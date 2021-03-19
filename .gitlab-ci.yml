@@ -1,0 +1,60 @@
+
+stages:
+  - test
+  - build
+before_script:
+  - flutter pub get
+  - flutter clean
+
+
+#MASTER
+master_test: 
+  stage: test 
+  script:
+    - echo "testing MASTER/RELEASE Branch  " 
+    - flutter test
+    #- flutter test test_driver/e2e  
+  only:
+    - master  
+master_build_android: 
+  stage: build 
+  script:
+     - flutter build apk
+  only:
+    - master  
+#DEVELOP
+develop_test: 
+  stage: test 
+  script:
+    - echo "testing DEVELOPER Branch  " 
+    - flutter test 
+    #- flutter test test_driver/e2e  
+  only:
+    - dev  
+develop_build_android: 
+  stage: build 
+  before_script:
+    - echo "About to build DEVELOP " 
+  script:
+    - echo "building DEVELOP " 
+    #- /home/mikeat/runner_wd/autoMergeRequestMaster.sh
+  only:
+    - dev  
+    
+
+
+#Code Review and Merge Request Checker
+NEW_FEATURE_TEST_and_AUTO_PR: 
+  stage: test 
+  only:
+    - /^feature\/*/
+  except:
+    - master
+    - dev
+  script:
+    - echo "testing for Code Review and Merge Request "
+    #- flutter analyze  
+    - flutter test
+    #- /home/mikeat/runner_wd/autoMergeRequest.sh
+ 
+
