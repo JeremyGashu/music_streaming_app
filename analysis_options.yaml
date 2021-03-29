@@ -1,7 +1,7 @@
-include: package:pedantic/analysis_options.1.11.0.yaml
-
-linter:
-  rules:
+#include: package:pedantic/analysis_options.1.11.0.yaml
+#
+#linter:
+#  rules:
     # Use parameter order as in json response
     #always_put_required_named_parameters_first: false
     
