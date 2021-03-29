@@ -6,9 +6,10 @@ project**
 for example - feature_authorization.
 
 - We will also have a commit message standard so that it makes our agile 
-process clear and all tests must be ran before a commit,for these to occur every developer should 
+process clear and all tests are forced to run before a commit ,for this to occur every developer should 
 have a copy of the files under the git_hooks locally in the .git/hooks/.
 In which the git_hooks folder is located on this projects root folder
+On Linux Systems make sure to make the files you copied executable after you copied them in to .git/hooks/ folder 
 
 - Our commit message standard is 
 
