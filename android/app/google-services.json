@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "565454845529",
+    "project_id": "twof-streaming-crashlyti",
+    "storage_bucket": "twof-streaming-crashlyti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565454845529:android:55401eaf4d8edeff6d2348",
+        "android_client_info": {
+          "package_name": "com.example.streaming_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565454845529-5i782l7pia9fvioj4hl53iv3co8s23t1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO6ueO2PU1jFnhf0PP2zspXXJUyn6ZKHY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565454845529-5i782l7pia9fvioj4hl53iv3co8s23t1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
