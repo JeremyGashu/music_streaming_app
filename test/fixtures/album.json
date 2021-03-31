@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id": "id",
+    "title": "title",
+    "description": "description",
+    "cover_image": "cover_image",
+    "views": 123,
+    "track_count": 12,
+    "likes": 123,
+    "artist_id": "artist_id"
+  },
+  "success": true,
+  "status": 200
+}

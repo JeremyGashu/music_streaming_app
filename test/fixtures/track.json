@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": "id",
+    "likes": 123,
+    "title": "title",
+    "release_date": "2012-02-27 13:27:00,123456789z",
+    "artist_id": "artist_id",
+    "album_id": "album_id",
+    "cover_img_url": "cover_image_url",
+    "track_url": "track_url",
+    "views": 123,
+    "duration": 123,
+    "lyrics_url": "lyrics_url",
+    "created_by": "created_by" 
+  },
+  "success": true,
+  "status": 200
+}
