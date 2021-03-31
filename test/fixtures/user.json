@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": "id",
+    "user_name": "user_name",
+    "first_name": "first_name",
+    "last_name": "last_name",
+    "phone_number": "phone_number",
+    "password": "password",
+    "bio": "bio",
+    "created_at": "created_at",
+    "updated_at": "updated_at",
+    "deleted_at": "deleted_at"
+  },
+  "success": true,
+  "status": 200
+}
