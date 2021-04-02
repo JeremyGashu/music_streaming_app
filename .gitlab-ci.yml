@@ -1,4 +1,3 @@
-
 stages:
   - test
   - build
@@ -9,7 +8,9 @@ before_script:
 
 #MASTER
 master_test: 
-  stage: test 
+  stage: test
+  tags:
+  - gitlab-runner
   script:
     - echo "testing MASTER/RELEASE Branch  " 
     - flutter test
@@ -17,14 +18,18 @@ master_test:
   only:
     - master  
 master_build_android: 
-  stage: build 
+  stage: build
+  tags:
+  - gitlab-runner
   script:
      - flutter build apk
   only:
     - master  
 #DEVELOP
 develop_test: 
-  stage: test 
+  stage: test
+  tags:
+  - gitlab-runner
   script:
     - echo "testing DEVELOPER Branch  " 
     - flutter test 
@@ -32,7 +37,9 @@ develop_test:
   only:
     - dev  
 develop_build_android: 
-  stage: build 
+  stage: build
+  tags:
+  - gitlab-runner
   before_script:
     - echo "About to build DEVELOP " 
   script:
@@ -45,7 +52,9 @@ develop_build_android:
 
 #Code Review and Merge Request Checker
 NEW_FEATURE_TEST_and_AUTO_PR: 
-  stage: test 
+  stage: test
+  tags:
+  - gitlab-runner 
   only:
     - /^feature\/*/
   except:
