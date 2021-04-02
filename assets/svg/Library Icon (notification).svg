@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="23.857" height="20.613" viewBox="0 0 23.857 20.613">
+  <g id="Library_Icon_notification_" data-name="Library Icon (notification)" transform="translate(0.96 0.75)">
+    <path id="Library_Icon_notification_selected_" data-name="Library Icon (notification, selected)" d="M18.649,19.883h1.178V15.058a6.877,6.877,0,0,1-1.178-.4Zm-4.319,0h1.178V.9H14.329Zm-4.4,0h1.178V.9H9.931ZM.9,19.408l1.1.4L8.439,1.928l-1.1-.4ZM18.649.9V6.12a6.877,6.877,0,0,1,1.178-.4V.9Zm4.4,9.492a2.356,2.356,0,1,1-2.356-2.373A2.371,2.371,0,0,1,23.047,10.392Z" transform="translate(-0.9 -0.9)" fill="#444" stroke="#575757" stroke-width="1.5" fill-rule="evenodd"/>
+    <path id="Library_Icon_notification_selected_2" data-name="Library Icon (notification, selected)" d="M27.846,12.273A2.373,2.373,0,1,1,25.473,9.9,2.38,2.38,0,0,1,27.846,12.273Z" transform="translate(-5.699 -2.781)" fill="#444" fill-rule="evenodd"/>
+  </g>
+</svg>
