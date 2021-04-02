@@ -1,3 +1,7 @@
+### Zebra Streaming 
+|[![pipeline status](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/pipeline.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|[![coverage report](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/coverage.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|
+
+
 **This are helpfull informations for those who develop and participate on this 
 project**
 
