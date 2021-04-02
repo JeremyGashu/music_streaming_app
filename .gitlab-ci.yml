@@ -1,3 +1,5 @@
+image: mobiledevops/flutter-sdk-image
+
 stages:
   - test
   - build
