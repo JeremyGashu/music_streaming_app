@@ -26,7 +26,10 @@ master_build_android:
   script:
      - flutter build apk
   only:
-    - master  
+    - master 
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/ 
 #DEVELOP
 develop_test: 
   stage: test
