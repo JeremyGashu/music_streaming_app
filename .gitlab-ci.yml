@@ -1,3 +1,5 @@
+image: mobiledevops/flutter-sdk-image
+
 stages:
   - test
   - build
@@ -24,7 +26,10 @@ master_build_android:
   script:
      - flutter build apk
   only:
-    - master  
+    - master 
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/ 
 #DEVELOP
 develop_test: 
   stage: test
@@ -66,4 +71,3 @@ NEW_FEATURE_TEST_and_AUTO_PR:
     - flutter test
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
  
-
