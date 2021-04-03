@@ -71,4 +71,3 @@ NEW_FEATURE_TEST_and_AUTO_PR:
     - flutter test
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
  
-
