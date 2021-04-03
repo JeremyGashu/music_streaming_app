@@ -1,5 +1,6 @@
 ### Zebra Streaming 
-|[![pipeline status](https://gitlab.com/<namespace>/<project>/badges/<branch>/pipeline.svg)](https://gitlab.com/<namespace>/<project>/)|[![coverage report](https://gitlab.com/<namespace>/<project>/badges/<branch>/coverage.svg)](https://gitlab.com/<namespace>/<project>/)|
+|[![pipeline status](https://gitlab.com/<namespace>/<project>/badges/<branch>/pipeline.svg)](https://gitlab.com/<namespace>/<project>/)|[![Coverage](https://gitlab.com/<namespace>/<project>/badges/<branch>/coverage.svg)](https://gitlab.com/<namespace>/<project>/)
+|
 
 
 **This are helpfull informations for those who develop and participate on this 
