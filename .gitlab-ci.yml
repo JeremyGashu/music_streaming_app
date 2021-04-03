@@ -9,7 +9,8 @@ before_script:
 
 
 #MASTER
-master_test: 
+master_test:
+  image: cirrusci/flutter:stable 
   stage: test
   tags:
   - gitlab-runner
