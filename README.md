@@ -1,5 +1,5 @@
 ### Zebra Streaming 
-|[![pipeline status](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/pipeline.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|[![coverage report](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/coverage.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|
+|[![pipeline status](https://gitlab.com/<namespace>/<project>/badges/<branch>/pipeline.svg)](https://gitlab.com/<namespace>/<project>/)|[![coverage report](https://gitlab.com/<namespace>/<project>/badges/<branch>/coverage.svg)](https://gitlab.com/<namespace>/<project>/)|
 
 
 **This are helpfull informations for those who develop and participate on this 
