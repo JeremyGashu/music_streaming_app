@@ -82,4 +82,26 @@ NEW_FEATURE_TEST_and_AUTO_PR:
     paths:
       - coverage
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
- 
+  
+#PIPELINE_TESTER
+PIPELINE_TESTER: 
+  image: matspfeiffer/flutter
+  stage: test
+  tags:
+  - gitlab-runner 
+  only:
+    - /^pipeline\/*/
+  except:
+    - master
+    - dev
+  script:
+    - echo "testing for Code Review and Merge Request "
+    #- flutter analyze  
+    - flutter test test_driver/e2e
+    - flutter test --coverage ./lib
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
+  artifacts:
+    paths:
+      - coverage
+    #- /home/mikeat/runner_wd/autoMergeRequest.sh
