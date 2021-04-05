@@ -99,8 +99,7 @@ PIPELINE_TESTER:
   script:
     # - sdkmanager --install "system-images;android-29;default;x86"
     # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
-    - yes | sdkmanager "platform-tools" "platforms;android-28" "emulator"
-    - yes | sdkmanager "system-images;android-28;google_apis;x86_64
+    - yes | sdkmanager --install "system-images;android-28;google_apis;x86_64
     - echo no | avdmanager create avd -n avd28 -k "system-images;android-28;google_apis;x86_64"
       # start the emulator
     - emulator -avd avd28 -no-audio -no-window &
