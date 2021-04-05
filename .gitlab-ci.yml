@@ -99,6 +99,8 @@ PIPELINE_TESTER:
     - dev
   script:
     - flutter emulators
+    - flutter emulator --launch android_emulator 
+    - flutter devices
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
     - flutter test test_driver/e2e
