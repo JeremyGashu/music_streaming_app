@@ -10,15 +10,22 @@ before_script:
 
 #MASTER
 master_test: 
+master_test:
+  image: cirrusci/flutter:stable 
   stage: test
   tags:
   - gitlab-runner
   script:
     - echo "testing MASTER/RELEASE Branch  " 
-    - flutter test
+    - flutter test --coverage ./lib
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
     #- flutter test test_driver/e2e  
   only:
     - master  
+  artifacts:
+    paths:
+      - coverage
 master_build_android: 
   stage: build
   tags:
@@ -57,6 +64,7 @@ develop_build_android:
 
 #Code Review and Merge Request Checker
 NEW_FEATURE_TEST_and_AUTO_PR: 
+  image: cirrusci/flutter:stable
   stage: test
   tags:
   - gitlab-runner 
@@ -68,6 +76,11 @@ NEW_FEATURE_TEST_and_AUTO_PR:
   script:
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
-    - flutter test
+    - flutter test --coverage ./lib
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
+  artifacts:
+    paths:
+      - coverage
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
  
