@@ -101,11 +101,11 @@ PIPELINE_TESTER:
     # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
     
     - echo no | sdkmanager --install "system-images;android-25;google_apis;armeabi-v7a"
-    - echo no | avdmanager -v create avd --force -n avd29 --package "system-images;android-25;google_apis;armeabi-v7a" --tag "google_apis" --abi "google_apis/armeabi-v7a"  
+    - echo no | avdmanager -v create avd --force -n avd25 --package "system-images;android-25;google_apis;armeabi-v7a" --tag "google_apis" --abi "google_apis/armeabi-v7a"  
       # start the emulator
-    - emulator -avd avd29 -no-audio -no-window &
+    - emulator -avd avd25 -no-audio -no-window &
+    - adb devices
     - flutter emulators
-    - flutter emulator --launch avd29 -v
     - flutter devices
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
