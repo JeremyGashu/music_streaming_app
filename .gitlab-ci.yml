@@ -98,6 +98,7 @@ PIPELINE_TESTER:
     - dev
   script:
     - emulator -list-avds
+    - emulator -avd Nexus_5X_API_26
     - emulator -avd test -no-skin -no-audio -no-window
     - flutter emulators
     - flutter emulator --launch android_emulator -v
