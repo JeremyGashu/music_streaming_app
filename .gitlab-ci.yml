@@ -97,9 +97,9 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
+    - echo no | avdmanager create avd --force --name android_emulator --abi google_apis/x86_64 --package 'system-images;android-23;google_apis;x86_64'
     - emulator -list-avds
-    - emulator -avd Nexus_5X_API_26
-    - emulator -avd test -no-skin -no-audio -no-window
+    - emulator -avd android_emulator -no-skin -no-audio -no-window
     - flutter emulators
     - flutter emulator --launch android_emulator -v
     - flutter devices
