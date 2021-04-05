@@ -98,10 +98,3 @@ PIPELINE_TESTER:
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
     - flutter test test_driver/e2e
-    - flutter test --coverage ./lib
-    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
-    - genhtml coverage/lcov_cleaned.info --output=coverage
-  artifacts:
-    paths:
-      - coverage
-    #- /home/mikeat/runner_wd/autoMergeRequest.sh
