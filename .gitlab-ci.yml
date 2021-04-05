@@ -100,7 +100,7 @@ PIPELINE_TESTER:
     - sdkmanager --install "system-images;android-29;default;x86"
     - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
     - flutter emulators
-    - flutter emulator --launch android_emulator -v
+    - flutter emulator --launch generic_10 -v
     - flutter devices
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
