@@ -97,10 +97,12 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
-    - sdkmanager --install "system-images;android-29;default;x86"
-    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
+    # - sdkmanager --install "system-images;android-29;default;x86"
+    # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
+    - sdkmanager "system-images;android-16;default;armeabi-v7a"
+    - echo "no" | avdmanager create avd -n Android_4.1_API_16 -k "system-images;android-16;default;armeabi-v7a" -c 100M --force
     - flutter emulators
-    - flutter emulator --launch generic_10 -v
+    - flutter emulator --launch Android_4.1_API_16 -v
     - flutter devices
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
