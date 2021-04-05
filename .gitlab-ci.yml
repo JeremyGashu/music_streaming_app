@@ -88,7 +88,7 @@ NEW_FEATURE_TEST_and_AUTO_PR:
   
 #PIPELINE_TESTER
 PIPELINE_TESTER: 
-  image: matspfeiffer/flutter
+  image: cirrusci/flutter:latest
   stage: test
   tags:
   - gitlab-runner 
