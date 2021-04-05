@@ -4,6 +4,7 @@ stages:
   - test
   - build
 before_script:
+  - flutter doctor -v
   - flutter upgrade
   - flutter pub get
   - flutter clean
