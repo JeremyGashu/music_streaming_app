@@ -97,9 +97,10 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
-    - echo no | avdmanager create avd --force --name android_emulator --abi google_apis/x86_64 --package 'system-images;android-23;google_apis;x86_64'
+    - sdkmanager --install "system-images;android-29;default;x86"
+    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default" --abi "x86"
     - emulator -list-avds
-    - emulator -avd android_emulator -no-skin -no-audio -no-window
+    - emulator -avd generic_10 -no-skin -no-audio -no-window
     - flutter emulators
     - flutter emulator --launch android_emulator -v
     - flutter devices
