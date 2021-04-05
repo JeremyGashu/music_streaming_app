@@ -4,6 +4,7 @@ stages:
   - test
   - build
 before_script:
+
   - flutter doctor -v
   - flutter upgrade
   - flutter pub get
@@ -97,6 +98,7 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
+    - flutter emulators
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
     - flutter test test_driver/e2e
