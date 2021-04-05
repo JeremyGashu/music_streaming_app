@@ -97,6 +97,7 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
+    - apt-get install -y android-emulator
     - android create avd --force -n test -t android-17 --abi armeabi-v7a
     - emulator -avd test -no-skin -no-audio -no-window
     - flutter emulators
