@@ -99,8 +99,8 @@ PIPELINE_TESTER:
   script:
     # - sdkmanager --install "system-images;android-29;default;x86"
     # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
-    - sdkmanager --install "system-images;android-28;google_apis;x86_64"
-    - echo no | avdmanager create avd -n avd28 -k "system-images;android-28;google_apis;x86_64"
+    - echo no | sdkmanager --install "system-images;android-28;google_apis;x86_64"
+    - echo no | avdmanager create avd -n avd28 -k "system-images;android-28;google_apis;x86_64" --abi 'armeabi-v7a'
       # start the emulator
     - emulator -avd avd28 -no-audio -no-window &
     - flutter emulators
