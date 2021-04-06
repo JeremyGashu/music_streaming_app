@@ -6,6 +6,8 @@ import 'package:streaming_mobile/presentation/playlist/widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
 
 class PlaylistDetail extends StatelessWidget {
+  final String albumId;
+  PlaylistDetail({@required this.albumId}) : assert(albumId != null);
   final List<Music> _musics = [
     Music(
       imageName: 'artist_image.jpg',
@@ -71,6 +73,7 @@ class PlaylistDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //here load the tracks that belong to the playlist id
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(

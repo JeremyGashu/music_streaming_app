@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/bloc/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
@@ -27,6 +30,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
+  final _trackRepo =
+      TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
 
   @override
   void initState() {
@@ -39,8 +44,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PlaylistBloc(playlistRepository: _playlistRepo),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PlaylistBloc(playlistRepository: _playlistRepo),
+        ),
+        BlocProvider(
+          create: (context) => TrackBloc(trackRepository: _trackRepo),
+        ),
+      ],
       child: MaterialApp(
         title: 'Material App',
         home: Scaffold(

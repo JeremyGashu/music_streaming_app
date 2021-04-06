@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/bloc/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/bloc/playlist/playlist_event.dart';
+import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/bloc/singletrack/track_event.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
@@ -21,6 +23,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
+    BlocProvider.of<TrackBloc>(context).add(LoadTracks());
 
     final size = MediaQuery.of(context).size;
     return Scaffold(
@@ -97,7 +100,7 @@ class HomePage extends StatelessWidget {
                 height: 200,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: [Album(), SingleTrack()],
+                  children: [Album(), Album()],
                 ),
               ),
               _sectionTitle(title: "Popular Playlists", callback: () {}),

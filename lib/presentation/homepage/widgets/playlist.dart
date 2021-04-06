@@ -16,10 +16,7 @@ class PlayList extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<PlaylistBloc, PlaylistState>(
         builder: (_, state) {
-          print("Current state");
-          if (state is LoadedPlaylist) {
-            print(state.playlists.data.trackCount);
-          }
+          // print("Current state");
 
           if (state is LoadedPlaylist) {
             return Container(
@@ -31,7 +28,9 @@ class PlayList extends StatelessWidget {
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return PlaylistDetail();
+                          return PlaylistDetail(
+                            albumId: state.playlists.data.id,
+                          );
                         }));
                       },
                       child: Stack(
