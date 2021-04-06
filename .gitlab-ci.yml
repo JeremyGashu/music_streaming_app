@@ -103,9 +103,9 @@ PIPELINE_TESTER:
     - apt-get install -y qemu-kvm
     - adduser $USER kvm
     - sdkmanager --list | grep system-images
-    - echo no | sdkmanager --install "system-images;android-29;default;x86"
-    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default" --abi "x86"
-          # start the emulator
+    - echo no | sdkmanager --install "system-images;android-29;default;x86_64"
+    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86_64" --tag "default" 
+         # start the emulator
     - emulator -avd @generic_10 -no-audio -no-window &
     - adb devices
     - flutter emulator --launch generic_10 -v
