@@ -101,7 +101,6 @@ PIPELINE_TESTER:
     # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
     - apt-get update
     - apt-get install -y qemu-kvm
-    - ls -al /dev/kvm
     - grep kvm /etc/group
     - sudo adduser $USER kvm
     - echo no | sdkmanager --install "system-images;android-25;google_apis;armeabi-v7a"
