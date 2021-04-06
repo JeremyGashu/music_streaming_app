@@ -2,8 +2,18 @@ import 'package:audio_service/audio_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/bloc/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
+import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/data/repository/track_repository.dart';
+import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 void main() {
+  Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
 
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -18,23 +28,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _playlistRepo = PlaylistRepository(
+      dataProvider: PlaylistDataProvider(client: http.Client()));
+  final _trackRepo =
+      TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
+
   @override
   void initState() {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
       print("completed");
-      setState(() {});
+      // setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (_, snapshot) {
-          return MaterialApp(
-            title: 'Material App',
-            home: AudioServiceWidget(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PlaylistBloc(playlistRepository: _playlistRepo),
+        ),
+        BlocProvider(
+          create: (context) => TrackBloc(trackRepository: _trackRepo),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Material App',
+        home: AudioServiceWidget(
               child: Scaffold(
                 appBar: AppBar(
                   title: Text('Material App Bar'),
@@ -46,7 +67,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
             ),
-          );
-        });
+      ),
+    );
   }
 }
