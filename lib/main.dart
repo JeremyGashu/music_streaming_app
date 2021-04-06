@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +34,15 @@ class _MyAppState extends State<MyApp> {
         builder: (_, snapshot) {
           return MaterialApp(
             title: 'Material App',
-            home: Scaffold(
-              appBar: AppBar(
-                title: Text('Material App Bar'),
-              ),
-              body: Center(
-                child: Container(
-                  child: Text('Hello World'),
+            home: AudioServiceWidget(
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text('Material App Bar'),
+                ),
+                body: Center(
+                  child: Container(
+                    child: Text('Hello World'),
+                  ),
                 ),
               ),
             ),
