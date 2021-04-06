@@ -33,9 +33,75 @@ class MediaDownloaderBloc
     send.send([id, status, progress]);
   }
 
+  /// remove the background isolate binding
+  void _unbindBackgroundIsolate() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+  }
+
+  /// flutter downloader works in the background, this will subscribe to the
+  /// background isolate and listens for the call back
+  void _bindBackgroundIsolate(){
+    bool isSuccess = IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    if(!isSuccess){
+      _unbindBackgroundIsolate();
+      _bindBackgroundIsolate();
+      return;
+    }
+    _port.listen((dynamic data) {
+      print('////////////////////////////////////////////////////');
+      print(data);
+      String taskId = data[0];
+      DownloadTaskStatus status = data[1];
+      int progress = data[2];
+      print(status);
+      var _taskIndex =
+      _tasks.indexWhere((element) => element.taskId == taskId);
+      print('////////////////////////////////////////////////////');
+      print('taskindex $_taskIndex');
+      if (_taskIndex != -1) {
+        if (status == DownloadTaskStatus.complete) {
+          smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
+          //
+          // LocalDatabaseBloc localDatabaseBloc = LocalDatabaseBloc(mediaDownloaderBloc: this);
+          // localDatabaseBloc.add(WriteToLocalDB(boxName: 'downloadTasks', key: '${_downloadTask.track_id}/${_downloadTask.segment_number}', value: _downloadTask));
+          // check's if previous event is add download before changing state
+          // if(_previousEvent is AddDownload){
+          //   add(UpdateDownloadState(
+          //       state: DownloadCompleted(downloadedTask: _downloadTask)));
+          // }
+          print('here');
+          add(UpdateDownloadState(
+              state: DownloadCompleted(downloadedTask: _downloadTask)));
+          _tasks.removeAt(_taskIndex);
+          if (_tasks.isNotEmpty) {
+            // FlutterDownloader.cancelAll();
+            print('here adfadfadfadfadfdf');
+            addDownload(_tasks[0].downloadTask)
+                .then((value) => _tasks[0].taskId = value);
+            print('here 55555555555555555');
+          } else {
+            print('/////////////////////////////////////////');
+            print('download done');
+            add(UpdateDownloadState(state: DownloadDone()));
+          }
+        } else {
+          // considering other states other than complete as failed
+          // since no implementation is done for other states
+          print('.//////////////////////// else');
+          print(status);
+          add(UpdateDownloadState(state: DownloadFailed()));
+        }
+      }
+    });
+    print('registering callback');
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
   @override
   Future<void> close() {
-    IsolateNameServer.removePortNameMapping("downloader_send_port");
+    /// remove the background isolate when bloc closes
+    _unbindBackgroundIsolate();
     return super.close();
   }
 
@@ -46,44 +112,9 @@ class MediaDownloaderBloc
       _previousEvent = event;
       yield DownloadOnProgressState();
       if (event is InitializeDownloader) {
-        IsolateNameServer.registerPortWithName(
-            _port.sendPort, 'downloader_send_port');
-        _port.listen((dynamic data) {
-          print(data);
-          String taskId = data[0];
-          DownloadTaskStatus status = data[1];
-          int progress = data[2];
-          var _taskIndex =
-              _tasks.indexWhere((element) => element.taskId == taskId);
-          if (_taskIndex != -1) {
-            if (status == DownloadTaskStatus.complete) {
-              smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
-              //
-              LocalDatabaseBloc localDatabaseBloc = LocalDatabaseBloc();
-              localDatabaseBloc.add(WriteToLocalDB(boxName: 'downloadTasks', key: '${_downloadTask.track_id}/${_downloadTask.segment_number}', value: _downloadTask));
-              // check's if previous event is add download before changing state
-              if(_previousEvent is AddDownload){
-                add(UpdateDownloadState(
-                    state: DownloadCompleted(downloadedTask: _downloadTask)));
-              }
-
-              _tasks.removeAt(_taskIndex);
-              if (_tasks.isNotEmpty) {
-                // FlutterDownloader.cancelAll();
-                addDownload(_tasks[0].downloadTask)
-                    .then((value) => _tasks[0].taskId = value);
-              } else {
-                add(UpdateDownloadState(state: DownloadDone()));
-              }
-            } else {
-              // considering other states other than complete as failed
-              // since no implementation is done for other states
-              add(UpdateDownloadState(state: DownloadFailed()));
-            }
-          }
-        });
-        FlutterDownloader.registerCallback(downloadCallback);
+        _bindBackgroundIsolate();
       } else if (event is AddDownload) {
+        print('add download event');
         _handleClearDownload();
         if (_tasks.length == 0) {
           String taskId = await addDownload(event.downloadTasks.first);
@@ -119,6 +150,7 @@ class MediaDownloaderBloc
     }
   }
 
+  /// add download task to downloader
   Future<String> addDownload(smd.DownloadTask task) async {
     final taskId = await FlutterDownloader.enqueue(
       url: task.url,
@@ -129,6 +161,8 @@ class MediaDownloaderBloc
     return taskId;
   }
 
+
+  /// clear the download task
   void _handleClearDownload() {
     if (_tasks.length != 0) {
       FlutterDownloader.cancel(taskId: _tasks[0].taskId);

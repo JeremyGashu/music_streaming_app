@@ -14,7 +14,7 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
   final MediaDownloaderBloc mediaDownloaderBloc;
   StreamSubscription downloaderSub;
   LocalDatabaseBloc({@required this.mediaDownloaderBloc}):assert(mediaDownloaderBloc!=null),super(LocalDBIdle()) {
-    // Subscribe to downloaderbloc and listen when download finished
+    /// Subscribe to [ MediaDownloaderBloc ] and listen to [DownloadState]
     downloaderSub = mediaDownloaderBloc.stream.listen((downloadState) {
       if(downloadState is DownloadCompleted){
         add(WriteToLocalDB(boxName: 'downloadTasks', key: "${
@@ -24,11 +24,12 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
     });
 
     // Initialize local database
-    add(InitLocalDB());
+    // add(InitLocalDB());
   }
 
   @override
   Future<void> close() {
+    // cancel stream subscription when bloc closes
     downloaderSub?.cancel();
     return super.close();
   }
@@ -60,7 +61,5 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
       yield LocalDBFailed();
     }
   }
-
-
 
 }
