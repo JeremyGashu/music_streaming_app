@@ -1,8 +1,6 @@
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:test/test.dart';
-import 'package:bloc_test/bloc_test.dart';
 
 void main() async{
 

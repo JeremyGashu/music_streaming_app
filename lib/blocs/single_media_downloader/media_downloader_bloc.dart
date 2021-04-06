@@ -3,8 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:streaming_mobile/blocs/local_database/local_database_bloc.dart';
-import 'package:streaming_mobile/blocs/local_database/local_database_event.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
 import 'media_downloader_event.dart';
 import 'media_downloader_state.dart';
@@ -20,7 +18,7 @@ class MediaDownloaderBloc
     extends Bloc<MediaDownloaderEvent, MediaDownloaderState> {
   ReceivePort _port = ReceivePort();
   List<Task> _tasks = [];
-  MediaDownloaderEvent _previousEvent;
+  // MediaDownloaderEvent _previousEvent;
   // Attach InitializeDownloader event when Instantiating the MediaDownloaderBloc;
   MediaDownloaderBloc() : super(DownloadOnProgressState()) {}
 
@@ -53,7 +51,6 @@ class MediaDownloaderBloc
       print(data);
       String taskId = data[0];
       DownloadTaskStatus status = data[1];
-      int progress = data[2];
       print(status);
       var _taskIndex =
       _tasks.indexWhere((element) => element.taskId == taskId);
@@ -109,7 +106,7 @@ class MediaDownloaderBloc
   Stream<MediaDownloaderState> mapEventToState(
       MediaDownloaderEvent event) async* {
     try {
-      _previousEvent = event;
+      // _previousEvent = event;
       yield DownloadOnProgressState();
       if (event is InitializeDownloader) {
         _bindBackgroundIsolate();
