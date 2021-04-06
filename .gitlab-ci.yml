@@ -9,8 +9,7 @@ before_script:
 
 
 #MASTER
-master_test:
-  image: cirrusci/flutter:stable 
+master_test: 
   stage: test
   tags:
   - gitlab-runner
@@ -63,7 +62,10 @@ develop_build_android:
 
 #Code Review and Merge Request Checker
 NEW_FEATURE_TEST_and_AUTO_PR: 
+<<<<<<< HEAD
   image: cirrusci/flutter:stable
+=======
+>>>>>>> 4dcd947c39db98f1ff26b185aaedbd6cb8f482ec
   stage: test
   tags:
   - gitlab-runner 
