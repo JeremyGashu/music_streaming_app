@@ -28,3 +28,7 @@ Git flow should be used in order to control the work flow
 Here is more on gitflow ->
 https://docs.gitlab.com/ee/topics/gitlab_flow.html
 
+```javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
