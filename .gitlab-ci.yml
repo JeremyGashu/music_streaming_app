@@ -1,3 +1,4 @@
+image: mobiledevops/flutter-sdk-image
 
 stages:
   - test
@@ -8,23 +9,38 @@ before_script:
 
 
 #MASTER
-master_test: 
-  stage: test 
+master_test:
+  image: cirrusci/flutter:stable 
+  stage: test
+  tags:
+  - gitlab-runner
   script:
     - echo "testing MASTER/RELEASE Branch  " 
-    - flutter test
+    - flutter test --coverage ./lib
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
     #- flutter test test_driver/e2e  
   only:
     - master  
+  artifacts:
+    paths:
+      - coverage
 master_build_android: 
-  stage: build 
+  stage: build
+  tags:
+  - gitlab-runner
   script:
      - flutter build apk
   only:
-    - master  
+    - master 
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/ 
 #DEVELOP
 develop_test: 
-  stage: test 
+  stage: test
+  tags:
+  - gitlab-runner
   script:
     - echo "testing DEVELOPER Branch  " 
     - flutter test 
@@ -32,7 +48,9 @@ develop_test:
   only:
     - dev  
 develop_build_android: 
-  stage: build 
+  stage: build
+  tags:
+  - gitlab-runner
   before_script:
     - echo "About to build DEVELOP " 
   script:
@@ -45,7 +63,10 @@ develop_build_android:
 
 #Code Review and Merge Request Checker
 NEW_FEATURE_TEST_and_AUTO_PR: 
-  stage: test 
+  image: cirrusci/flutter:stable
+  stage: test
+  tags:
+  - gitlab-runner 
   only:
     - /^feature\/*/
   except:
@@ -54,7 +75,11 @@ NEW_FEATURE_TEST_and_AUTO_PR:
   script:
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
-    - flutter test
+    - flutter test --coverage ./lib
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
+  artifacts:
+    paths:
+      - coverage
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
  
-
