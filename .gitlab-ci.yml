@@ -103,8 +103,8 @@ PIPELINE_TESTER:
     - apt-get install -y qemu-kvm
     - adduser $USER kvm
     - sdkmanager --list | grep system-images
-    - echo no | sdkmanager --install "system-images;android-29;default;x86_64"
-    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86_64" --tag "default" 
+    - echo no | sdkmanager --install "system-images;android-S;google_apis_playstore;arm64-v8a"
+    - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-S;google_apis_playstore;arm64-v8a" --tag "default" 
          # start the emulator
     - emulator -avd @generic_10 -no-audio -no-window &
     - adb devices
