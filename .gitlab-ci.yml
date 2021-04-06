@@ -102,13 +102,14 @@ PIPELINE_TESTER:
     - apt-get update
     - apt-get install -y qemu-kvm
     - adduser $USER kvm
-    - echo no | sdkmanager --install "system-images;android-25;google_apis;armeabi-v7a"
-    - echo no | avdmanager -v create avd --force -n avd29 --package "system-images;android-25;google_apis;armeabi-v7a" --tag "google_apis" --abi "google_apis/armeabi-v7a"  
+    - echo no | sdkmanager --install "system-images;android-27;google_apis_playstore;x86"
+    - echo no | avdmanager -v create avd --force -n avd29 --package "system-images;android-27;google_apis_playstore;x86" --tag "google_apis" 
       # start the emulator
     - emulator -avd avd29 -no-audio -no-window &
     - adb devices
     - flutter emulator --launch avd29 -v
     - flutter emulators
+    - flutter emulator --launch avd29 -v
     - flutter devices
     - echo "testing for Code Review and Merge Request "
     #- flutter analyze  
