@@ -73,7 +73,6 @@ class PlaylistDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //here load the tracks that belong to the playlist id
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(

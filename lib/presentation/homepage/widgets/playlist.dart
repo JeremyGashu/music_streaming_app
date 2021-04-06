@@ -16,8 +16,6 @@ class PlayList extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<PlaylistBloc, PlaylistState>(
         builder: (_, state) {
-          // print("Current state");
-
           if (state is LoadedPlaylist) {
             return Container(
               width: 120,

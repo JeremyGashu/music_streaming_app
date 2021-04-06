@@ -5,7 +5,12 @@ import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/bloc/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 
-class SingleTrack extends StatelessWidget {
+class SingleTrack extends StatefulWidget {
+  @override
+  _SingleTrackState createState() => _SingleTrackState();
+}
+
+class _SingleTrackState extends State<SingleTrack> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -16,6 +21,7 @@ class SingleTrack extends StatelessWidget {
           if (state is LoadedTrack) {
             return GestureDetector(
               onTap: () {
+                //you can access the track info with state.track
                 print(state.track);
               },
               child: Container(
