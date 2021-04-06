@@ -38,7 +38,6 @@ master_build_android:
   artifacts:
     paths:
       - build/app/outputs/apk/release/
-    expire_in: 1 day
  
 #DEVELOP
 develop_test: 
