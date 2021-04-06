@@ -36,6 +36,7 @@ master_build_android:
   only:
     - master 
   artifacts:
+    name: "Zebra_streaming_build_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
     paths:
       - build/app/outputs/apk/release/
  
