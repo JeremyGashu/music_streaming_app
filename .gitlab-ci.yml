@@ -70,6 +70,7 @@ NEW_FEATURE_TEST_and_AUTO_PR:
   - gitlab-runner 
   only:
     - /^feature\/*/
+    - /^Feature\/*/
   except:
     - master
     - dev
