@@ -71,7 +71,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
         /// when loading audio data
         case ProcessingState.loading:
           _setState(state: AudioProcessingState.buffering);
-          break;       
+          break;
         default:
           break;
       }
@@ -126,10 +126,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
     onPlay();
   }
 
-  /// ToDo: Pause the player and download the segment
-  /// 
-  /// Get the exact segment from the player position
-  /// Wait until segment is downloaded and start playing
   @override
   Future<void> onSeekTo(Duration position) async {
     await prefs.setInt('position', position.inSeconds);
@@ -181,6 +177,21 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   @override
+  Future<void> onPlayMediaItem(MediaItem mediaItem) async {
+    await _audioPlayer.stop();
+
+    if (mediaItem.extras['source'].toString().startsWith('/')) {
+      /// To play from local path
+      await _audioPlayer.setFilePath(mediaItem.extras['source']);
+    } else {
+      /// To play directly from the given url in [MediaItem]
+      await _audioPlayer.setUrl(mediaItem.extras['source']);
+    }
+
+    onUpdateMediaItem(mediaItem);
+  }
+
+  @override
   Future<void> onStop() async {
     await _audioPlayer.stop();
 
@@ -213,7 +224,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   /// This method sets background state with ease
-  /// 
+  ///
   /// It accepts the audio_services [AudioProcessingState]
   void _setState({@required AudioProcessingState state}) {
     AudioServiceBackground.setState(

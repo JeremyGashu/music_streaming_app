@@ -7,13 +7,17 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 
-class SinleTrackPlayerPage extends StatefulWidget {
+class SingleTrackPlayerPage extends StatefulWidget {
+  final Track track;
+  const SingleTrackPlayerPage({@required this.track});
+
   @override
-  _SinleTrackPlayerPageState createState() => _SinleTrackPlayerPageState();
+  _SingleTrackPlayerPageState createState() => _SingleTrackPlayerPageState();
 }
 
-class _SinleTrackPlayerPageState extends State<SinleTrackPlayerPage> {
+class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   SliderThemeData _sliderThemeData;
   final BehaviorSubject<double> _dragPositionSubject =
       BehaviorSubject.seeded(null);
@@ -93,7 +97,7 @@ class _SinleTrackPlayerPageState extends State<SinleTrackPlayerPage> {
                 ///
                 /// This will be replaced with another widget later
                 return Center(
-                  child: Text('Not Playing: Go back to home page.'),
+                  child: Text('Not Playing'),
                 );
               },
             );
@@ -108,6 +112,7 @@ class _SinleTrackPlayerPageState extends State<SinleTrackPlayerPage> {
         _songImage(),
         Spacer(),
         _songTitleRow(),
+
         /// SeekBar
         Stack(
           children: [
@@ -156,8 +161,10 @@ class _SinleTrackPlayerPageState extends State<SinleTrackPlayerPage> {
                   },
                   onChanged: (value) => _dragPositionSubject.add(value),
                   onChangeEnd: (value) {
+                    /// TODO : Check segment availability
+                    /// 
                     /// Pause the player first then calculate segment position
-                    /// then check if the segment exists and play. If the 
+                    /// then check if the segment exists and play. If the
                     /// segment was not downloaded, start download and wait
                     /// until download finished state yielded.
                     AudioService.seekTo(Duration(milliseconds: value.toInt()));

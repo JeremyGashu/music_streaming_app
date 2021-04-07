@@ -56,17 +56,17 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Material App',
         home: AudioServiceWidget(
-              child: Scaffold(
-                appBar: AppBar(
-                  title: Text('Material App Bar'),
-                ),
-                body: Center(
-                  child: Container(
-                    child: Text('Hello World'),
-                  ),
-                ),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Material App Bar'),
+            ),
+            body: Center(
+              child: Container(
+                child: Text('Hello World'),
               ),
             ),
+          ),
+        ),
       ),
     );
   }
