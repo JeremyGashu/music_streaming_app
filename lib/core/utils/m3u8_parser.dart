@@ -32,19 +32,22 @@ class ParseHls {
               : await getApplicationDocumentsDirectory())
           .path;
       String filePath = dir + '/' + fileId;
-      String filename = '/main.m3u8';
+      String filenameTxt = '/main.txt';
+      String filenameM3u8 = '/main.m3u8';
 
       // create the dir to save the file
       await createDir('$dir/$fileId');
 
       // download the file to the created folder
-      await downloadFile(url, filePath, filename);
+      await downloadFile(url, filePath, filenameTxt);
       print('////////////////////////// Download finished');
 
       // read m3u8 as string
-      String m3u8String = await m3u8StringLoader('$dir/$fileId/$filename');
+      String m3u8String = await m3u8StringLoader('$dir/$fileId/$filenameTxt');
 
-      /// TODO: write [m3u8String] to local path
+      /// write [m3u8String] to local path
+      File file = new File('$dir/$fileId/$filenameM3u8');
+      file.writeAsString(m3u8String);
 
       return true;
     } on Exception {
