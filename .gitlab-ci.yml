@@ -4,6 +4,8 @@ stages:
   - test
   - build
 before_script:
+
+  - flutter doctor -v
   - flutter pub get
   - flutter clean
 
@@ -31,12 +33,14 @@ master_build_android:
   tags:
   - gitlab-runner
   script:
-     - flutter build apk
+     - flutter build apk --release --build-number=$CI_PIPELINE_ID
   only:
     - master 
   artifacts:
+    name: "Zebra_streaming_build_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
     paths:
-      - build/app/outputs/flutter-apk/ 
+      - build/app/outputs/apk/release/
+ 
 #DEVELOP
 develop_test: 
   stage: test
@@ -84,4 +88,39 @@ NEW_FEATURE_TEST_and_AUTO_PR:
     paths:
       - coverage
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
- 
+  
+#PIPELINE_TESTER
+PIPELINE_TESTER: 
+  image: cirrusci/flutter:latest
+  stage: test
+  tags:
+  - gitlab-runner 
+  only:
+    - /^pipeline\/*/
+  except:
+    - master
+    - dev
+  script:
+    - flutter build apk --release --build-number=$CI_PIPELINE_ID
+  artifacts:
+    paths:
+      - build/app/outputs/apk/release/
+    expire_in: 1 day
+    # # - sdkmanager --install "system-images;android-29;default;x86"
+    # # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-29;default;x86" --tag "default"
+    # - apt-get update
+    # - apt-get install -y qemu-kvm
+    # - adduser $USER kvm
+    # - sdkmanager --list | grep system-images
+    # - echo no | sdkmanager --install "system-images;android-S;google_apis_playstore;arm64-v8a"
+    # - echo "no" | avdmanager --verbose create avd --force --name "generic_10" --package "system-images;android-S;google_apis_playstore;arm64-v8a" --tag "google_apis_playstore" 
+    #      # start the emulator
+    # - emulator -avd @generic_10 -no-audio -no-window &
+    # - adb devices
+    # - flutter emulator --launch generic_10 -v
+    # - flutter emulators
+    # - flutter emulator --launch generic_10 -v
+    # - flutter devices
+    # - echo "testing for Code Review and Merge Request "
+    # #- flutter analyze  
+    # - flutter test test_driver/e2e

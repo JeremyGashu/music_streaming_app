@@ -11,12 +11,14 @@ if "Fixes" in commit_msg or "fixes" in commit_msg:
 if "Feature" in commit_msg or "feature" in commit_msg:
     feature_checker=True
 if issue_checker & feature_checker:
-    print("Issue and feature information submitted correctly")
+    print("Issue and feature information submitted correctly!")
 else:
-    print("Incorrect format")
-    print("Please Use The Correct Commit Message Format")
-    print("E.g. git commit -m 'Example commit message [Feature X] [Fixes #21]'")
-    sys.exit(1)   
-
-
+    print("Checking for merge message...")
+    if "Merge branch" in commit_msg:
+        print("Merge message accepted!")
+    else:
+        print("Incorrect format")
+        print("Please Use The Correct Commit Message Format")
+        print("E.g. git commit -m 'Example commit message [Feature X] [Fixes #21]'")
+        sys.exit(1)   
 

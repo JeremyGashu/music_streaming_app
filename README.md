@@ -1,5 +1,6 @@
 ### Zebra Streaming 
 |[![pipeline status](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/pipeline.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|[![coverage report](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/badges/master/coverage.svg)](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/commits/master)|
+[Download Latest Build](https://gitlab.com/2ftimeplc/2fflutter/streaming_mobile/-/jobs/artifacts/master/download?job=master_build_android)
 
 
 **This are helpfull informations for those who develop and participate on this 
