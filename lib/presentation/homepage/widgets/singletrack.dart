@@ -1,26 +1,14 @@
-import 'dart:async';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/bloc/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/core/services/audio_player_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
-
-/// Move this function to the parent of this widget
-/// if starting audio_service fails
-///
-/// And also streamSubscription of [PlaybackStateStream] must be moved and
-/// instantiated in initState.
-backgroundTaskEntryPoint() {
-  AudioServiceBackground.run(() => AudioPlayerTask());
-}
 
 class SingleTrack extends StatefulWidget {
   @override
@@ -28,25 +16,6 @@ class SingleTrack extends StatefulWidget {
 }
 
 class _SingleTrackState extends State<SingleTrack> {
-  StreamSubscription playbackStateStream;
-
-  bool isStopped(PlaybackState state) =>
-      state != null && state.processingState == AudioProcessingState.stopped;
-
-  void reloadPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    playbackStateStream =
-        AudioService.playbackStateStream.where(isStopped).listen((_) {
-      reloadPrefs();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,6 +25,7 @@ class _SingleTrackState extends State<SingleTrack> {
           if (state is LoadedTrack) {
             return GestureDetector(
               onTap: () {
+                /// Start playing the audio
                 playSingleTrack(context, state.track);
 
                 /// Pass the track data to [SingletrackPlayer] page
@@ -166,11 +136,11 @@ class _SingleTrackState extends State<SingleTrack> {
 
 void playSingleTrack(BuildContext context, Track track,
     [Duration position]) async {
-  String dir = (Theme.of(context).platform == TargetPlatform.android
-          ? await getExternalStorageDirectory()
-          : await getApplicationDocumentsDirectory())
-      .path;
-  String m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
+  // String dir = (Theme.of(context).platform == TargetPlatform.android
+  //         ? await getExternalStorageDirectory()
+  //         : await getApplicationDocumentsDirectory())
+  //     .path;
+  // String m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
 
   MediaItem _mediaItem = MediaItem(
       id: track.data.id,
@@ -179,7 +149,8 @@ void playSingleTrack(BuildContext context, Track track,
       artist: track.data.artistId,
       duration: Duration(milliseconds: track.data.duration),
       artUri: Uri.parse(track.data.coverImgUrl),
-      extras: {'source': m3u8FilePath});
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
 
   if (AudioService.running) {
     AudioService.playMediaItem(_mediaItem);
@@ -198,8 +169,8 @@ void playSingleTrack(BuildContext context, Track track,
       androidStopForegroundOnPause: true,
       androidEnableQueue: true,
     )) {
+      print('/////////// Mediaitem track is ${_mediaItem.extras['source']}');
       AudioService.playMediaItem(_mediaItem);
-
       /// TODO: check segment before playing it
       ///
       /// Subscribe to audio_service position_stream and check downloaded

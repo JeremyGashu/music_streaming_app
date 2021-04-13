@@ -12,8 +12,8 @@ import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
+import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
-
 
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -24,14 +24,11 @@ import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Bloc.observer = SimpleBlocObserver();
 
-  await FlutterDownloader.initialize(
-      debug: true // optional: set false to disable printing logs to console
-  );
   await Hive.initFlutter();
 
   await Firebase.initializeApp();
@@ -44,13 +41,13 @@ void main() async{
   await FlutterDownloader.initialize(debug: true);
 
   MediaDownloaderBloc _mediaDownloaderBloc = MediaDownloaderBloc();
-  LocalDatabaseBloc _localDatabaseBloc = LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc);
-  runApp(MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
-        BlocProvider(create: (context) => _localDatabaseBloc..add(InitLocalDB())),
-      ],
-      child: MyApp()));
+  LocalDatabaseBloc _localDatabaseBloc =
+      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc);
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+        create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
+    BlocProvider(create: (context) => _localDatabaseBloc..add(InitLocalDB())),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -86,18 +83,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Material App',
-        home: AudioServiceWidget(
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text('Material App Bar'),
-            ),
-            body: Center(
-              child: Container(
-                child: Text('Hello World'),
-              ),
-            ),
-          ),
-        ),
+        home: AudioServiceWidget(child: HomePage()),
       ),
     );
   }

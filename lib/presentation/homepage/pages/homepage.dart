@@ -1,11 +1,16 @@
+import 'dart:async';
+
+import 'package:audio_service/audio_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/bloc/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/bloc/playlist/playlist_event.dart';
 import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/bloc/singletrack/track_event.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
+import 'package:streaming_mobile/core/services/audio_player_task.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
@@ -13,7 +18,40 @@ import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
 
-class HomePage extends StatelessWidget {
+/// Move this function to the parent of this widget if
+/// starting audio_service fails(NotConnected error)
+///
+/// And also streamSubscription of [PlaybackStateStream] must be moved and
+/// instantiated in initState of the parent widget.
+backgroundTaskEntryPoint() {
+  AudioServiceBackground.run(() => AudioPlayerTask());
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  StreamSubscription playbackStateStream;
+
+  bool isStopped(PlaybackState state) =>
+      state != null && state.processingState == AudioProcessingState.stopped;
+
+  void reloadPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    playbackStateStream =
+        AudioService.playbackStateStream.where(isStopped).listen((_) {
+      reloadPrefs();
+    });
+  }
+
   final List<String> carouselImages = [
     'assets/images/carousel_image.jpg',
     'assets/images/carousel_image.jpg',

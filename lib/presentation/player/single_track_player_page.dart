@@ -25,11 +25,16 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
 
+  bool _isPlaying = false;
+
   @override
   void initState() {
     super.initState();
 
     sharedPreferences = SharedPreferences.getInstance();
+
+    // AudioService.play();
+    // _isPlaying = true;
 
     periodicSubscription = Stream.periodic(Duration(seconds: 1)).listen((_) {
       _dragPositionSubject.add(
@@ -46,6 +51,11 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         periodicSubscription.pause();
       }
     });
+
+    // if (!AudioService.playbackState.playing) {
+    //   AudioService.play();
+    //   _isPlaying = true;
+    // }
   }
 
   @override
@@ -97,7 +107,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                 ///
                 /// This will be replaced with another widget later
                 return Center(
-                  child: Text('Not Playing'),
+                  child: CircularProgressIndicator(),
                 );
               },
             );
@@ -161,12 +171,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                   },
                   onChanged: (value) => _dragPositionSubject.add(value),
                   onChangeEnd: (value) {
-                    /// TODO : Check segment availability
-                    /// 
-                    /// Pause the player first then calculate segment position
-                    /// then check if the segment exists and play. If the
-                    /// segment was not downloaded, start download and wait
-                    /// until download finished state yielded.
                     AudioService.seekTo(Duration(milliseconds: value.toInt()));
                     periodicSubscription.resume();
                   },
@@ -229,17 +233,36 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             Icons.skip_previous,
             size: 34,
           ),
-          Container(
+          GestureDetector(
+            onTap: () {
+              if (_isPlaying) {
+                AudioService.pause();
+              } else {
+                AudioService.play();
+              }
+              setState(() {
+                _isPlaying = !_isPlaying;
+              });
+            },
+            child: Container(
               height: 50,
               width: 50,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: Colors.orange.shade300),
-              child: Icon(
-                Icons.pause,
-                color: Colors.white,
-                size: 38,
-              )),
+              child: _isPlaying
+                  ? Icon(
+                      Icons.pause,
+                      color: Colors.white,
+                      size: 38,
+                    )
+                  : Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 38,
+                    ),
+            ),
+          ),
           Icon(
             Icons.skip_next,
             size: 34,
@@ -301,7 +324,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       height: 380,
       child: Image(
         image: AssetImage(
-          'assets/images/photo_4.jpg',
+          'assets/images/artist_one.jpg',
         ),
         fit: BoxFit.cover,
       ),

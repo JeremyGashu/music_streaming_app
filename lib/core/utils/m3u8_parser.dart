@@ -33,7 +33,7 @@ class ParseHls {
           .path;
       String filePath = dir + '/' + fileId;
       String filenameTxt = '/main.txt';
-      String filenameM3u8 = '/main.m3u8';
+      String filename = '/main.m3u8';
 
       // create the dir to save the file
       await createDir('$dir/$fileId');
@@ -46,7 +46,7 @@ class ParseHls {
       String m3u8String = await m3u8StringLoader('$dir/$fileId/$filenameTxt');
 
       /// write [m3u8String] to local path
-      File file = new File('$dir/$fileId/$filenameM3u8');
+      File file = File('$dir/$fileId/$filename');
       file.writeAsString(m3u8String);
 
       return true;
@@ -80,18 +80,24 @@ class ParseHls {
   /// It takes the a String of path to the file as an argument
   Future<String> m3u8StringLoader(String filePath) async {
     String m3u8Text = '';
+    int segmentIndex = 0;
     await File(filePath)
         .openRead()
         .map(utf8.decode)
         .transform(new LineSplitter())
         .forEach((line) {
       if (line.startsWith('http')) {
-        m3u8Text += (line.split('/').last + '\n');
+        /// Replace the remote url with a local path
+        /// Increment segment id
+        m3u8Text += 'main${segmentIndex}.ts' + '\n';
+        segmentIndex++;
       } else {
         m3u8Text += (line + '\n');
       }
     });
 
+
+    /// Replace the key url to local path
     int start = m3u8Text.indexOf('URI');
     int end = m3u8Text.indexOf('IV');
 
