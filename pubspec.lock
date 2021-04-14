@@ -148,6 +148,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  check_vpn_connection:
+    dependency: "direct main"
+    description:
+      name: check_vpn_connection
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   checked_yaml:
     dependency: transitive
     description:
