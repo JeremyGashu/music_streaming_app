@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:path/path.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';

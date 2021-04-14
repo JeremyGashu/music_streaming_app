@@ -9,7 +9,6 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/data/models/download_task.dart';
 
 import 'local_database_state.dart';
-import 'local_database_state.dart';
 
 class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
   final MediaDownloaderBloc mediaDownloaderBloc;
