@@ -91,8 +91,10 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                       artUri: Uri.parse(prefs.getString('artUri')),
                       extras: {'source': prefs.getString('source')},
                     );
-                    return _nowPlayingWidget(
-                        mediaItem: mediaItem, loadFromPrefs: prefs);
+                    return SingleChildScrollView(
+                      child: _nowPlayingWidget(
+                          mediaItem: mediaItem, loadFromPrefs: prefs),
+                    );
                   }
                 }
                 return Center(
