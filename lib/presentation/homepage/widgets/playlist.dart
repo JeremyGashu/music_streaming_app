@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:streaming_mobile/bloc/playlist/playlist_bloc.dart';
-import 'package:streaming_mobile/bloc/playlist/playlist_state.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 
 class PlayList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<PlaylistBloc, PlaylistState>(
