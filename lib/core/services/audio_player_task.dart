@@ -64,14 +64,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
         case ProcessingState.idle:
           _setState(state: AudioProcessingState.none);
           break;
-
-        /// This case might not work
-        ///
-        /// Remove it if it causes the player to crash
-        /// when loading audio data
-        case ProcessingState.loading:
-          _setState(state: AudioProcessingState.buffering);
-          break;
         default:
           break;
       }
@@ -189,6 +181,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     }
 
     onUpdateMediaItem(mediaItem);
+    onPlay();
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:streaming_mobile/bloc/singletrack/track_event.dart';
-import 'package:streaming_mobile/bloc/singletrack/track_state.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 
 class TrackBloc extends Bloc<TrackEvent, TrackState> {

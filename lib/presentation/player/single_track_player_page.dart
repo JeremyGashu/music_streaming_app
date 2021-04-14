@@ -8,6 +8,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
   final Track track;
@@ -25,16 +26,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
 
-  bool _isPlaying = false;
+  bool _isPlaying = true;
 
   @override
   void initState() {
     super.initState();
 
     sharedPreferences = SharedPreferences.getInstance();
-
-    // AudioService.play();
-    // _isPlaying = true;
 
     periodicSubscription = Stream.periodic(Duration(seconds: 1)).listen((_) {
       _dragPositionSubject.add(
@@ -51,11 +49,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         periodicSubscription.pause();
       }
     });
-
-    // if (!AudioService.playbackState.playing) {
-    //   AudioService.play();
-    //   _isPlaying = true;
-    // }
   }
 
   @override
@@ -102,10 +95,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         mediaItem: mediaItem, loadFromPrefs: prefs);
                   }
                 }
-
-                /// Show not playing screen here
-                ///
-                /// This will be replaced with another widget later
                 return Center(
                   child: CircularProgressIndicator(),
                 );
@@ -131,7 +120,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           ],
         ),
 
-        _controlButtonsRow(),
+        _controlButtonsRow(loadFromPrefs),
       ],
     );
   }
@@ -222,7 +211,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Padding _controlButtonsRow() {
+  Padding _controlButtonsRow(SharedPreferences preferences) {
     return Padding(
       padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
       child: Row(
@@ -238,7 +227,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               if (_isPlaying) {
                 AudioService.pause();
               } else {
-                AudioService.play();
+                play(widget.track, preferences);
               }
               setState(() {
                 _isPlaying = !_isPlaying;
@@ -329,5 +318,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         fit: BoxFit.cover,
       ),
     );
+  }
+
+  play(Track track, SharedPreferences prefs) {
+    if (!AudioService.running && prefs != null) {
+      final position = Duration(seconds: prefs.getInt('position'));
+      playSingleTrack(context, track, position);
+    } else
+      AudioService.play();
   }
 }

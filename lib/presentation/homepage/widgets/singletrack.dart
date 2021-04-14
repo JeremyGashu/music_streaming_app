@@ -1,10 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:streaming_mobile/bloc/singletrack/track_bloc.dart';
-import 'package:streaming_mobile/bloc/singletrack/track_state.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
@@ -142,10 +141,13 @@ void playSingleTrack(BuildContext context, Track track,
   //     .path;
   // String m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
 
+  final id = track.data.id;
+
   MediaItem _mediaItem = MediaItem(
       id: track.data.id,
       album: track.data.albumId,
       title: track.data.title,
+      genre: 'genre goes here',
       artist: track.data.artistId,
       duration: Duration(milliseconds: track.data.duration),
       artUri: Uri.parse(track.data.coverImgUrl),
@@ -153,14 +155,7 @@ void playSingleTrack(BuildContext context, Track track,
       extras: {'source': track.data.trackUrl});
 
   if (AudioService.running) {
-    AudioService.playMediaItem(_mediaItem);
-
-    /// TODO: check segment before playing it
-    ///
-    /// Subscribe to audio_service position_stream and check downloaded
-    /// state of each segment 1 second before it is played. If segment is
-    /// not downloaded, pause the player and download segment then play.
-
+    AudioService.playFromMediaId(id);
   } else {
     if (await AudioService.start(
       backgroundTaskEntrypoint: backgroundTaskEntryPoint,
@@ -169,26 +164,14 @@ void playSingleTrack(BuildContext context, Track track,
       androidStopForegroundOnPause: true,
       androidEnableQueue: true,
     )) {
-      print('/////////// Mediaitem track is ${_mediaItem.extras['source']}');
-      AudioService.playMediaItem(_mediaItem);
-      /// TODO: check segment before playing it
-      ///
-      /// Subscribe to audio_service position_stream and check downloaded
-      /// state of each segment 1 second before it is played. If segment is
-      /// not downloaded, pause the player and download segment then play.
+      
+      final List<MediaItem> queue = [];
+      queue.add(_mediaItem);
 
-      // AudioService.positionStream.listen((stream) async {
-      //   if (stream.inSeconds % 3 == 2) {
-      //     AudioService.pause();
-      //     downloaderBloc.add(DownloadSegmentEvent(val: value.toInt()));
-      //     downloadSubscirption = downloaderBloc.listen((state) {
-      //       if (state is DownloadedState) {
-      //         AudioService.seekTo(Duration(milliseconds: value.toInt()));
-      //         AudioService.play();
-      //       }
-      //     });
-      //   }
-      // });
+      await AudioService.updateMediaItem(queue[0]);
+      await AudioService.updateQueue(queue);
+
+      AudioService.playFromMediaId(id);
 
       if (position != null) AudioService.seekTo(position);
     }
