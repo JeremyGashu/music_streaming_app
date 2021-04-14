@@ -3,6 +3,7 @@ image: mobiledevops/flutter-sdk-image
 stages:
   - test
   - build
+  - report
 before_script:
 
   - flutter doctor -v
@@ -11,7 +12,6 @@ before_script:
 
 
 #MASTER
-master_test: 
 master_test:
   image: cirrusci/flutter:stable 
   stage: test
@@ -89,6 +89,17 @@ NEW_FEATURE_TEST_and_AUTO_PR:
       - coverage
     #- /home/mikeat/runner_wd/autoMergeRequest.sh
   
+feature_report: 
+  image: mike328/gitlab-telegram-bot:latest
+  stage: report
+  tags:
+  - gitlab-runner
+  script:
+    - python3 /code/telegram/sendReport.py "$TELEGRAM_API_TOKEN" "$TELEGRAM_CHAT_ID"  "$CI_COMMIT_AUTHOR" " commited to $CI_PROJECT_TITLE $CI_COMMIT_BRANCH  | $CI_COMMIT_SHA - $CI_COMMIT_MESSAGE"
+  only:
+    - /^feature\/*/
+    - /^Feature\/*/
+
 #PIPELINE_TESTER
 PIPELINE_TESTER: 
   image: cirrusci/flutter:latest
