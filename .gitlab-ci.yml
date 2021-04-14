@@ -4,8 +4,9 @@ stages:
   - test
   - build
   - report
-before_script:
 
+.shared_script: &cleanup 
+  before_script:
   - flutter doctor -v
   - flutter pub get
   - flutter clean
@@ -13,6 +14,7 @@ before_script:
 
 #MASTER
 master_test:
+  <<: *cleanup
   image: cirrusci/flutter:stable 
   stage: test
   tags:
@@ -29,6 +31,7 @@ master_test:
     paths:
       - coverage
 master_build_android: 
+  <<: *cleanup
   stage: build
   tags:
   - gitlab-runner
@@ -43,6 +46,7 @@ master_build_android:
  
 #DEVELOP
 develop_test: 
+  <<: *cleanup
   stage: test
   tags:
   - gitlab-runner
@@ -52,7 +56,8 @@ develop_test:
     #- flutter test test_driver/e2e  
   only:
     - dev  
-develop_build_android: 
+develop_build_android:
+  <<: *cleanup 
   stage: build
   tags:
   - gitlab-runner
@@ -68,6 +73,7 @@ develop_build_android:
 
 #Code Review and Merge Request Checker
 NEW_FEATURE_TEST_and_AUTO_PR: 
+  <<: *cleanup
   image: cirrusci/flutter:stable
   stage: test
   tags:
@@ -102,6 +108,7 @@ feature_report:
 
 #PIPELINE_TESTER
 PIPELINE_TESTER: 
+  <<: *cleanup
   image: cirrusci/flutter:latest
   stage: test
   tags:
