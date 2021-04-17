@@ -222,7 +222,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void _setState({@required AudioProcessingState state}) {
     AudioServiceBackground.setState(
       controls: getControls(),
-      systemActions: [MediaAction.seekTo],
+      // systemActions: [MediaAction.seekTo],
       processingState: state,
       playing: _audioPlayer.playing,
       position: _audioPlayer.position,
