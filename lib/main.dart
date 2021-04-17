@@ -20,6 +20,8 @@ import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
+import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
+import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 import 'blocs/local_database/local_database_bloc.dart';
@@ -98,6 +100,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Material App',
         home: BlocListener<UserLocationBloc, UserLocationState>(
           listener: (context, state) {
@@ -106,20 +109,7 @@ class _MyAppState extends State<MyApp> {
                 context: context,
                 barrierDismissible: false,
                 builder: (ctx) {
-                  return AlertDialog(
-                    title: Text('Location required'),
-                    content: Text(
-                        'Please allow location permission from settings, to continue using the app'),
-                    actions: <Widget>[
-                      TextButton(
-                          onPressed: () {
-                            BlocProvider.of<UserLocationBloc>(context)
-                                .add(UserLocationEvent.Init);
-                            Navigator.of(ctx).pop();
-                          },
-                          child: Text('try again'))
-                    ],
-                  );
+                  return LocationDisabledPage();
                 },
               );
             }
@@ -132,7 +122,7 @@ class _MyAppState extends State<MyApp> {
               } else if (state is VPNEnabled) {
                 return Scaffold(
                   body: Center(
-                    child: Text('Please Disable the VPN to use the out App.'),
+                    child: VPNEnabledPage(),
                   ),
                 );
               }
