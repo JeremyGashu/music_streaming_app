@@ -36,7 +36,7 @@ master_build_android:
   tags:
   - gitlab-runner
   script:
-     - flutter build apk --stacktrace --release --build-number=$CI_PIPELINE_ID
+     - flutter build apk -v --release --build-number=$CI_PIPELINE_ID
   only:
     - master 
   artifacts:
