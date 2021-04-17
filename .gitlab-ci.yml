@@ -40,7 +40,7 @@ master_build_android:
   only:
     - master 
   artifacts:
-    name: "Zebra_streaming_build_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+    name: "${CI_PROJECT_NAME}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
     paths:
       - build/app/outputs/apk/release/
  
@@ -119,7 +119,7 @@ PIPELINE_TESTER:
     - master
     - dev
   script:
-    - flutter build apk --release --build-number=$CI_PIPELINE_ID
+    - flutter build apk --stacktrace --release --build-number=$CI_PIPELINE_ID
   artifacts:
     paths:
       - build/app/outputs/apk/release/
