@@ -9,18 +9,19 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
+import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
+import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
-import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
-import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
-import 'package:streaming_mobile/core/services/location_service.dart';
+
 import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
@@ -88,7 +89,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
       print("completed");
-      // setState(() {});
+      setState(() {
+        //Here after you can use the flutter_local_notification
+      });
     });
   }
 
