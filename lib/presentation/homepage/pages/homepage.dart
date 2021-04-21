@@ -64,157 +64,154 @@ class _HomePageState extends State<HomePage> {
     BlocProvider.of<TrackBloc>(context).add(LoadTracks());
 
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(color: Colors.white),
-                height: 220,
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                      height: 220,
-                      viewportFraction: 1,
-                      initialPage: 0,
-                      enableInfiniteScroll: false),
-                  items: carouselImages
-                      .map((e) => Container(
-                            margin: EdgeInsets.only(right: 8.0),
-                            child: Stack(children: [
-                              Image.asset(
-                                e,
-                                fit: BoxFit.cover,
-                                width: 1000,
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(color: Colors.white),
+              height: 220,
+              child: CarouselSlider(
+                options: CarouselOptions(
+                    height: 220,
+                    viewportFraction: 1,
+                    initialPage: 0,
+                    enableInfiniteScroll: false),
+                items: carouselImages
+                    .map((e) => Container(
+                          margin: EdgeInsets.only(right: 8.0),
+                          child: Stack(children: [
+                            Image.asset(
+                              e,
+                              fit: BoxFit.cover,
+                              width: 1000,
+                            ),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                height: 100.0,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                      kPurple,
+                                      kViolet.withOpacity(0.0)
+                                    ])),
                               ),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 100.0,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.bottomCenter,
-                                          end: Alignment.topCenter,
-                                          colors: [
-                                        kPurple,
-                                        kViolet.withOpacity(0.0)
-                                      ])),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Amelkalew',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      'Dawit Getachew',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: kYellow),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Amelkalew',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                      Text(
-                                        'Dawit Getachew',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: kYellow),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ]),
-                          ))
-                      .toList(),
-                ),
+                            )
+                          ]),
+                        ))
+                    .toList(),
               ),
-              Ad(size),
-              _sectionTitle(title: "New Releases", callback: () {}),
-              Container(
-                height: 200,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [Album(), Album()],
-                ),
+            ),
+            Ad(size),
+            _sectionTitle(title: "New Releases", callback: () {}),
+            Container(
+              height: 200,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [Album(), Album()],
               ),
-              _sectionTitle(title: "Popular Playlists", callback: () {}),
-              Container(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    PlayList(),
-                    PlayList(),
-                    PlayList(),
-                  ],
-                ),
-              ),
-              _sectionTitle(title: "Most Played Tracks", callback: () {}),
-              ListView(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+            ),
+            _sectionTitle(title: "Popular Playlists", callback: () {}),
+            Container(
+              height: 160,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: [
-                  TrackListItem(),
-                  TrackListItem(),
-                  TrackListItem(),
+                  PlayList(),
+                  PlayList(),
+                  PlayList(),
                 ],
               ),
-              _sectionTitle(title: "Genres", callback: () {}),
-              Container(
-                height: 130,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Genre(title: 'Country'),
-                    Genre(title: 'R & B'),
-                    Genre(title: 'Pop'),
-                  ],
-                ),
+            ),
+            _sectionTitle(title: "Most Played Tracks", callback: () {}),
+            ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                TrackListItem(),
+                TrackListItem(),
+                TrackListItem(),
+              ],
+            ),
+            _sectionTitle(title: "Genres", callback: () {}),
+            Container(
+              height: 130,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Genre(title: 'Country'),
+                  Genre(title: 'R & B'),
+                  Genre(title: 'Pop'),
+                ],
               ),
-              _sectionTitle(title: "Artists", callback: () {}),
-              Container(
-                height: 180,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Artist(),
-                    Artist(),
-                    Artist(),
-                    Artist(),
-                  ],
-                ),
+            ),
+            _sectionTitle(title: "Artists", callback: () {}),
+            Container(
+              height: 180,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Artist(),
+                  Artist(),
+                  Artist(),
+                  Artist(),
+                ],
               ),
-              Ad(size),
-              _sectionTitle(title: "Albums", callback: () {}),
-              Container(
-                height: 200,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Album(),
-                    Album(),
-                    Album(),
-                  ],
-                ),
+            ),
+            Ad(size),
+            _sectionTitle(title: "Albums", callback: () {}),
+            Container(
+              height: 200,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Album(),
+                  Album(),
+                  Album(),
+                ],
               ),
-              _sectionTitle(title: "Single Tracks", callback: () {}),
-              Container(
-                height: 200,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    SingleTrack(),
-                    SingleTrack(),
-                    SingleTrack(),
-                  ],
-                ),
+            ),
+            _sectionTitle(title: "Single Tracks", callback: () {}),
+            Container(
+              height: 200,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  SingleTrack(),
+                  SingleTrack(),
+                  SingleTrack(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

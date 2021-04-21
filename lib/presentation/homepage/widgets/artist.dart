@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/presentation/artist/pages/account_profile.dart';
+
+import '../../artist/pages/account_profile.dart';
 
 class Artist extends StatelessWidget {
   @override
@@ -10,8 +11,8 @@ class Artist extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AccountProfile()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ProfilePage()));
         },
         child: Container(
           width: 120,

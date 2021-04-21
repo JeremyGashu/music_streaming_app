@@ -19,6 +19,7 @@ import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
+import 'package:streaming_mobile/presentation/artist/pages/profile_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
@@ -86,6 +87,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  int _currentIndex = 0;
+  List<Widget> _widgets = [
+    AudioServiceWidget(child: HomePage()),
+    AudioServiceWidget(child: HomePage()),
+    AudioServiceWidget(child: HomePage()),
+    AccountProfile(),
+    //Search(),
+    //Library(),
+    //ArtistPage(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -99,37 +111,83 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Material App',
-        home: BlocListener<UserLocationBloc, UserLocationState>(
-          listener: (context, state) {
-            if (state is UserLocationLoadFailed) {
-              showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (ctx) {
-                  return LocationDisabledPage();
-                },
-              );
-            }
-          },
-          child: BlocBuilder<VPNBloc, VPNState>(
-            buildWhen: (prev, current) => prev != current,
-            builder: (ctx, state) {
-              if (state is VPNDisabled) {
-                return AudioServiceWidget(child: HomePage());
-              } else if (state is VPNEnabled) {
-                return Scaffold(
-                  body: Center(
-                    child: VPNEnabledPage(),
-                  ),
-                );
-              }
-              return AudioServiceWidget(child: HomePage());
+    return BlocListener<UserLocationBloc, UserLocationState>(
+      listener: (context, state) {
+        if (state is UserLocationLoadFailed) {
+          showDialog<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) {
+              return LocationDisabledPage();
             },
-          ),
-        ));
+          );
+        }
+      },
+      child: BlocBuilder<VPNBloc, VPNState>(
+        buildWhen: (prev, current) => prev != current,
+        builder: (ctx, state) {
+          if (state is VPNDisabled) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Material App',
+                home: Scaffold(
+                  body: _widgets[_currentIndex],
+                  bottomNavigationBar: BottomNavigationBar(
+                    currentIndex: _currentIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    items: [
+                      BottomNavigationBarItem(
+                        label: '',
+                        icon: Icon(
+                          Icons.home,
+                          color:
+                              _currentIndex == 0 ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        label: '',
+                        icon: Icon(
+                          Icons.search,
+                          color:
+                              _currentIndex == 1 ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        label: '',
+                        icon: Icon(
+                          Icons.library_books_outlined,
+                          color:
+                              _currentIndex == 2 ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        label: '',
+                        icon: Icon(
+                          Icons.person,
+                          color:
+                              _currentIndex == 3 ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ));
+          } else if (state is VPNEnabled) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Material App',
+                home: Scaffold(body: VPNEnabledPage()));
+          }
+          return Container();
+          // return AudioServiceWidget(child: HomePage());
+        },
+      ), //Search(),
+      //Library(),
+      //ArtistPage(),
+    );
   }
 }
 

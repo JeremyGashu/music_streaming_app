@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:streaming_mobile/presentation/artist/widgets/albums_widget.dart';
-import 'package:streaming_mobile/presentation/artist/widgets/playlist.dart';
 
-import '../../homepage/widgets/singletrack.dart';
-
-class ProfilePage extends StatelessWidget {
+class AccountProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -22,8 +18,8 @@ class ProfilePage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(90),
                   child: Container(
-                    width: 140,
-                    height: 140,
+                    width: 150,
+                    height: 150,
                     child: Image.asset(
                       'assets/images/artist_image.jpg',
                       fit: BoxFit.cover,
@@ -38,149 +34,102 @@ class ProfilePage extends StatelessWidget {
                     fontSize: 17, color: Colors.black.withOpacity(0.5)),
               ),
               SizedBox(
-                height: 20,
-              ),
-
-              _likeAndFollowersStat(),
-
-              // _followSection(),
-              SizedBox(
                 height: 10,
               ),
-              _descriptionSection(),
               Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  color: Colors.purple,
                 ),
-                width: double.infinity,
-                child: TextButton(
-                  style: ButtonStyle(
-                    alignment: AlignmentDirectional.centerEnd,
+                width: 160,
+                height: 35,
+                child: Center(
+                    child: Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
                   ),
-                  onPressed: () {},
-                  child: Text(
-                    'More',
-                  ),
-                ),
+                )),
               ),
-              // SizedBox(
-              //   height: 10,
-              // ),
+              SizedBox(
+                height: 20,
+              ),
               //ad container
               _adContainer('ad.png'),
 
-              // SizedBox(
-              //   height: 10,
-              // ),
+              SizedBox(
+                height: 10,
+              ),
 
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      //tab selectors
-                      _tabSelectors(),
-
-                      //album section
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3].length,
-                            itemBuilder: (context, index) {
-                              return Album();
-                            }),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Single Tracks',
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black.withOpacity(0.7),
-                              letterSpacing: 1.01,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  color: Colors.purple,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.navigate_next,
-                                    color: Colors.purple,
-                                  ),
-                                  onPressed: () {})
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3, 4].length,
-                            itemBuilder: (context, index) {
-                              return SingleTrack();
-                            }),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Popular Playlists',
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black.withOpacity(0.7),
-                              letterSpacing: 1.01,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  color: Colors.purple,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.navigate_next,
-                                    color: Colors.purple,
-                                  ),
-                                  onPressed: () {}),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3, 4].length,
-                            itemBuilder: (context, index) {
-                              return PlayList();
-                            }),
-                      ),
-                    ],
+              Row(
+                children: [
+                  SizedBox(
+                    width: 5,
                   ),
-                ),
+                  Icon(
+                    Icons.notification_important,
+                    color: Colors.purple,
+                    size: 25,
+                  ),
+                  SizedBox(
+                    width: 17,
+                  ),
+                  Expanded(
+                      child: Text(
+                    'Notifications',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Divider(),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.settings,
+                    color: Colors.purple,
+                    size: 25,
+                  ),
+                  SizedBox(
+                    width: 17,
+                  ),
+                  Expanded(
+                      child: Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                ],
               ),
             ],
           ),
@@ -297,7 +246,7 @@ Widget _followSection() {
                 child: Text(
                   'Follow',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 25,
                   ),
                 ),
@@ -342,7 +291,7 @@ Widget _descriptionSection() {
       '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
       style: TextStyle(
         letterSpacing: 1.1,
-        fontSize: 17,
+        fontSize: 18,
         color: Colors.black.withOpacity(0.6),
       ),
     ),
@@ -352,10 +301,10 @@ Widget _descriptionSection() {
 Widget _adContainer(String path) {
   return Container(
     margin: EdgeInsets.symmetric(
-      vertical: 0,
+      vertical: 10,
     ),
     width: double.infinity,
-    height: 110,
+    height: 120,
     child: Image.asset(
       'assets/images/$path',
       fit: BoxFit.cover,
@@ -391,7 +340,61 @@ Widget _tabItem(String svgName) {
     ),
   );
 }
-
+//
+// Widget _albumBuilder(Album album) {
+//   return Padding(
+//     padding: EdgeInsets.all(10),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Container(
+//           width: 200,
+//           height: 150,
+//           child: Card(
+//             color: Colors.transparent,
+//             elevation: 10,
+//             child: ClipRRect(
+//               borderRadius: BorderRadius.only(
+//                 bottomLeft: Radius.circular(15),
+//                 bottomRight: Radius.circular(15),
+//               ),
+//               child: Image.asset(
+//                 'images/${album.imageName}',
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//         ),
+//         Text(
+//           '${album.name}',
+//           style: TextStyle(
+//             color: Colors.black.withOpacity(0.9),
+//             fontSize: 22,
+//             letterSpacing: 1.05,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         Text(
+//           '${album.artistName}',
+//           style: TextStyle(
+//             color: Colors.black.withOpacity(0.6),
+//             fontSize: 17,
+//             letterSpacing: 1.05,
+//           ),
+//         ),
+//         Text(
+//           'Album - ${album.numberOfTracks} Tracks',
+//           style: TextStyle(
+//             color: Colors.yellow[900],
+//             fontSize: 17,
+//             letterSpacing: 1.05,
+//           ),
+//         )
+//       ],
+//     ),
+//   );
+// }
+//
 // Widget _trackBuilder(Track track) {
 //   return Padding(
 //     padding: EdgeInsets.all(10),
