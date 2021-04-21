@@ -42,9 +42,10 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
 
     playbackStateSubscription = AudioService.playbackStateStream
         .where((state) => state != null)
-        .listen((state) {
+        .listen((state) async{
       if (state.playing) {
         periodicSubscription.resume();
+        // await LocalHelper.getFilePath(context);
       } else if (!periodicSubscription.isPaused) {
         periodicSubscription.pause();
       }

@@ -29,6 +29,8 @@ class DownloadFailed extends MediaDownloaderState{
 }
 
 class DownloadDone extends MediaDownloaderState{
+  final DownloadTask downloadedTask;
+  DownloadDone({@required this.downloadedTask}):assert(downloadedTask != null);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [downloadedTask];
 }

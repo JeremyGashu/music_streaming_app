@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -20,7 +21,7 @@ class MediaDownloaderBloc
   List<Task> _tasks = [];
   // MediaDownloaderEvent _previousEvent;
   // Attach InitializeDownloader event when Instantiating the MediaDownloaderBloc;
-  MediaDownloaderBloc() : super(DownloadOnProgressState()) {}
+  MediaDownloaderBloc() : super(DownloadOnProgressState());
 
   // Handles download callback
   static void downloadCallback(
@@ -80,7 +81,9 @@ class MediaDownloaderBloc
           } else {
             print('/////////////////////////////////////////');
             print('download done');
-            add(UpdateDownloadState(state: DownloadDone()));
+            add(UpdateDownloadState(state: DownloadDone(
+              downloadedTask: _downloadTask
+            )));
           }
         } else {
           // considering other states other than complete as failed
@@ -113,18 +116,35 @@ class MediaDownloaderBloc
       } else if (event is AddDownload) {
         print('add download event');
         _handleClearDownload();
+        List<smd.DownloadTask> dt = [];
         if (_tasks.length == 0) {
-          String taskId = await addDownload(event.downloadTasks.first);
-          // map [DownloadTask to Task]
-          _tasks.addAll(
-            event.downloadTasks.map((smd.DownloadTask task) {
-              if(task.url == event.downloadTasks.first.url)
-              return Task(taskId: taskId, downloadTask: task);
-              else
-                return Task(taskId: '', downloadTask: task);
+          var length = event.downloadTasks.length;
+          for(int i=0; i<length; i++){
+            var element = event.downloadTasks[i];
+            File file = File(element.download_path + 'main${element.segment_number}.ts');
+            print(file.path);
+            if(!(file.existsSync())){
+              dt.add(element);
+              print("file doesn't exist");
             }
-            ).toList()
-          );
+          }
+          if(dt.isEmpty){
+            print("MediaDownloaderBloc: download tasks empty or downloaded before");
+            yield DownloadDone(downloadedTask: event.downloadTasks[0]);
+          }else{
+            String taskId = await addDownload(dt.first);
+            _tasks.addAll(
+                dt.map((smd.DownloadTask task) {
+                  if(task.url == dt.first.url)
+                    return Task(taskId: taskId, downloadTask: task);
+                  else
+                    return Task(taskId: '', downloadTask: task);
+                }
+                ).toList()
+            );
+          }
+          // map [DownloadTask to Task]
+
           // _tasks.add(Task(downloadTask: event.downloadTask, taskId: taskId));
         }
       } else if (event is RetryDownload) {
@@ -132,9 +152,10 @@ class MediaDownloaderBloc
           await FlutterDownloader.cancelAll();
           addDownload(_tasks[0].downloadTask)
               .then((value) => _tasks[0].taskId = value);
-        } else {
-          yield DownloadDone();
         }
+        // else {
+        //   yield DownloadDone(downloadedTask: null);
+        // }
       } else if (event is UpdateDownloadState) {
         yield event.state;
       } else if (event is ClearDownload) {
@@ -152,6 +173,7 @@ class MediaDownloaderBloc
     final taskId = await FlutterDownloader.enqueue(
       url: task.url,
       savedDir: task.download_path,
+      fileName: "main${task.segment_number}.ts",
       showNotification:
           false, // click on notification to open downloaded file (for Android)
     );
