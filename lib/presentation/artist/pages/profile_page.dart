@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AccountProfile extends StatelessWidget {
   @override
@@ -172,131 +171,131 @@ Widget _upperSection() {
   );
 }
 
-Widget _likeAndFollowersStat() {
-  return Padding(
-    padding: EdgeInsets.all(10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Column(
-          children: [
-            Text(
-              '2,168',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Followers',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.01,
-                color: Colors.black.withOpacity(
-                  0.5,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Text(
-              '19,168',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Likes',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                letterSpacing: 1.01,
-                color: Colors.black.withOpacity(
-                  0.5,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+// Widget _likeAndFollowersStat() {
+//   return Padding(
+//     padding: EdgeInsets.all(10),
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceAround,
+//       children: [
+//         Column(
+//           children: [
+//             Text(
+//               '2,168',
+//               style: TextStyle(
+//                 fontSize: 30,
+//                 fontWeight: FontWeight.bold,
+//               ),
+//             ),
+//             Text(
+//               'Followers',
+//               style: TextStyle(
+//                 fontSize: 20,
+//                 fontWeight: FontWeight.bold,
+//                 letterSpacing: 1.01,
+//                 color: Colors.black.withOpacity(
+//                   0.5,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//         Column(
+//           children: [
+//             Text(
+//               '19,168',
+//               style: TextStyle(
+//                 fontSize: 30,
+//                 fontWeight: FontWeight.bold,
+//               ),
+//             ),
+//             Text(
+//               'Likes',
+//               style: TextStyle(
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: 20,
+//                 letterSpacing: 1.01,
+//                 color: Colors.black.withOpacity(
+//                   0.5,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
-Widget _followSection() {
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      vertical: 10,
-      horizontal: 15,
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: TextButton(
-              onPressed: () {},
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 10,
-                ),
-                child: Text(
-                  'Follow',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                  ),
-                ),
-              )),
-        ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _socialMediaIcon(
-                'facebook.png',
-              ),
-              _socialMediaIcon(
-                'instagram.png',
-              ),
-              _socialMediaIcon(
-                'youtube.png',
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
+// Widget _followSection() {
+//   return Padding(
+//     padding: EdgeInsets.symmetric(
+//       vertical: 10,
+//       horizontal: 15,
+//     ),
+//     child: Row(
+//       children: [
+//         Expanded(
+//           child: TextButton(
+//               onPressed: () {},
+//               child: Padding(
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: 8,
+//                   horizontal: 10,
+//                 ),
+//                 child: Text(
+//                   'Follow',
+//                   style: TextStyle(
+//                     color: Colors.white,
+//                     fontSize: 25,
+//                   ),
+//                 ),
+//               )),
+//         ),
+//         Expanded(
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: [
+//               _socialMediaIcon(
+//                 'facebook.png',
+//               ),
+//               _socialMediaIcon(
+//                 'instagram.png',
+//               ),
+//               _socialMediaIcon(
+//                 'youtube.png',
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
-Widget _socialMediaIcon(String name) {
-  return Container(
-    height: 32,
-    width: 32,
-    child: Image.asset(
-      'images/$name',
-      fit: BoxFit.cover,
-    ),
-  );
-}
+// Widget _socialMediaIcon(String name) {
+//   return Container(
+//     height: 32,
+//     width: 32,
+//     child: Image.asset(
+//       'images/$name',
+//       fit: BoxFit.cover,
+//     ),
+//   );
+// }
 
-Widget _descriptionSection() {
-  return Container(
-    padding: EdgeInsets.all(10),
-    child: Text(
-      '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
-      style: TextStyle(
-        letterSpacing: 1.1,
-        fontSize: 18,
-        color: Colors.black.withOpacity(0.6),
-      ),
-    ),
-  );
-}
+// Widget _descriptionSection() {
+//   return Container(
+//     padding: EdgeInsets.all(10),
+//     child: Text(
+//       '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
+//       style: TextStyle(
+//         letterSpacing: 1.1,
+//         fontSize: 18,
+//         color: Colors.black.withOpacity(0.6),
+//       ),
+//     ),
+//   );
+// }
 
 Widget _adContainer(String path) {
   return Container(
@@ -312,34 +311,34 @@ Widget _adContainer(String path) {
   );
 }
 
-Widget _tabSelectors() {
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      horizontal: 10,
-      vertical: 20,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _tabItem('home.svg'),
-        _tabItem('search.svg'),
-        _tabItem('Pressed Library Icon (notification).svg'),
-        _tabItem('account.svg'),
-      ],
-    ),
-  );
-}
+// Widget _tabSelectors() {
+//   return Padding(
+//     padding: EdgeInsets.symmetric(
+//       horizontal: 10,
+//       vertical: 20,
+//     ),
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         _tabItem('home.svg'),
+//         _tabItem('search.svg'),
+//         _tabItem('Pressed Library Icon (notification).svg'),
+//         _tabItem('account.svg'),
+//       ],
+//     ),
+//   );
+// }
 
-Widget _tabItem(String svgName) {
-  return Container(
-    width: 22,
-    height: 22,
-    child: SvgPicture.asset(
-      'images/$svgName',
-      fit: BoxFit.cover,
-    ),
-  );
-}
+// Widget _tabItem(String svgName) {
+//   return Container(
+//     width: 22,
+//     height: 22,
+//     child: SvgPicture.asset(
+//       'images/$svgName',
+//       fit: BoxFit.cover,
+//     ),
+//   );
+// }
 //
 // Widget _albumBuilder(Album album) {
 //   return Padding(

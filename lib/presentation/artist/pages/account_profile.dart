@@ -278,62 +278,62 @@ Widget _likeAndFollowersStat() {
   );
 }
 
-Widget _followSection() {
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      vertical: 10,
-      horizontal: 15,
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: TextButton(
-              onPressed: () {},
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 10,
-                ),
-                child: Text(
-                  'Follow',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 25,
-                  ),
-                ),
-              )),
-        ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _socialMediaIcon(
-                'facebook.png',
-              ),
-              _socialMediaIcon(
-                'instagram.png',
-              ),
-              _socialMediaIcon(
-                'youtube.png',
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
+// Widget _followSection() {
+//   return Padding(
+//     padding: EdgeInsets.symmetric(
+//       vertical: 10,
+//       horizontal: 15,q
+//     ),
+//     child: Row(
+//       children: [
+//         Expanded(
+//           child: TextButton(
+//               onPressed: () {},
+//               child: Padding(
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: 8,
+//                   horizontal: 10,
+//                 ),
+//                 child: Text(
+//                   'Follow',
+//                   style: TextStyle(
+//                     color: Colors.black,
+//                     fontSize: 25,
+//                   ),
+//                 ),
+//               )),
+//         ),
+//         Expanded(
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: [
+//               _socialMediaIcon(
+//                 'facebook.png',
+//               ),
+//               _socialMediaIcon(
+//                 'instagram.png',
+//               ),
+//               _socialMediaIcon(
+//                 'youtube.png',
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
-Widget _socialMediaIcon(String name) {
-  return Container(
-    height: 32,
-    width: 32,
-    child: Image.asset(
-      'images/$name',
-      fit: BoxFit.cover,
-    ),
-  );
-}
+// Widget _socialMediaIcon(String name) {
+//   return Container(
+//     height: 32,
+//     width: 32,
+//     child: Image.asset(
+//       'images/$name',
+//       fit: BoxFit.cover,
+//     ),
+//   );
+// }
 
 Widget _descriptionSection() {
   return Container(

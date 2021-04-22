@@ -19,6 +19,5 @@ class LocationDisabledPage extends StatelessWidget {
             child: Text('try again'))
       ],
     );
-    ;
   }
 }
