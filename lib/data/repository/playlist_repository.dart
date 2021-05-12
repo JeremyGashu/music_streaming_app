@@ -10,9 +10,14 @@ class PlaylistRepository {
   PlaylistRepository({@required this.dataProvider})
       : assert(dataProvider != null);
 
-  Future<Playlist> getPlaylists() async {
+  Future<List<Playlist>> getPlaylists() async {
     http.Response playlists = await dataProvider.getPlaylists();
-    var decodedPlaylists = jsonDecode(playlists.body);
-    return Playlist.fromJson(decodedPlaylists);
+    var decodedPlaylists = jsonDecode(playlists.body)['data']['data'] as List;
+
+    print("loaded playlists: " + decodedPlaylists.toString());
+
+    return decodedPlaylists
+        .map((playlist) => Playlist.fromJson(playlist))
+        .toList();
   }
 }

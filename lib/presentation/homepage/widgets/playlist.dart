@@ -26,7 +26,7 @@ class PlayList extends StatelessWidget {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return PlaylistDetail(
-                            albumId: state.playlists.data.id,
+                            albumId: 'state.playlists.data.id',
                           );
                         }));
                       },
@@ -74,7 +74,7 @@ class PlayList extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
                           child: Text(
-                            '${state.playlists.data.trackCount} new songs',
+                            '23 new songs',
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 14.0),
                           ),
