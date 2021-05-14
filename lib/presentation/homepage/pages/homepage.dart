@@ -5,6 +5,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
+import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
@@ -62,6 +64,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
     BlocProvider.of<TrackBloc>(context).add(LoadTracks());
+    BlocProvider.of<AlbumBloc>(context).add(LoadAlbum());
 
     final size = MediaQuery.of(context).size;
     return Scaffold(

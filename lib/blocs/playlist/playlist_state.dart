@@ -20,7 +20,7 @@ class LoadingPlaylist extends PlaylistState {
 }
 
 class LoadedPlaylist extends PlaylistState {
-  final Playlist playlists;
+  final List<Playlist> playlists;
   LoadedPlaylist({@required this.playlists}) : assert(playlists != null);
   @override
   List<Object> get props => [playlists];
