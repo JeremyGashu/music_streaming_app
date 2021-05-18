@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/core/app/urls.dart';
 
@@ -35,19 +37,26 @@ var testData = '''
 }
 ''';
 
-class PlaylistDataProvider {
+class ArtistDataProvider {
   final http.Client client;
 
-  PlaylistDataProvider({this.client}) : assert(client != null);
+  ArtistDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getPlaylists(
+  Future<http.Response> getAllArtists(
       {int page, int perPage, String sort, String sortKey}) async {
     page ??= 0;
     perPage ??= 10;
     sort ??= 'ASC';
-    sortKey ??= 'title';
+    sortKey ??= 'first_name';
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        '$BASE_URL/albums?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+    print('URL: ' + url);
+    http.Response response = await client.get(Uri.parse(url));
+    return response;
+  }
+
+  Future<http.Response> getArtistById(String artistId) async {
+    String url = '$BASE_URL/artists/${artistId}';
     http.Response response = await client.get(Uri.parse(url));
     return response;
   }

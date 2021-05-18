@@ -14,13 +14,13 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     if (event is LoadPlaylists) {
       try {
         yield LoadingPlaylist();
-        await Future.delayed(Duration(seconds: 5));
         var playlists = await playlistRepository.getPlaylists();
 
         yield LoadedPlaylist(playlists: playlists);
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingPlaylistError(message: "Error one loading playlists");
+        yield LoadingPlaylistError(message: "Error on loading playlists");
+        throw Exception(e);
       }
     }
   }

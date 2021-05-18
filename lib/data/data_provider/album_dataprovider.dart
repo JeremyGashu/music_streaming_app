@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/core/app/urls.dart';
 
@@ -35,19 +37,43 @@ var testData = '''
 }
 ''';
 
-class PlaylistDataProvider {
+class AlbumDataProvider {
   final http.Client client;
 
-  PlaylistDataProvider({this.client}) : assert(client != null);
+  AlbumDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getPlaylists(
+  Future<http.Response> getAllAlbums(
       {int page, int perPage, String sort, String sortKey}) async {
     page ??= 0;
     perPage ??= 10;
     sort ??= 'ASC';
     sortKey ??= 'title';
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        '$BASE_URL/albums?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+    http.Response response = await client.get(Uri.parse(url));
+
+    return response;
+  }
+
+  Future<http.Response> getAlbumsByArtist(String artistId, int page,
+      {int perPage, String sort, String sortKey}) async {
+    perPage ??= 10;
+    sort ??= 'ASC';
+    sortKey ??= 'title';
+    String url =
+        '$BASE_URL/artist/albums?artist_id=${artistId}&page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+    http.Response response = await client.get(Uri.parse(url));
+    return response;
+  }
+
+  Future<http.Response> getAlbumById(String albumId) async {
+    String url = '$BASE_URL/artist/albums/${albumId}';
+    http.Response response = await client.get(Uri.parse(url));
+    return response;
+  }
+
+  Future<http.Response> deleteAlbum(String albumId) async {
+    String url = '$BASE_URL/artists/${albumId}';
     http.Response response = await client.get(Uri.parse(url));
     return response;
   }

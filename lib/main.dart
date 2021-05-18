@@ -15,8 +15,10 @@ import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
+import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
+import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/artist/pages/profile_page.dart';
@@ -25,6 +27,7 @@ import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
+import 'blocs/albums/album_bloc.dart';
 import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
@@ -46,6 +49,8 @@ void main() async {
 
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
+  final _albumRepository =
+      AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
   final _trackRepo =
       TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
 
@@ -58,6 +63,9 @@ void main() async {
   LocalDatabaseBloc _localDatabaseBloc =
       LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc);
   runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (context) => AlbumBloc(albumRepository: _albumRepository),
+    ),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
     BlocProvider(create: (context) => _localDatabaseBloc..add(InitLocalDB())),
@@ -101,12 +109,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      setState(() {
-        //Here after you can use the flutter_local_notification
-      });
-    });
   }
 
   @override

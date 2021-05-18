@@ -94,6 +94,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> onSkipToPrevious() => skip(-1);
 
   Future<void> skip(int offset) async {
+    print("CURRENT INDEX => " + _queueIndex.toString());
+    print("CURRENT QUEUE LENGTH => " + _queue.length.toString());
     final newIndex = _queueIndex + offset;
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
 
@@ -114,8 +116,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
       /// To play directly from the given url in [MediaItem]
       await _audioPlayer.setUrl(_mediaItem.extras['source']);
     }
-    onUpdateMediaItem(_mediaItem);
-    onPlay();
+    await onUpdateMediaItem(_mediaItem);
+    print("NEXT PLAYING => " + _queueIndex.toString());
+    await onPlay();
   }
 
   @override
@@ -164,8 +167,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
       /// To play directly from the given url in [MediaItem]
       await _audioPlayer.setUrl(_mediaItem.extras['source']);
     }
-    onUpdateMediaItem(_mediaItem);
-    onPlay();
+    await onUpdateMediaItem(_mediaItem);
+    await onPlay();
   }
 
   @override
@@ -180,8 +183,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
       await _audioPlayer.setUrl(mediaItem.extras['source']);
     }
 
-    onUpdateMediaItem(mediaItem);
-    onPlay();
+    await onUpdateMediaItem(mediaItem);
+    await onPlay();
   }
 
   @override
