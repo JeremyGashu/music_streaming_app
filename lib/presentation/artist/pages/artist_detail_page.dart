@@ -15,7 +15,7 @@ class ArtistDetailPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               //the name and back navigator icon and vertical more option
-              _upperSection(),
+              _upperSection(context),
               Divider(),
               //circular artist image
               Padding(
@@ -210,7 +210,7 @@ class ArtistDetailPage extends StatelessWidget {
 }
 
 //back nav, name and more vertical iconBuilder
-Widget _upperSection() {
+Widget _upperSection(BuildContext context) {
   return Padding(
     padding: EdgeInsets.all(5),
     child: Row(
@@ -221,7 +221,9 @@ Widget _upperSection() {
             Icons.arrow_back_ios,
             color: Colors.black.withOpacity(0.5),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         Text(
           'Dawit Getachew',

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/audio_player_task.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artists_grid.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
@@ -165,7 +166,12 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            _sectionTitle(title: "Artists", callback: () {}),
+            _sectionTitle(
+                title: "Artists",
+                callback: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (ctx) => ArtistsGrid()));
+                }),
             Container(
               height: 180,
               child: ListView(
