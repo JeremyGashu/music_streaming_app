@@ -107,6 +107,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Material App',
+        debugShowCheckedModeBanner: false,
         home: BlocListener<UserLocationBloc, UserLocationState>(
           listener: (context, state) {
             if (state is UserLocationLoadFailed) {

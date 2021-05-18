@@ -111,7 +111,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     return Column(
       children: [
         _songImage(),
-        Spacer(),
         _songTitleRow(),
 
         /// SeekBar
