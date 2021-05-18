@@ -11,8 +11,10 @@ enum UserLocationEvent { Init, GetUserLocation }
 class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
   final LocationService locationService;
   static LocationData _location;
-  var _timer;
-  UserLocationBloc({@required this.locationService}) : assert(locationService!=null),super(UserLocationLoadBusy());
+  Timer _timer;
+  UserLocationBloc({@required this.locationService})
+      : assert(locationService != null),
+        super(UserLocationLoadBusy());
 
   @override
   Stream<UserLocationState> mapEventToState(UserLocationEvent event) async* {
@@ -31,12 +33,11 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
         _timer = Timer.periodic(Duration(seconds: 2), (timer) async {
           var serviceEnabled = await Location.instance.serviceEnabled();
           print(serviceEnabled);
-          if(!serviceEnabled){
+          if (!serviceEnabled) {
             add(UserLocationEvent.Init);
             timer?.cancel();
           }
         });
-
       } else if (event == UserLocationEvent.GetUserLocation) {
         if (_location != null) {
           yield UserLocationLoadSuccess(location: _location);

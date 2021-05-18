@@ -24,7 +24,7 @@ import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
-import 'package:streaming_mobile/presentation/artist/pages/account_profile.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_profie_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
     AudioServiceWidget(child: HomePage()),
     AudioServiceWidget(child: HomePage()),
     AudioServiceWidget(child: HomePage()),
-    ArtistDetailPage(),
+    ArtistProfilePage(),
     //Search(),
     //Library(),
     //ArtistPage(),

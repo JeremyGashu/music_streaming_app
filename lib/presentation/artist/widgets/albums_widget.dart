@@ -10,7 +10,6 @@ class Album extends StatefulWidget {
 class _AlbumState extends State<Album> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -49,6 +49,7 @@ dependencies:
   mockito: ^5.0.4
   check_vpn_connection : ^0.0.1
   flutter_local_notifications: ^5.0.0+1
+  connectivity: ^3.0.3
 
 
 dev_dependencies:
@@ -61,7 +62,7 @@ flutter_native_splash:
   color: "#ffffff"
   image: assets/images/splash_image.png
   android: true
-  iso : true
+  ios : true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
