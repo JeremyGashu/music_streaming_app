@@ -5,7 +5,7 @@ import 'package:streaming_mobile/presentation/artist/widgets/playlist.dart';
 
 import '../../homepage/widgets/singletrack.dart';
 
-class ProfilePage extends StatelessWidget {
+class ArtistDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +16,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               //the name and back navigator icon and vertical more option
               _upperSection(),
+              Divider(),
               //circular artist image
               Padding(
                 padding: EdgeInsets.all(15),
@@ -45,9 +46,11 @@ class ProfilePage extends StatelessWidget {
 
               // _followSection(),
               SizedBox(
-                height: 10,
+                height: 5,
               ),
+              Divider(),
               _descriptionSection(),
+
               Container(
                 margin: EdgeInsets.symmetric(
                   horizontal: 10,
@@ -74,112 +77,128 @@ class ProfilePage extends StatelessWidget {
               // ),
 
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      //tab selectors
-                      _tabSelectors(),
+                elevation: 1,
+                child: Column(
+                  children: [
+                    //tab selectors
+                    _tabSelectors(),
 
-                      //album section
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3].length,
-                            itemBuilder: (context, index) {
-                              return Album();
-                            }),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Single Tracks',
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black.withOpacity(0.7),
-                              letterSpacing: 1.01,
-                              fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 10,
+                    ),
+
+                    //album section
+                    Container(
+                      height: 200,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            return Album();
+                          }),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Single Tracks',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.black.withOpacity(0.7),
+                            letterSpacing: 1.01,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Text(
+                                  'View All',
+                                  style: TextStyle(
+                                    color: Colors.purple,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.navigate_next,
+                                  color: Colors.purple,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  color: Colors.purple,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.navigate_next,
-                                    color: Colors.purple,
-                                  ),
-                                  onPressed: () {})
-                            ],
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height: 200,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: [1, 2, 3, 4].length,
+                          itemBuilder: (context, index) {
+                            return SingleTrack();
+                          }),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Popular Playlists',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.black.withOpacity(0.7),
+                            letterSpacing: 1.01,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3, 4].length,
-                            itemBuilder: (context, index) {
-                              return SingleTrack();
-                            }),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Popular Playlists',
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black.withOpacity(0.7),
-                              letterSpacing: 1.01,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Text(
+                                  'View All',
+                                  style: TextStyle(
+                                    color: Colors.purple,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.navigate_next,
+                                  color: Colors.purple,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  color: Colors.purple,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.navigate_next,
-                                    color: Colors.purple,
-                                  ),
-                                  onPressed: () {}),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: 200,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: [1, 2, 3, 4].length,
-                            itemBuilder: (context, index) {
-                              return PlayList();
-                            }),
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      height: 200,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4,
+                          itemBuilder: (context, index) {
+                            return PlayList();
+                          }),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -234,7 +253,7 @@ Widget _likeAndFollowersStat() {
             Text(
               '2,168',
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -256,7 +275,7 @@ Widget _likeAndFollowersStat() {
             Text(
               '19,168',
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -341,8 +360,8 @@ Widget _descriptionSection() {
     child: Text(
       '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
       style: TextStyle(
-        letterSpacing: 1.1,
-        fontSize: 17,
+        letterSpacing: 1.05,
+        fontSize: 15,
         color: Colors.black.withOpacity(0.6),
       ),
     ),
@@ -355,7 +374,6 @@ Widget _adContainer(String path) {
       vertical: 0,
     ),
     width: double.infinity,
-    height: 110,
     child: Image.asset(
       'assets/images/$path',
       fit: BoxFit.cover,
@@ -383,11 +401,12 @@ Widget _tabSelectors() {
 
 Widget _tabItem(String svgName) {
   return Container(
-    width: 22,
-    height: 22,
+    width: 25,
+    height: 25,
     child: SvgPicture.asset(
-      'images/$svgName',
-      fit: BoxFit.cover,
+      'assets/svg/$svgName',
+      height: 22,
+      width: 22,
     ),
   );
 }

@@ -166,7 +166,7 @@ void playSingleTrack(BuildContext context, Track track,
       extras: {'source': track.data.trackUrl});
 
   if (AudioService.running) {
-    AudioService.playFromMediaId(id);
+    await AudioService.playFromMediaId(id);
   } else {
     if (await AudioService.start(
       backgroundTaskEntrypoint: backgroundTaskEntryPoint,
@@ -182,7 +182,7 @@ void playSingleTrack(BuildContext context, Track track,
       await AudioService.updateMediaItem(queue[0]);
       await AudioService.updateQueue(queue);
 
-      AudioService.playFromMediaId(id);
+      await AudioService.playFromMediaId(id);
 
       if (position != null) AudioService.seekTo(position);
     }

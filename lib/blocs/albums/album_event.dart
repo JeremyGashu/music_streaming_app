@@ -5,7 +5,7 @@ class AlbumEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadAlbum extends AlbumEvent {
+class LoadAlbums extends AlbumEvent {
   @override
   List<Object> get props => [];
 }

@@ -7,8 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
@@ -21,7 +24,7 @@ import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
-import 'package:streaming_mobile/presentation/artist/pages/profile_page.dart';
+import 'package:streaming_mobile/presentation/artist/pages/account_profile.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
@@ -64,7 +67,8 @@ void main() async {
       LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc);
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
-      create: (context) => AlbumBloc(albumRepository: _albumRepository),
+      create: (context) =>
+          AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
     ),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
@@ -72,19 +76,15 @@ void main() async {
     BlocProvider(
         create: (context) => _userLocationBloc..add(UserLocationEvent.Init)),
     BlocProvider(
-      create: (context) => PlaylistBloc(playlistRepository: _playlistRepo),
-    ),
-    BlocProvider(
-      create: (context) => TrackBloc(trackRepository: _trackRepo),
-    ),
-    BlocProvider(
-      create: (context) => PlaylistBloc(playlistRepository: _playlistRepo),
+      create: (context) =>
+          PlaylistBloc(playlistRepository: _playlistRepo)..add(LoadPlaylists()),
     ),
     BlocProvider(
         create: (context) =>
             VPNBloc()..add(StartListening(intervalInSeconds: 2))),
     BlocProvider(
-      create: (context) => TrackBloc(trackRepository: _trackRepo),
+      create: (context) =>
+          TrackBloc(trackRepository: _trackRepo)..add(LoadTracks()),
     ),
   ], child: MyApp()));
 }
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
     AudioServiceWidget(child: HomePage()),
     AudioServiceWidget(child: HomePage()),
     AudioServiceWidget(child: HomePage()),
-    AccountProfile(),
+    ArtistDetailPage(),
     //Search(),
     //Library(),
     //ArtistPage(),

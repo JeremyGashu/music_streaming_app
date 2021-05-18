@@ -227,9 +227,9 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             size: 34,
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               if (_isPlaying) {
-                AudioService.pause();
+                await AudioService.pause();
               } else {
                 play(widget.track, preferences);
               }
@@ -322,11 +322,11 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  play(Track track, SharedPreferences prefs) {
+  play(Track track, SharedPreferences prefs) async {
     if (!AudioService.running && prefs != null) {
       final position = Duration(seconds: prefs.getInt('position'));
       playSingleTrack(context, track, position);
     } else
-      AudioService.play();
+      await AudioService.play();
   }
 }

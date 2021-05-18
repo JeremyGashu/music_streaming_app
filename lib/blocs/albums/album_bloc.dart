@@ -11,7 +11,7 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
   @override
   Stream<AlbumState> mapEventToState(AlbumEvent event) async* {
     yield InitialState();
-    if (event is LoadAlbum) {
+    if (event is LoadAlbums) {
       try {
         yield LoadingAlbum();
         await Future.delayed(Duration(seconds: 5));

@@ -12,7 +12,7 @@ class Artist extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ProfilePage()));
+              context, MaterialPageRoute(builder: (context) => ArtistDetailPage()));
         },
         child: Container(
           width: 120,
