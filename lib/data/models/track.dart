@@ -31,15 +31,24 @@ class Track extends Equatable {
 class Data extends Equatable {
   final String id;
   final int likes;
+
   final String title;
+
   final String releaseDate;
+
   final String artistId;
+
   final String albumId;
+
   final String coverImgUrl;
   final String trackUrl;
+
   final int views;
+
   final int duration;
+
   final String lyricsUrl;
+
   final String createdBy;
 
   Data(
