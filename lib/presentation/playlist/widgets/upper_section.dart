@@ -42,16 +42,16 @@ Widget upperSection(context) {
             ),
           ),
           Positioned(
-            top: 10,
+            top: 5,
             left: 20,
             child: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
-                size: 32,
+                size: 27,
               ),
               onPressed: () {
-                print('a');
+                Navigator.pop(context);
               },
             ),
           ),

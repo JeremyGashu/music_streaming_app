@@ -69,40 +69,42 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<MediaItem>(
-          stream: AudioService.currentMediaItemStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _nowPlayingWidget(mediaItem: snapshot.data);
-            }
-            return FutureBuilder<SharedPreferences>(
-              future: sharedPreferences,
-              builder: (context, prefSnapshot) {
-                if (prefSnapshot.hasData) {
-                  final prefs = prefSnapshot.data;
-                  if (prefs.containsKey('id')) {
-                    final mediaItem = MediaItem(
-                      id: prefs.getString('id'),
-                      album: prefs.getString('album'),
-                      title: prefs.getString('title'),
-                      artist: prefs.getString('artist'),
-                      duration: Duration(seconds: prefs.getInt('duration')),
-                      genre: prefs.getString('genre'),
-                      artUri: Uri.parse(prefs.getString('artUri')),
-                      extras: {'source': prefs.getString('source')},
-                    );
-                    return SingleChildScrollView(
-                      child: _nowPlayingWidget(
-                          mediaItem: mediaItem, loadFromPrefs: prefs),
-                    );
+      body: SafeArea(
+        child: StreamBuilder<MediaItem>(
+            stream: AudioService.currentMediaItemStream,
+            builder: (ctx, snapshot) {
+              if (snapshot.hasData) {
+                return _nowPlayingWidget(mediaItem: snapshot.data);
+              }
+              return FutureBuilder<SharedPreferences>(
+                future: sharedPreferences,
+                builder: (ctx, prefSnapshot) {
+                  if (prefSnapshot.hasData) {
+                    final prefs = prefSnapshot.data;
+                    if (prefs.containsKey('id')) {
+                      final mediaItem = MediaItem(
+                        id: prefs.getString('id'),
+                        album: prefs.getString('album'),
+                        title: prefs.getString('title'),
+                        artist: prefs.getString('artist'),
+                        duration: Duration(seconds: prefs.getInt('duration')),
+                        genre: prefs.getString('genre'),
+                        artUri: Uri.parse(prefs.getString('artUri')),
+                        extras: {'source': prefs.getString('source')},
+                      );
+                      return SingleChildScrollView(
+                        child: _nowPlayingWidget(
+                            mediaItem: mediaItem, loadFromPrefs: prefs),
+                      );
+                    }
                   }
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            );
-          }),
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              );
+            }),
+      ),
     );
   }
 
@@ -110,7 +112,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       {MediaItem mediaItem, SharedPreferences loadFromPrefs}) {
     return Column(
       children: [
-        _songImage(),
+        _songImage(context),
+        Spacer(),
         _songTitleRow(),
 
         /// SeekBar
@@ -224,9 +227,9 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             size: 34,
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               if (_isPlaying) {
-                AudioService.pause();
+                await AudioService.pause();
               } else {
                 play(widget.track, preferences);
               }
@@ -308,24 +311,22 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Container _songImage() {
+  Container _songImage(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 380,
-      child: Image(
-        image: AssetImage(
-          'assets/images/artist_one.jpg',
-        ),
+      height: MediaQuery.of(context).size.height * 0.4,
+      child: Image.asset(
+        'assets/images/artist_one.jpg',
         fit: BoxFit.cover,
       ),
     );
   }
 
-  play(Track track, SharedPreferences prefs) {
+  play(Track track, SharedPreferences prefs) async {
     if (!AudioService.running && prefs != null) {
       final position = Duration(seconds: prefs.getInt('position'));
       playSingleTrack(context, track, position);
     } else
-      AudioService.play();
+      await AudioService.play();
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/presentation/artist/pages/account_profile.dart';
+
+import '../../artist/pages/artist_detail_page.dart';
 
 class Artist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AccountProfile()));
+              MaterialPageRoute(builder: (context) => ArtistDetailPage()));
         },
         child: Container(
           width: 120,
