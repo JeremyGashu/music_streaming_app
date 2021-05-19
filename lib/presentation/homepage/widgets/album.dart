@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 
 class Album extends StatefulWidget {
@@ -12,7 +10,6 @@ class Album extends StatefulWidget {
 class _AlbumState extends State<Album> {
   @override
   Widget build(BuildContext context) {
-    print(BlocProvider.of<AlbumBloc>(context).state);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
