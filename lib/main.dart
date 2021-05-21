@@ -43,6 +43,7 @@ void main() async {
 
   await Hive.initFlutter();
 
+
   await Firebase.initializeApp();
   await initMessaging();
 

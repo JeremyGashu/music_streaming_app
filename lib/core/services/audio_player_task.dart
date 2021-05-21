@@ -68,6 +68,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
           break;
       }
     });
+
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   void _handlePlaybackCompleted() => hasNext ? onSkipToNext() : onStop();
@@ -75,13 +78,16 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void playPause() => _audioPlayer.playing ? onPause() : onPlay();
 
   @override
-  Future<void> onPlay() => _audioPlayer.play();
+  Future<void> onPlay() async {
+    await _audioPlayer.play();
+  }
 
   @override
   Future<void> onPause() async {
+    debugPrint('CALLED METHOD => onPause');
     if (_audioPlayer.processingState == ProcessingState.loading ||
         _audioPlayer.playing) {
-      _audioPlayer.pause();
+      await _audioPlayer.pause();
       // Save the current player position in seconds.
       await prefs.setInt('position', _audioPlayer.position.inSeconds);
     }
@@ -94,8 +100,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> onSkipToPrevious() => skip(-1);
 
   Future<void> skip(int offset) async {
-    print("CURRENT INDEX => " + _queueIndex.toString());
-    print("CURRENT QUEUE LENGTH => " + _queue.length.toString());
+    debugPrint('CALLED METHOD => skip');
+    debugPrint("CURRENT INDEX => " + _queueIndex.toString());
+    debugPrint("CURRENT QUEUE LENGTH => " + _queue.length.toString());
     final newIndex = _queueIndex + offset;
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
 
@@ -114,11 +121,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
       await _audioPlayer.setFilePath(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
     await onUpdateMediaItem(_mediaItem);
-    print("NEXT PLAYING => " + _queueIndex.toString());
+    debugPrint("NEXT PLAYING => " + _queueIndex.toString());
     await onPlay();
+
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -128,6 +141,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     /// Broadcast that we're seeking.
     _setState(state: AudioServiceBackground.state.processingState);
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -152,6 +167,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
         break;
       default:
     }
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -165,10 +182,15 @@ class AudioPlayerTask extends BackgroundAudioTask {
       await _audioPlayer.setFilePath(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
     await onUpdateMediaItem(_mediaItem);
     await onPlay();
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -180,11 +202,16 @@ class AudioPlayerTask extends BackgroundAudioTask {
       await _audioPlayer.setFilePath(mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
 
     await onUpdateMediaItem(mediaItem);
     await onPlay();
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -205,18 +232,24 @@ class AudioPlayerTask extends BackgroundAudioTask {
     playerEventSubscription.cancel();
     await _audioPlayer.dispose();
     // Shutdown background task
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
     await super.onStop();
   }
 
   @override
   Future<void> onUpdateMediaItem(MediaItem mediaItem) async {
-    AudioServiceBackground.setMediaItem(mediaItem);
+    await AudioServiceBackground.setMediaItem(mediaItem);
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
   Future<void> onUpdateQueue(List<MediaItem> mediaItems) async {
     _queue = mediaItems;
-    AudioServiceBackground.setQueue(_queue);
+    await AudioServiceBackground.setQueue(_queue);
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   /// This method sets background state with ease
@@ -225,7 +258,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void _setState({@required AudioProcessingState state}) {
     AudioServiceBackground.setState(
       controls: getControls(),
-      // systemActions: [MediaAction.seekTo],
       processingState: state,
       playing: _audioPlayer.playing,
       position: _audioPlayer.position,

@@ -141,9 +141,11 @@ class ArtistDetailPage extends StatelessWidget {
                       height: 200,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: [1, 2, 3, 4].length,
+                          itemCount: [1, 2, 3].length,
                           itemBuilder: (context, index) {
-                            return SingleTrack();
+                            return SingleTrack(
+                              track: null,
+                            );
                           }),
                     ),
                     SizedBox(

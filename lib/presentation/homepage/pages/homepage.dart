@@ -3,13 +3,22 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/audio_player_task.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artists_grid.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/loading_playlist_shimmer.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
@@ -135,13 +144,44 @@ class _HomePageState extends State<HomePage> {
             _sectionTitle(title: "Popular Playlists", callback: () {}),
             Container(
               height: 160,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  PlayList(),
-                  PlayList(),
-                  PlayList(),
-                ],
+              child: BlocBuilder<PlaylistBloc, PlaylistState>(
+                builder: (ctx, state) {
+                  if (state is LoadingPlaylist) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        LoadingPlaylistShimmer(),
+                        LoadingPlaylistShimmer(),
+                        LoadingPlaylistShimmer(),
+                      ],
+                    );
+                  } else if (state is LoadedPlaylist) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        PlayList(),
+                        PlayList(),
+                        PlayList(),
+                      ],
+                    );
+                  } else if (state is LoadingPlaylistError) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text('Error Loading Playlist!'),
+                          IconButton(
+                              icon: Icon(Icons.update),
+                              onPressed: () {
+                                BlocProvider.of<PlaylistBloc>(context)
+                                    .add(LoadPlaylists());
+                              }),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Container();
+                },
               ),
             ),
             _sectionTitle(title: "Most Played Tracks", callback: () {}),
@@ -200,14 +240,53 @@ class _HomePageState extends State<HomePage> {
             _sectionTitle(title: "Single Tracks", callback: () {}),
             Container(
               height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  SingleTrack(),
-                  SingleTrack(),
-                  SingleTrack(),
-                ],
+              child: BlocBuilder<TrackBloc, TrackState>(
+                builder: (ctx, state) {
+                  if (state is LoadingTrack) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        LoadingTrackShimmer(),
+                        LoadingTrackShimmer(),
+                        LoadingTrackShimmer(),
+                      ],
+                    );
+                  } else if (state is LoadedTrack) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        SingleTrack(track: state.track),
+                        SingleTrack(track: state.track),
+                        SingleTrack(track: state.track),
+                      ],
+                    );
+                  } else if (state is LoadingTrackError) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text('Error Loading Tracks!'),
+                          IconButton(
+                              icon: Icon(Icons.update),
+                              onPressed: () {
+                                BlocProvider.of<TrackBloc>(context)
+                                    .add(LoadTracks());
+                              }),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Container();
+                },
               ),
+              // child: ListView(
+              //   scrollDirection: Axis.horizontal,
+              //   children: [
+              //     SingleTrack(),
+              //     SingleTrack(),
+              //     SingleTrack(),
+              //   ],
+              // ),
             ),
           ],
         ),

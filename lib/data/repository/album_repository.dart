@@ -1,12 +1,33 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 
+String defaultAlbumString = '''
+{
+    "success": true,
+    "data": {
+        "meta_data": {
+            "page": 1,
+            "per_page": 10,
+            "page_count": 1,
+            "total_count": 0,
+            "links": [
+            ]
+        },
+        "data": []
+    }
+}
+''';
+
 class AlbumRepository {
   final AlbumDataProvider dataProvider;
+  http.Response albums;
+  List decodeAlbums;
   AlbumRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
   Future<List<Album>> getAllAlbums(
@@ -15,11 +36,30 @@ class AlbumRepository {
     perPage ??= 10;
     sort ??= 'ASC';
     sortKey ??= 'title';
-    http.Response albums = await dataProvider.getAllAlbums(
-        page: page, perPage: perPage, sort: sort, sortKey: sortKey);
 
-    var decodedPlaylists = jsonDecode(albums.body)['data']['data'] as List;
-    return decodedPlaylists.map((album) => Album.fromJson(album)).toList();
+    var albumBox = await Hive.openBox('albums');
+    ConnectivityResult connectivityResult =
+        await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      albums = await dataProvider.getAllAlbums(
+          page: page, perPage: perPage, sort: sort, sortKey: sortKey);
+
+      print('getAlbums: online and saving data ' + albums.body);
+      print('CLEARING DATA BEFORE WRITING: ');
+      await albumBox.clear();
+      print('WRITING DATA: ');
+      await albumBox.add(albums.body);
+      decodeAlbums = jsonDecode(albums.body)['data']['data'] as List;
+    } else {
+      String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
+      print('getAlbums: offline and retrieving data... ' + albumCache);
+
+      decodeAlbums = jsonDecode(albumCache)['data']['data'] as List;
+    }
+
+    return decodeAlbums.map((album) => Album.fromJson(album)).toList();
   }
 
   Future<Album> getAlbumById(String albumId) async {
