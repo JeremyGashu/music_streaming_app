@@ -26,8 +26,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
 
-  bool _isPlaying = true;
-
   @override
   void initState() {
     super.initState();
@@ -222,43 +220,54 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(Icons.shuffle, color: Colors.orange.shade300),
-          Icon(
-            Icons.skip_previous,
-            size: 34,
-          ),
-          GestureDetector(
-            onTap: () async {
-              if (_isPlaying) {
-                await AudioService.pause();
-              } else {
-                play(widget.track, preferences);
-              }
-              setState(() {
-                _isPlaying = !_isPlaying;
-              });
+          IconButton(
+            onPressed: () async {
+              await AudioService.skipToPrevious();
             },
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.orange.shade300),
-              child: _isPlaying
-                  ? Icon(
-                      Icons.pause,
-                      color: Colors.white,
-                      size: 38,
-                    )
-                  : Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 38,
-                    ),
+            icon: Icon(
+              Icons.skip_previous,
+              size: 34,
             ),
           ),
-          Icon(
-            Icons.skip_next,
-            size: 34,
+          StreamBuilder<PlaybackState>(
+              stream: AudioService.playbackStateStream,
+              builder: (context, snapshot) {
+                return GestureDetector(
+                  onTap: () async {
+                    if (snapshot.hasData && snapshot.data.playing) {
+                      await AudioService.pause();
+                    } else {
+                      play(widget.track, preferences);
+                    }
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.orange.shade300),
+                    child: snapshot.hasData && snapshot.data.playing
+                        ? Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                            size: 38,
+                          )
+                        : Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 38,
+                          ),
+                  ),
+                );
+              }),
+          IconButton(
+            onPressed: () async {
+              await AudioService.skipToNext();
+            },
+            icon: Icon(
+              Icons.skip_next,
+              size: 34,
+            ),
           ),
           Icon(
             Icons.repeat,

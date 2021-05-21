@@ -133,6 +133,28 @@ void playSingleTrack(BuildContext context, Track track,
       // extras: {'source': m3u8FilePath});
       extras: {'source': track.data.trackUrl});
 
+  MediaItem _mediaItem3 = MediaItem(
+      id: track.data.id + '3',
+      album: track.data.albumId,
+      title: track.data.title,
+      genre: 'genre goes here',
+      artist: track.data.artistId,
+      duration: Duration(milliseconds: track.data.duration),
+      artUri: Uri.parse(track.data.coverImgUrl),
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
+
+  MediaItem _mediaItem4 = MediaItem(
+      id: track.data.id + '4',
+      album: track.data.albumId,
+      title: track.data.title,
+      genre: 'genre goes here',
+      artist: track.data.artistId,
+      duration: Duration(milliseconds: track.data.duration),
+      artUri: Uri.parse(track.data.coverImgUrl),
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
+
   if (AudioService.running) {
     await AudioService.playFromMediaId(id);
   } else {
@@ -146,6 +168,8 @@ void playSingleTrack(BuildContext context, Track track,
       final List<MediaItem> queue = [];
       queue.add(_mediaItem);
       queue.add(_mediaItem2);
+      queue.add(_mediaItem3);
+      queue.add(_mediaItem4);
 
       await AudioService.updateMediaItem(queue[0]);
       await AudioService.updateQueue(queue);
