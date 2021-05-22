@@ -49,6 +49,9 @@ dependencies:
   mockito: ^5.0.4
   check_vpn_connection : ^0.0.1
   aes_crypt: ^0.1.1
+  cached_network_image: ^3.0.0
+  modal_bottom_sheet: ^2.0.0
+  flutter_spinkit: ^4.1.2
 
 dev_dependencies:
   flutter_test:

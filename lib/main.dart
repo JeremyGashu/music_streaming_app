@@ -99,7 +99,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Material App',
+        title: 'Zema streaming',
+        debugShowCheckedModeBanner: false,
         home: BlocListener<UserLocationBloc, UserLocationState>(
           listener: (context, state) {
             if (state is UserLocationLoadFailed) {

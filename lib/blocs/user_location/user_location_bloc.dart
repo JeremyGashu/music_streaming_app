@@ -20,17 +20,17 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
       yield UserLocationLoadBusy();
       if (event == UserLocationEvent.Init) {
         _location = await locationService.getLocation();
-        print(_location);
+        // print(_location);
         if (_location == null) {
           yield UserLocationLoadFailed();
         } else {
-          print('here');
+          // print('here');
           yield UserLocationLoadSuccess(location: _location);
         }
 
         _timer = Timer.periodic(Duration(seconds: 2), (timer) async {
           var serviceEnabled = await Location.instance.serviceEnabled();
-          print(serviceEnabled);
+          // print(serviceEnabled);
           if(!serviceEnabled){
             add(UserLocationEvent.Init);
             timer?.cancel();

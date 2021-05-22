@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 
 final playControl = MediaControl(
   androidIcon: 'drawable/ic_action_play_arrow',
@@ -28,7 +29,7 @@ final skipToNextControl = MediaControl(
 
 class AudioPlayerTask extends BackgroundAudioTask {
   final _audioPlayer = AudioPlayer();
-  int _queueIndex = -1;
+  int _queueIndex = 0;
   static int clickDelay = 0;
 
   List<MediaItem> _queue = <MediaItem>[];
@@ -75,7 +76,13 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void playPause() => _audioPlayer.playing ? onPause() : onPlay();
 
   @override
-  Future<void> onPlay() => _audioPlayer.play();
+  Future<void> onPlay() async {
+    _audioPlayer.play();
+    AudioServiceBackground.setState(
+        controls: [MediaControl.pause, MediaControl.stop],
+        playing: true,
+        processingState: AudioProcessingState.ready);
+  }
 
   @override
   Future<void> onPause() async {
@@ -95,6 +102,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   Future<void> skip(int offset) async {
     final newIndex = _queueIndex + offset;
+    print("Queue index: ${_queueIndex}");
+    print("Playing index: ${newIndex}");
+    print("queue length: ${_queue.length}");
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
 
     await _audioPlayer.stop();
@@ -109,13 +119,20 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     if (_mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(_mediaItem.extras['source']);
+      await playFromLocal(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      // TODO: start download here
+      print("download started from skip method");
+      LocalHelper.downloadMedia(_mediaItem.extras['source'], _mediaItem.id);
+      // await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
-    onUpdateMediaItem(_mediaItem);
-    onPlay();
+    await onUpdateMediaItem(_mediaItem);
+    await onPlay();
   }
 
   @override
@@ -159,29 +176,51 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     if (_mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(_mediaItem.extras['source']);
+      await playFromLocal(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      // await _audioPlayer.setUrl(_mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
-    onUpdateMediaItem(_mediaItem);
-    onPlay();
+    await onUpdateMediaItem(_mediaItem);
+    await onPlay();
   }
 
   @override
   Future<void> onPlayMediaItem(MediaItem mediaItem) async {
     await _audioPlayer.stop();
+    _queueIndex = _queue.indexWhere((media) => media.id == mediaItem.id);
+    print(_queueIndex);
+    print(_mediaItem);
 
     if (mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(mediaItem.extras['source']);
+      print("playing from local");
+      await playFromLocal(mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
-      await _audioPlayer.setUrl(mediaItem.extras['source']);
+      print("playing from remote");
+      // await _audioPlayer.setUrl(mediaItem.extras['source']);
+      HlsAudioSource _hlsAudioSource = HlsAudioSource(
+        Uri.parse(_mediaItem.extras['source']),
+      );
+      await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
 
-    onUpdateMediaItem(mediaItem);
-    onPlay();
+    await onUpdateMediaItem(mediaItem);
+    await onPlay();
+  }
+
+  Future<void> playFromLocal(String source) async{
+    var dir = await LocalHelper.getLocalFilePath();
+    var filePathEnc = "$dir/${_mediaItem.id}/enc.key.aes";
+    var filePathDec = "$dir/${_mediaItem.id}/enc.key";
+    await LocalHelper.decryptFile(filePathEnc);
+    await _audioPlayer.setFilePath(source);
+    await LocalHelper.encryptFile(filePathDec);
   }
 
   @override
@@ -192,17 +231,18 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await save();
 
     // Broadcast that we've stopped.
-    await AudioServiceBackground.setState(
-      controls: [],
-      processingState: AudioProcessingState.stopped,
-      playing: false,
-    );
+
     // Clean up resources
     _queue = null;
     playerEventSubscription.cancel();
     await _audioPlayer.dispose();
     // Shutdown background task
     await super.onStop();
+    await AudioServiceBackground.setState(
+      controls: [],
+      processingState: AudioProcessingState.stopped,
+      playing: false,
+    );
   }
 
   @override
@@ -213,7 +253,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateQueue(List<MediaItem> mediaItems) async {
     _queue = mediaItems;
-    AudioServiceBackground.setQueue(_queue);
+    print("Onupdatequeue[queuelength]:${mediaItems.length}");
+    await AudioServiceBackground.setQueue(_queue);
   }
 
   /// This method sets background state with ease

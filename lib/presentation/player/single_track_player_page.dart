@@ -221,9 +221,14 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(Icons.shuffle, color: Colors.orange.shade300),
-          Icon(
-            Icons.skip_previous,
-            size: 34,
+          GestureDetector(
+            onTap: ()async{
+              await AudioService.skipToPrevious();
+            },
+            child: Icon(
+              Icons.skip_previous,
+              size: 34,
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -235,6 +240,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               setState(() {
                 _isPlaying = !_isPlaying;
               });
+              print("SingleTrackPlayerPage[isPlaying]: ${_isPlaying}");
             },
             child: Container(
               height: 50,
@@ -255,9 +261,14 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     ),
             ),
           ),
-          Icon(
-            Icons.skip_next,
-            size: 34,
+          GestureDetector(
+            onTap: ()async{
+              await AudioService.skipToNext();
+            },
+            child: Icon(
+              Icons.skip_next,
+              size: 34,
+            ),
           ),
           Icon(
             Icons.repeat,

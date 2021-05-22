@@ -5,7 +5,6 @@ import 'package:aes_crypt/aes_crypt.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ParseHls {
   final httpClient = new HttpClient();
@@ -13,6 +12,7 @@ class ParseHls {
   Future<HlsPlaylist> parseHLS(String m3u8String) async {
     try {
       // final String fileData = await rootBundle.loadString(m3u8String);
+      print(m3u8String);
       Uri playlistUri;
       var playlist;
       playlist =
@@ -26,35 +26,35 @@ class ParseHls {
 
   /// Download .m3u8 file from given url and reads it
   /// and saves it to local directory
-  Future<bool> writeLocalM3u8File(String url, String fileId) async {
+  Future<bool> writeLocalM3u8File(String path) async {
     try {
-      String dir = (Platform.isAndroid
-              ? await getExternalStorageDirectory()
-              : await getApplicationDocumentsDirectory())
-          .path;
-      String filePath = dir + '/' + fileId;
-      String filenameTxt = '/main.txt';
-      String filename = '/main.m3u8';
-      String keyFileName = '/enc.key';
+      // String dir = (Platform.isAndroid
+      //         ? await getExternalStorageDirectory()
+      //         : await getApplicationDocumentsDirectory())
+      //     .path;
+      // String filePath = dir + '/' + fileId;
+      // String filenameTxt = '/main.txt';
+      // String filename = '/main.m3u8';
+      // String keyFileName = '/enc.key';
 
       // create the dir to save the file
-      await createDir('$dir/$fileId');
+      // await createDir('$dir/$fileId');
 
       // download the file to the created folder
-      await downloadFile(url, filePath, filenameTxt);
-      print('////////////////////////// Downloading m3u8File finished');
+      // await downloadFile(url, filePath, filenameTxt);
+      // print('////////////////////////// Downloading m3u8File finished');
 
       // read m3u8 as string
-      String m3u8String = await m3u8StringLoader('$dir/$fileId/$filenameTxt');
-      int start = m3u8String.indexOf('URI');
-      int end = m3u8String.indexOf('IV');
-      String keyUrl = m3u8String.substring(start+5, end-2);
-      print(keyUrl);
-      await downloadFile(keyUrl, dir, keyFileName);
-      print('////////////////////////// Downloading key file finished');
-      m3u8String.replaceRange(start, end, '''URI="enc.key",''');
+      String m3u8String = await m3u8StringLoader(path);
+      // int start = m3u8String.indexOf('URI');
+      // int end = m3u8String.indexOf('IV');
+      // String keyUrl = m3u8String.substring(start+5, end-2);
+      // print(keyUrl);
+      // await downloadFile(keyUrl, dir, keyFileName);
+      // print('////////////////////////// Downloading key file finished');
+      // m3u8String.replaceRange(start, end, '''URI="enc.key",''');
       /// write [m3u8String] to local path
-      File file = File('$dir/$fileId/$filename');
+      File file = File(path);
       file.writeAsString(m3u8String);
       // File keyFile = File('$dir/$fileId/$keyFileName');
 
@@ -65,10 +65,11 @@ class ParseHls {
   }
 
   Future<String> downloadFile(String url, String dir, String filename) async {
-    print('/////////////////// DOWNLOAD STARTED from $url. . .');
+    print('/////////////////// DOWNLOAD STARTED from url: $url');
     try {
       /// Send request to [url]
       /// Write byte stream on [bytes]
+      httpClient.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
@@ -83,7 +84,6 @@ class ParseHls {
       }
       await file.writeAsBytes(bytes);
       print('/////////////////// DOWNLOAD FINISHED!');
-
       return file.path;
     } catch(error, stacktrace) {
       print(error);
@@ -94,31 +94,48 @@ class ParseHls {
 
   Future<bool> updateLocalM3u8(String filePath) async {
     String m3u8Text = await m3u8StringLoader(filePath);
+    if(m3u8Text.indexOf("EXT-X-KEY") == -1 ){
+      print("unencrypted m3u8");
+      return false;
+    }
     int start = m3u8Text.indexOf('URI');
     int end = m3u8Text.indexOf('IV');
     String keyUrl = m3u8Text.substring(start+5, end-2);
     print(keyUrl);
     print(m3u8Text.indexOf('''URI="/enc.key"'''));
+    print(m3u8Text.indexOf("EXT-X-KEY"));
+
     var keyPath = filePath.substring(0, filePath.indexOf("/main.m3u8"));
-    if(m3u8Text.indexOf('''URI="/enc.key"''') == -1){
-      await downloadFile(keyUrl, keyPath, 'enc.key');
-      print('////////////////////////// Downloading key file finished');
-      /// encrypt key
-      await encryptFile("${keyPath}/enc.key");
-      m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
-    }else{
-      /// decrypt key before playing
-      File file = new File("${keyPath}/enc.key.aes");
-      if(file.existsSync()){
-        // await decryptFile("${keyPath}/enc.key.aes");
+    if(m3u8Text.indexOf('''URI="/enc.key"''') == -1 ){
+      File fileEnc = new File("${keyPath}/enc.key.aes");
+      File fileOrig = new File("${keyPath}/enc.key");
+      if(fileEnc.existsSync() && fileOrig.existsSync()){
+        fileOrig.deleteSync();
+      }else if(fileEnc.existsSync() && !fileOrig.existsSync()){ /// check if only encrypted key exists
+        m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
+      }else if(!fileEnc.existsSync() && fileOrig.existsSync()){
+        await encryptFile("${keyPath}/enc.key");
       }else{
-        File file = new File("${keyPath}/enc.key");
-        if(!file.existsSync()){
+        await downloadFile(keyUrl, keyPath, 'enc.key');
+        print('////////////////////////// Downloading key file finished');
+        /// encrypt key
+        await encryptFile("${keyPath}/enc.key");
+        m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
+      }
+    }else{
+      /// Todo: decrypt key before playing
+      File file = new File("${keyPath}/enc.key.aes");
+      File fileOrig = new File("${keyPath}/enc.key");
+      if(file.existsSync() || fileOrig.existsSync()){
+        if(fileOrig.existsSync()){
+          await encryptFile("${keyPath}/enc.key");
+        }
+        m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
+      }else{
           await downloadFile(keyUrl, keyPath, 'enc.key');
           print('////////////////////////// Downloading key file finished');
           m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
           await encryptFile("${keyPath}/enc.key");
-        }
       }
     }
     print(m3u8Text);

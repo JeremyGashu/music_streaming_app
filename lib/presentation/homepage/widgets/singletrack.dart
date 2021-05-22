@@ -159,7 +159,7 @@ void playSingleTrack(BuildContext context, Track track,
   ParseHls parseHLS = ParseHls();
   HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(await parseHLS.downloadFile(track.data.trackUrl,'$dir/$id', "main.m3u8")).readAsStringSync());
   List<DownloadTask> downloadTasks = [];
-  print(hlsPlayList.segments);
+  // print(hlsPlayList.segments);
   hlsPlayList.segments.forEach((segment){
     var segmentIndex = hlsPlayList.segments.indexOf(segment);
      downloadTasks.add(DownloadTask(
@@ -175,7 +175,8 @@ void playSingleTrack(BuildContext context, Track track,
   // print(downloadTasks);
 
   print("trackDownloaded: $trackDownloaded");
-  if(trackDownloaded != null){
+  bool playFromLocal = trackDownloaded != null;
+  if(playFromLocal){
     /// TODO: check if all segments presented before playing from local storage
     print("playing from local");
     m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
@@ -199,8 +200,10 @@ void playSingleTrack(BuildContext context, Track track,
       extras: {'source': m3u8FilePath});
 
   if (AudioService.running) {
+    if(playFromLocal)
     await parseHLS.decryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key.aes");
     await AudioService.playFromMediaId(id);
+    if(playFromLocal)
     await parseHLS.encryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key");
   } else {
     if (await AudioService.start(
@@ -210,13 +213,14 @@ void playSingleTrack(BuildContext context, Track track,
       androidStopForegroundOnPause: true,
       androidEnableQueue: true,
     )) {
-      
       final List<MediaItem> queue = [];
       queue.add(_mediaItem);
       await AudioService.updateMediaItem(queue[0]);
       await AudioService.updateQueue(queue);
+      if(playFromLocal)
       await parseHLS.decryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key.aes");
       await AudioService.playFromMediaId(id);
+      if(playFromLocal)
       await parseHLS.encryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key");
       if (position != null) AudioService.seekTo(position);
     }
