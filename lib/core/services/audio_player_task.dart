@@ -69,6 +69,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
           break;
       }
     });
+
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   void _handlePlaybackCompleted() => hasNext ? onSkipToNext() : onStop();
@@ -86,9 +89,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPause() async {
+    debugPrint('CALLED METHOD => onPause');
     if (_audioPlayer.processingState == ProcessingState.loading ||
         _audioPlayer.playing) {
-      _audioPlayer.pause();
+      await _audioPlayer.pause();
       // Save the current player position in seconds.
       await prefs.setInt('position', _audioPlayer.position.inSeconds);
     }
@@ -101,6 +105,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> onSkipToPrevious() => skip(-1);
 
   Future<void> skip(int offset) async {
+    debugPrint('CALLED METHOD => skip');
+    debugPrint("CURRENT INDEX => " + _queueIndex.toString());
+    debugPrint("CURRENT QUEUE LENGTH => " + _queue.length.toString());
     final newIndex = _queueIndex + offset;
     print("Queue index: ${_queueIndex}");
     print("Playing index: ${newIndex}");
@@ -142,6 +149,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     /// Broadcast that we're seeking.
     _setState(state: AudioServiceBackground.state.processingState);
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -166,6 +175,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
         break;
       default:
     }
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -237,6 +248,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
     playerEventSubscription.cancel();
     await _audioPlayer.dispose();
     // Shutdown background task
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
     await super.onStop();
     await AudioServiceBackground.setState(
       controls: [],
@@ -247,7 +260,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onUpdateMediaItem(MediaItem mediaItem) async {
-    AudioServiceBackground.setMediaItem(mediaItem);
+    await AudioServiceBackground.setMediaItem(mediaItem);
+    debugPrint(
+        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override

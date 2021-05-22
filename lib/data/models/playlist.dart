@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+
 
 class Playlist extends Equatable {
   final Metadata mMetadata;
@@ -51,12 +53,11 @@ class Metadata extends Equatable {
     List<Links> linksList = list.map((e) => Links.fromJson(e)).toList();
 
     return Metadata(
-      page: json['page'],
-      perPage: json['per_page'],
-      pageCount: json['page_count'],
-      totalCount: json['total_count'],
-      links: linksList
-    );
+        page: json['page'],
+        perPage: json['per_page'],
+        pageCount: json['page_count'],
+        totalCount: json['total_count'],
+        links: linksList);
   }
 
   Map<String, dynamic> toJson() {
@@ -109,14 +110,31 @@ class Links extends Equatable {
 
 class Data extends Equatable {
   final String id;
+
   final String title;
+
+  @HiveField(2)
   final String createdBy;
+
+  @HiveField(3)
   final String description;
+
+  @HiveField(4)
   final String coverImg;
+
+  @HiveField(5)
   final String type;
+
+  @HiveField(6)
   final int views;
+
+  @HiveField(7)
   final int trackCount;
+
+  @HiveField(8)
   final int likes;
+
+  @HiveField(9)
   final String createdAt;
 
   Data(

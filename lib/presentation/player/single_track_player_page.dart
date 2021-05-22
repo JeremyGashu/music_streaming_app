@@ -26,8 +26,6 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
 
-  bool _isPlaying = true;
-
   @override
   void initState() {
     super.initState();
@@ -70,40 +68,42 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<MediaItem>(
-          stream: AudioService.currentMediaItemStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _nowPlayingWidget(mediaItem: snapshot.data);
-            }
-            return FutureBuilder<SharedPreferences>(
-              future: sharedPreferences,
-              builder: (context, prefSnapshot) {
-                if (prefSnapshot.hasData) {
-                  final prefs = prefSnapshot.data;
-                  if (prefs.containsKey('id')) {
-                    final mediaItem = MediaItem(
-                      id: prefs.getString('id'),
-                      album: prefs.getString('album'),
-                      title: prefs.getString('title'),
-                      artist: prefs.getString('artist'),
-                      duration: Duration(seconds: prefs.getInt('duration')),
-                      genre: prefs.getString('genre'),
-                      artUri: Uri.parse(prefs.getString('artUri')),
-                      extras: {'source': prefs.getString('source')},
-                    );
-                    return SingleChildScrollView(
-                      child: _nowPlayingWidget(
-                          mediaItem: mediaItem, loadFromPrefs: prefs),
-                    );
+      body: SafeArea(
+        child: StreamBuilder<MediaItem>(
+            stream: AudioService.currentMediaItemStream,
+            builder: (ctx, snapshot) {
+              if (snapshot.hasData) {
+                return _nowPlayingWidget(mediaItem: snapshot.data);
+              }
+              return FutureBuilder<SharedPreferences>(
+                future: sharedPreferences,
+                builder: (ctx, prefSnapshot) {
+                  if (prefSnapshot.hasData) {
+                    final prefs = prefSnapshot.data;
+                    if (prefs.containsKey('id')) {
+                      final mediaItem = MediaItem(
+                        id: prefs.getString('id'),
+                        album: prefs.getString('album'),
+                        title: prefs.getString('title'),
+                        artist: prefs.getString('artist'),
+                        duration: Duration(seconds: prefs.getInt('duration')),
+                        genre: prefs.getString('genre'),
+                        artUri: Uri.parse(prefs.getString('artUri')),
+                        extras: {'source': prefs.getString('source')},
+                      );
+                      return SingleChildScrollView(
+                        child: _nowPlayingWidget(
+                            mediaItem: mediaItem, loadFromPrefs: prefs),
+                      );
+                    }
                   }
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            );
-          }),
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              );
+            }),
+      ),
     );
   }
 
@@ -111,7 +111,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       {MediaItem mediaItem, SharedPreferences loadFromPrefs}) {
     return Column(
       children: [
-        _songImage(),
+        _songImage(context),
         Spacer(),
         _songTitleRow(),
 
@@ -221,51 +221,51 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(Icons.shuffle, color: Colors.orange.shade300),
-          GestureDetector(
-            onTap: ()async{
+          IconButton(
+            onPressed: () async {
               await AudioService.skipToPrevious();
             },
-            child: Icon(
+            icon: Icon(
               Icons.skip_previous,
               size: 34,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              if (_isPlaying) {
-                AudioService.pause();
-              } else {
-                play(widget.track, preferences);
-              }
-              setState(() {
-                _isPlaying = !_isPlaying;
-              });
-              print("SingleTrackPlayerPage[isPlaying]: ${_isPlaying}");
-            },
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.orange.shade300),
-              child: _isPlaying
-                  ? Icon(
-                      Icons.pause,
-                      color: Colors.white,
-                      size: 38,
-                    )
-                  : Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 38,
-                    ),
-            ),
-          ),
-          GestureDetector(
-            onTap: ()async{
+          StreamBuilder<PlaybackState>(
+              stream: AudioService.playbackStateStream,
+              builder: (context, snapshot) {
+                return GestureDetector(
+                  onTap: () async {
+                    if (snapshot.hasData && snapshot.data.playing) {
+                      await AudioService.pause();
+                    } else {
+                      play(widget.track, preferences);
+                    }
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.orange.shade300),
+                    child: snapshot.hasData && snapshot.data.playing
+                        ? Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                            size: 38,
+                          )
+                        : Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 38,
+                          ),
+                  ),
+                );
+              }),
+          IconButton(
+            onPressed: () async {
               await AudioService.skipToNext();
             },
-            child: Icon(
+            icon: Icon(
               Icons.skip_next,
               size: 34,
             ),
@@ -321,24 +321,22 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Container _songImage() {
+  Container _songImage(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 380,
-      child: Image(
-        image: AssetImage(
-          'assets/images/artist_one.jpg',
-        ),
+      height: MediaQuery.of(context).size.height * 0.4,
+      child: Image.asset(
+        'assets/images/artist_one.jpg',
         fit: BoxFit.cover,
       ),
     );
   }
 
-  play(Track track, SharedPreferences prefs) {
+  play(Track track, SharedPreferences prefs) async {
     if (!AudioService.running && prefs != null) {
       final position = Duration(seconds: prefs.getInt('position'));
       playSingleTrack(context, track, position);
     } else
-      AudioService.play();
+      await AudioService.play();
   }
 }

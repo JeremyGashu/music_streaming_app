@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/core/app/urls.dart';
 
 var testData = '''
 {
@@ -39,10 +40,15 @@ class PlaylistDataProvider {
 
   PlaylistDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getPlaylists() async {
-    // http.Response response = await client.get(Uri.parse(
-    //     'https://endpoint/playlist/popular?x&page=0&per_page=10&sort=asc'));
-
-    return http.Response(testData, 200);
+  Future<http.Response> getPlaylists(
+      {int page, int perPage, String sort, String sortKey}) async {
+    page ??= 0;
+    perPage ??= 10;
+    sort ??= 'ASC';
+    sortKey ??= 'title';
+    String url =
+        '$BASE_URL/playlists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+    http.Response response = await client.get(Uri.parse(url));
+    return response;
   }
 }

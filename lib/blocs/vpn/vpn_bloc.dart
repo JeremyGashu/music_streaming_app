@@ -6,12 +6,14 @@ import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 
 class VPNBloc extends Bloc<VPNEvent, VPNState> {
-  VPNBloc() : super(InitialVPNState());
+  Timer _timer;
+  VPNBloc() : super(InitialVPNState()) {}
 
   @override
   Stream<VPNState> mapEventToState(VPNEvent event) async* {
     if (event is StartListening) {
-      Timer.periodic(Duration(seconds: event.intervalInSeconds), (timer) async {
+      _timer = Timer.periodic(Duration(seconds: event.intervalInSeconds),
+          (timer) async {
         bool status = await CheckVpnConnection.isVpnActive();
         if (status) {
           // print('VPN Enabled!');
@@ -26,5 +28,11 @@ class VPNBloc extends Bloc<VPNEvent, VPNState> {
     } else if (event is VPNDisabledEvent) {
       yield VPNDisabled();
     }
+  }
+
+  @override
+  Future<void> close() {
+    _timer.cancel();
+    return super.close();
   }
 }

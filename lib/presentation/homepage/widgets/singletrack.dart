@@ -6,11 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
-import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
-import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
@@ -20,6 +17,9 @@ import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 class SingleTrack extends StatefulWidget {
+  final Track track;
+  SingleTrack({@required this.track});
+
   @override
   _SingleTrackState createState() => _SingleTrackState();
 }
@@ -29,114 +29,84 @@ class _SingleTrackState extends State<SingleTrack> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: BlocBuilder<TrackBloc, TrackState>(
-        builder: (ctx, state) {
-          if (state is LoadedTrack) {
-            return GestureDetector(
-              onTap: () {
-                /// Start playing the audio
-                playSingleTrack(context, state.track);
-                /// Pass the track data to [SingletrackPlayer] page
-                /// using state.track
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            SingleTrackPlayerPage(track: state.track)));
-              },
-              child: Container(
-                width: 140,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 140,
-                        height: 120,
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 3.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: Image.asset(
-                              'assets/images/singletrack_one.jpg',
-                              width: 140.0,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 5.0),
-                                child: Text(
-                                  'Amelkalew',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.0),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2.0),
-                                child: Text(
-                                  'Dawit Getachew',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: kGray,
-                                      fontSize: 12.0),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Text(
-                              '04:13',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: kYellow,
-                                  fontSize: 12.0),
-                            ),
-                          )
-                        ],
-                      )
-                    ]),
-              ),
-            );
-          } else if (state is LoadingTrackError) {
-            return Center(
-              child: Text(
-                'Failed Loading playlists!',
-              ),
-            );
-          } else if (state is LoadingTrack) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey,
-              highlightColor: Colors.grey.withOpacity(0.5),
-              child: Center(
-                child: Text(
-                  'Loading...',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: () {
+          /// Start playing the audio
+          playSingleTrack(context, widget.track);
+
+          /// Pass the track data to [SingletrackPlayer] page
+          /// using state.track
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SingleTrackPlayerPage(track: widget.track)));
+        },
+        child: Container(
+          width: 140,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              width: 140,
+              height: 120,
+              child: Card(
+                margin: EdgeInsets.zero,
+                elevation: 3.0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.asset(
+                    'assets/images/singletrack_one.jpg',
+                    width: 140.0,
+                    height: 120,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-            );
-          } else {
-            return Container();
-          }
-        },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text(
+                        'Amelkalew',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14.0),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2.0),
+                      child: Text(
+                        'Dawit Getachew',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: kGray,
+                            fontSize: 12.0),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Text(
+                    '04:13',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: kYellow,
+                        fontSize: 12.0),
+                  ),
+                )
+              ],
+            )
+          ]),
+        ),
       ),
     );
   }
@@ -199,6 +169,39 @@ void playSingleTrack(BuildContext context, Track track,
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
 
+  MediaItem _mediaItem2 = MediaItem(
+      id: track.data.id + '2',
+      album: track.data.albumId,
+      title: track.data.title,
+      genre: 'genre goes here',
+      artist: track.data.artistId,
+      duration: Duration(milliseconds: track.data.duration),
+      artUri: Uri.parse(track.data.coverImgUrl),
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
+
+  MediaItem _mediaItem3 = MediaItem(
+      id: track.data.id + '3',
+      album: track.data.albumId,
+      title: track.data.title,
+      genre: 'genre goes here',
+      artist: track.data.artistId,
+      duration: Duration(milliseconds: track.data.duration),
+      artUri: Uri.parse(track.data.coverImgUrl),
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
+
+  MediaItem _mediaItem4 = MediaItem(
+      id: track.data.id + '4',
+      album: track.data.albumId,
+      title: track.data.title,
+      genre: 'genre goes here',
+      artist: track.data.artistId,
+      duration: Duration(milliseconds: track.data.duration),
+      artUri: Uri.parse(track.data.coverImgUrl),
+      // extras: {'source': m3u8FilePath});
+      extras: {'source': track.data.trackUrl});
+
   if (AudioService.running) {
     if(playFromLocal)
     await parseHLS.decryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key.aes");
@@ -215,13 +218,15 @@ void playSingleTrack(BuildContext context, Track track,
     )) {
       final List<MediaItem> queue = [];
       queue.add(_mediaItem);
+      queue.add(_mediaItem2);
+      queue.add(_mediaItem3);
+      queue.add(_mediaItem4);
+
       await AudioService.updateMediaItem(queue[0]);
       await AudioService.updateQueue(queue);
-      if(playFromLocal)
-      await parseHLS.decryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key.aes");
+
       await AudioService.playFromMediaId(id);
-      if(playFromLocal)
-      await parseHLS.encryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key");
+
       if (position != null) AudioService.seekTo(position);
     }
   }
