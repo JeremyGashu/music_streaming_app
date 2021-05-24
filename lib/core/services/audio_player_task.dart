@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 
 final playControl = MediaControl(
   androidIcon: 'drawable/ic_action_play_arrow',
@@ -28,7 +29,7 @@ final skipToNextControl = MediaControl(
 
 class AudioPlayerTask extends BackgroundAudioTask {
   final _audioPlayer = AudioPlayer();
-  int _queueIndex = -1;
+  int _queueIndex = 0;
   static int clickDelay = 0;
 
   List<MediaItem> _queue = <MediaItem>[];
@@ -79,7 +80,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPlay() async {
-    await _audioPlayer.play();
+    _audioPlayer.play();
+    AudioServiceBackground.setState(
+        controls: [MediaControl.pause, MediaControl.stop],
+        playing: true,
+        processingState: AudioProcessingState.ready);
   }
 
   @override
@@ -104,6 +109,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
     debugPrint("CURRENT INDEX => " + _queueIndex.toString());
     debugPrint("CURRENT QUEUE LENGTH => " + _queue.length.toString());
     final newIndex = _queueIndex + offset;
+    print("Queue index: ${_queueIndex}");
+    print("Playing index: ${newIndex}");
+    print("queue length: ${_queue.length}");
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
 
     await _audioPlayer.stop();
@@ -118,20 +126,20 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     if (_mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(_mediaItem.extras['source']);
+      await playFromLocal(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
+      // TODO: start download here
+      print("download started from skip method");
+      LocalHelper.downloadMedia(_mediaItem.extras['source'], _mediaItem.id);
+      // await _audioPlayer.setUrl(_mediaItem.extras['source']);
       HlsAudioSource _hlsAudioSource = HlsAudioSource(
         Uri.parse(_mediaItem.extras['source']),
       );
       await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
     await onUpdateMediaItem(_mediaItem);
-    debugPrint("NEXT PLAYING => " + _queueIndex.toString());
     await onPlay();
-
-    debugPrint(
-        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
@@ -179,9 +187,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     if (_mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(_mediaItem.extras['source']);
+      await playFromLocal(_mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
+      // await _audioPlayer.setUrl(_mediaItem.extras['source']);
       HlsAudioSource _hlsAudioSource = HlsAudioSource(
         Uri.parse(_mediaItem.extras['source']),
       );
@@ -189,19 +198,23 @@ class AudioPlayerTask extends BackgroundAudioTask {
     }
     await onUpdateMediaItem(_mediaItem);
     await onPlay();
-    debugPrint(
-        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   @override
   Future<void> onPlayMediaItem(MediaItem mediaItem) async {
     await _audioPlayer.stop();
+    _queueIndex = _queue.indexWhere((media) => media.id == mediaItem.id);
+    print(_queueIndex);
+    print(_mediaItem);
 
     if (mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
-      await _audioPlayer.setFilePath(mediaItem.extras['source']);
+      print("playing from local");
+      await playFromLocal(mediaItem.extras['source']);
     } else {
       /// To play directly from the given url in [MediaItem]
+      print("playing from remote");
+      // await _audioPlayer.setUrl(mediaItem.extras['source']);
       HlsAudioSource _hlsAudioSource = HlsAudioSource(
         Uri.parse(_mediaItem.extras['source']),
       );
@@ -210,8 +223,15 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
     await onUpdateMediaItem(mediaItem);
     await onPlay();
-    debugPrint(
-        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
+  }
+
+  Future<void> playFromLocal(String source) async{
+    var dir = await LocalHelper.getLocalFilePath();
+    var filePathEnc = "$dir/${_mediaItem.id}/enc.key.aes";
+    var filePathDec = "$dir/${_mediaItem.id}/enc.key";
+    await LocalHelper.decryptFile(filePathEnc);
+    await _audioPlayer.setFilePath(source);
+    await LocalHelper.encryptFile(filePathDec);
   }
 
   @override
@@ -222,11 +242,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await save();
 
     // Broadcast that we've stopped.
-    await AudioServiceBackground.setState(
-      controls: [],
-      processingState: AudioProcessingState.stopped,
-      playing: false,
-    );
+
     // Clean up resources
     _queue = null;
     playerEventSubscription.cancel();
@@ -235,6 +251,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
     debugPrint(
         'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
     await super.onStop();
+    await AudioServiceBackground.setState(
+      controls: [],
+      processingState: AudioProcessingState.stopped,
+      playing: false,
+    );
   }
 
   @override
@@ -247,9 +268,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateQueue(List<MediaItem> mediaItems) async {
     _queue = mediaItems;
+    print("Onupdatequeue[queuelength]:${mediaItems.length}");
     await AudioServiceBackground.setQueue(_queue);
-    debugPrint(
-        'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
   /// This method sets background state with ease
@@ -258,6 +278,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   void _setState({@required AudioProcessingState state}) {
     AudioServiceBackground.setState(
       controls: getControls(),
+      // systemActions: [MediaAction.seekTo],
       processingState: state,
       playing: _audioPlayer.playing,
       position: _audioPlayer.position,

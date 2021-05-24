@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -42,6 +43,9 @@ void main() async {
   Bloc.observer = SimpleBlocObserver();
 
   await Hive.initFlutter();
+  await FlutterDownloader.initialize(
+    debug: true
+  );
 
 
   await Firebase.initializeApp();
@@ -65,7 +69,7 @@ void main() async {
   /// initialize [MediaDownloaderBLoc]
   MediaDownloaderBloc _mediaDownloaderBloc = MediaDownloaderBloc();
   LocalDatabaseBloc _localDatabaseBloc =
-      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc);
+      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)..add(InitLocalDB());
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (context) =>
@@ -73,7 +77,7 @@ void main() async {
     ),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
-    BlocProvider(create: (context) => _localDatabaseBloc..add(InitLocalDB())),
+    BlocProvider(create: (context) => _localDatabaseBloc),
     BlocProvider(
         create: (context) => _userLocationBloc..add(UserLocationEvent.Init)),
     BlocProvider(

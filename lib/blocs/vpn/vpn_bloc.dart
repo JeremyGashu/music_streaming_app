@@ -16,10 +16,10 @@ class VPNBloc extends Bloc<VPNEvent, VPNState> {
           (timer) async {
         bool status = await CheckVpnConnection.isVpnActive();
         if (status) {
-          print('VPN Enabled!');
+          // print('VPN Enabled!');
           add(VPNEnabledEvent());
         } else {
-          print('VPN Disabled!');
+          // print('VPN Disabled!');
           add(VPNDisabledEvent());
         }
       });

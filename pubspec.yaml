@@ -44,10 +44,14 @@ dependencies:
   path: ^1.8.0
   hive: ^2.0.2
   hive_flutter: ^1.0.0
-  firebase_messaging: ^9.1.0
+  firebase_messaging: ^10.0.0
   location: ^4.1.1
   mockito: ^5.0.4
   check_vpn_connection : ^0.0.1
+  aes_crypt: ^0.1.1
+  cached_network_image: ^3.0.0
+  modal_bottom_sheet: ^2.0.0
+  flutter_spinkit: ^4.1.2
   flutter_local_notifications: ^5.0.0+1
   connectivity: ^3.0.3
 

@@ -1,6 +1,17 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
+import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
+import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
@@ -103,13 +114,49 @@ class _SingleTrackState extends State<SingleTrack> {
 
 void playSingleTrack(BuildContext context, Track track,
     [Duration position]) async {
-  // String dir = (Theme.of(context).platform == TargetPlatform.android
-  //         ? await getExternalStorageDirectory()
-  //         : await getApplicationDocumentsDirectory())
-  //     .path;
-  // String m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
+  String dir = (Theme.of(context).platform == TargetPlatform.android
+      ? await getExternalStorageDirectory()
+      : await getApplicationDocumentsDirectory())
+      .path;
+  var m3u8FilePath;
 
   final id = track.data.id;
+
+  var box = Hive.lazyBox("downloadedMedias");
+  var trackDownloaded = await box.get("$id");
+  print("ID: $id");
+
+  ParseHls parseHLS = ParseHls();
+  HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(await parseHLS.downloadFile(track.data.trackUrl,'$dir/$id', "main.m3u8")).readAsStringSync());
+  List<DownloadTask> downloadTasks = [];
+  // print(hlsPlayList.segments);
+  hlsPlayList.segments.forEach((segment){
+    var segmentIndex = hlsPlayList.segments.indexOf(segment);
+     downloadTasks.add(DownloadTask(
+      track_id: id,
+      segment_number: segmentIndex,
+      downloadType: DownloadType.media,
+      downloaded: false,
+      download_path: '$dir/${track.data.id}/',
+      url: segment.url
+    ));
+  });
+  // print("DownloadTasks: ");
+  // print(downloadTasks);
+
+  print("trackDownloaded: $trackDownloaded");
+  bool playFromLocal = trackDownloaded != null;
+  if(playFromLocal){
+    /// TODO: check if all segments presented before playing from local storage
+    print("playing from local");
+    m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
+    await parseHLS.updateLocalM3u8(m3u8FilePath);
+  }else{
+    print("playing from remote");
+    m3u8FilePath = track.data.trackUrl;
+    /// TODO: Start download here
+    BlocProvider.of<MediaDownloaderBloc>(context).add(AddDownload(downloadTasks: downloadTasks));
+  }
 
   MediaItem _mediaItem = MediaItem(
       id: track.data.id,
@@ -120,7 +167,7 @@ void playSingleTrack(BuildContext context, Track track,
       duration: Duration(milliseconds: track.data.duration),
       artUri: Uri.parse(track.data.coverImgUrl),
       // extras: {'source': m3u8FilePath});
-      extras: {'source': track.data.trackUrl});
+      extras: {'source': m3u8FilePath});
 
   MediaItem _mediaItem2 = MediaItem(
       id: track.data.id + '2',
@@ -156,7 +203,11 @@ void playSingleTrack(BuildContext context, Track track,
       extras: {'source': track.data.trackUrl});
 
   if (AudioService.running) {
+    if(playFromLocal)
+    await parseHLS.decryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key.aes");
     await AudioService.playFromMediaId(id);
+    if(playFromLocal)
+    await parseHLS.encryptFile("${await LocalHelper.getFilePath(context)}/$id/enc.key");
   } else {
     if (await AudioService.start(
       backgroundTaskEntrypoint: backgroundTaskEntryPoint,
