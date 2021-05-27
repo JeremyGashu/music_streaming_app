@@ -167,10 +167,24 @@ class _HomePageState extends State<HomePage> {
                   } else if (state is LoadingPlaylistError) {
                     return Center(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Error Loading Playlist!'),
+                          Text(
+                            'Error Loading Playlist!',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           IconButton(
-                              icon: Icon(Icons.update),
+                              icon: Icon(
+                                Icons.update,
+                                color: Colors.redAccent.withOpacity(0.8),
+                                size: 45,
+                              ),
                               onPressed: () {
                                 BlocProvider.of<PlaylistBloc>(context)
                                     .add(LoadPlaylists());
