@@ -9,6 +9,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
+import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
+import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
@@ -23,9 +25,11 @@ import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
+import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_profie_page.dart';
+import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
@@ -36,6 +40,7 @@ import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
+import 'data/data_provider/auth_dataprovider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,10 +48,7 @@ void main() async {
   Bloc.observer = SimpleBlocObserver();
 
   await Hive.initFlutter();
-  await FlutterDownloader.initialize(
-    debug: true
-  );
-
+  await FlutterDownloader.initialize(debug: true);
 
   await Firebase.initializeApp();
   await initMessaging();
@@ -54,6 +56,9 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.log(details.toString());
   };
+
+  final _authRepo =
+      AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
 
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
@@ -69,11 +74,15 @@ void main() async {
   /// initialize [MediaDownloaderBLoc]
   MediaDownloaderBloc _mediaDownloaderBloc = MediaDownloaderBloc();
   LocalDatabaseBloc _localDatabaseBloc =
-      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)..add(InitLocalDB());
+      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)
+        ..add(InitLocalDB());
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (context) =>
           AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
+    ),
+    BlocProvider(
+      create: (context) => AuthBloc(authRepository: _authRepo),
     ),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
@@ -118,82 +127,97 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserLocationBloc, UserLocationState>(
-      listener: (context, state) {
-        if (state is UserLocationLoadFailed) {
-          showDialog<void>(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) {
-              return LocationDisabledPage();
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          return BlocListener<UserLocationBloc, UserLocationState>(
+            listener: (context, state) {
+              if (state is UserLocationLoadFailed) {
+                showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) {
+                    return LocationDisabledPage();
+                  },
+                );
+              }
             },
+            child: BlocBuilder<VPNBloc, VPNState>(
+              buildWhen: (prev, current) => prev != current,
+              builder: (ctx, state) {
+                if (state is VPNDisabled) {
+                  return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'Streaming App',
+                      home: Scaffold(
+                        body: _widgets[_currentIndex],
+                        bottomNavigationBar: BottomNavigationBar(
+                          currentIndex: _currentIndex,
+                          onTap: (index) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                          },
+                          items: [
+                            BottomNavigationBarItem(
+                              label: '',
+                              icon: Icon(
+                                Icons.home,
+                                color: _currentIndex == 0
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ),
+                            BottomNavigationBarItem(
+                              label: '',
+                              icon: Icon(
+                                Icons.search,
+                                color: _currentIndex == 1
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ),
+                            BottomNavigationBarItem(
+                              label: '',
+                              icon: Icon(
+                                Icons.library_books_outlined,
+                                color: _currentIndex == 2
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ),
+                            BottomNavigationBarItem(
+                              label: '',
+                              icon: Icon(
+                                Icons.person,
+                                color: _currentIndex == 3
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ));
+                } else if (state is VPNEnabled) {
+                  return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'Streaming App',
+                      home: Scaffold(body: VPNEnabledPage()));
+                }
+                return Container();
+                // return AudioServiceWidget(child: HomePage());
+              },
+            ), //Search(),
+            //Library(),
+            //ArtistPage(),
           );
+        } else {
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Streaming App',
+              home: WelcomePage());
         }
       },
-      child: BlocBuilder<VPNBloc, VPNState>(
-        buildWhen: (prev, current) => prev != current,
-        builder: (ctx, state) {
-          if (state is VPNDisabled) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Material App',
-                home: Scaffold(
-                  body: _widgets[_currentIndex],
-                  bottomNavigationBar: BottomNavigationBar(
-                    currentIndex: _currentIndex,
-                    onTap: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    items: [
-                      BottomNavigationBarItem(
-                        label: '',
-                        icon: Icon(
-                          Icons.home,
-                          color:
-                              _currentIndex == 0 ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      BottomNavigationBarItem(
-                        label: '',
-                        icon: Icon(
-                          Icons.search,
-                          color:
-                              _currentIndex == 1 ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      BottomNavigationBarItem(
-                        label: '',
-                        icon: Icon(
-                          Icons.library_books_outlined,
-                          color:
-                              _currentIndex == 2 ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      BottomNavigationBarItem(
-                        label: '',
-                        icon: Icon(
-                          Icons.person,
-                          color:
-                              _currentIndex == 3 ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ));
-          } else if (state is VPNEnabled) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Material App',
-                home: Scaffold(body: VPNEnabledPage()));
-          }
-          return Container();
-          // return AudioServiceWidget(child: HomePage());
-        },
-      ), //Search(),
-      //Library(),
-      //ArtistPage(),
     );
   }
 }

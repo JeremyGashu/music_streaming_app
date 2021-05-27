@@ -147,8 +147,8 @@ class _HomePageState extends State<HomePage> {
               child: BlocBuilder<PlaylistBloc, PlaylistState>(
                 builder: (ctx, state) {
                   if (state is LoadingPlaylist) {
-                    return ListView(
-                      scrollDirection: Axis.horizontal,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         LoadingPlaylistShimmer(),
                         LoadingPlaylistShimmer(),
