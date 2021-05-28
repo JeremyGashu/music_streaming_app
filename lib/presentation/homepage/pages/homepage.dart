@@ -22,6 +22,7 @@ import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shi
 import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
+import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
 
 /// Move this function to the parent of this widget if
 /// starting audio_service fails(NotConnected error)
@@ -239,7 +240,12 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Ad(size),
-            _sectionTitle(title: "Albums", callback: () {}),
+            _sectionTitle(
+                title: "Albums",
+                callback: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (ctx) => LibraryPage()));
+                }),
             Container(
               height: 200,
               child: ListView(
