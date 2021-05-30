@@ -85,7 +85,7 @@ class WelcomePage extends StatelessWidget {
                   height: 50.0,
                   child: SignInButtonBuilder(
                     text: 'Sign up with Google',
-                    image: Image.asset('assets/images/google_icon.jpg'),
+                    image: Image.asset('assets/images/google_icon.png'),
                     onPressed: () {},
                     width: kWidth(context),
                     height: 50.0,

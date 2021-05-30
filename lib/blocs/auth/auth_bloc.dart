@@ -42,9 +42,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             otp: event.otp,
             phoneNo: event.phoneNo,
           );
-          //TODO save the token here
+          //TODO save the token in hive here
           yield Authenticated(isAuthenticated: true, otp: event.otp);
-          // yield Authenticated(isAuthenticated: true, otp: otp);
         } else {
           yield OTPVerificationFailed(phoneNo: event.phoneNo);
         }
@@ -53,6 +52,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield AuthenticationError();
         throw Exception(e);
       }
+    } else if (event is LogOutEvent) {
+      //TODO clear the saved token from hive in here
+      yield Unauthenticated();
     }
   }
 }

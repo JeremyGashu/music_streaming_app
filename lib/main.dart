@@ -33,6 +33,7 @@ import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
+import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 import 'blocs/albums/album_bloc.dart';
@@ -113,11 +114,9 @@ class _MyAppState extends State<MyApp> {
   List<Widget> _widgets = [
     AudioServiceWidget(child: HomePage()),
     AudioServiceWidget(child: HomePage()),
-    AudioServiceWidget(child: HomePage()),
+    LibraryPage(),
     ArtistProfilePage(),
-    //Search(),
-    //Library(),
-    //ArtistPage(),
+    //Search(), 2
   ];
 
   @override
