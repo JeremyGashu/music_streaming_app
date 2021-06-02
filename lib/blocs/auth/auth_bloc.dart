@@ -13,11 +13,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is LoginEvent) {
-      yield SendingAuthData();
+    if (event is VerifyPhoneNumberEvent) {
+      yield SendingPhoneVerification();
       try {
         await Future.delayed(Duration(seconds: 3));
-        String otp = await authRepository.sendAuthData(phoneNo: event.phoneNo);
+        String otp =
+            await authRepository.verifyPhoneNumber(phoneNo: event.phoneNo);
         if (otp != '') {
           yield OTPReceived(otp: otp, phoneNo: event.phoneNo);
           // yield Authenticated(isAuthenticated: true, otp: otp);
@@ -42,8 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             otp: event.otp,
             phoneNo: event.phoneNo,
           );
-          //TODO save the token in hive here
-          yield Authenticated(isAuthenticated: true, otp: event.otp);
+          // yield Authenticated(isAuthenticated: true, otp: event.otp);
         } else {
           yield OTPVerificationFailed(phoneNo: event.phoneNo);
         }

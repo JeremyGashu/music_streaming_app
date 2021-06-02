@@ -1,0 +1,2 @@
+final String BEARER_TOKEN =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjI2MzYwMDYsInBob25lIjoiMDk0MjE4NzQzNiIsInJvbGUiOiIifQ.6NhrL1Gc9p9BJqKN8f-qQ6TzLmk6j-kxfjTKe1N0V4k';

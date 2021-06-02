@@ -22,9 +22,9 @@ class SendOTPVerification extends AuthEvent {
   List<Object> get props => [phoneNo, otp];
 }
 
-class LoginEvent extends AuthEvent {
+class VerifyPhoneNumberEvent extends AuthEvent {
   final String phoneNo;
-  LoginEvent({@required this.phoneNo}) : assert(phoneNo != null);
+  VerifyPhoneNumberEvent({@required this.phoneNo}) : assert(phoneNo != null);
   @override
   List<Object> get props => [phoneNo];
 }

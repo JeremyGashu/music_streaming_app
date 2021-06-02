@@ -8,8 +8,9 @@ class AuthRepository {
   final AuthDataProvider dataProvider;
   AuthRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<String> sendAuthData({String phoneNo}) async {
-    http.Response authData = await dataProvider.sendAuthData(phoneNo: phoneNo);
+  Future<String> verifyPhoneNumber({String phoneNo}) async {
+    http.Response authData =
+        await dataProvider.verifyPhoneNumber(phoneNo: phoneNo);
     var otp = jsonDecode(authData.body)['data'];
     return otp;
   }

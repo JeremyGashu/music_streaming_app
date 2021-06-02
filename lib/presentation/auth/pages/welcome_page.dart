@@ -64,7 +64,12 @@ class WelcomePage extends StatelessWidget {
                     height: 50,
                     margin: EdgeInsets.only(bottom: 20),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PhoneInputPage()));
+                      },
                       child: Text('SIGN UP', style: TextStyle(color: kBlack)),
                       style: ButtonStyle(
                           shape:

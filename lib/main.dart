@@ -13,6 +13,7 @@ import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
+import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
@@ -23,6 +24,7 @@ import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
@@ -34,6 +36,7 @@ import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
 import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
+import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 import 'blocs/albums/album_bloc.dart';
@@ -42,6 +45,7 @@ import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
 import 'data/data_provider/auth_dataprovider.dart';
+import 'data/repository/signup_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +64,8 @@ void main() async {
 
   final _authRepo =
       AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
+  final _signUpRepo =
+      SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
 
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
@@ -78,6 +84,9 @@ void main() async {
       LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)
         ..add(InitLocalDB());
   runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (context) => SignUpBloc(signUpRepository: _signUpRepo),
+    ),
     BlocProvider(
       create: (context) =>
           AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
@@ -113,7 +122,7 @@ class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
   List<Widget> _widgets = [
     AudioServiceWidget(child: HomePage()),
-    AudioServiceWidget(child: HomePage()),
+    SearchPage(),
     LibraryPage(),
     ArtistProfilePage(),
     //Search(), 2
@@ -207,14 +216,13 @@ class _MyAppState extends State<MyApp> {
                 // return AudioServiceWidget(child: HomePage());
               },
             ), //Search(),
-            //Library(),
-            //ArtistPage(),
           );
         } else {
           return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Streaming App',
-              home: WelcomePage());
+            debugShowCheckedModeBanner: false,
+            title: 'Streaming App',
+            home: WelcomePage(),
+          );
         }
       },
     );
