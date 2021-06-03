@@ -13,6 +13,20 @@ class SignUpEvent extends AuthEvent {
   List<Object> get props => [phoneNo];
 }
 
+class CheckAuthOnStartUp extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class LoginEvent extends AuthEvent {
+  final String phone;
+  final String password;
+  LoginEvent({@required this.phone, @required this.password})
+      : assert(phone != null && password != null);
+  @override
+  List<Object> get props => [phone, password];
+}
+
 class SendOTPVerification extends AuthEvent {
   final String phoneNo;
   final String otp;

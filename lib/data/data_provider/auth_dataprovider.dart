@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/core/app/urls.dart';
 
 var testData = '''
 {
@@ -44,5 +47,12 @@ class AuthDataProvider {
       return http.Response(testVerificationData, 200);
     }
     return http.Response(testVerificationFailureData, 200);
+  }
+
+  Future<http.Response> loginUser({String phone, String password}) async {
+    http.Response response = await http.post(Uri.parse(LOGIN_URL),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({'phone': phone, 'password': password}));
+    return response;
   }
 }

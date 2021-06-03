@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:streaming_mobile/data/models/auth_data.dart';
 
 class AuthState extends Equatable {
   @override
@@ -16,32 +17,17 @@ class SendingPhoneVerification extends AuthState {
   List<Object> get props => [];
 }
 
-class Authenticated extends AuthState {
-  final bool isAuthenticated;
-  final String otp;
-  Authenticated({@required this.isAuthenticated, @required this.otp});
-  @override
-  List<Object> get props => [isAuthenticated, otp];
-}
-
-class Unauthenticated extends AuthState {
-  @override
-  List<Object> get props => [];
-}
-
 class VerifyingOTP extends AuthState {
   @override
   List<Object> get props => [];
 }
 
 class OTPVerified extends AuthState {
-  final String token;
   final String phoneNo;
   final String otp;
-  OTPVerified(
-      {@required this.token, @required this.otp, @required this.phoneNo});
+  OTPVerified({@required this.otp, @required this.phoneNo});
   @override
-  List<Object> get props => [token, otp, phoneNo];
+  List<Object> get props => [otp, phoneNo];
 }
 
 class OTPVerificationFailed extends AuthState {
@@ -64,4 +50,23 @@ class AuthenticationError extends AuthState {
   AuthenticationError({this.message}) : assert(message != null);
   @override
   List<Object> get props => [message];
+}
+
+class Authenticated extends AuthState {
+  final AuthData authData;
+  Authenticated({@required this.authData});
+  @override
+  List<Object> get props => [authData];
+}
+
+class Unauthenticated extends AuthState {
+  final AuthData authData;
+  Unauthenticated({@required this.authData});
+  @override
+  List<Object> get props => [authData];
+}
+
+class SendingLoginData extends AuthState {
+  @override
+  List<Object> get props => [];
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/data/data_provider/auth_dataprovider.dart';
+import 'package:streaming_mobile/data/models/auth_data.dart';
 
 class AuthRepository {
   final AuthDataProvider dataProvider;
@@ -20,5 +21,26 @@ class AuthRepository {
         await dataProvider.verifyOTP(phoneNo: phoneNo, otp: otp);
     var authToken = jsonDecode(verificationData.body)['data'];
     return authToken;
+  }
+
+  Future<AuthData> loginUser({String phone, String password}) async {
+    http.Response response = await dataProvider.loginUser(
+      password: password,
+      phone: phone,
+    );
+    var decodedResponse = jsonDecode(response.body);
+    if (decodedResponse['success']) {
+      return AuthData(
+          isAuthenticated: true,
+          phone: phone,
+          token: decodedResponse['data']['token'],
+          message: '');
+    }
+
+    return AuthData(
+      isAuthenticated: false,
+      phone: phone,
+      message: decodedResponse['errors']['title'],
+    );
   }
 }
