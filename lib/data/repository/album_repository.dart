@@ -46,16 +46,25 @@ class AlbumRepository {
       albums = await dataProvider.getAllAlbums(
           page: page, perPage: perPage, sort: sort, sortKey: sortKey);
 
-      print('getAlbums: online and saving data ' + albums.body);
-      print('CLEARING DATA BEFORE WRITING: ');
-      await albumBox.clear();
-      print('WRITING DATA: ');
-      await albumBox.add(albums.body);
-      decodeAlbums = jsonDecode(albums.body)['data']['data'] as List;
+      var decoded = jsonDecode(albums.body);
+      if (decoded['success']) {
+        print('getAlbums: online and saving data ' + albums.body);
+        print('getAlbums: CLEARING DATA BEFORE WRITING');
+        await albumBox.clear();
+        print('getAlbums: WRITING DATA: ');
+        await albumBox.add(albums.body);
+        decodeAlbums = jsonDecode(albums.body)['data']['data'] as List;
+      } else {
+        print(
+            'getAlbums: but can\'t save the data as it have errors in loading so I am returning the old valid cache' +
+                albums.body);
+        String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
+        print('getAlbums: offline and retrieving data... ' + albumCache);
+
+        decodeAlbums = jsonDecode(albumCache)['data']['data'] as List;
+      }
     } else {
       String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
-      print('getAlbums: offline and retrieving data... ' + albumCache);
-
       decodeAlbums = jsonDecode(albumCache)['data']['data'] as List;
     }
 

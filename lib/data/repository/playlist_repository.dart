@@ -39,13 +39,23 @@ class PlaylistRepository {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       playlists = await dataProvider.getPlaylists();
+      var decoded = jsonDecode(playlists.body);
+      if (decoded['success']) {
+        print('getPlaylists: online and saving data ' + playlists.body);
+        print('getPlaylists: CLEARING DATA BEFORE WRITING: ');
+        await playlistBox.clear();
+        print('getPlaylists: WRITING DATA: ');
+        await playlistBox.add(playlists.body);
+        decodedPlaylists = jsonDecode(playlists.body)['data']['data'] as List;
+      } else {
+        print(
+            'getPlaylists: but can\'t save the data as it have errors in loading so I am returning the old valid cache ' +
+                playlists.body);
+        String playlistCache =
+            playlistBox.get(0, defaultValue: defaultPlaylistStringValue);
 
-      print('getPlaylists: online and saving data ' + playlists.body);
-      print('CLEARING DATA BEFORE WRITING: ');
-      await playlistBox.clear();
-      print('WRITING DATA: ');
-      await playlistBox.add(playlists.body);
-      decodedPlaylists = jsonDecode(playlists.body)['data']['data'] as List;
+        decodedPlaylists = jsonDecode(playlistCache)['data']['data'] as List;
+      }
     } else {
       String playlistCache =
           playlistBox.get(0, defaultValue: defaultPlaylistStringValue);

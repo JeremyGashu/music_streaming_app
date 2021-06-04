@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
@@ -22,11 +23,12 @@ import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
 
-/// Move this function to the parent of this widget if
 /// starting audio_service fails(NotConnected error)
 ///
 /// And also streamSubscription of [PlaybackStateStream] must be moved and
 /// instantiated in initState of the parent widget.
+import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
+
 backgroundTaskEntryPoint() {
   AudioServiceBackground.run(() => AudioPlayerTask());
 }
@@ -146,15 +148,15 @@ class _HomePageState extends State<HomePage> {
               child: BlocBuilder<PlaylistBloc, PlaylistState>(
                 builder: (ctx, state) {
                   if (state is LoadingPlaylist) {
-                    return ListView(
-                      scrollDirection: Axis.horizontal,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         LoadingPlaylistShimmer(),
                         LoadingPlaylistShimmer(),
                         LoadingPlaylistShimmer(),
                       ],
                     );
-                  } else {
+                  }  else if (state is LoadedPlaylist) {
                     return ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -162,8 +164,39 @@ class _HomePageState extends State<HomePage> {
                         PlayList(),
                         PlayList(),
                       ],
+                    );
+                  }else if (state is LoadingPlaylistError) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Error Loading Playlist!',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.update,
+                                color: Colors.redAccent.withOpacity(0.8),
+                                size: 45,
+                              ),
+                              onPressed: () {
+                                BlocProvider.of<PlaylistBloc>(context)
+                                    .add(LoadPlaylists());
+                              }),
+                        ],
+                      ),
                     );
                   }
+
+                  return Container();
+
                 },
               ),
             ),
@@ -208,7 +241,12 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Ad(size),
-            _sectionTitle(title: "Albums", callback: () {}),
+            _sectionTitle(
+                title: "Albums",
+                callback: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (ctx) => AlbumPage()));
+                }),
             Container(
               height: 200,
               child: ListView(

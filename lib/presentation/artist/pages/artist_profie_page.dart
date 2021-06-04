@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
+import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 
 class ArtistProfilePage extends StatelessWidget {
   @override
@@ -83,6 +86,17 @@ class ArtistProfilePage extends StatelessWidget {
                   size: 25,
                 ),
               ),
+
+              _listSelectorTiles(
+                  title: 'Log Out',
+                  icon: Icon(
+                    Icons.logout,
+                    color: Colors.purple,
+                    size: 25,
+                  ),
+                  onTap: () {
+                    BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
+                  }),
             ],
           ),
         ),
