@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
@@ -155,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                         LoadingPlaylistShimmer(),
                       ],
                     );
-                  } else { // else if (state is LoadedPlaylist) {
+                  } else {
                     return ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -165,23 +164,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     );
                   }
-                  // } else if (state is LoadingPlaylistError) {
-                  //   return Center(
-                  //     child: Column(
-                  //       children: [
-                  //         Text('Error Loading Playlist!'),
-                  //         IconButton(
-                  //             icon: Icon(Icons.update),
-                  //             onPressed: () {
-                  //               BlocProvider.of<PlaylistBloc>(context)
-                  //                   .add(LoadPlaylists());
-                  //             }),
-                  //       ],
-                  //     ),
-                  //   );
-                  // }
-
-                  return Container();
                 },
               ),
             ),

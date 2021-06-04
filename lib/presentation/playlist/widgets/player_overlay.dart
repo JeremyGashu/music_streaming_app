@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
@@ -203,26 +202,26 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
     );
   }
 
-  Widget _nextUpRow(MediaItem mediaItem) {
-    return Row(
-      children: [
-        Icon(
-          Icons.queue_music,
-          color: kRed,
-          size: 30.0,
-        ),
-        Text(
-          "Next: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(
-          "${mediaItem.artist}-${mediaItem.title}",
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        )
-      ],
-    );
-  }
+  // Widget _nextUpRow(MediaItem mediaItem) {
+  //   return Row(
+  //     children: [
+  //       Icon(
+  //         Icons.queue_music,
+  //         color: kRed,
+  //         size: 30.0,
+  //       ),
+  //       Text(
+  //         "Next: ",
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       ),
+  //       Text(
+  //         "${mediaItem.artist}-${mediaItem.title}",
+  //         overflow: TextOverflow.ellipsis,
+  //         maxLines: 1,
+  //       )
+  //     ],
+  //   );
+  // }
 
   Widget _controlButtonsRow(bool playing) {
     return GestureDetector(

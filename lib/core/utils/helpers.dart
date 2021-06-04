@@ -9,10 +9,8 @@ import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:streaming_mobile/blocs/local_database/local_database_bloc.dart';
-import 'package:streaming_mobile/blocs/local_database/local_database_event.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
-import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as mdm;
 import 'package:hive_flutter/hive_flutter.dart';
@@ -83,7 +81,7 @@ class LocalHelper{
         MediaDownloaderBloc mediaDownloaderBloc = MediaDownloaderBloc();
         mediaDownloaderBloc.add(InitializeDownloader());
         mediaDownloaderBloc.add(AddDownload(downloadTasks: downloadTasks));
-        LocalDatabaseBloc localDatabaseBloc = LocalDatabaseBloc(mediaDownloaderBloc: mediaDownloaderBloc);
+        LocalDatabaseBloc(mediaDownloaderBloc: mediaDownloaderBloc);
       }
     }catch(error, stacktrace){
       print("LocalHelper:[downloadMedia]: error: $error");

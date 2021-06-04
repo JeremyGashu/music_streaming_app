@@ -10,15 +10,12 @@ import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
-import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/player_overlay.dart';
@@ -129,8 +126,6 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   SharedPreferences sharedPreferences;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-
-  bool _isPlaying = false;
 
   @override
   void initState() {

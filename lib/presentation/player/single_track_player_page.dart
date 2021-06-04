@@ -5,13 +5,10 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
-import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
   // final Track track;
@@ -402,7 +399,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
 
   play(SharedPreferences prefs) async {
     if (!AudioService.running && prefs != null) {
-      final position = Duration(seconds: prefs.getInt('position'));
+      // final position = Duration(seconds: prefs.getInt('position'));
       // playSingleTrack(context, track, position);
     } else
       await AudioService.play();
