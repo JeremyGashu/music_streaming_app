@@ -11,7 +11,7 @@ class InitialState extends AuthState {
   List<Object> get props => [];
 }
 
-class SendingAuthData extends AuthState {
+class SendingPhoneVerification extends AuthState {
   @override
   List<Object> get props => [];
 }

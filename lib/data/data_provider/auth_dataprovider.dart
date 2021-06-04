@@ -29,9 +29,13 @@ class AuthDataProvider {
   final http.Client client;
   AuthDataProvider({@required this.client}) : assert(client != null);
 
-  Future<http.Response> sendAuthData({String phoneNo}) async {
-    //TODO for later use use the valid URL
-    // String url = '${BASE_URL}';
+  Future<http.Response> verifyPhoneNumber({String phoneNo}) async {
+    //TODO for later use use the valid URL and send the data there
+    // http.Response response = await http.post(
+    //   Uri.parse('http://138.68.163.236:8866/v1/request_otp'),
+    //   headers: {"Content-Type": "application/json"},
+    //   body: jsonEncode({'phone': phoneNo}),
+    // );
     return http.Response(testData, 200);
   }
 

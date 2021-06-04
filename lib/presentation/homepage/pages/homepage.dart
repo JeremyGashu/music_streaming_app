@@ -22,13 +22,13 @@ import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shi
 import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
-import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
 
-/// Move this function to the parent of this widget if
 /// starting audio_service fails(NotConnected error)
 ///
 /// And also streamSubscription of [PlaybackStateStream] must be moved and
 /// instantiated in initState of the parent widget.
+import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
+
 backgroundTaskEntryPoint() {
   AudioServiceBackground.run(() => AudioPlayerTask());
 }
@@ -244,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                 title: "Albums",
                 callback: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (ctx) => LibraryPage()));
+                      MaterialPageRoute(builder: (ctx) => AlbumPage()));
                 }),
             Container(
               height: 200,

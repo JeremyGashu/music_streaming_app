@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
+import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
 
 class Album extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _AlbumState extends State<Album> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LibraryPage()));
+            context, MaterialPageRoute(builder: (context) => AlbumPage()));
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
