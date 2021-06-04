@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,8 +14,8 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
-  final Track track;
-  const SingleTrackPlayerPage({@required this.track});
+  // final Track track;
+  // const SingleTrackPlayerPage({@required this.track});
 
   @override
   _SingleTrackPlayerPageState createState() => _SingleTrackPlayerPageState();
@@ -25,11 +28,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
 
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
-
   @override
   void initState() {
-    super.initState();
-
     sharedPreferences = SharedPreferences.getInstance();
 
     periodicSubscription = Stream.periodic(Duration(seconds: 1)).listen((_) {
@@ -48,6 +48,15 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         periodicSubscription.pause();
       }
     });
+    AudioService.playbackStateStream.listen((PlaybackState event) {
+      if(event.processingState == AudioProcessingState.stopped){
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          Navigator.of(context).pop();
+        });
+      }
+    });
+    super.initState();
+
   }
 
   @override
@@ -68,62 +77,82 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: StreamBuilder<MediaItem>(
-            stream: AudioService.currentMediaItemStream,
-            builder: (ctx, snapshot) {
-              if (snapshot.hasData) {
-                return _nowPlayingWidget(mediaItem: snapshot.data);
-              }
-              return FutureBuilder<SharedPreferences>(
-                future: sharedPreferences,
-                builder: (ctx, prefSnapshot) {
-                  if (prefSnapshot.hasData) {
-                    final prefs = prefSnapshot.data;
-                    if (prefs.containsKey('id')) {
-                      final mediaItem = MediaItem(
-                        id: prefs.getString('id'),
-                        album: prefs.getString('album'),
-                        title: prefs.getString('title'),
-                        artist: prefs.getString('artist'),
-                        duration: Duration(seconds: prefs.getInt('duration')),
-                        genre: prefs.getString('genre'),
-                        artUri: Uri.parse(prefs.getString('artUri')),
-                        extras: {'source': prefs.getString('source')},
-                      );
-                      return SingleChildScrollView(
-                        child: _nowPlayingWidget(
-                            mediaItem: mediaItem, loadFromPrefs: prefs),
-                      );
-                    }
+      backgroundColor: Colors.black87,
+      body: StreamBuilder(
+        stream: AudioService.playbackStateStream,
+        builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
+          return SafeArea(
+            child: StreamBuilder<MediaItem>(
+                stream: AudioService.currentMediaItemStream,
+                builder: (ctx, snapshot) {
+                  if(playBackSnapshot.hasData && (playBackSnapshot.data.playing || (playBackSnapshot.data.processingState == AudioProcessingState.ready) ) ){
+                  if (snapshot.hasData) {
+                    return _nowPlayingWidget(playBackSnapshot.data,mediaItem: snapshot.data);
                   }
+                  }
+                  // return FutureBuilder<SharedPreferences>(
+                  //   future: sharedPreferences,
+                  //   builder: (ctx, prefSnapshot) {
+                  //     if (prefSnapshot.hasData) {
+                  //       final prefs = prefSnapshot.data;
+                  //       if (prefs.containsKey('id')) {
+                  //         final mediaItem = MediaItem(
+                  //           id: prefs.getString('id'),
+                  //           album: prefs.getString('album'),
+                  //           title: prefs.getString('title'),
+                  //           artist: prefs.getString('artist'),
+                  //           duration: Duration(seconds: prefs.getInt('duration')),
+                  //           genre: prefs.getString('genre'),
+                  //           artUri: Uri.parse(prefs.getString('artUri')),
+                  //           extras: {'source': prefs.getString('source')},
+                  //         );
+                  //         return _nowPlayingWidget(
+                  //             mediaItem: mediaItem, loadFromPrefs: prefs);
+                  //       }
+                  //     }
+                  //     return Center(
+                  //       child: CircularProgressIndicator(),
+                  //     );
+                  //   },
+                  // );
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: SpinKitWave(
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   );
-                },
-              );
-            }),
+                }),
+          );
+        }
       ),
     );
   }
 
-  Column _nowPlayingWidget(
+  Column _nowPlayingWidget(playbackState,
       {MediaItem mediaItem, SharedPreferences loadFromPrefs}) {
     return Column(
       children: [
-        _songImage(context),
-        Spacer(),
-        _songTitleRow(),
-
+        Expanded(child: _songImage(context, mediaItem)),
+        // Spacer(),
         /// SeekBar
-        Stack(
-          children: [
-            bufferedIndicator(mediaItem?.duration?.inMilliseconds?.toDouble()),
-            positionIndicator(mediaItem, loadFromPrefs),
-          ],
-        ),
-
-        _controlButtonsRow(loadFromPrefs),
+        Container(
+          padding: const EdgeInsets.only(top:24.0, left: 8.0, right:8.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+            color: Colors.white
+          ),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  bufferedIndicator(mediaItem?.duration?.inMilliseconds?.toDouble()),
+                  positionIndicator(mediaItem, loadFromPrefs),
+                ],
+              ),
+              _controlButtonsRow(loadFromPrefs, playbackState),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -214,13 +243,22 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Padding _controlButtonsRow(SharedPreferences preferences) {
+  Padding _controlButtonsRow(SharedPreferences preferences, PlaybackState playbackState) {
     return Padding(
       padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(Icons.shuffle, color: Colors.orange.shade300),
+          IconButton(
+              onPressed: () async {
+                print("SHUFFLE MODE ${playbackState.shuffleMode}");
+                if(playbackState.shuffleMode == AudioServiceShuffleMode.none){
+                     await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                }else {
+                    await AudioService.setShuffleMode(AudioServiceShuffleMode.none);
+                }
+              },
+              icon: Icon( playbackState.shuffleMode == AudioServiceShuffleMode.all ? Icons.playlist_play :  Icons.shuffle, color: Colors.orange.shade300, size: 30,)),
           IconButton(
             onPressed: () async {
               await AudioService.skipToPrevious();
@@ -238,7 +276,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     if (snapshot.hasData && snapshot.data.playing) {
                       await AudioService.pause();
                     } else {
-                      play(widget.track, preferences);
+                      play(preferences);
                     }
                   },
                   child: Container(
@@ -270,16 +308,24 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               size: 34,
             ),
           ),
-          Icon(
-            Icons.repeat,
-            color: Colors.orange.shade300,
+          IconButton(
+            onPressed: (){
+              playbackState.repeatMode == AudioServiceRepeatMode.one ?
+                  AudioService.setRepeatMode(AudioServiceRepeatMode.none):
+              AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+            },
+            icon: Icon(
+              playbackState.repeatMode == AudioServiceRepeatMode.one ?
+              Icons.repeat_one_outlined : Icons.repeat,
+              color: Colors.orange.shade300,
+            ),
           )
         ],
       ),
     );
   }
 
-  Padding _songTitleRow() {
+  Padding _songTitleRow(MediaItem mediaItem) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 40, 24, 30),
       child: Row(
@@ -288,54 +334,76 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           Icon(
             Icons.add,
             size: 36,
-            color: Color(0xFF2D2D2D),
+            color: Colors.white,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Amelkalew',
+                '${mediaItem.title}',
                 style: TextStyle(
                     letterSpacing: 1.2,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF2D2D2D)),
+                    color: Colors.white),
               ),
               Text(
-                'Dawit Getachew',
+                '${mediaItem.artist}',
                 style: TextStyle(
                     letterSpacing: 1,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    color: Color(0x882D2D2D)),
+                    color: Colors.white),
               ),
             ],
           ),
           Icon(
             Icons.more_vert_outlined,
             size: 36,
-            color: Color(0xFF2D2D2D),
+            color: Colors.white,
           ),
         ],
       ),
     );
   }
 
-  Container _songImage(BuildContext context) {
+  Container _songImage(BuildContext context, MediaItem mediaItem) {
     return Container(
+      color: Colors.black87,
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.4,
-      child: Image.asset(
-        'assets/images/artist_one.jpg',
-        fit: BoxFit.cover,
-      ),
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(icon: Icon(Icons.arrow_back,color: Colors.white70,), onPressed: (){
+                Navigator.of(context).pop();
+              }),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: CachedNetworkImage(
+                imageUrl: mediaItem.artUri.toString(),
+                fit: BoxFit.cover,
+                width: 200,
+                height: 300,
+              ),
+            ),
+            _songTitleRow(mediaItem),
+
+          ],
+        ),
+      )
     );
   }
 
-  play(Track track, SharedPreferences prefs) async {
+  play(SharedPreferences prefs) async {
     if (!AudioService.running && prefs != null) {
       final position = Duration(seconds: prefs.getInt('position'));
-      playSingleTrack(context, track, position);
+      // playSingleTrack(context, track, position);
     } else
       await AudioService.play();
   }

@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                         LoadingPlaylistShimmer(),
                       ],
                     );
-                  } else if (state is LoadedPlaylist) {
+                  } else { // else if (state is LoadedPlaylist) {
                     return ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -164,21 +164,22 @@ class _HomePageState extends State<HomePage> {
                         PlayList(),
                       ],
                     );
-                  } else if (state is LoadingPlaylistError) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Text('Error Loading Playlist!'),
-                          IconButton(
-                              icon: Icon(Icons.update),
-                              onPressed: () {
-                                BlocProvider.of<PlaylistBloc>(context)
-                                    .add(LoadPlaylists());
-                              }),
-                        ],
-                      ),
-                    );
                   }
+                  // } else if (state is LoadingPlaylistError) {
+                  //   return Center(
+                  //     child: Column(
+                  //       children: [
+                  //         Text('Error Loading Playlist!'),
+                  //         IconButton(
+                  //             icon: Icon(Icons.update),
+                  //             onPressed: () {
+                  //               BlocProvider.of<PlaylistBloc>(context)
+                  //                   .add(LoadPlaylists());
+                  //             }),
+                  //       ],
+                  //     ),
+                  //   );
+                  // }
 
                   return Container();
                 },

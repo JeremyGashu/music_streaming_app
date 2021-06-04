@@ -36,6 +36,7 @@ import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
+import 'presentation/playlist/widgets/player_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -136,9 +137,38 @@ class _MyAppState extends State<MyApp> {
           if (state is VPNDisabled) {
             return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                title: 'Material App',
+                title: 'Zema streaming',
                 home: Scaffold(
-                  body: _widgets[_currentIndex],
+                  body: Stack(
+                    children: [
+                      _widgets[_currentIndex],
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: StreamBuilder(
+                          stream: AudioService.playbackStateStream,
+                          builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
+                            if (snapshot.hasData) {
+                              print("SnapshotData: ${snapshot.data.processingState}");
+                            }
+                            if (snapshot.hasData) {
+                              var snapShotData = snapshot.data.processingState;
+                              if (snapShotData != AudioProcessingState.stopped) {
+                                return StreamBuilder(
+                                  stream: AudioService.currentMediaItemStream,
+                                  builder: (context, AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                                    return currentMediaItemSnapshot.hasData &&
+                                    currentMediaItemSnapshot.data != null ?
+                                    PlayerOverlay(playing: snapshot.data.playing) : SizedBox();
+                                  }
+                                );
+                              }
+                            }
+                            return SizedBox();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                   bottomNavigationBar: BottomNavigationBar(
                     currentIndex: _currentIndex,
                     onTap: (index) {

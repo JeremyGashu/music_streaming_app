@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -108,10 +109,21 @@ class AudioPlayerTask extends BackgroundAudioTask {
     debugPrint('CALLED METHOD => skip');
     debugPrint("CURRENT INDEX => " + _queueIndex.toString());
     debugPrint("CURRENT QUEUE LENGTH => " + _queue.length.toString());
-    final newIndex = _queueIndex + offset;
+    print("Shuffle mode enabled: ${_audioPlayer.shuffleModeEnabled}");
+    int newIndex = _queueIndex + offset;
+    if(_audioPlayer.shuffleModeEnabled){
+      newIndex = Random().nextInt(_queue.length);
+      while(newIndex == _queueIndex){
+        newIndex = Random().nextInt(_queue.length);
+      }
+      print("New idnex: $newIndex");
+    }
     print("Queue index: ${_queueIndex}");
     print("Playing index: ${newIndex}");
     print("queue length: ${_queue.length}");
+    if(_audioPlayer.loopMode == LoopMode.one){
+      newIndex = _queueIndex;
+    }
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
 
     await _audioPlayer.stop();
@@ -141,6 +153,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await onUpdateMediaItem(_mediaItem);
     await onPlay();
   }
+
+
 
   @override
   Future<void> onSeekTo(Duration position) async {
@@ -250,12 +264,13 @@ class AudioPlayerTask extends BackgroundAudioTask {
     // Shutdown background task
     debugPrint(
         'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
-    await super.onStop();
     await AudioServiceBackground.setState(
       controls: [],
       processingState: AudioProcessingState.stopped,
       playing: false,
     );
+    await super.onStop();
+
   }
 
   @override
@@ -263,6 +278,39 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await AudioServiceBackground.setMediaItem(mediaItem);
     debugPrint(
         'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
+  }
+
+  @override
+  Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) {
+    if(repeatMode != AudioServiceRepeatMode.none){
+      switch(repeatMode){
+        case AudioServiceRepeatMode.all:
+          _audioPlayer.setLoopMode(LoopMode.all);
+          break;
+        case AudioServiceRepeatMode.none:
+          _audioPlayer.setLoopMode(LoopMode.off);
+          break;
+        case AudioServiceRepeatMode.one:
+          _audioPlayer.setLoopMode(LoopMode.one);
+          break;
+      }
+      _audioPlayer.setLoopMode(LoopMode.one);
+    }
+    AudioServiceBackground.setState(
+      repeatMode: repeatMode
+    );
+    return super.onSetRepeatMode(repeatMode);
+  }
+
+  @override
+  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) {
+    if(shuffleMode != AudioServiceShuffleMode.none){
+      _audioPlayer.setShuffleModeEnabled(true);
+    }
+    AudioServiceBackground.setState(
+        shuffleMode: shuffleMode
+    );
+    return super.onSetShuffleMode(shuffleMode);
   }
 
   @override
