@@ -25,9 +25,7 @@ class PlayList extends StatelessWidget {
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return PlaylistDetail(
-                            albumId: 'state.playlists.data.id',
-                          );
+                          return PlaylistDetail();
                         }));
                       },
                       child: Stack(

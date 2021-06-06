@@ -129,7 +129,6 @@ class _MyAppState extends State<MyApp> {
     SearchPage(),
     LibraryPage(),
     ArtistProfilePage(),
-    //Search(), 2
   ];
 
   @override

@@ -5,6 +5,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
+import 'package:streaming_mobile/blocs/albums/album_event.dart';
+import 'package:streaming_mobile/blocs/albums/album_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -22,11 +25,6 @@ import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shi
 import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/singletrack.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
-
-/// starting audio_service fails(NotConnected error)
-///
-/// And also streamSubscription of [PlaybackStateStream] must be moved and
-/// instantiated in initState of the parent widget.
 import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
 
 backgroundTaskEntryPoint() {
@@ -134,20 +132,28 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Ad(size),
+            //TODO: do the featured lists
             _sectionTitle(title: "New Releases", callback: () {}),
             Container(
               height: 200,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: [Album(), Album()],
+                children: [
+                  SingleAlbum(
+                    album: null,
+                  ),
+                  SingleAlbum(
+                    album: null,
+                  ),
+                ],
               ),
             ),
             _sectionTitle(title: "Popular Playlists", callback: () {}),
             Container(
               height: 160,
-              child: BlocBuilder<PlaylistBloc, PlaylistState>(
+              child: BlocBuilder<AlbumBloc, AlbumState>(
                 builder: (ctx, state) {
-                  if (state is LoadingPlaylist) {
+                  if (state is LoadingAlbum) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -156,14 +162,15 @@ class _HomePageState extends State<HomePage> {
                         LoadingPlaylistShimmer(),
                       ],
                     );
-                  } else if (state is LoadedPlaylist) {
-                    return ListView(
+                  } else if (state is LoadedAlbum) {
+                    return ListView.builder(
+                      itemCount: state.albums.length,
                       scrollDirection: Axis.horizontal,
-                      children: [
-                        PlayList(),
-                        PlayList(),
-                        PlayList(),
-                      ],
+                      itemBuilder: (ctx, index) {
+                        return SinglePlaylist(
+                          album: state.albums[index],
+                        );
+                      },
                     );
                   } else if (state is LoadingPlaylistError) {
                     return Center(
@@ -248,13 +255,59 @@ class _HomePageState extends State<HomePage> {
                 }),
             Container(
               height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Album(),
-                  Album(),
-                  Album(),
-                ],
+              child: BlocBuilder<AlbumBloc, AlbumState>(
+                builder: (ctx, state) {
+                  if (state is LoadingAlbum) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        LoadingTrackShimmer(),
+                        LoadingTrackShimmer(),
+                        LoadingTrackShimmer(),
+                      ],
+                    );
+                  } else if (state is LoadedAlbum) {
+                    return ListView.builder(
+                      itemCount: state.albums.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (ctx, index) {
+                        return SingleAlbum(
+                          album: state.albums[index],
+                        );
+                      },
+                    );
+                  } else if (state is LoadingAlbumError) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Error Loading Albums!!',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.update,
+                                color: Colors.redAccent.withOpacity(0.8),
+                                size: 45,
+                              ),
+                              onPressed: () {
+                                BlocProvider.of<AlbumBloc>(context)
+                                    .add(LoadAlbums());
+                              }),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Container();
+                },
               ),
             ),
             _sectionTitle(title: "Single Tracks", callback: () {}),
@@ -271,22 +324,35 @@ class _HomePageState extends State<HomePage> {
                         LoadingTrackShimmer(),
                       ],
                     );
-                  } else if (state is LoadedTrack) {
-                    return ListView(
+                  } else if (state is LoadedTracks) {
+                    return ListView.builder(
+                      itemCount: state.tracks.length,
                       scrollDirection: Axis.horizontal,
-                      children: [
-                        SingleTrack(track: state.track),
-                        SingleTrack(track: state.track),
-                        SingleTrack(track: state.track),
-                      ],
+                      itemBuilder: (ctx, index) {
+                        return SingleTrack(track: state.tracks[index]);
+                      },
                     );
                   } else if (state is LoadingTrackError) {
                     return Center(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Error Loading Tracks!'),
+                          Text(
+                            'Error Loading Tracks!',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           IconButton(
-                              icon: Icon(Icons.update),
+                              icon: Icon(
+                                Icons.update,
+                                color: Colors.redAccent.withOpacity(0.8),
+                                size: 45,
+                              ),
                               onPressed: () {
                                 BlocProvider.of<TrackBloc>(context)
                                     .add(LoadTracks());
@@ -299,14 +365,6 @@ class _HomePageState extends State<HomePage> {
                   return Container();
                 },
               ),
-              // child: ListView(
-              //   scrollDirection: Axis.horizontal,
-              //   children: [
-              //     SingleTrack(),
-              //     SingleTrack(),
-              //     SingleTrack(),
-              //   ],
-              // ),
             ),
           ],
         ),

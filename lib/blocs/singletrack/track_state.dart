@@ -19,11 +19,11 @@ class LoadingTrack extends TrackState {
   List<Object> get props => [];
 }
 
-class LoadedTrack extends TrackState {
-  final Track track;
-  LoadedTrack({@required this.track}) : assert(track != null);
+class LoadedTracks extends TrackState {
+  final List<Track> tracks;
+  LoadedTracks({@required this.tracks}) : assert(tracks != null);
   @override
-  List<Object> get props => [track];
+  List<Object> get props => [tracks];
 }
 
 class LoadingTrackError extends TrackState {

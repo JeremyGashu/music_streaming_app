@@ -58,7 +58,7 @@ class AlbumDataProvider {
     };
 
     String url =
-        '$BASE_URL/albums?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        'http://138.68.163.236:8889/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title';
     http.Response response = await client.get(Uri.parse(url), headers: headers);
 
     return response;

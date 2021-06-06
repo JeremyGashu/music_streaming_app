@@ -1,4 +1,6 @@
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/data/models/auth_data.dart';
 
 //"track_url": "http://138.68.163.236:8787/track/1",
 var testData = '''
@@ -22,16 +24,24 @@ var testData = '''
 }
 ''';
 
-
 class TrackDataProvider {
   final http.Client client;
 
   TrackDataProvider({this.client}) : assert(client != null);
 
   Future<http.Response> getTracks() async {
-    // http.Response response = await client.get(Uri.parse(
-    //     'https://endpoint/playlist/popular?x&page=0&per_page=10&sort=asc'));
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
 
-    return http.Response(testData, 200);
+    http.Response response = await client.get(
+      Uri.parse(
+          'http://138.68.163.236:8889/v1/tracks/?page=1&per_page=10&sort=ASC'),
+      headers: headers,
+    );
+
+    return response;
   }
 }
