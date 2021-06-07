@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                         LoadingPlaylistShimmer(),
                       ],
                     );
-                  } else if (state is LoadedPlaylist) {
+                  }  else if (state is LoadedPlaylist) {
                     return ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                         PlayList(),
                       ],
                     );
-                  } else if (state is LoadingPlaylistError) {
+                  }else if (state is LoadingPlaylistError) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -196,6 +196,7 @@ class _HomePageState extends State<HomePage> {
                   }
 
                   return Container();
+
                 },
               ),
             ),

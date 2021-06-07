@@ -33,7 +33,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            SingleTrackPlayerPage(track: state.track)));
+                            SingleTrackPlayerPage()));
               },
               child: Container(
                 width: 140,

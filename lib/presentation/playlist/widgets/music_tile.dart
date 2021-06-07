@@ -1,12 +1,11 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
-Widget musicTile(Track music,Function onPressed, [isPlaying=false]) {
-
-
+Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem mediaItem]) {
 
   return GestureDetector(
     onTap: (){
@@ -19,9 +18,9 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false]) {
           width: 50,
           height: 50,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
             child: CachedNetworkImage(
-              imageUrl: music.data.coverImgUrl,
+              imageUrl: music !=null ? music.data.coverImgUrl : mediaItem.artUri.toString(),
               placeholder: (context, url) => CircularProgressIndicator(),
               fit: BoxFit.cover,
             ),
@@ -29,7 +28,9 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false]) {
         ),
       ),
       title: Text(
-        music.data.title,
+        music != null ? music.data.title : mediaItem.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: Colors.black.withOpacity(0.8),
           fontSize: 18,
@@ -37,7 +38,7 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false]) {
         ),
       ),
       subtitle: Text(
-        music.data.artistId,
+        music != null ? music.data.artistId : mediaItem.artist,
         style: TextStyle(
           color: Colors.black.withOpacity(0.5),
           fontSize: 14,
@@ -59,7 +60,7 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false]) {
           ):
           SizedBox(),
           Text(
-            prettyDuration(Duration(milliseconds: music.data.duration))
+            prettyDuration(Duration(milliseconds: music != null ? music.data.duration : mediaItem.duration.inMilliseconds))
             ,
             style: TextStyle(color: Colors.grey),
           ),

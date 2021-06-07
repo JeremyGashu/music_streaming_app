@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
-import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
@@ -18,6 +18,7 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/playlistStat.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
@@ -39,7 +40,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   "data": {
     "id": "id",
     "likes": 123,
-    "title": "title",
+    "title": "the lord of the rings ",
     "release_date": "2012-02-27 13:27:00,123456789z",
     "artist_id": "artist_id",
     "album_id": "album_id",
@@ -58,9 +59,51 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   var testData2 = '''
 {
   "data": {
-    "id": "id3",
+    "id": "id2",
     "likes": 123,
     "title": "title2",
+    "release_date": "2012-02-27 13:27:00,123456789z",
+    "artist_id": "artist_id",
+    "album_id": "album_id",
+    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
+    "track_url": "https://138.68.163.236:8787/track/1",
+    "views": 123,
+    "duration": 300000,
+    "lyrics_url": "lyrics_url",
+    "created_by": "created_by" 
+  },
+  "success": true,
+  "status": 200
+}
+''';
+
+  var testData3 = '''
+{
+  "data": {
+    "id": "id3",
+    "likes": 123,
+    "title": "title3",
+    "release_date": "2012-02-27 13:27:00,123456789z",
+    "artist_id": "artist_id",
+    "album_id": "album_id",
+    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
+    "track_url": "https://138.68.163.236:8787/track/1",
+    "views": 123,
+    "duration": 300000,
+    "lyrics_url": "lyrics_url",
+    "created_by": "created_by"
+  },
+  "success": true,
+  "status": 200
+}
+''';
+
+  var testData4 = '''
+{
+  "data": {
+    "id": "id4",
+    "likes": 123,
+    "title": "title4",
     "release_date": "2012-02-27 13:27:00,123456789z",
     "artist_id": "artist_id",
     "album_id": "album_id",
@@ -84,13 +127,13 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 
-  bool _isPlaying = false;
-
   @override
   void initState() {
     var track1 = Track.fromJson(jsonDecode(testData1));
     var track2 = Track.fromJson(jsonDecode(testData2));
-    tracks.addAll([track1, track2]);
+    var track3 = Track.fromJson(jsonDecode(testData3));
+    var track4 = Track.fromJson(jsonDecode(testData4));
+    tracks.addAll([track1, track2, track3, track4]);
     super.initState();
   }
 
@@ -139,7 +182,20 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                         Colors.deepPurple,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      // TODO: play playlist
+                      if(!AudioService.running){
+                        await AudioService.start(
+                          backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+                          androidNotificationChannelName: 'Playback',
+                          androidNotificationColor: 0xFF2196f3,
+                          androidStopForegroundOnPause: true,
+                          androidEnableQueue: true,
+                        );
+                      }
+                      await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                      playAudio(Random().nextInt(tracks.length), sharedPreferences);
+                    },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 10,
@@ -168,33 +224,37 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                 height: 15,
               ),
               Container(
-                height: 320,
                 child: StreamBuilder(
                     stream: AudioService.currentMediaItemStream,
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
                       print("Snapshot: ${snapshot.data}");
-                      print(snapshot.hasData &&
-                          (snapshot.data.id == tracks[0].data.id));
+                      // print(snapshot.hasData &&
+                      //     (snapshot.data.id == tracks[0].data.id));
                       return StreamBuilder(
                         stream: AudioService.playbackStateStream,
                         builder: (context,
                                 AsyncSnapshot<PlaybackState>
                                     playbackSnapshot) =>
-                            ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: tracks.length,
-                                itemBuilder: (context, index) {
-                                  return musicTile(tracks[index], () {
-                                    print("play playlist");
-                                    playAudio(index, sharedPreferences);
-                                  },
-                                      snapshot.hasData &&
-                                          (snapshot.data.id ==
-                                              tracks[index].data.id) &&
-                                          playbackSnapshot.hasData &&
-                                          playbackSnapshot.data.playing);
-                                }),
+                            Column(
+                              children: [
+                                ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: tracks.length,
+                                    itemBuilder: (context, index) {
+                                      return musicTile(tracks[index], () {
+                                        print("play playlist");
+                                        playAudio(index, sharedPreferences);
+                                      },
+                                          snapshot.hasData &&
+                                              (snapshot.data.id ==
+                                                  tracks[index].data.id) &&
+                                              playbackSnapshot.hasData &&
+                                              playbackSnapshot.data.playing);
+                                    }),
+                                SizedBox(height: 100,)
+                              ],
+                            ),
                       );
                     }),
               ),
@@ -211,9 +271,15 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               }
               if (snapshot.hasData) {
                 var snapShotData = snapshot.data.processingState;
-                if (snapShotData != AudioProcessingState.stopped &&
-                    snapShotData != AudioProcessingState.none) {
-                  return bottomPlayer(playing: snapshot.data.playing);
+                if (snapShotData != AudioProcessingState.stopped) {
+                  return StreamBuilder(
+                      stream: AudioService.currentMediaItemStream,
+                      builder: (context, AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                        return currentMediaItemSnapshot.hasData &&
+                            currentMediaItemSnapshot.data != null ?
+                        PlayerOverlay(playing: snapshot.data.playing) : SizedBox();
+                      }
+                  );
                 }
               }
               return SizedBox();
@@ -224,228 +290,12 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     ));
   }
 
-  Widget bottomPlayer({bool playing}) {
-    return StreamBuilder(
-      stream: AudioService.queueStream,
-      builder: (context, AsyncSnapshot<List<MediaItem>> snapshot) =>
-          StreamBuilder(
-        stream: AudioService.currentMediaItemStream,
-        builder: (context, AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
-            Wrap(
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                    color: kYellow,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(0.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 5.0,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3))
-                    ]),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      // SliderTheme(
-                      //   data: _sliderThemeData.copyWith(
-                      //     trackHeight: 2.0,
-                      //     activeTrackColor: Colors.red.shade300,
-                      //     thumbColor: Colors.red.shade300,
-                      //     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
-                      //     overlayColor: Colors.red.withAlpha(36),
-                      //     overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
-                      //     inactiveTrackColor: Colors.transparent,
-                      //   ),
-                      //   child: Slider(
-                      //     value: 0,
-                      //     onChanged: (val) {},
-                      //     min: 0,
-                      //     max: 100,
-                      //     activeColor: kRed,
-                      //     inactiveColor: Colors.white,
-                      //   ),
-                      // ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Column(
-                          children: [
-                            // Row(
-                            //   mainAxisSize: MainAxisSize.max,
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     Text(
-                            //       "01:25",
-                            //     ),
-                            //     Text(
-                            //       "05:00",
-                            //     ),
-                            //   ],
-                            // ),
-                            StreamBuilder(
-                              stream: AudioService.currentMediaItemStream,
-                              builder: (context,
-                                      AsyncSnapshot<MediaItem> snapshot) =>
-                                  Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(children: [
-                                  currentMediaSnapshot.hasData
-                                      ? Text(
-                                          "${currentMediaSnapshot.data.artist}:",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Text(
-                                          "-----",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                  currentMediaSnapshot.hasData
-                                      ? Text(
-                                          "${currentMediaSnapshot.data.title}",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        )
-                                      : Text(
-                                          "-----",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        )
-                                ]),
-                              ),
-                            ),
-                            Divider(
-                              color: Colors.white54,
-                            ),
-                            _controlButtonsRow(playing),
-                            Divider(
-                              color: Colors.white54,
-                            ),
-                            () {
-                              if (snapshot.hasData &&
-                                  currentMediaSnapshot.hasData) {
-                                var _currentIndex = snapshot.data
-                                    .indexOf(currentMediaSnapshot.data);
-                                print("current index: $_currentIndex");
-                                if ((_currentIndex <
-                                        snapshot.data.length - 1) &&
-                                    _currentIndex != -1) {
-                                  MediaItem nextMediaItem =
-                                      snapshot.data[_currentIndex + 1];
-                                  return _nextUpRow(nextMediaItem);
-                                } else {
-                                  return SizedBox();
-                                }
-                              } else {
-                                return SizedBox();
-                              }
-                            }()
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _nextUpRow(MediaItem mediaItem) {
-    return Row(
-      children: [
-        Icon(
-          Icons.queue_music,
-          color: kRed,
-          size: 30.0,
-        ),
-        Text(
-          "Next: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(
-          "${mediaItem.artist}-${mediaItem.title}",
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        )
-      ],
-    );
-  }
-
-  Widget _controlButtonsRow(bool playing) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Icon(Icons.shuffle, color: Colors.orange.shade300),
-        GestureDetector(
-          onTap: () async {
-            await AudioService.skipToPrevious();
-          },
-          child: Icon(
-            Icons.skip_previous,
-            size: 34,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            if (playing) {
-              AudioService.pause();
-            } else {
-              // play(widget.track, preferences);
-              AudioService.play();
-            }
-            setState(() {
-              _isPlaying = !_isPlaying;
-            });
-            print("SingleTrackPlayerPage[isPlaying]: ${_isPlaying}");
-          },
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.orange.shade300),
-            child: playing
-                ? Icon(
-                    Icons.pause,
-                    color: Colors.white,
-                    size: 38,
-                  )
-                : Icon(
-                    Icons.play_arrow,
-                    color: Colors.white,
-                    size: 38,
-                  ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () async {
-            await AudioService.skipToNext();
-          },
-          child: Icon(
-            Icons.skip_next,
-            size: 34,
-          ),
-        ),
-        Icon(
-          Icons.repeat,
-          color: Colors.orange.shade300,
-        )
-      ],
-    );
-  }
-
   void playAudio(int index, SharedPreferences prefs) async {
     if(AudioService.playbackState.playing){
+      print("Track Index: ${tracks[index].data.id} Current Media Item ID: ${AudioService.currentMediaItem.id}");
       if(tracks[index].data.id == AudioService.currentMediaItem.id){
         print("PlayListPage[playlist_detail]: already running with the same media id");
-        Navigator.push(context, MaterialPageRoute(builder:(context) =>SingleTrackPlayerPage(track: tracks[index])));
+        Navigator.push(context, MaterialPageRoute(builder:(context) =>SingleTrackPlayerPage()));
         return;
       }
     }
@@ -470,7 +320,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SingleTrackPlayerPage(track: tracks[index])));
+            builder: (context) => SingleTrackPlayerPage()));
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];
@@ -555,22 +405,27 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       await parseHLS.writeLocalM3u8File(m3u8FilePath);
     }
 
+    await _startPlaying(mediaItems, index);
+
+  }
+
+  _startPlaying(mediaItems, index) async {
     if (AudioService.running) {
       print("running");
       await AudioService.updateQueue(mediaItems);
       await AudioService.playMediaItem(mediaItems[index]);
     } else {
       if (await AudioService.start(
-        backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-        androidNotificationChannelName: 'Playback',
-        androidNotificationColor: 0xFF2196f3,
-        androidStopForegroundOnPause: true,
-        androidEnableQueue: true,
+      backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+      androidNotificationChannelName: 'Playback',
+      androidNotificationColor: 0xFF2196f3,
+      androidStopForegroundOnPause: true,
+      androidEnableQueue: true,
       )) {
-        await AudioService.updateQueue(mediaItems);
-        await AudioService.playMediaItem(mediaItems[index]);
-      }
+    await AudioService.updateQueue(mediaItems);
+    await AudioService.playMediaItem(mediaItems[index]);
     }
+  }
   }
 }
 
