@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
-import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
@@ -17,6 +17,7 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/playlistStat.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
@@ -32,7 +33,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   SharedPreferences sharedPreferences;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  bool _isPlaying = false;
+  // bool _isPlaying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,22 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                         Colors.deepPurple,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      // TODO: play playlist
+                      if (!AudioService.running) {
+                        await AudioService.start(
+                          backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+                          androidNotificationChannelName: 'Playback',
+                          androidNotificationColor: 0xFF2196f3,
+                          androidStopForegroundOnPause: true,
+                          androidEnableQueue: true,
+                        );
+                      }
+                      await AudioService.setShuffleMode(
+                          AudioServiceShuffleMode.all);
+                      playAudio(Random().nextInt(widget.tracks.length),
+                          sharedPreferences);
+                    },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 10,
@@ -100,18 +116,21 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                 height: 15,
               ),
               Container(
-                height: 320,
                 child: StreamBuilder(
                     stream: AudioService.currentMediaItemStream,
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
                       print("Snapshot: ${snapshot.data}");
                       print(snapshot.hasData &&
                           (snapshot.data.id == widget.tracks[0].songId));
+                      // print(snapshot.hasData &&
+                      //     (snapshot.data.id == tracks[0].data.id));
                       return StreamBuilder(
                         stream: AudioService.playbackStateStream,
                         builder: (context,
                                 AsyncSnapshot<PlaybackState>
                                     playbackSnapshot) =>
+                            Column(
+                          children: [
                             ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -127,6 +146,11 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                           playbackSnapshot.hasData &&
                                           playbackSnapshot.data.playing);
                                 }),
+                            SizedBox(
+                              height: 100,
+                            )
+                          ],
+                        ),
                       );
                     }),
               ),
@@ -143,9 +167,16 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               }
               if (snapshot.hasData) {
                 var snapShotData = snapshot.data.processingState;
-                if (snapShotData != AudioProcessingState.stopped &&
-                    snapShotData != AudioProcessingState.none) {
-                  return bottomPlayer(playing: snapshot.data.playing);
+                if (snapShotData != AudioProcessingState.stopped) {
+                  return StreamBuilder(
+                      stream: AudioService.currentMediaItemStream,
+                      builder: (context,
+                          AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                        return currentMediaItemSnapshot.hasData &&
+                                currentMediaItemSnapshot.data != null
+                            ? PlayerOverlay(playing: snapshot.data.playing)
+                            : SizedBox();
+                      });
                 }
               }
               return SizedBox();
@@ -154,223 +185,6 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
         ),
       ]),
     ));
-  }
-
-  Widget bottomPlayer({bool playing}) {
-    return StreamBuilder(
-      stream: AudioService.queueStream,
-      builder: (context, AsyncSnapshot<List<MediaItem>> snapshot) =>
-          StreamBuilder(
-        stream: AudioService.currentMediaItemStream,
-        builder: (context, AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
-            Wrap(
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                    color: kYellow,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(0.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 5.0,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3))
-                    ]),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      // SliderTheme(
-                      //   data: _sliderThemeData.copyWith(
-                      //     trackHeight: 2.0,
-                      //     activeTrackColor: Colors.red.shade300,
-                      //     thumbColor: Colors.red.shade300,
-                      //     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
-                      //     overlayColor: Colors.red.withAlpha(36),
-                      //     overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
-                      //     inactiveTrackColor: Colors.transparent,
-                      //   ),
-                      //   child: Slider(
-                      //     value: 0,
-                      //     onChanged: (val) {},
-                      //     min: 0,
-                      //     max: 100,
-                      //     activeColor: kRed,
-                      //     inactiveColor: Colors.white,
-                      //   ),
-                      // ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Column(
-                          children: [
-                            // Row(
-                            //   mainAxisSize: MainAxisSize.max,
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     Text(
-                            //       "01:25",
-                            //     ),
-                            //     Text(
-                            //       "05:00",
-                            //     ),
-                            //   ],
-                            // ),
-                            StreamBuilder(
-                              stream: AudioService.currentMediaItemStream,
-                              builder: (context,
-                                      AsyncSnapshot<MediaItem> snapshot) =>
-                                  Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(children: [
-                                  currentMediaSnapshot.hasData
-                                      ? Text(
-                                          "${currentMediaSnapshot.data.artist}:",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Text(
-                                          "-----",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                  currentMediaSnapshot.hasData
-                                      ? Text(
-                                          "${currentMediaSnapshot.data.title}",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        )
-                                      : Text(
-                                          "-----",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        )
-                                ]),
-                              ),
-                            ),
-                            Divider(
-                              color: Colors.white54,
-                            ),
-                            _controlButtonsRow(playing),
-                            Divider(
-                              color: Colors.white54,
-                            ),
-                            () {
-                              if (snapshot.hasData &&
-                                  currentMediaSnapshot.hasData) {
-                                var _currentIndex = snapshot.data
-                                    .indexOf(currentMediaSnapshot.data);
-                                print("current index: $_currentIndex");
-                                if ((_currentIndex <
-                                        snapshot.data.length - 1) &&
-                                    _currentIndex != -1) {
-                                  MediaItem nextMediaItem =
-                                      snapshot.data[_currentIndex + 1];
-                                  return _nextUpRow(nextMediaItem);
-                                } else {
-                                  return SizedBox();
-                                }
-                              } else {
-                                return SizedBox();
-                              }
-                            }()
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _nextUpRow(MediaItem mediaItem) {
-    return Row(
-      children: [
-        Icon(
-          Icons.queue_music,
-          color: kRed,
-          size: 30.0,
-        ),
-        Text(
-          "Next: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(
-          "${mediaItem.artist}-${mediaItem.title}",
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        )
-      ],
-    );
-  }
-
-  Widget _controlButtonsRow(bool playing) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Icon(Icons.shuffle, color: Colors.orange.shade300),
-        GestureDetector(
-          onTap: () async {
-            await AudioService.skipToPrevious();
-          },
-          child: Icon(
-            Icons.skip_previous,
-            size: 34,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            if (playing) {
-              AudioService.pause();
-            } else {
-              // play(widget.track, preferences);
-              AudioService.play();
-            }
-            setState(() {
-              _isPlaying = !_isPlaying;
-            });
-            print("SingleTrackPlayerPage[isPlaying]: ${_isPlaying}");
-          },
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.orange.shade300),
-            child: playing
-                ? Icon(
-                    Icons.pause,
-                    color: Colors.white,
-                    size: 38,
-                  )
-                : Icon(
-                    Icons.play_arrow,
-                    color: Colors.white,
-                    size: 38,
-                  ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () async {
-            await AudioService.skipToNext();
-          },
-          child: Icon(
-            Icons.skip_next,
-            size: 34,
-          ),
-        ),
-        Icon(
-          Icons.repeat,
-          color: Colors.orange.shade300,
-        )
-      ],
-    );
   }
 
   void playAudio(int index, SharedPreferences prefs) async {
@@ -426,10 +240,10 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       print("Source: $source");
       mediaItems.add(MediaItem(
           id: track.songId,
-          album: track.album.albumId,
+          album: track.albumId,
           title: track.song.title,
           genre: 'genre goes here',
-          artist: track.album.artist.firstName,
+          // artist: track.artist.firstName,
           duration: Duration(milliseconds: track.song.duration),
           artUri: Uri.parse(track.song.coverImageUrl),
           // extras: {'source': m3u8FilePath});
@@ -495,6 +309,10 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       await parseHLS.writeLocalM3u8File(m3u8FilePath);
     }
 
+    await _startPlaying(mediaItems, index);
+  }
+
+  _startPlaying(mediaItems, index) async {
     if (AudioService.running) {
       print("running");
       await AudioService.updateQueue(mediaItems);
