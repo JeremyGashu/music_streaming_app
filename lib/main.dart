@@ -258,6 +258,5 @@ initMessaging() async {
     print('TITLE: ' + message.notification.title);
     print('BODY: ' + message.notification.body);
   });
-
   print('User granted permission: ${settings.authorizationStatus}');
 }

@@ -111,9 +111,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
     debugPrint("CURRENT QUEUE LENGTH => " + _queue.length.toString());
     print("Shuffle mode enabled: ${_audioPlayer.shuffleModeEnabled}");
     int newIndex = _queueIndex + offset;
-    if(_audioPlayer.shuffleModeEnabled){
+    if (_audioPlayer.shuffleModeEnabled) {
       newIndex = Random().nextInt(_queue.length);
-      while(newIndex == _queueIndex){
+      while (newIndex == _queueIndex) {
         newIndex = Random().nextInt(_queue.length);
       }
       print("New idnex: $newIndex");
@@ -121,7 +121,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     print("Queue index: ${_queueIndex}");
     print("Playing index: ${newIndex}");
     print("queue length: ${_queue.length}");
-    if(_audioPlayer.loopMode == LoopMode.one){
+    if (_audioPlayer.loopMode == LoopMode.one) {
       newIndex = _queueIndex;
     }
     if (!(newIndex >= 0 && newIndex < _queue.length)) return;
@@ -153,8 +153,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await onUpdateMediaItem(_mediaItem);
     await onPlay();
   }
-
-
 
   @override
   Future<void> onSeekTo(Duration position) async {
@@ -198,8 +196,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await _audioPlayer.stop();
     // Get queue index by mediaId.
     _queueIndex = _queue.indexWhere((media) => media.id == mediaId);
-
-    if (_mediaItem.extras['source'].toString().startsWith('/')) {
+    if (_mediaItem.extras['initializing'] != null &&
+        _mediaItem.extras['initializing']) {
+      debugPrint('Initializing: AudioService on startup.');
+      await _audioPlayer.setAsset(_mediaItem.extras['source']);
+    } else if (_mediaItem.extras['source'].toString().startsWith('/')) {
       /// To play from local path
       await playFromLocal(_mediaItem.extras['source']);
     } else {
@@ -239,7 +240,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await onPlay();
   }
 
-  Future<void> playFromLocal(String source) async{
+  Future<void> playFromLocal(String source) async {
     var dir = await LocalHelper.getLocalFilePath();
     var filePathEnc = "$dir/${_mediaItem.id}/enc.key.aes";
     var filePathDec = "$dir/${_mediaItem.id}/enc.key";
@@ -270,7 +271,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
       playing: false,
     );
     await super.onStop();
-
   }
 
   @override
@@ -282,8 +282,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) {
-    if(repeatMode != AudioServiceRepeatMode.none){
-      switch(repeatMode){
+    if (repeatMode != AudioServiceRepeatMode.none) {
+      switch (repeatMode) {
         case AudioServiceRepeatMode.all:
           _audioPlayer.setLoopMode(LoopMode.all);
           break;
@@ -299,20 +299,16 @@ class AudioPlayerTask extends BackgroundAudioTask {
       }
       _audioPlayer.setLoopMode(LoopMode.one);
     }
-    AudioServiceBackground.setState(
-      repeatMode: repeatMode
-    );
+    AudioServiceBackground.setState(repeatMode: repeatMode);
     return super.onSetRepeatMode(repeatMode);
   }
 
   @override
   Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) {
-    if(shuffleMode != AudioServiceShuffleMode.none){
+    if (shuffleMode != AudioServiceShuffleMode.none) {
       _audioPlayer.setShuffleModeEnabled(true);
     }
-    AudioServiceBackground.setState(
-        shuffleMode: shuffleMode
-    );
+    AudioServiceBackground.setState(shuffleMode: shuffleMode);
     return super.onSetShuffleMode(shuffleMode);
   }
 

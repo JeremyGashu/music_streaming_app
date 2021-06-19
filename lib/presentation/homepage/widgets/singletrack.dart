@@ -41,8 +41,9 @@ class _SingleTrackState extends State<SingleTrack> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      SingleTrackPlayerPage(track: Track(),)));
+                  builder: (context) => SingleTrackPlayerPage(
+                        track: Track(),
+                      )));
         },
         child: Container(
           width: 140,
