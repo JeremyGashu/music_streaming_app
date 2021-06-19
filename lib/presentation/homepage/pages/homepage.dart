@@ -54,6 +54,8 @@ class _HomePageState extends State<HomePage> {
         AudioService.playbackStateStream.where(isStopped).listen((_) {
       reloadPrefs();
     });
+
+    //todo here play the initial audio to get rid of the delay when it plays the first media
   }
 
   final List<String> carouselImages = [

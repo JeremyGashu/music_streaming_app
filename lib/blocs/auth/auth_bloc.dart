@@ -32,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception(e);
       }
     } else if (event is CheckAuthOnStartUp) {
+      yield CheckingAuthOnStartup();
       var authBox = await Hive.openBox<AuthData>('auth_box');
       AuthData authData = authBox.get('auth_data',
           defaultValue: AuthData(isAuthenticated: false));
