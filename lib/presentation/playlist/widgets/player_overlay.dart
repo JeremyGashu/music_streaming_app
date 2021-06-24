@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
@@ -225,8 +226,13 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
 
   Widget _controlButtonsRow(bool playing) {
     return GestureDetector(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleTrackPlayerPage()));
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleTrackPlayerPage(
+                      track: Track(),
+                    )));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -239,30 +245,34 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
           Expanded(
             child: StreamBuilder(
               stream: AudioService.currentMediaItemStream,
-              builder: (context, AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
+              builder: (context,
+                      AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
                   currentMediaSnapshot.hasData
                       ?
-                  // Text(
-                  //         "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
-                  //         style: TextStyle(
-                  //             fontWeight: FontWeight.w600, color: Colors.white70),
-                  //         overflow: TextOverflow.ellipsis, maxLines: 1,
-                  //       )
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: AnimatedOverflow(
-                          animatedOverflowDirection: AnimatedOverflowDirection.HORIZONTAL,
-                          child:Text(
-                            "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, color: Colors.white70),
-                            overflow: TextOverflow.visible, maxLines: 1,
+                      // Text(
+                      //         "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
+                      //         style: TextStyle(
+                      //             fontWeight: FontWeight.w600, color: Colors.white70),
+                      //         overflow: TextOverflow.ellipsis, maxLines: 1,
+                      //       )
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AnimatedOverflow(
+                            animatedOverflowDirection:
+                                AnimatedOverflowDirection.HORIZONTAL,
+                            child: Text(
+                              "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white70),
+                              overflow: TextOverflow.visible,
+                              maxLines: 1,
+                            ),
+                            maxWidth: 200,
+                            padding: 40.0,
+                            speed: 50.0,
                           ),
-                          maxWidth: 200,
-                          padding: 40.0,
-                          speed: 50.0,
-                          ),
-                  )
+                        )
                       : Text(
                           "-----",
                           style: TextStyle(fontWeight: FontWeight.bold),

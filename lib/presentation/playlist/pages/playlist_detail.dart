@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
+
 import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +12,6 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
-import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
@@ -22,128 +21,19 @@ import 'package:streaming_mobile/presentation/playlist/widgets/player_overlay.da
 import 'package:streaming_mobile/presentation/playlist/widgets/playlistStat.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
-import 'package:http/http.dart' as http;
 
 class PlaylistDetail extends StatefulWidget {
-  final String albumId;
-  PlaylistDetail({@required this.albumId}) : assert(albumId != null);
-
+  final List<Track> tracks;
+  PlaylistDetail({this.tracks});
   @override
   _PlaylistDetailState createState() => _PlaylistDetailState();
 }
 
 class _PlaylistDetailState extends State<PlaylistDetail> {
-  // SliderThemeData _sliderThemeData;
-
-  var testData1 = '''
-{
-  "data": {
-    "id": "id",
-    "likes": 123,
-    "title": "the lord of the rings ",
-    "release_date": "2012-02-27 13:27:00,123456789z",
-    "artist_id": "artist_id",
-    "album_id": "album_id",
-    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
-    "track_url": "http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8/tears-of-steel-audio_eng=64008.m3u8",
-    "views": 123,
-    "duration": 300000,
-    "lyrics_url": "lyrics_url",
-    "created_by": "created_by" 
-  },
-  "success": true,
-  "status": 200
-}
-''';
-
-  var testData2 = '''
-{
-  "data": {
-    "id": "id2",
-    "likes": 123,
-    "title": "title2",
-    "release_date": "2012-02-27 13:27:00,123456789z",
-    "artist_id": "artist_id",
-    "album_id": "album_id",
-    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
-    "track_url": "https://138.68.163.236:8787/track/1",
-    "views": 123,
-    "duration": 300000,
-    "lyrics_url": "lyrics_url",
-    "created_by": "created_by" 
-  },
-  "success": true,
-  "status": 200
-}
-''';
-
-  var testData3 = '''
-{
-  "data": {
-    "id": "id3",
-    "likes": 123,
-    "title": "title3",
-    "release_date": "2012-02-27 13:27:00,123456789z",
-    "artist_id": "artist_id",
-    "album_id": "album_id",
-    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
-    "track_url": "https://138.68.163.236:8787/track/1",
-    "views": 123,
-    "duration": 300000,
-    "lyrics_url": "lyrics_url",
-    "created_by": "created_by"
-  },
-  "success": true,
-  "status": 200
-}
-''';
-
-  var testData4 = '''
-{
-  "data": {
-    "id": "id4",
-    "likes": 123,
-    "title": "title4",
-    "release_date": "2012-02-27 13:27:00,123456789z",
-    "artist_id": "artist_id",
-    "album_id": "album_id",
-    "cover_img_url": "https://images.template.net/wp-content/uploads/2016/05/17050744/DJ-Album-Cover-Template-Sample.jpg?width=100",
-    "track_url": "https://138.68.163.236:8787/track/1",
-    "views": 123,
-    "duration": 300000,
-    "lyrics_url": "lyrics_url",
-    "created_by": "created_by" 
-  },
-  "success": true,
-  "status": 200
-}
-''';
-
-
-  TrackDataProvider trackDataProvider =
-      TrackDataProvider(client: http.Client());
-  List<Track> tracks = [];
   SharedPreferences sharedPreferences;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-
-  @override
-  void initState() {
-    var track1 = Track.fromJson(jsonDecode(testData1));
-    var track2 = Track.fromJson(jsonDecode(testData2));
-    var track3 = Track.fromJson(jsonDecode(testData3));
-    var track4 = Track.fromJson(jsonDecode(testData4));
-    tracks.addAll([track1, track2, track3, track4]);
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // _sliderThemeData = SliderTheme.of(context).copyWith(
-    //   trackHeight: 2.0,
-    // );
-    super.didChangeDependencies();
-  }
+  // bool _isPlaying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +74,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     ),
                     onPressed: () async {
                       // TODO: play playlist
-                      if(!AudioService.running){
+                      if (!AudioService.running) {
                         await AudioService.start(
                           backgroundTaskEntrypoint: backgroundTaskEntryPoint,
                           androidNotificationChannelName: 'Playback',
@@ -193,8 +83,10 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                           androidEnableQueue: true,
                         );
                       }
-                      await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
-                      playAudio(Random().nextInt(tracks.length), sharedPreferences);
+                      await AudioService.setShuffleMode(
+                          AudioServiceShuffleMode.all);
+                      playAudio(Random().nextInt(widget.tracks.length),
+                          sharedPreferences);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -228,6 +120,8 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     stream: AudioService.currentMediaItemStream,
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
                       print("Snapshot: ${snapshot.data}");
+                      print(snapshot.hasData &&
+                          (snapshot.data.id == widget.tracks[0].songId));
                       // print(snapshot.hasData &&
                       //     (snapshot.data.id == tracks[0].data.id));
                       return StreamBuilder(
@@ -236,25 +130,27 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                 AsyncSnapshot<PlaybackState>
                                     playbackSnapshot) =>
                             Column(
-                              children: [
-                                ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: tracks.length,
-                                    itemBuilder: (context, index) {
-                                      return musicTile(tracks[index], () {
-                                        print("play playlist");
-                                        playAudio(index, sharedPreferences);
-                                      },
-                                          snapshot.hasData &&
-                                              (snapshot.data.id ==
-                                                  tracks[index].data.id) &&
-                                              playbackSnapshot.hasData &&
-                                              playbackSnapshot.data.playing);
-                                    }),
-                                SizedBox(height: 100,)
-                              ],
-                            ),
+                          children: [
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: widget.tracks.length,
+                                itemBuilder: (context, index) {
+                                  return musicTile(widget.tracks[index], () {
+                                    print("play playlist");
+                                    playAudio(index, sharedPreferences);
+                                  },
+                                      snapshot.hasData &&
+                                          (snapshot.data.id ==
+                                              widget.tracks[index].songId) &&
+                                          playbackSnapshot.hasData &&
+                                          playbackSnapshot.data.playing);
+                                }),
+                            SizedBox(
+                              height: 100,
+                            )
+                          ],
+                        ),
                       );
                     }),
               ),
@@ -274,12 +170,13 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                 if (snapShotData != AudioProcessingState.stopped) {
                   return StreamBuilder(
                       stream: AudioService.currentMediaItemStream,
-                      builder: (context, AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                      builder: (context,
+                          AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
                         return currentMediaItemSnapshot.hasData &&
-                            currentMediaItemSnapshot.data != null ?
-                        PlayerOverlay(playing: snapshot.data.playing) : SizedBox();
-                      }
-                  );
+                                currentMediaItemSnapshot.data != null
+                            ? PlayerOverlay(playing: snapshot.data.playing)
+                            : SizedBox();
+                      });
                 }
               }
               return SizedBox();
@@ -291,11 +188,15 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   }
 
   void playAudio(int index, SharedPreferences prefs) async {
-    if(AudioService.playbackState.playing){
-      print("Track Index: ${tracks[index].data.id} Current Media Item ID: ${AudioService.currentMediaItem.id}");
-      if(tracks[index].data.id == AudioService.currentMediaItem.id){
-        print("PlayListPage[playlist_detail]: already running with the same media id");
-        Navigator.push(context, MaterialPageRoute(builder:(context) =>SingleTrackPlayerPage()));
+    if (AudioService.playbackState.playing) {
+      if (widget.tracks[index].songId == AudioService.currentMediaItem.id) {
+        print(
+            "PlayListPage[playlist_detail]: already running with the same media id");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SingleTrackPlayerPage(track: widget.tracks[index])));
         return;
       }
     }
@@ -305,7 +206,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       print("audio service not running");
       int pos = sharedPreferences.getInt('position');
       Duration position = Duration(seconds: 0);
-      if(pos!=null){
+      if (pos != null) {
         position = Duration(seconds: pos);
       }
       playPlayList(context, position, index);
@@ -320,30 +221,31 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SingleTrackPlayerPage()));
+            builder: (context) =>
+                SingleTrackPlayerPage(track: widget.tracks[index])));
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];
-    print("tracks length: ${tracks.length}");
+    print("tracks length: ${widget.tracks.length}");
     print("index: $index");
-    print("tracks: ${tracks}");
+    print("tracks: ${widget.tracks}");
 
-    for (Track track in tracks) {
-      String source = track.data.trackUrl;
-      if (await LocalHelper.isFileDownloaded(track.data.id)) {
-        print("${track.data.id}: downloaded");
-        source = '$dir/${track.data.id}/main.m3u8';
+    for (Track track in widget.tracks) {
+      String source = 'https://138.68.163.236:8787/track/${track.songId}';
+      if (await LocalHelper.isFileDownloaded(track.songId)) {
+        print("${track.songId}: downloaded");
+        source = '$dir/${track.songId}/main.m3u8';
       }
 
       print("Source: $source");
       mediaItems.add(MediaItem(
-          id: track.data.id,
-          album: track.data.albumId,
-          title: track.data.title,
+          id: track.songId,
+          album: track.albumId,
+          title: track.song.title,
           genre: 'genre goes here',
-          artist: track.data.artistId,
-          duration: Duration(milliseconds: track.data.duration),
-          artUri: Uri.parse(track.data.coverImgUrl),
+          // artist: track.artist.firstName,
+          duration: Duration(milliseconds: track.song.duration),
+          artUri: Uri.parse(track.song.coverImageUrl),
           // extras: {'source': m3u8FilePath});
           extras: {'source': source}));
     }
@@ -369,14 +271,16 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
     // await AudioService.addQueueItems(mediaItems);
     /// check if currently clicked media file is not downloaded and start download
-    var _trackToPlay = tracks[index];
+    var _trackToPlay = widget.tracks[index];
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
-    if (!(await LocalHelper.isFileDownloaded(_trackToPlay.data.id))) {
+    if (!(await LocalHelper.isFileDownloaded(_trackToPlay.song.songId))) {
       // var m3u8FilePath = '$dir/${_trackToPlay.data.id}/main.m3u8';
       HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-              await parseHLS.downloadFile(_trackToPlay.data.trackUrl,
-                  '$dir/${_trackToPlay.data.id}', "main.m3u8"))
+              await parseHLS.downloadFile(
+                  'https://138.68.163.236:8787/track/${_trackToPlay.song.songId}',
+                  '$dir/${_trackToPlay.song.songId}',
+                  "main.m3u8"))
           .readAsStringSync());
       // TODO: update this after correct m3u8 is generated
       // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
@@ -385,18 +289,18 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       hlsPlayList.segments.forEach((segment) {
         var segmentIndex = hlsPlayList.segments.indexOf(segment);
         downloadTasks.add(DownloadTask(
-            track_id: _trackToPlay.data.id,
+            track_id: _trackToPlay.songId,
             segment_number: segmentIndex,
             downloadType: DownloadType.media,
             downloaded: false,
-            download_path: '$dir/${_trackToPlay.data.id}/',
+            download_path: '$dir/${_trackToPlay.songId}/',
             url: segment.url));
       });
       print(downloadTasks);
       BlocProvider.of<MediaDownloaderBloc>(context)
           .add(AddDownload(downloadTasks: downloadTasks));
     } else {
-      var m3u8FilePath = '$dir/${_trackToPlay.data.id}/main.m3u8';
+      var m3u8FilePath = '$dir/${_trackToPlay.songId}/main.m3u8';
 
       /// TODO: uncomment for encryption key download
       await parseHLS.updateLocalM3u8(m3u8FilePath);
@@ -406,7 +310,6 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     }
 
     await _startPlaying(mediaItems, index);
-
   }
 
   _startPlaying(mediaItems, index) async {

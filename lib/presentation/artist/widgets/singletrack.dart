@@ -21,11 +21,11 @@ class _SingleTrackState extends State<SingleTrack> {
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<TrackBloc, TrackState>(
         builder: (ctx, state) {
-          if (state is LoadedTrack) {
+          if (state is LoadedTracks) {
             return GestureDetector(
               onTap: () {
                 /// Start playing the audio
-                playSingleTrack(context, state.track);
+                playSingleTrack(context, state.tracks[0]);
 
                 /// Pass the track data to [SingletrackPlayer] page
                 /// using state.track
@@ -33,7 +33,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            SingleTrackPlayerPage()));
+                            SingleTrackPlayerPage(track: state.tracks[0])));
               },
               child: Container(
                 width: 140,
@@ -141,18 +141,19 @@ void playSingleTrack(BuildContext context, Track track,
   //     .path;
   // String m3u8FilePath = '$dir/${track.data.id}/main.m3u8';
 
-  final id = track.data.id;
+  final id = track.songId;
 
+  print('playing from url in herer ${track.songId}');
   MediaItem _mediaItem = MediaItem(
-      id: track.data.id,
-      album: track.data.albumId,
-      title: track.data.title,
+      id: track.songId,
+      album: track.albumId,
+      title: track.song.title,
       genre: 'genre goes here',
-      artist: track.data.artistId,
-      duration: Duration(milliseconds: track.data.duration),
-      artUri: Uri.parse(track.data.coverImgUrl),
+      artist: track.album.artistId,
+      duration: Duration(seconds: 300),
+      artUri: Uri.parse(track.song.coverImageUrl),
       // extras: {'source': m3u8FilePath});
-      extras: {'source': track.data.trackUrl});
+      extras: {'source': 'https://138.68.163.236:8787/track/${track.songId}'});
 
   if (AudioService.running) {
     AudioService.playFromMediaId(id);

@@ -15,12 +15,13 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
       try {
         yield LoadingTrack();
         await Future.delayed(Duration(seconds: 5));
-        var tracks = await trackRepository.getTracks();
+        var tracksResponse = await trackRepository.getTracks();
 
-        yield LoadedTrack(track: tracks);
+        yield LoadedTracks(tracks: tracksResponse.data.data);
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading playlists");
+        throw Exception(e);
       }
     }
   }

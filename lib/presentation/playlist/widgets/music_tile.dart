@@ -8,7 +8,7 @@ import 'package:streaming_mobile/data/models/track.dart';
 Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem mediaItem]) {
 
   return GestureDetector(
-    onTap: (){
+    onTap: () {
       onPressed();
     },
     child: ListTile(
@@ -20,7 +20,7 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: CachedNetworkImage(
-              imageUrl: music !=null ? music.data.coverImgUrl : mediaItem.artUri.toString(),
+              imageUrl: music != null ? music.song.coverImageUrl : mediaItem.artUri.toString(),
               placeholder: (context, url) => CircularProgressIndicator(),
               fit: BoxFit.cover,
             ),
@@ -28,7 +28,7 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
         ),
       ),
       title: Text(
-        music != null ? music.data.title : mediaItem.title,
+        music != null ? music.song.title != null ? music.song.title : "-------" : mediaItem.title != null ? mediaItem.title : "-------",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
@@ -38,7 +38,7 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
         ),
       ),
       subtitle: Text(
-        music != null ? music.data.artistId : mediaItem.artist,
+        music != null ? music.songId : mediaItem.artist != null ? mediaItem.artist : "-----",
         style: TextStyle(
           color: Colors.black.withOpacity(0.5),
           fontSize: 14,
@@ -48,20 +48,20 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          isPlaying ? Row(
-            children: [
-              Image.asset(
-                "assets/images/playing_wave.gif",
-                height: 20,
-                color: kRed,
-              ),
-              SizedBox(width: 10),
-            ],
-          ):
-          SizedBox(),
+          isPlaying
+              ? Row(
+                  children: [
+                    Image.asset(
+                      "assets/images/playing_wave.gif",
+                      height: 20,
+                      color: kRed,
+                    ),
+                    SizedBox(width: 10),
+                  ],
+                )
+              : SizedBox(),
           Text(
-            prettyDuration(Duration(milliseconds: music != null ? music.data.duration : mediaItem.duration.inMilliseconds))
-            ,
+            prettyDuration(music != null ? (music.song.duration != null ? Duration(seconds: music.song.duration) : mediaItem.duration) : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),
           ),
           Icon(

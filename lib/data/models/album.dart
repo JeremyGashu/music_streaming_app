@@ -1,87 +1,241 @@
-import 'package:equatable/equatable.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 
-class Album extends Equatable {
-  final Data data;
-  final bool success;
-  final int status;
+class AlbumsResponse {
+  AlbumsResponse({
+    this.success,
+    this.data,
+  });
 
-  Album({this.data, this.success, this.status});
+  bool success;
+  Data data;
 
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-        data: json['data'] != null ? new Data.fromJson(json['data']) : null,
-        success: json['success'],
-        status: json['status']);
-  }
+  factory AlbumsResponse.fromJson(Map<String, dynamic> json) => AlbumsResponse(
+        success: json["success"],
+        data: Data.fromJson(json["data"]),
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data.toJson();
-    }
-    data['success'] = this.success;
-    data['status'] = this.status;
-    return data;
-  }
-
-  @override
-  List<Object> get props => [data, success, status];
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
+      };
 }
 
-class Data extends Equatable {
-  final String id;
-  final String title;
-  final String description;
-  final String coverImage;
-  final int trackCount;
-  final int views;
-  final int likes;
-  final String artistId;
+class Data {
+  Data({
+    this.metaData,
+    this.data,
+  });
 
-  Data(
-      {this.id,
-      this.title,
-      this.description,
-      this.coverImage,
-      this.trackCount,
-      this.views,
-      this.likes,
-      this.artistId});
+  MetaData metaData;
+  List<Album> data;
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        coverImage: json['cover_image'],
-        views: json['views'],
-        trackCount: json['track_count'],
-        likes: json['likes'],
-        artistId: json['artist_id']);
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        metaData: MetaData.fromJson(json["meta_data"]),
+        data: List<Album>.from(json["data"].map((x) => Album.fromJson(x))),
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['description'] = this.description;
-    data['cover_image'] = this.coverImage;
-    data['views'] = this.views;
-    data['likes'] = this.likes;
-    data['track_count'] = this.trackCount;
-    data['artist_id'] = this.artistId;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "meta_data": metaData.toJson(),
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+      };
+}
 
-  @override
-  List<Object> get props => [
-        id,
-        title,
-        description,
-        coverImage,
-        trackCount,
-        views,
-        likes,
-        artistId,
-      ];
+class Album {
+  Album({
+    this.albumId,
+    this.artistId,
+    this.artist,
+    this.title,
+    this.coverImageUrl,
+    this.views,
+    this.tracks,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  String albumId;
+  String artistId;
+  Artist artist;
+  String title;
+  String coverImageUrl;
+  int views;
+  List<Track> tracks;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Album.fromJson(Map<String, dynamic> json) => Album(
+        albumId: json["album_id"],
+        artistId: json["artist_id"],
+        artist: Artist.fromJson(json["artist"]),
+        title: json["title"],
+        coverImageUrl: json["cover_image_url"],
+        views: json["views"],
+        tracks: List<Track>.from(json["tracks"].map((x) => Track.fromJson(x))),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "album_id": albumId,
+        "artist_id": artistId,
+        "artist": artist.toJson(),
+        "title": title,
+        "cover_image_url": coverImageUrl,
+        "views": views,
+        "tracks": List<dynamic>.from(tracks.map((x) => x.toJson())),
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+class Artist {
+  Artist({
+    this.artistId,
+    this.firstName,
+    this.lastName,
+    this.image,
+    this.email,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  String artistId;
+  String firstName;
+  String lastName;
+  String image;
+  String email;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Artist.fromJson(Map<String, dynamic> json) => Artist(
+        artistId: json["artist_id"],
+        firstName: json["first_name"],
+        lastName: json["last_name"],
+        image: json["image"],
+        email: json["email"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "artist_id": artistId,
+        "first_name": firstName,
+        "last_name": lastName,
+        "image": image,
+        "email": email,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+class Song {
+  Song({
+    this.songId,
+    this.title,
+    this.coverImageUrl,
+    this.songUrl,
+    this.views,
+    this.duration,
+    this.releasedAt,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  String songId;
+  String title;
+  String coverImageUrl;
+  String songUrl;
+  int views;
+  int duration;
+  DateTime releasedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Song.fromJson(Map<String, dynamic> json) => Song(
+        songId: json["song_id"],
+        title: json["title"],
+        coverImageUrl: json["cover_image_url"],
+        songUrl: json["song_url"],
+        views: json["views"],
+        duration: json["duration"],
+        releasedAt: DateTime.parse(json["released_at"]),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "song_id": songId,
+        "title": title,
+        "cover_image_url": coverImageUrl,
+        "song_url": songUrl,
+        "views": views,
+        "duration": duration,
+        "released_at": releasedAt.toIso8601String(),
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+class MetaData {
+  MetaData({
+    this.page,
+    this.perPage,
+    this.pageCount,
+    this.totalCount,
+    this.links,
+  });
+
+  int page;
+  int perPage;
+  int pageCount;
+  int totalCount;
+  List<Link> links;
+
+  factory MetaData.fromJson(Map<String, dynamic> json) => MetaData(
+        page: json["page"],
+        perPage: json["per_page"],
+        pageCount: json["page_count"],
+        totalCount: json["total_count"],
+        links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "page": page,
+        "per_page": perPage,
+        "page_count": pageCount,
+        "total_count": totalCount,
+        "links": List<dynamic>.from(links.map((x) => x.toJson())),
+      };
+}
+
+class Link {
+  Link({
+    this.self,
+    this.first,
+    this.previous,
+    this.next,
+    this.last,
+  });
+
+  String self;
+  String first;
+  String previous;
+  String next;
+  String last;
+
+  factory Link.fromJson(Map<String, dynamic> json) => Link(
+        self: json["self"] == null ? null : json["self"],
+        first: json["first"] == null ? null : json["first"],
+        previous: json["previous"] == null ? null : json["previous"],
+        next: json["next"] == null ? null : json["next"],
+        last: json["last"] == null ? null : json["last"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "self": self == null ? null : self,
+        "first": first == null ? null : first,
+        "previous": previous == null ? null : previous,
+        "next": next == null ? null : next,
+        "last": last == null ? null : last,
+      };
 }

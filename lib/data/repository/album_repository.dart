@@ -15,8 +15,23 @@ String defaultAlbumString = '''
             "page": 1,
             "per_page": 10,
             "page_count": 1,
-            "total_count": 0,
+            "total_count": 1,
             "links": [
+                {
+                    "self": "/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title"
+                },
+                {
+                    "first": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                },
+                {
+                    "previous": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                },
+                {
+                    "next": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                },
+                {
+                    "last": "/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title"
+                }
             ]
         },
         "data": []
@@ -27,10 +42,10 @@ String defaultAlbumString = '''
 class AlbumRepository {
   final AlbumDataProvider dataProvider;
   http.Response albums;
-  List decodeAlbums;
+  var decodeAlbums;
   AlbumRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<List<Album>> getAllAlbums(
+  Future<AlbumsResponse> getAllAlbums(
       {int page, int perPage, String sort, String sortKey}) async {
     page ??= 0;
     perPage ??= 10;
@@ -53,7 +68,7 @@ class AlbumRepository {
         await albumBox.clear();
         print('getAlbums: WRITING DATA: ');
         await albumBox.add(albums.body);
-        decodeAlbums = jsonDecode(albums.body)['data']['data'] as List;
+        decodeAlbums = jsonDecode(albums.body);
       } else {
         print(
             'getAlbums: but can\'t save the data as it have errors in loading so I am returning the old valid cache' +
@@ -61,14 +76,15 @@ class AlbumRepository {
         String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
         print('getAlbums: offline and retrieving data... ' + albumCache);
 
-        decodeAlbums = jsonDecode(albumCache)['data']['data'] as List;
+        decodeAlbums = jsonDecode(albumCache);
       }
     } else {
+      //TODO change default album string
       String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
-      decodeAlbums = jsonDecode(albumCache)['data']['data'] as List;
+      decodeAlbums = jsonDecode(albumCache);
     }
 
-    return decodeAlbums.map((album) => Album.fromJson(album)).toList();
+    return AlbumsResponse.fromJson(decodeAlbums);
   }
 
   Future<Album> getAlbumById(String albumId) async {

@@ -10,6 +10,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
+import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
@@ -26,6 +27,7 @@ import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
+import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
@@ -53,6 +55,7 @@ void main() async {
   Bloc.observer = SimpleBlocObserver();
 
   await Hive.initFlutter();
+  Hive.registerAdapter(AuthDataAdapter());
   await FlutterDownloader.initialize(debug: true);
 
   await Firebase.initializeApp();
@@ -92,7 +95,8 @@ void main() async {
           AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
     ),
     BlocProvider(
-      create: (context) => AuthBloc(authRepository: _authRepo),
+      create: (context) =>
+          AuthBloc(authRepository: _authRepo)..add(CheckAuthOnStartUp()),
     ),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
@@ -125,7 +129,6 @@ class _MyAppState extends State<MyApp> {
     SearchPage(),
     LibraryPage(),
     ArtistProfilePage(),
-    //Search(), 2
   ];
 
   @override

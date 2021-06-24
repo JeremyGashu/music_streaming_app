@@ -9,10 +9,11 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
-  // final Track track;
-  // const SingleTrackPlayerPage({@required this.track});
+  final Track track;
+  const SingleTrackPlayerPage({@required this.track});
 
   @override
   _SingleTrackPlayerPageState createState() => _SingleTrackPlayerPageState();

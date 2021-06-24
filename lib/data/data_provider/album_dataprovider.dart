@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/core/app/urls.dart';
+import 'package:streaming_mobile/data/models/auth_data.dart';
 
 var testData = '''
 {
@@ -48,9 +50,16 @@ class AlbumDataProvider {
     perPage ??= 10;
     sort ??= 'ASC';
     sortKey ??= 'title';
+
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
+
     String url =
-        '$BASE_URL/albums?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
-    http.Response response = await client.get(Uri.parse(url));
+        'http://138.68.163.236:8889/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title';
+    http.Response response = await client.get(Uri.parse(url), headers: headers);
 
     return response;
   }

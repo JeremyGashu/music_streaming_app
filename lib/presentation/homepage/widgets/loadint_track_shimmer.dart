@@ -8,12 +8,16 @@ class LoadingTrackShimmer extends StatelessWidget {
       highlightColor: Colors.grey.withOpacity(0.5),
       baseColor: Colors.grey.withOpacity(0.7),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 100,
             width: 130,
+            margin: EdgeInsets.all(5),
             color: Colors.grey.withOpacity(0.3),
+          ),
+          SizedBox(
+            height: 5,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

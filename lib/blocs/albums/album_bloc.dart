@@ -15,9 +15,9 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
       try {
         yield LoadingAlbum();
         await Future.delayed(Duration(seconds: 5));
-        var albums = await albumRepository.getAllAlbums();
+        var albumsResponse = await albumRepository.getAllAlbums();
 
-        yield LoadedAlbum(albums: albums);
+        yield LoadedAlbum(albums: albumsResponse.data.data);
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingAlbumError(message: "Error on loading Album");

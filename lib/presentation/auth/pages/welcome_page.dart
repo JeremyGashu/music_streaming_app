@@ -3,6 +3,7 @@ import 'package:flutter_signin_button/button_builder.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/phone_input_page.dart';
+import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class WelcomePage extends StatelessWidget {
   @override
@@ -45,7 +46,7 @@ class WelcomePage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PhoneInputPage()));
+                                builder: (context) => LoginPage()));
                       },
                       child:
                           Text('LOG IN', style: TextStyle(color: Colors.white)),

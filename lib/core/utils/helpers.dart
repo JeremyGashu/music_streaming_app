@@ -7,49 +7,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:streaming_mobile/blocs/local_database/local_database_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as mdm;
-import 'package:hive_flutter/hive_flutter.dart';
 
 class LocalHelper{
   static final httpClient = new HttpClient();
 
   static Future<String> getFilePath(context) async{
     return (Theme.of(context).platform == TargetPlatform.android
-        ? await getExternalStorageDirectory()
+            ? await getExternalStorageDirectory()
             : await getApplicationDocumentsDirectory())
-    .path;
-  }
-
-  static Future<String> getLocalFilePath() async{
-    return (Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationDocumentsDirectory())
         .path;
   }
 
-  static Future<bool> isFileDownloaded(String fileId)async{
-    var box = Hive.lazyBox("downloadedMedias");
+  static Future<String> getLocalFilePath() async {
+    return (Platform.isAndroid
+            ? await getExternalStorageDirectory()
+            : await getApplicationDocumentsDirectory())
+        .path;
+  }
+
+  static Future<bool> isFileDownloaded(String fileId) async {
+    var box = await Hive.openBox("downloadedMedias");
     var trackDownloaded = await box.get(fileId);
     return trackDownloaded != null;
   }
 
   static Future<void> downloadMedia(String trackUrl, String fileId) async {
-    try{
+    try {
       await Hive.initFlutter();
-      await Hive.openLazyBox("downloadedMedias");
-      await FlutterDownloader.initialize(
-          debug: true
-      );
-      print("LocalHelper:[downloadMedia]: trackUrl: $trackUrl, fileId: ${fileId}");
+      await Hive.openBox("downloadedMedias");
+      await FlutterDownloader.initialize(debug: true);
+      print(
+          "LocalHelper:[downloadMedia]: trackUrl: $trackUrl, fileId: ${fileId}");
       ParseHls parseHLS = ParseHls();
       var dir = await LocalHelper.getLocalFilePath();
       bool isFileDownloaded = await LocalHelper.isFileDownloaded(fileId);
-      if(!isFileDownloaded){
+      if (!isFileDownloaded) {
         // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
         //     await parseHLS.downloadFile(trackUrl,
         //         '$dir/${fileId}', "main.m3u8"))
@@ -83,7 +82,7 @@ class LocalHelper{
         mediaDownloaderBloc.add(AddDownload(downloadTasks: downloadTasks));
         LocalDatabaseBloc(mediaDownloaderBloc: mediaDownloaderBloc);
       }
-    }catch(error, stacktrace){
+    } catch (error, stacktrace) {
       print("LocalHelper:[downloadMedia]: error: $error");
       print(stacktrace);
     }
@@ -238,7 +237,7 @@ class LocalHelper{
       // File file = new File(filePath);
       // await file.delete();
       return true;
-    }catch(e, st){
+    } catch (e, st) {
       print(e);
       print(st);
       int start = filePath.indexOf("enc.key.aes");

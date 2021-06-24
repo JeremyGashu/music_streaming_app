@@ -1,116 +1,279 @@
-import 'package:equatable/equatable.dart';
+class TracksResponse {
+  TracksResponse({
+    this.success,
+    this.data,
+  });
 
-class Track extends Equatable {
-  final Data data;
-  final bool success;
-  final int status;
+  bool success;
+  Data data;
 
-  Track({this.data, this.success, this.status});
+  factory TracksResponse.fromJson(Map<String, dynamic> json) => TracksResponse(
+        success: json["success"],
+        data: Data.fromJson(json["data"]),
+      );
 
-  factory Track.fromJson(Map<String, dynamic> json) {
-    return Track(
-        data: json['data'] != null ? new Data.fromJson(json['data']) : null,
-        success: json['success'],
-        status: json['status']);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data.toJson();
-    }
-    data['success'] = this.success;
-    data['status'] = this.status;
-    return data;
-  }
-
-  @override
-  List<Object> get props => [data, success, status];
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
+      };
 }
 
-class Data extends Equatable {
-  final String id;
-  final int likes;
+class Data {
+  Data({
+    this.metaData,
+    this.data,
+  });
 
-  final String title;
+  MetaData metaData;
+  List<Track> data;
 
-  final String releaseDate;
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        metaData: MetaData.fromJson(json["meta_data"]),
+        data: List<Track>.from(json["data"].map((x) => Track.fromJson(x))),
+      );
 
-  final String artistId;
+  Map<String, dynamic> toJson() => {
+        "meta_data": metaData.toJson(),
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+      };
+}
 
-  final String albumId;
+class Track {
+  Track({
+    this.trackId,
+    this.albumId,
+    this.album,
+    this.songId,
+    this.song,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-  final String coverImgUrl;
-  final String trackUrl;
+  String trackId;
+  String albumId;
+  Album album;
+  String songId;
+  Song song;
+  DateTime createdAt;
+  DateTime updatedAt;
 
-  final int views;
+  factory Track.fromJson(Map<String, dynamic> json) => Track(
+        trackId: json["track_id"],
+        albumId: json["album_id"],
+        album: json["album"] != null ? Album.fromJson(json["album"]) : null,
+        songId: json["song_id"],
+        song: Song.fromJson(json["song"]),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
 
-  final int duration;
+  Map<String, dynamic> toJson() => {
+        "track_id": trackId,
+        "album_id": albumId,
+        "album": album.toJson(),
+        "song_id": songId,
+        "song": song.toJson(),
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
 
-  final String lyricsUrl;
+class Album {
+  Album({
+    this.albumId,
+    this.artistId,
+    this.artist,
+    this.title,
+    this.coverImageUrl,
+    this.views,
+    this.tracks,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-  final String createdBy;
+  String albumId;
+  String artistId;
+  Artist artist;
+  String title;
+  String coverImageUrl;
+  int views;
+  dynamic tracks;
+  DateTime createdAt;
+  DateTime updatedAt;
 
-  Data(
-      {this.id,
-      this.likes,
-      this.title,
-      this.releaseDate,
-      this.artistId,
-      this.albumId,
-      this.coverImgUrl,
-      this.trackUrl,
-      this.views,
-      this.duration,
-      this.lyricsUrl,
-      this.createdBy});
+  factory Album.fromJson(Map<String, dynamic> json) => Album(
+        albumId: json["album_id"],
+        artistId: json["artist_id"],
+        artist: Artist.fromJson(json["artist"]),
+        title: json["title"],
+        coverImageUrl: json["cover_image_url"],
+        views: json["views"],
+        tracks: json["tracks"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-        id: json['id'],
-        likes: json['likes'],
-        title: json['title'],
-        releaseDate: json['release_date'],
-        artistId: json['artist_id'],
-        albumId: json['album_id'],
-        coverImgUrl: json['cover_img_url'],
-        trackUrl: json['track_url'],
-        views: json['views'],
-        duration: json['duration'],
-        lyricsUrl: json['lyrics_url'],
-        createdBy: json['created_by']);
-  }
+  Map<String, dynamic> toJson() => {
+        "album_id": albumId,
+        "artist_id": artistId,
+        "artist": artist.toJson(),
+        "title": title,
+        "cover_image_url": coverImageUrl,
+        "views": views,
+        "tracks": tracks,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['likes'] = this.likes;
-    data['title'] = this.title;
-    data['release_date'] = this.releaseDate;
-    data['artist_id'] = this.artistId;
-    data['album_id'] = this.albumId;
-    data['cover_img_url'] = this.coverImgUrl;
-    data['track_url'] = this.trackUrl;
-    data['views'] = this.views;
-    data['duration'] = this.duration;
-    data['lyrics_url'] = this.lyricsUrl;
-    data['created_by'] = this.createdBy;
-    return data;
-  }
+class Artist {
+  Artist({
+    this.artistId,
+    this.firstName,
+    this.lastName,
+    this.image,
+    this.email,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-  @override
-  List<Object> get props => [
-        id,
-        likes,
-        title,
-        releaseDate,
-        artistId,
-        albumId,
-        coverImgUrl,
-        trackUrl,
-        views,
-        duration,
-        lyricsUrl,
-        createdBy
-      ];
+  String artistId;
+  String firstName;
+  String lastName;
+  String image;
+  String email;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Artist.fromJson(Map<String, dynamic> json) => Artist(
+        artistId: json["artist_id"],
+        firstName: json["first_name"],
+        lastName: json["last_name"],
+        image: json["image"],
+        email: json["email"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "artist_id": artistId,
+        "first_name": firstName,
+        "last_name": lastName,
+        "image": image,
+        "email": email,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+class Song {
+  Song({
+    this.songId,
+    this.title,
+    this.coverImageUrl,
+    this.songUrl,
+    this.views,
+    this.duration,
+    this.releasedAt,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  String songId;
+  String title;
+  String coverImageUrl;
+  String songUrl;
+  int views;
+  int duration;
+  DateTime releasedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Song.fromJson(Map<String, dynamic> json) => Song(
+        songId: json["song_id"],
+        title: json["title"],
+        coverImageUrl: json["cover_image_url"],
+        songUrl: json["song_url"],
+        views: json["views"],
+        duration: json["duration"],
+        releasedAt: DateTime.parse(json["released_at"]),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "song_id": songId,
+        "title": title,
+        "cover_image_url": coverImageUrl,
+        "song_url": songUrl,
+        "views": views,
+        "duration": duration,
+        "released_at": releasedAt.toIso8601String(),
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+class MetaData {
+  MetaData({
+    this.page,
+    this.perPage,
+    this.pageCount,
+    this.totalCount,
+    this.links,
+  });
+
+  int page;
+  int perPage;
+  int pageCount;
+  int totalCount;
+  List<Link> links;
+
+  factory MetaData.fromJson(Map<String, dynamic> json) => MetaData(
+        page: json["page"],
+        perPage: json["per_page"],
+        pageCount: json["page_count"],
+        totalCount: json["total_count"],
+        links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "page": page,
+        "per_page": perPage,
+        "page_count": pageCount,
+        "total_count": totalCount,
+        "links": List<dynamic>.from(links.map((x) => x.toJson())),
+      };
+}
+
+class Link {
+  Link({
+    this.self,
+    this.first,
+    this.previous,
+    this.next,
+    this.last,
+  });
+
+  String self;
+  String first;
+  String previous;
+  String next;
+  String last;
+
+  factory Link.fromJson(Map<String, dynamic> json) => Link(
+        self: json["self"] == null ? null : json["self"],
+        first: json["first"] == null ? null : json["first"],
+        previous: json["previous"] == null ? null : json["previous"],
+        next: json["next"] == null ? null : json["next"],
+        last: json["last"] == null ? null : json["last"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "self": self == null ? null : self,
+        "first": first == null ? null : first,
+        "previous": previous == null ? null : previous,
+        "next": next == null ? null : next,
+        "last": last == null ? null : last,
+      };
 }
