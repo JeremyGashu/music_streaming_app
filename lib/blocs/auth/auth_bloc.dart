@@ -43,7 +43,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } else if (event is SendOTPVerification) {
       yield VerifyingOTP();
-      await Future.delayed(Duration(seconds: 3));
       try {
         String token = await authRepository.verifyOTP(
             phoneNo: event.phoneNo, otp: event.otp);
@@ -78,7 +77,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           print(
               'saved auth data ${authBox.get('auth_data', defaultValue: AuthData(isAuthenticated: false))}');
         } else {
-          yield InitialState();
+          yield Unauthenticated(authData: authData);
         }
       } catch (e) {
         print(e.toString());

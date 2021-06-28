@@ -22,183 +22,189 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return StreamBuilder(
       stream: AudioService.queueStream,
       builder: (context, AsyncSnapshot<List<MediaItem>> snapshot) =>
           StreamBuilder(
         stream: AudioService.currentMediaItemStream,
         builder: (context, AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
-        currentMediaSnapshot.hasData ?
-        Wrap(
-          children: [
-            GestureDetector(
-              onVerticalDragEnd: (details){
-                setState(() {
-                  _expandList = false;
-                });
-              },
-              child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  height: _expandList ? 300 : 0,
-                  width: kWidth(context),
-                  color: kPlaylistBg,
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                      children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "${currentMediaSnapshot.data.title}",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        _expandList
-                            ? GestureDetector(
-                                child:
-                                    Icon(Icons.keyboard_arrow_down_sharp),
-                                onTap: () {
-                                  setState(() {
-                                    _expandList = false;
-                                  });
-                                })
-                            : SizedBox()
-                      ],
-                    ),
-                    Expanded(
-                      child: StreamBuilder(
-                        stream: AudioService.playbackStateStream,
-                        builder: (context,
-                                AsyncSnapshot<PlaybackState>
-                                    playbackSnapshot) =>
-                        playbackSnapshot.hasData ?
-                            ListView.builder(
-                              padding: EdgeInsets.zero,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return musicTile(
-                                    null,
-                                    () {
-                                      print("play playlist");
-                                      // playAudio(index, sharedPreferences);
-                                      AudioService.playMediaItem(
-                                          snapshot.data[index]);
-                                    },
-                                    snapshot.hasData &&
-                                        (currentMediaSnapshot.data.id ==
-                                            snapshot.data[index].id) &&
-                                        playbackSnapshot.hasData &&
-                                        playbackSnapshot.data.playing,
-                                    snapshot.data[index],
-                                  );
-                                }): SizedBox(),
-                      ),
-                    ),
-                  ])),
-            ),
-            Container(
-                decoration: BoxDecoration(
-                    color: kYellow,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(0.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 5.0,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3))
-                    ]),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
+            currentMediaSnapshot.hasData
+                ? Wrap(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Column(
-                          children: [
-                            // StreamBuilder(
-                            //   stream: AudioService.currentMediaItemStream,
-                            //   builder: (context,
-                            //       AsyncSnapshot<MediaItem> snapshot) =>
-                            //       Padding(
-                            //         padding:
-                            //         const EdgeInsets.symmetric(vertical: 8.0),
-                            //         child: Row(children: [
-                            //           currentMediaSnapshot.hasData
-                            //               ? Text(
-                            //             "${currentMediaSnapshot.data.artist}:",
-                            //             style: TextStyle(
-                            //                 fontWeight: FontWeight.bold),
-                            //           )
-                            //               : Text(
-                            //             "-----",
-                            //             style: TextStyle(
-                            //                 fontWeight: FontWeight.bold),
-                            //           ),
-                            //           currentMediaSnapshot.hasData
-                            //               ? Text(
-                            //             "${currentMediaSnapshot.data.title}",
-                            //             overflow: TextOverflow.ellipsis,
-                            //             maxLines: 1,
-                            //           )
-                            //               : Text(
-                            //             "-----",
-                            //             overflow: TextOverflow.ellipsis,
-                            //             maxLines: 1,
-                            //           ),
-                            //           Expanded(child: Align(
-                            //             alignment: Alignment.centerRight,
-                            //             child: !_expandList ? GestureDetector(
-                            //               child: Icon(Icons.keyboard_arrow_up),
-                            //               onTap: (){
-                            //                 setState(() {
-                            //                   _expandList = true;
-                            //                 });
-                            //               },
-                            //             ) : SizedBox(),
-                            //           ))
-                            //         ]),
-                            //       ),
-                            // ),
-                            // Divider(
-                            //   color: Colors.white54,
-                            // ),
-                            _controlButtonsRow(widget.playing),
-                            // Divider(
-                            //   color: Colors.white54,
-                            // ),
-                            //     () {
-                            //   if (snapshot.hasData &&
-                            //       currentMediaSnapshot.hasData) {
-                            //     var _currentIndex = snapshot.data
-                            //         .indexOf(currentMediaSnapshot.data);
-                            //     print("current index: $_currentIndex");
-                            //     if ((_currentIndex <
-                            //         snapshot.data.length - 1) &&
-                            //         _currentIndex != -1) {
-                            //       MediaItem nextMediaItem =
-                            //       snapshot.data[_currentIndex + 1];
-                            //       return _nextUpRow(nextMediaItem);
-                            //     } else {
-                            //       return SizedBox();
-                            //     }
-                            //   } else {
-                            //     return SizedBox();
-                            //   }
-                            // }()
-                          ],
-                        ),
-                      )
+                      GestureDetector(
+                        onVerticalDragEnd: (details) {
+                          setState(() {
+                            _expandList = false;
+                          });
+                        },
+                        child: AnimatedContainer(
+                            duration: Duration(milliseconds: 500),
+                            height: _expandList ? 300 : 0,
+                            width: kWidth(context),
+                            color: kPlaylistBg,
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${currentMediaSnapshot.data.title}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  _expandList
+                                      ? GestureDetector(
+                                          child: Icon(
+                                              Icons.keyboard_arrow_down_sharp),
+                                          onTap: () {
+                                            setState(() {
+                                              _expandList = false;
+                                            });
+                                          })
+                                      : SizedBox()
+                                ],
+                              ),
+                              Expanded(
+                                child: StreamBuilder(
+                                  stream: AudioService.playbackStateStream,
+                                  builder: (context,
+                                          AsyncSnapshot<PlaybackState>
+                                              playbackSnapshot) =>
+                                      playbackSnapshot.hasData
+                                          ? ListView.builder(
+                                              padding: EdgeInsets.zero,
+                                              itemCount: snapshot.data.length,
+                                              itemBuilder: (context, index) {
+                                                return musicTile(
+                                                  null,
+                                                  () {
+                                                    print("play playlist");
+                                                    // playAudio(index, sharedPreferences);
+                                                    AudioService.playMediaItem(
+                                                        snapshot.data[index]);
+                                                  },
+                                                  snapshot.hasData &&
+                                                      (currentMediaSnapshot
+                                                              .data.id ==
+                                                          snapshot.data[index]
+                                                              .id) &&
+                                                      playbackSnapshot
+                                                          .hasData &&
+                                                      playbackSnapshot
+                                                          .data.playing,
+                                                  snapshot.data[index],
+                                                );
+                                              })
+                                          : SizedBox(),
+                                ),
+                              ),
+                            ])),
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: kYellow,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(0.0),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black26,
+                                    spreadRadius: 5.0,
+                                    blurRadius: 7.0,
+                                    offset: Offset(0, 3))
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 12.0),
+                                  child: Column(
+                                    children: [
+                                      // StreamBuilder(
+                                      //   stream: AudioService.currentMediaItemStream,
+                                      //   builder: (context,
+                                      //       AsyncSnapshot<MediaItem> snapshot) =>
+                                      //       Padding(
+                                      //         padding:
+                                      //         const EdgeInsets.symmetric(vertical: 8.0),
+                                      //         child: Row(children: [
+                                      //           currentMediaSnapshot.hasData
+                                      //               ? Text(
+                                      //             "${currentMediaSnapshot.data.artist}:",
+                                      //             style: TextStyle(
+                                      //                 fontWeight: FontWeight.bold),
+                                      //           )
+                                      //               : Text(
+                                      //             "-----",
+                                      //             style: TextStyle(
+                                      //                 fontWeight: FontWeight.bold),
+                                      //           ),
+                                      //           currentMediaSnapshot.hasData
+                                      //               ? Text(
+                                      //             "${currentMediaSnapshot.data.title}",
+                                      //             overflow: TextOverflow.ellipsis,
+                                      //             maxLines: 1,
+                                      //           )
+                                      //               : Text(
+                                      //             "-----",
+                                      //             overflow: TextOverflow.ellipsis,
+                                      //             maxLines: 1,
+                                      //           ),
+                                      //           Expanded(child: Align(
+                                      //             alignment: Alignment.centerRight,
+                                      //             child: !_expandList ? GestureDetector(
+                                      //               child: Icon(Icons.keyboard_arrow_up),
+                                      //               onTap: (){
+                                      //                 setState(() {
+                                      //                   _expandList = true;
+                                      //                 });
+                                      //               },
+                                      //             ) : SizedBox(),
+                                      //           ))
+                                      //         ]),
+                                      //       ),
+                                      // ),
+                                      // Divider(
+                                      //   color: Colors.white54,
+                                      // ),
+                                      _controlButtonsRow(widget.playing),
+                                      // Divider(
+                                      //   color: Colors.white54,
+                                      // ),
+                                      //     () {
+                                      //   if (snapshot.hasData &&
+                                      //       currentMediaSnapshot.hasData) {
+                                      //     var _currentIndex = snapshot.data
+                                      //         .indexOf(currentMediaSnapshot.data);
+                                      //     print("current index: $_currentIndex");
+                                      //     if ((_currentIndex <
+                                      //         snapshot.data.length - 1) &&
+                                      //         _currentIndex != -1) {
+                                      //       MediaItem nextMediaItem =
+                                      //       snapshot.data[_currentIndex + 1];
+                                      //       return _nextUpRow(nextMediaItem);
+                                      //     } else {
+                                      //       return SizedBox();
+                                      //     }
+                                      //   } else {
+                                      //     return SizedBox();
+                                      //   }
+                                      // }()
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )),
                     ],
-                  ),
-                )),
-          ],
-        ):SizedBox(),
+                  )
+                : SizedBox(),
       ),
     );
   }

@@ -58,8 +58,6 @@ class _HomePageState extends State<HomePage> {
     });
 
     initializeAudioService();
-
-    //todo here play the initial audio to get rid of the delay when it plays the first media
   }
 
   final List<String> carouselImages = [

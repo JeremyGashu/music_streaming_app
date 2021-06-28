@@ -1,7 +1,3 @@
-//todo initialize the audio background service here and play the test silent audio
-//todo from asset
-//todo make sure the notification is not visible when it appears for the first time
-
 import 'package:audio_service/audio_service.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 
