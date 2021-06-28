@@ -26,7 +26,6 @@ class SinglePlaylist extends StatelessWidget {
                           return PlaylistDetail(
                             tracks: album.tracks,
                           );
-                          //TODO make the playlist detail to receive tracks
                         }));
                       },
                       child: Stack(

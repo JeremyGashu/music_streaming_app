@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +24,7 @@ import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
+import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
@@ -86,35 +88,43 @@ void main() async {
   LocalDatabaseBloc _localDatabaseBloc =
       LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)
         ..add(InitLocalDB());
-  runApp(MultiBlocProvider(providers: [
-    BlocProvider(
-      create: (context) => SignUpBloc(signUpRepository: _signUpRepo),
-    ),
-    BlocProvider(
-      create: (context) =>
-          AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
-    ),
-    BlocProvider(
-      create: (context) =>
-          AuthBloc(authRepository: _authRepo)..add(CheckAuthOnStartUp()),
-    ),
-    BlocProvider(
-        create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
-    BlocProvider(create: (context) => _localDatabaseBloc),
-    BlocProvider(
-        create: (context) => _userLocationBloc..add(UserLocationEvent.Init)),
-    BlocProvider(
-      create: (context) =>
-          PlaylistBloc(playlistRepository: _playlistRepo)..add(LoadPlaylists()),
-    ),
-    BlocProvider(
-        create: (context) =>
-            VPNBloc()..add(StartListening(intervalInSeconds: 2))),
-    BlocProvider(
-      create: (context) =>
-          TrackBloc(trackRepository: _trackRepo)..add(LoadTracks()),
-    ),
-  ], child: MyApp()));
+  runApp(MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SignUpBloc(signUpRepository: _signUpRepo),
+        ),
+        BlocProvider(
+          create: (context) =>
+              AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              AuthBloc(authRepository: _authRepo)..add(CheckAuthOnStartUp()),
+        ),
+        BlocProvider(
+            create: (context) =>
+                _mediaDownloaderBloc..add(InitializeDownloader())),
+        BlocProvider(create: (context) => _localDatabaseBloc),
+        BlocProvider(
+            create: (context) =>
+                _userLocationBloc..add(UserLocationEvent.Init)),
+        BlocProvider(
+          create: (context) => PlaylistBloc(playlistRepository: _playlistRepo)
+            ..add(LoadPlaylists()),
+        ),
+        BlocProvider(
+            create: (context) =>
+                VPNBloc()..add(StartListening(intervalInSeconds: 2))),
+        BlocProvider(
+          create: (context) =>
+              TrackBloc(trackRepository: _trackRepo)..add(LoadTracks()),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyApp(),
+        title: 'Streaming App',
+      )));
 }
 
 class MyApp extends StatefulWidget {
@@ -139,7 +149,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
+      builder: (ctx, state) {
         if (state is Authenticated) {
           return BlocListener<UserLocationBloc, UserLocationState>(
             listener: (context, state) {
@@ -157,74 +167,76 @@ class _MyAppState extends State<MyApp> {
               buildWhen: (prev, current) => prev != current,
               builder: (ctx, state) {
                 if (state is VPNDisabled) {
-                  return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      title: 'Streaming App',
-                      home: Scaffold(
-                        body: _widgets[_currentIndex],
-                        bottomNavigationBar: BottomNavigationBar(
-                          currentIndex: _currentIndex,
-                          onTap: (index) {
-                            setState(() {
-                              _currentIndex = index;
-                            });
-                          },
-                          items: [
-                            BottomNavigationBarItem(
-                              label: '',
-                              icon: Icon(
-                                Icons.home,
-                                color: _currentIndex == 0
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                            BottomNavigationBarItem(
-                              label: '',
-                              icon: Icon(
-                                Icons.search,
-                                color: _currentIndex == 1
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                            BottomNavigationBarItem(
-                              label: '',
-                              icon: Icon(
-                                Icons.library_books_outlined,
-                                color: _currentIndex == 2
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                            BottomNavigationBarItem(
-                              label: '',
-                              icon: Icon(
-                                Icons.person,
-                                color: _currentIndex == 3
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                          ],
+                  return Scaffold(
+                    body: _widgets[_currentIndex],
+                    bottomNavigationBar: BottomNavigationBar(
+                      currentIndex: _currentIndex,
+                      onTap: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                      items: [
+                        BottomNavigationBarItem(
+                          label: '',
+                          icon: Icon(
+                            Icons.home,
+                            color:
+                                _currentIndex == 0 ? Colors.black : Colors.grey,
+                          ),
                         ),
-                      ));
+                        BottomNavigationBarItem(
+                          label: '',
+                          icon: Icon(
+                            Icons.search,
+                            color:
+                                _currentIndex == 1 ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                        BottomNavigationBarItem(
+                          label: '',
+                          icon: Icon(
+                            Icons.library_books_outlined,
+                            color:
+                                _currentIndex == 2 ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                        BottomNavigationBarItem(
+                          label: '',
+                          icon: Icon(
+                            Icons.person,
+                            color:
+                                _currentIndex == 3 ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 } else if (state is VPNEnabled) {
-                  return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      title: 'Streaming App',
-                      home: Scaffold(body: VPNEnabledPage()));
+                  return Scaffold(body: VPNEnabledPage());
                 }
                 return Container();
                 // return AudioServiceWidget(child: HomePage());
               },
             ), //Search(),
           );
+        } else if (state is CheckingAuthOnStartup) {
+          return Scaffold(
+            body: Container(
+              color: Colors.white,
+              height: kHeight(context),
+              width: kWidth(context),
+              child: Center(
+                child: SpinKitCubeGrid(
+                  size: 100,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          );
         } else {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Streaming App',
-            home: WelcomePage(),
+          return Scaffold(
+            body: WelcomePage(),
           );
         }
       },
@@ -252,6 +264,5 @@ initMessaging() async {
     print('TITLE: ' + message.notification.title);
     print('BODY: ' + message.notification.body);
   });
-
   print('User granted permission: ${settings.authorizationStatus}');
 }

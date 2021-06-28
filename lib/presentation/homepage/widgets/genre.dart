@@ -6,7 +6,6 @@ class Genre extends StatelessWidget {
   Genre({@required this.title}) : assert(title != null);
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       width: 140,
       padding: EdgeInsets.all(8.0),

@@ -41,8 +41,9 @@ class _SingleTrackState extends State<SingleTrack> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      SingleTrackPlayerPage(track: Track(),)));
+                  builder: (context) => SingleTrackPlayerPage(
+                        track: Track(),
+                      )));
         },
         child: Container(
           width: 140,
@@ -170,7 +171,7 @@ void playSingleTrack(BuildContext context, Track track,
     await parseHLS.updateLocalM3u8(m3u8FilePath);
   } else {
     print("playing from remote");
-    m3u8FilePath = 'https://138.68.163.236:8787/track/${track.song..songId}';
+    m3u8FilePath = 'https://138.68.163.236:8787/track/${track.song.songId}';
 
     /// TODO: Start download here
     BlocProvider.of<MediaDownloaderBloc>(context)
