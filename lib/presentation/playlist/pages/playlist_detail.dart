@@ -319,16 +319,16 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       await AudioService.playMediaItem(mediaItems[index]);
     } else {
       if (await AudioService.start(
-        backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-        androidNotificationChannelName: 'Playback',
-        androidNotificationColor: 0xFF2196f3,
-        androidStopForegroundOnPause: true,
-        androidEnableQueue: true,
+      backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+      androidNotificationChannelName: 'Playback',
+      androidNotificationColor: 0xFF2196f3,
+      androidStopForegroundOnPause: true,
+      androidEnableQueue: true,
       )) {
-        await AudioService.updateQueue(mediaItems);
-        await AudioService.playMediaItem(mediaItems[index]);
-      }
+    await AudioService.updateQueue(mediaItems);
+    await AudioService.playMediaItem(mediaItems[index]);
     }
+  }
   }
 }
 
