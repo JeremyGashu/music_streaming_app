@@ -16,7 +16,6 @@ import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/audio_player_task.dart';
-import 'package:streaming_mobile/core/services/audio_service_initializer.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artists_grid.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
@@ -56,8 +55,6 @@ class _HomePageState extends State<HomePage> {
         AudioService.playbackStateStream.where(isStopped).listen((_) {
       reloadPrefs();
     });
-
-    initializeAudioService();
   }
 
   final List<String> carouselImages = [

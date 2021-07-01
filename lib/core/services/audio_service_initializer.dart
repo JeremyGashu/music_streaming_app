@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/material.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 
 void initializeAudioService() async {
@@ -30,6 +31,7 @@ void initializeAudioService() async {
     await AudioService.updateMediaItem(queue[0]);
     await AudioService.updateQueue(queue);
 
+    debugPrint('playing the silent audio to initialization');
     await AudioService.playFromMediaId(initId);
   }
 }

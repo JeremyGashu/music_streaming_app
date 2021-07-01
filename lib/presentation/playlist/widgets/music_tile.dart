@@ -5,8 +5,8 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
-Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem mediaItem]) {
-
+Widget musicTile(Track music, Function onPressed,
+    [isPlaying = false, MediaItem mediaItem]) {
   return GestureDetector(
     onTap: () {
       onPressed();
@@ -20,7 +20,15 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: CachedNetworkImage(
-              imageUrl: music != null ? music.song.coverImageUrl : mediaItem.artUri.toString(),
+              errorWidget: (context, url, error) {
+                return Image.asset(
+                  'assets/images/album_one.jpg',
+                  fit: BoxFit.cover,
+                );
+              },
+              imageUrl: music != null
+                  ? music.song.coverImageUrl
+                  : mediaItem.artUri.toString(),
               placeholder: (context, url) => CircularProgressIndicator(),
               fit: BoxFit.cover,
             ),
@@ -28,7 +36,13 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
         ),
       ),
       title: Text(
-        music != null ? music.song.title != null ? music.song.title : "-------" : mediaItem.title != null ? mediaItem.title : "-------",
+        music != null
+            ? music.song.title != null
+                ? music.song.title
+                : "-------"
+            : mediaItem.title != null
+                ? mediaItem.title
+                : "-------",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
@@ -38,7 +52,11 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
         ),
       ),
       subtitle: Text(
-        music != null ? music.songId : mediaItem.artist != null ? mediaItem.artist : "-----",
+        music != null
+            ? music.songId
+            : mediaItem.artist != null
+                ? mediaItem.artist
+                : "-----",
         style: TextStyle(
           color: Colors.black.withOpacity(0.5),
           fontSize: 14,
@@ -61,7 +79,11 @@ Widget musicTile(Track music,Function onPressed, [isPlaying=false, MediaItem med
                 )
               : SizedBox(),
           Text(
-            prettyDuration(music != null ? (music.song.duration != null ? Duration(seconds: music.song.duration) : mediaItem.duration) : Duration(seconds: 0)),
+            prettyDuration(music != null
+                ? (music.song.duration != null
+                    ? Duration(seconds: music.song.duration)
+                    : mediaItem.duration)
+                : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),
           ),
           Icon(
