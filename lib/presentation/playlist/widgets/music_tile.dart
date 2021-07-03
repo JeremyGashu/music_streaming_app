@@ -53,7 +53,7 @@ Widget musicTile(Track music, Function onPressed,
       ),
       subtitle: Text(
         music != null
-            ? music.songId
+            ? music.song.title
             : mediaItem.artist != null
                 ? mediaItem.artist
                 : "-----",
@@ -86,11 +86,11 @@ Widget musicTile(Track music, Function onPressed,
                 : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),
           ),
-          Icon(
-            Icons.more_vert,
-            color: Colors.grey,
-            size: 25,
-          )
+          // Icon(
+          //   Icons.more_vert,
+          //   color: Colors.grey,
+          //   size: 25,
+          // )
         ],
       ),
     ),

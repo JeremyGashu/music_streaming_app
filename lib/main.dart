@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
+import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
@@ -26,11 +27,13 @@ import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/services/audio_service_initializer.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
+import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
@@ -44,6 +47,7 @@ import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 import 'blocs/albums/album_bloc.dart';
+import 'blocs/artist/artist_event.dart';
 import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
@@ -71,6 +75,9 @@ void main() async {
       AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
   final _signUpRepo =
       SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
+
+  final _artistRepo =
+      ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
 
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
@@ -115,6 +122,10 @@ void main() async {
     BlocProvider(
       create: (context) =>
           TrackBloc(trackRepository: _trackRepo)..add(LoadTracks()),
+    ),
+    BlocProvider(
+      create: (context) =>
+          ArtistBloc(artistRepository: _artistRepo)..add(LoadArtists()),
     ),
   ], child: MyApp()));
 }

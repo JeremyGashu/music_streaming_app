@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
+import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
+import 'package:streaming_mobile/blocs/artist/artist_event.dart';
+import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -154,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 _sectionTitle(title: "Popular Playlists", callback: () {}),
                 Container(
-                  height: 160,
+                  height: 170,
                   child: BlocBuilder<AlbumBloc, AlbumState>(
                     builder: (ctx, state) {
                       if (state is LoadingAlbum) {
@@ -240,14 +243,59 @@ class _HomePageState extends State<HomePage> {
                     }),
                 Container(
                   height: 180,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      Artist(),
-                      Artist(),
-                      Artist(),
-                      Artist(),
-                    ],
+                  child: BlocBuilder<ArtistBloc, ArtistState>(
+                    builder: (ctx, state) {
+                      if (state is LoadingArtist) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            LoadingPlaylistShimmer(),
+                            LoadingPlaylistShimmer(),
+                            LoadingPlaylistShimmer(),
+                          ],
+                        );
+                      } else if (state is LoadedArtist) {
+                        return ListView.builder(
+                          itemCount: state.artists.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Artist(
+                              artist: state.artists[index],
+                            );
+                          },
+                        );
+                      } else if (state is LoadingArtistError) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Error Loading Artists!',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.update,
+                                    color: Colors.redAccent.withOpacity(0.8),
+                                    size: 45,
+                                  ),
+                                  onPressed: () {
+                                    BlocProvider.of<ArtistBloc>(context)
+                                        .add(LoadArtists());
+                                  }),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return Container();
+                    },
                   ),
                 ),
                 Ad(size),

@@ -51,7 +51,7 @@ class ArtistDataProvider {
     sort ??= 'ASC';
     sortKey ??= 'first_name';
     String url =
-        '$BASE_URL/albums?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        '$BASE_URL/artists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
     var authBox = await Hive.openBox<AuthData>('auth_box');
     var authData = authBox.get('auth_data');
     var headers = {
