@@ -57,6 +57,7 @@ class PlaylistRepository {
         decodedPlaylists = jsonDecode(playlistCache)['data']['data'] as List;
       }
     } else {
+      //TODO: if there is no network and the cache is empty show error message in the UI
       String playlistCache =
           playlistBox.get(0, defaultValue: defaultPlaylistStringValue);
       print('getPlaylists: offline and retrieving data... ' + playlistCache);

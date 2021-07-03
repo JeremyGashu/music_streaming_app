@@ -57,9 +57,9 @@ class AlbumDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url =
-        'http://138.68.163.236:8889/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title';
-    http.Response response = await client.get(Uri.parse(url), headers: headers);
+    //todo use the correct page, perPage sort and sort key once the backend is finished
+    http.Response response =
+        await client.get(Uri.parse(ALBUM_URL), headers: headers);
 
     return response;
   }

@@ -14,7 +14,6 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
     if (event is LoadAlbums) {
       try {
         yield LoadingAlbum();
-        await Future.delayed(Duration(seconds: 5));
         var albumsResponse = await albumRepository.getAllAlbums();
 
         yield LoadedAlbum(albums: albumsResponse.data.data);

@@ -80,6 +80,7 @@ class AlbumRepository {
       }
     } else {
       //TODO change default album string
+      //TODO: if there is no network and there is no data in the cache show error message in the UI
       String albumCache = albumBox.get(0, defaultValue: defaultAlbumString);
       decodeAlbums = jsonDecode(albumCache);
     }
