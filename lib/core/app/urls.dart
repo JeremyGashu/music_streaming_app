@@ -5,8 +5,10 @@ final PLAYLIST_URL =
     'http://138.68.163.236:8889/v1/playlists/?page=1&per_page=10&sort=ASC&sort_key=title';
 final ALBUM_URL =
     'http://138.68.163.236:8889/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title';
-final ARTISTS_PAGE =
+final ARTIST_URL =
     'http://138.68.163.236:8889/v1/artists/?page=1&per_page=10&sort=ASC&sort_key=title';
+final TRACKS_URL =
+    'http://138.68.163.236:8889/v1/tracks/?page=1&per_page=10&sort=ASC';
 //todo: genre
 //todo: analytics
 //todo: getOtp

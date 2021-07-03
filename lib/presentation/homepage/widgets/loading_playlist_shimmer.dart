@@ -18,6 +18,9 @@ class LoadingPlaylistShimmer extends StatelessWidget {
               color: Colors.grey.withOpacity(0.3),
             ),
           ),
+          SizedBox(
+            height: 5,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

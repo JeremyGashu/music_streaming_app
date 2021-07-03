@@ -18,7 +18,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is VerifyPhoneNumberEvent) {
       yield SendingPhoneVerification();
       try {
-        await Future.delayed(Duration(seconds: 3));
         String otp =
             await authRepository.verifyPhoneNumber(phoneNo: event.phoneNo);
         if (otp != '') {
