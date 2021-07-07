@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
+import 'package:streaming_mobile/data/models/genre.dart';
 
-class Genre extends StatelessWidget {
-  final title;
-  Genre({@required this.title}) : assert(title != null);
+class GenreWidget extends StatelessWidget {
+  final Genre genre;
+  GenreWidget({@required this.genre}) : assert(genre != null);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +30,7 @@ class Genre extends StatelessWidget {
         Align(
           alignment: Alignment.center,
           child: Text(
-            '$title',
+            '${genre.name}',
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
           ),
