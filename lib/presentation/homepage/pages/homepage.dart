@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
+import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
+import 'package:streaming_mobile/blocs/genres/genres_event.dart';
+import 'package:streaming_mobile/blocs/genres/genres_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -20,6 +23,7 @@ import 'package:streaming_mobile/presentation/artist/pages/artists_grid.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/loading_genre_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loading_playlist_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/playlist.dart';
@@ -111,7 +115,8 @@ class _HomePageState extends State<HomePage> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Amelkalew',
@@ -175,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         );
-                      }else if (state is LoadingPlaylistError) {
+                      } else if (state is LoadingPlaylistError) {
                         return Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -206,7 +211,6 @@ class _HomePageState extends State<HomePage> {
                       }
 
                       return Container();
-
                     },
                   ),
                 ),
@@ -222,16 +226,60 @@ class _HomePageState extends State<HomePage> {
                 ),
                 _sectionTitle(title: "Genres", callback: () {}),
                 Container(
-                  height: 130,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      Genre(title: 'Country'),
-                      Genre(title: 'R & B'),
-                      Genre(title: 'Pop'),
-                    ],
-                  ),
-                ),
+                    height: 130,
+                    child: BlocBuilder<GenresBloc, GenresState>(
+                      builder: (ctx, state) {
+                        if (state is GenresLoadInProgress) {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              LoadingGenreShimmer(),
+                              LoadingGenreShimmer(),
+                              LoadingGenreShimmer(),
+                            ],
+                          );
+                        } else if (state is GenresLoadSuccess) {
+                          return ListView.builder(
+                            itemCount: state.genres.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (ctx, index) {
+                              return GenreWidget(
+                                genre:state.genres[index]
+                              );
+                            },
+                          );
+                        } else if (state is GenresLoadFailed) {
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Error Loading Genres!!',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.update,
+                                      color: Colors.redAccent.withOpacity(0.8),
+                                      size: 45,
+                                    ),
+                                    onPressed: () {
+                                      BlocProvider.of<GenresBloc>(context)
+                                          .add(FetchGenres());
+                                    }),
+                              ],
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    )),
                 _sectionTitle(
                     title: "Artists",
                     callback: () {
@@ -386,12 +434,13 @@ class _HomePageState extends State<HomePage> {
                   if (snapShotData != AudioProcessingState.stopped) {
                     return StreamBuilder(
                         stream: AudioService.currentMediaItemStream,
-                        builder: (context, AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                        builder: (context,
+                            AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
                           return currentMediaItemSnapshot.hasData &&
-                              currentMediaItemSnapshot.data != null ?
-                          PlayerOverlay(playing: snapshot.data.playing) : SizedBox();
-                        }
-                    );
+                                  currentMediaItemSnapshot.data != null
+                              ? PlayerOverlay(playing: snapshot.data.playing)
+                              : SizedBox();
+                        });
                   }
                 }
                 return SizedBox();
