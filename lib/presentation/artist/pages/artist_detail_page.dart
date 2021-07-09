@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:streaming_mobile/presentation/artist/widgets/albums_widget.dart';
-import 'package:streaming_mobile/presentation/artist/widgets/playlist.dart';
-
-import '../../homepage/widgets/singletrack.dart';
+import 'package:streaming_mobile/presentation/common_widgets/album.dart';
+import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class ArtistDetailPage extends StatelessWidget {
   @override
@@ -94,7 +93,7 @@ class ArtistDetailPage extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: 3,
                           itemBuilder: (context, index) {
-                            return Album();
+                            return SingleAlbum(album: null);
                           }),
                     ),
                     SizedBox(
@@ -197,7 +196,7 @@ class ArtistDetailPage extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: 4,
                           itemBuilder: (context, index) {
-                            return PlayList();
+                            return SinglePlaylist();
                           }),
                     ),
                   ],

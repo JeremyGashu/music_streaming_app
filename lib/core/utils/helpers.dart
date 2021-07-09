@@ -15,10 +15,10 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as mdm;
 
-class LocalHelper{
+class LocalHelper {
   static final httpClient = new HttpClient();
 
-  static Future<String> getFilePath(context) async{
+  static Future<String> getFilePath(context) async {
     return (Theme.of(context).platform == TargetPlatform.android
             ? await getExternalStorageDirectory()
             : await getApplicationDocumentsDirectory())
@@ -56,13 +56,12 @@ class LocalHelper{
 
         File m3u8File = File("$dir/$fileId/main.m3u8");
         HlsMediaPlaylist hlsPlayList;
-        if(m3u8File.existsSync()){
+        if (m3u8File.existsSync()) {
           hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
-        }else{
-          hlsPlayList = await parseHLS.parseHLS(File(
-              await downloadFile(trackUrl,
-                  '$dir/$fileId', "main.m3u8"))
-              .readAsStringSync());
+        } else {
+          hlsPlayList = await parseHLS.parseHLS(
+              File(await downloadFile(trackUrl, '$dir/$fileId', "main.m3u8"))
+                  .readAsStringSync());
         }
 
         List<mdm.DownloadTask> downloadTasks = [];
@@ -118,44 +117,46 @@ class LocalHelper{
 
   static Future<bool> updateLocalM3u8(String filePath) async {
     String m3u8Text = await m3u8StringLoader(filePath);
-    if(m3u8Text.indexOf("EXT-X-KEY") == -1 ){
+    if (m3u8Text.indexOf("EXT-X-KEY") == -1) {
       print("unencrypted m3u8");
       return false;
     }
     int start = m3u8Text.indexOf('URI');
     int end = m3u8Text.indexOf('IV');
-    String keyUrl = m3u8Text.substring(start+5, end-2);
+    String keyUrl = m3u8Text.substring(start + 5, end - 2);
     print(keyUrl);
     print(m3u8Text.indexOf('''URI="/enc.key"'''));
     print(m3u8Text.indexOf("EXT-X-KEY"));
 
     var keyPath = filePath.substring(0, filePath.indexOf("/main.m3u8"));
-    if(m3u8Text.indexOf('''URI="/enc.key"''') == -1 ){
+    if (m3u8Text.indexOf('''URI="/enc.key"''') == -1) {
       File fileEnc = new File("${keyPath}/enc.key.aes");
       File fileOrig = new File("${keyPath}/enc.key");
-      if(fileEnc.existsSync() && fileOrig.existsSync()){
+      if (fileEnc.existsSync() && fileOrig.existsSync()) {
         fileOrig.deleteSync();
-      }else if(fileEnc.existsSync() && !fileOrig.existsSync()){ /// check if only encrypted key exists
+      } else if (fileEnc.existsSync() && !fileOrig.existsSync()) {
+        /// check if only encrypted key exists
         m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
-      }else if(!fileEnc.existsSync() && fileOrig.existsSync()){
+      } else if (!fileEnc.existsSync() && fileOrig.existsSync()) {
         await encryptFile("${keyPath}/enc.key");
-      }else{
+      } else {
         await downloadFile(keyUrl, keyPath, 'enc.key');
         print('////////////////////////// Downloading key file finished');
+
         /// encrypt key
         await encryptFile("${keyPath}/enc.key");
         m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
       }
-    }else{
+    } else {
       /// Todo: decrypt key before playing
       File file = new File("${keyPath}/enc.key.aes");
       File fileOrig = new File("${keyPath}/enc.key");
-      if(file.existsSync() || fileOrig.existsSync()){
-        if(fileOrig.existsSync()){
+      if (file.existsSync() || fileOrig.existsSync()) {
+        if (fileOrig.existsSync()) {
           await encryptFile("${keyPath}/enc.key");
         }
         m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
-      }else{
+      } else {
         await downloadFile(keyUrl, keyPath, 'enc.key');
         print('////////////////////////// Downloading key file finished');
         m3u8Text = m3u8Text.replaceRange(start, end, '''URI="enc.key",''');
@@ -167,12 +168,14 @@ class LocalHelper{
     return true;
   }
 
-  static Future<String> downloadFile(String url, String dir, String filename) async {
+  static Future<String> downloadFile(
+      String url, String dir, String filename) async {
     print('/////////////////// DOWNLOAD STARTED from url: $url');
     try {
       /// Send request to [url]
       /// Write byte stream on [bytes]
-      httpClient.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+      httpClient.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
@@ -181,14 +184,14 @@ class LocalHelper{
       /// on local storage 'dir/filename'
 
       File file = new File('$dir/$filename');
-      if(!(await file.exists())){
+      if (!(await file.exists())) {
         await file.create(recursive: true);
         // await file.create(recursive: true);
       }
       await file.writeAsBytes(bytes);
       print('/////////////////// DOWNLOAD FINISHED!');
       return file.path;
-    } catch(error, stacktrace) {
+    } catch (error, stacktrace) {
       print(error);
       print(stacktrace);
       throw Exception();
@@ -203,32 +206,34 @@ class LocalHelper{
     // send.send([id, status, progress]);
   }
 
-  static Future<bool> encryptFile(String filePath)async{
-    try{
+  static Future<bool> encryptFile(String filePath) async {
+    try {
       var crypt = AesCrypt('my cool password');
       crypt.setOverwriteMode(AesCryptOwMode.on);
+
       /// encrypt file
       await crypt.encryptFile(filePath);
       File file = new File(filePath);
       await file.delete();
       return true;
-    }catch(error, stacktrace){
+    } catch (error, stacktrace) {
       print(error);
       print(stacktrace);
       throw Exception("encryption failed");
     }
   }
 
-  static Future<bool> decryptFile(String filePath) async{
-    try{
+  static Future<bool> decryptFile(String filePath) async {
+    try {
       File file = new File(filePath);
-      if(!file.existsSync()){
+      if (!file.existsSync()) {
         print("downloading key since it is not available");
         int start = filePath.indexOf("enc.key.aes");
         print(filePath);
         print(start);
-        print("enc.key.aes".length-1);
-        var m3u8FilePath = filePath.replaceRange(start, "enc.key.aes".length-1, "main.m3u8");
+        print("enc.key.aes".length - 1);
+        var m3u8FilePath =
+            filePath.replaceRange(start, "enc.key.aes".length - 1, "main.m3u8");
         await updateLocalM3u8(m3u8FilePath);
       }
       var crypt = AesCrypt('my cool password');
@@ -243,10 +248,11 @@ class LocalHelper{
       int start = filePath.indexOf("enc.key.aes");
       print(filePath);
       print(start);
-      print("enc.key.aes".length-1);
-      var decKeyPath = filePath.replaceRange(start, "enc.key.aes".length-1, "enc.key");
+      print("enc.key.aes".length - 1);
+      var decKeyPath =
+          filePath.replaceRange(start, "enc.key.aes".length - 1, "enc.key");
       File file = new File(decKeyPath);
-      if(file.existsSync()){
+      if (file.existsSync()) {
         file.deleteSync();
       }
       throw Exception("decryption failed");
