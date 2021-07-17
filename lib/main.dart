@@ -14,6 +14,8 @@ import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
+import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
+import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
@@ -28,6 +30,7 @@ import 'package:streaming_mobile/core/services/audio_service_initializer.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
@@ -53,6 +56,7 @@ import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
 import 'data/data_provider/auth_dataprovider.dart';
+import 'data/repository/genre_repository.dart';
 import 'data/repository/signup_repository.dart';
 
 void main() async {
@@ -85,6 +89,8 @@ void main() async {
       AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
   final _trackRepo =
       TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
+
+  final _genreRepo = GenreRepository(genreDataProvider: GenreDataProvider(client: http.Client()));
 
   /// initialize [UserLocationBloc]
   UserLocationBloc _userLocationBloc =
@@ -126,6 +132,9 @@ void main() async {
     BlocProvider(
       create: (context) =>
           ArtistBloc(artistRepository: _artistRepo)..add(LoadArtists()),
+    ),
+    BlocProvider(
+      create: (context) => GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
     ),
   ], child: MyApp()));
 }

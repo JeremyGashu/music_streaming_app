@@ -10,7 +10,6 @@ final ARTIST_URL =
 final TRACKS_URL =
     'http://138.68.163.236:8889/v1/songs?page=1&per_page=20&singles=true';
 final REFRESH_TOKEN_URL = 'http://138.68.163.236:8866/v1/refresh_token';
-
 //todo: genre
 //todo: analytics
 //todo: getOtp

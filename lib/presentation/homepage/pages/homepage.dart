@@ -14,6 +14,9 @@ import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
+import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
+import 'package:streaming_mobile/blocs/genres/genres_event.dart';
+import 'package:streaming_mobile/blocs/genres/genres_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -28,6 +31,7 @@ import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/loading_genre_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loading_playlist_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shimmer.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
@@ -279,16 +283,61 @@ class _HomePageState extends State<HomePage> {
                     ),
                     _sectionTitle(title: "Genres", callback: () {}),
                     Container(
-                      height: 130,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Genre(title: 'Country'),
-                          Genre(title: 'R & B'),
-                          Genre(title: 'Pop'),
-                        ],
-                      ),
-                    ),
+                        height: 130,
+                        child: BlocBuilder<GenresBloc, GenresState>(
+                          builder: (ctx, state) {
+                            if (state is GenresLoadInProgress) {
+                              return ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  LoadingGenreShimmer(),
+                                  LoadingGenreShimmer(),
+                                  LoadingGenreShimmer(),
+                                ],
+                              );
+                            } else if (state is GenresLoadSuccess) {
+                              return ListView.builder(
+                                itemCount: state.genres.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, index) {
+                                  return GenreWidget(
+                                      genre: state.genres[index]);
+                                },
+                              );
+                            } else if (state is GenresLoadFailed) {
+                              return Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Error Loading Genres!!',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.update,
+                                          color:
+                                              Colors.redAccent.withOpacity(0.8),
+                                          size: 45,
+                                        ),
+                                        onPressed: () {
+                                          BlocProvider.of<GenresBloc>(context)
+                                              .add(FetchGenres());
+                                        }),
+                                  ],
+                                ),
+                              );
+                            }
+                            return Container();
+                          },
+                        )),
+
                     _sectionTitle(
                         title: "Artists",
                         callback: () {
