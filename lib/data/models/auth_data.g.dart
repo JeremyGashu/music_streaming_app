@@ -21,13 +21,14 @@ class AuthDataAdapter extends TypeAdapter<AuthData> {
       phone: fields[1] as String,
       token: fields[2] as String,
       message: fields[3] as String,
+      refreshToken: fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AuthData obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.isAuthenticated)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class AuthDataAdapter extends TypeAdapter<AuthData> {
       ..writeByte(2)
       ..write(obj.token)
       ..writeByte(3)
-      ..write(obj.message);
+      ..write(obj.message)
+      ..writeByte(4)
+      ..write(obj.refreshToken);
   }
 
   @override

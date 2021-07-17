@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'dart:math';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -244,7 +244,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
           title: track.song.title,
           genre: 'genre goes here',
           // artist: track.artist.firstName,
-          duration: Duration(milliseconds: track.song.duration),
+          duration: Duration(seconds: track.song.duration),
           artUri: Uri.parse(track.song.coverImageUrl),
           // extras: {'source': m3u8FilePath});
           extras: {'source': source}));
@@ -319,16 +319,16 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       await AudioService.playMediaItem(mediaItems[index]);
     } else {
       if (await AudioService.start(
-      backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-      androidNotificationChannelName: 'Playback',
-      androidNotificationColor: 0xFF2196f3,
-      androidStopForegroundOnPause: true,
-      androidEnableQueue: true,
+        backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+        androidNotificationChannelName: 'Playback',
+        androidNotificationColor: 0xFF2196f3,
+        androidStopForegroundOnPause: true,
+        androidEnableQueue: true,
       )) {
-    await AudioService.updateQueue(mediaItems);
-    await AudioService.playMediaItem(mediaItems[index]);
+        await AudioService.updateQueue(mediaItems);
+        await AudioService.playMediaItem(mediaItems[index]);
+      }
     }
-  }
   }
 }
 

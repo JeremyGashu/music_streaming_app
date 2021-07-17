@@ -5,7 +5,6 @@ class SearchState extends Equatable {
   List<Object> get props => [];
 }
 
-//searchError
 class InitialState extends SearchState {
   @override
   List<Object> get props => [];

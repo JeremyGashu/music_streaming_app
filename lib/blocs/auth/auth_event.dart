@@ -18,6 +18,12 @@ class CheckAuthOnStartUp extends AuthEvent {
   List<Object> get props => [];
 }
 
+class RefreshToken extends AuthEvent {
+  RefreshToken();
+  @override
+  List<Object> get props => [];
+}
+
 class LoginEvent extends AuthEvent {
   final String phone;
   final String password;

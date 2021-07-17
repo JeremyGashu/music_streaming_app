@@ -14,9 +14,15 @@ class AuthData extends Equatable {
   final String token;
   @HiveField(3)
   final String message;
+  @HiveField(4)
+  final String refreshToken;
 
   AuthData(
-      {@required this.isAuthenticated, this.phone, this.token, this.message});
+      {@required this.isAuthenticated,
+      this.phone,
+      this.token,
+      this.message,
+      this.refreshToken});
 
   @override
   List<Object> get props => [isAuthenticated, phone];

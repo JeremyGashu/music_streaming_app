@@ -55,4 +55,15 @@ class AuthDataProvider {
         body: jsonEncode({'phone': phone, 'password': password}));
     return response;
   }
+
+  Future<http.Response> refreshAccessToken({String refreshToken}) async {
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $refreshToken',
+      'Content-Type': 'application/json'
+    };
+    http.Response response =
+        await http.post(Uri.parse(REFRESH_TOKEN_URL), headers: headers);
+
+    return response;
+  }
 }

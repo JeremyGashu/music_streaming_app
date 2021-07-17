@@ -6,9 +6,18 @@ class SearchEvent extends Equatable {
 }
 
 class Search extends SearchEvent {
-  final String searchParam;
+  final String searchKey;
+  final String searchBy;
+  final SearchIn searchIn;
 
-  Search({this.searchParam});
+  Search({this.searchBy, this.searchKey, this.searchIn = SearchIn.SONGS});
   @override
-  List<Object> get props => [searchParam];
+  List<Object> get props => [searchKey];
 }
+
+class ExitSearch extends SearchEvent {
+  @override
+  List<Object> get props => [];
+}
+
+enum SearchIn { ARTISTS, SONGS, ALBUMS, PLAYLISTS }

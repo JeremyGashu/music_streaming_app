@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/app/size_configs.dart';
-import 'package:streaming_mobile/presentation/artist/widgets/albums_widget.dart';
+import 'package:streaming_mobile/presentation/common_widgets/album.dart';
 import 'package:streaming_mobile/presentation/search/widgets/custom_list_tile.dart';
 import 'package:streaming_mobile/presentation/search/widgets/custom_title_text.dart';
 import 'package:streaming_mobile/presentation/search/widgets/play_list_card.dart';
@@ -77,8 +77,10 @@ class SearchPage extends StatelessWidget {
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
-                      Album(),
-                      Album(),
+                      SingleAlbum(
+                        album: null,
+                      ),
+                      SingleAlbum(album: null),
                     ],
                   )),
               CustomTitleText(
@@ -92,8 +94,10 @@ class SearchPage extends StatelessWidget {
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
-                      Album(),
-                      Album(),
+                      SingleAlbum(
+                        album: null,
+                      ),
+                      SingleAlbum(album: null),
                     ],
                   )),
             ],

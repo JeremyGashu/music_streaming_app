@@ -1,21 +1,33 @@
 class TracksResponse {
-  TracksResponse({
-    this.success,
-    this.data,
-  });
+  TracksResponse({this.success, this.data, this.error});
 
   bool success;
   Data data;
+  Error error;
 
   factory TracksResponse.fromJson(Map<String, dynamic> json) => TracksResponse(
-        success: json["success"],
-        data: Data.fromJson(json["data"]),
-      );
+      success: json["success"] != null ? json["success"] : false,
+      data: json["data"] != null ? Data.fromJson(json["data"]) : null,
+      error: json['error'] != null ? Error.fromJson(json['error']) : null);
 
   Map<String, dynamic> toJson() => {
         "success": success,
         "data": data.toJson(),
       };
+}
+
+class Error {
+  final int code;
+  final String source;
+  final String title;
+
+  Error({this.code, this.source, this.title});
+
+  factory Error.fromJson(Map<String, dynamic> json) => Error(
+        title: json['title'],
+        code: json['code'],
+        source: json['source'],
+      );
 }
 
 class Data {
