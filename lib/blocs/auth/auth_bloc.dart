@@ -92,6 +92,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       print(
           'auth data after log out${authBox.get('auth_data', defaultValue: AuthData(isAuthenticated: false))}');
       yield InitialState();
+    } else if (event is RefreshToken) {
+      // yield SendingRefreshToken();
+      print('sending refreshing token..');
+      try {
+        var authBox = await Hive.openBox<AuthData>('auth_box');
+        AuthData savedAuthData = authBox.get('auth_data');
+        AuthData authData = await authRepository.refreshAccessToken(
+            refreshToken: savedAuthData.refreshToken);
+
+        print('refreshed auth data: ${authData}');
+        if (authData.isAuthenticated) {
+          //todo put things you want to do after the token is refreshed
+
+          var authBox = await Hive.openBox<AuthData>('auth_box');
+          print('saving refreshed auth data into  hive');
+          await authBox.put('auth_data', authData);
+
+          print(
+              'saved refreshed auth data ${authBox.get('auth_data', defaultValue: AuthData(isAuthenticated: false))}');
+          yield TokenRefreshSuccessful(newToken: authData.refreshToken);
+        } else {
+          yield Unauthenticated(authData: authData);
+        }
+      } catch (e) {
+        print(e.toString());
+        yield AuthenticationError(
+            message: 'Please check your internet connection!');
+        throw Exception(e);
+      }
     }
   }
 }

@@ -34,12 +34,35 @@ class AuthRepository {
           isAuthenticated: true,
           phone: phone,
           token: decodedResponse['data']['token'],
-          message: '');
+          message: '',
+          refreshToken: decodedResponse['data']['refresh_token']);
     }
+
+    //todo add for the case of 401 response
 
     return AuthData(
       isAuthenticated: false,
       phone: phone,
+      message: decodedResponse['errors']['title'],
+    );
+  }
+
+  Future<AuthData> refreshAccessToken({String refreshToken}) async {
+    http.Response response =
+        await dataProvider.refreshAccessToken(refreshToken: refreshToken);
+    var decodedResponse = jsonDecode(response.body);
+    print(decodedResponse);
+    if (decodedResponse['success']) {
+      return AuthData(
+        isAuthenticated: true,
+        token: decodedResponse['data']['access_token'],
+        refreshToken: decodedResponse['data']['refresh_token'],
+      );
+    }
+    //todo add for the case of 401 response
+
+    return AuthData(
+      isAuthenticated: false,
       message: decodedResponse['errors']['title'],
     );
   }

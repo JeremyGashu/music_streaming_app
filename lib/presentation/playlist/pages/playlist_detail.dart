@@ -244,7 +244,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
           title: track.song.title,
           genre: 'genre goes here',
           // artist: track.artist.firstName,
-          duration: Duration(milliseconds: track.song.duration),
+          duration: Duration(seconds: track.song.duration),
           artUri: Uri.parse(track.song.coverImageUrl),
           // extras: {'source': m3u8FilePath});
           extras: {'source': source}));

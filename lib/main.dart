@@ -154,7 +154,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is Authenticated) {
+        if (state is Authenticated || state is TokenRefreshSuccessful) {
           return BlocListener<UserLocationBloc, UserLocationState>(
             listener: (context, state) {
               if (state is UserLocationLoadFailed) {

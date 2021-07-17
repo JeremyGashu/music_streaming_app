@@ -14,7 +14,6 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
     if (event is LoadTracks) {
       try {
         yield LoadingTrack();
-        await Future.delayed(Duration(seconds: 5));
         var tracksResponse = await trackRepository.getTracks();
 
         yield LoadedTracks(tracks: tracksResponse.data.data);

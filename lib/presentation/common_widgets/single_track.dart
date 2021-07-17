@@ -42,7 +42,7 @@ class _SingleTrackState extends State<SingleTrack> {
               context,
               MaterialPageRoute(
                   builder: (context) => SingleTrackPlayerPage(
-                        track: Track(),
+                        track: widget.track,
                       )));
         },
         child: Container(

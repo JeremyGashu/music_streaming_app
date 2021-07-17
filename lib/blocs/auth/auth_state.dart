@@ -71,6 +71,29 @@ class SendingLoginData extends AuthState {
   List<Object> get props => [];
 }
 
+//TODO add the refresh token states here
+class SendingRefreshToken extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class TokenRefreshSuccessful extends AuthState {
+  final String newToken;
+
+  TokenRefreshSuccessful({this.newToken});
+  @override
+  List<Object> get props => [newToken];
+}
+
+class SendingRefreshTokenFailed extends AuthState {
+  final String message;
+
+  SendingRefreshTokenFailed({this.message});
+  @override
+  List<Object> get props => [];
+}
+
+///
 class CheckingAuthOnStartup extends AuthState {
   @override
   List<Object> get props => [];
