@@ -117,8 +117,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         print(e.toString());
-        yield AuthenticationError(
-            message: 'Please check your internet connection!');
+        // yield AuthenticationError(
+        //     message: 'Please check your internet connection!');
         throw Exception(e);
       }
     }
