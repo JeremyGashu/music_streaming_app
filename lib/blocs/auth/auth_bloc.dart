@@ -121,6 +121,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         //     message: 'Please check your internet connection!');
         throw Exception(e);
       }
+    } else if (event is ResetPassword) {
+      yield SendingResetPasswordRequest();
+      try {
+        bool success =
+            await authRepository.resetPassword(phoneNo: event.phoneNo);
+        if (success != null && success) {
+          yield SentPasswordResetRequest(phoneNo: event.phoneNo);
+        } else {
+          yield SendingPasswordResetFailed(
+              message: 'Error on sending reset password');
+        }
+      } catch (e) {
+        yield SendingPasswordResetFailed(
+            message: 'Error on sending reset password');
+        throw Exception(e);
+      }
+    } else if (event is VerifyPasswordReset) {
+      yield SendingVerifyPasswordReset();
+      ;
+      try {
+        bool success = await authRepository.verifyPasswordReset(
+            phoneNo: event.phoneNo,
+            resetCode: event.resetCode,
+            confirmPassword: event.confirmPassword,
+            password: event.password);
+        if (success != null && success) {
+          yield VerifiedPasswordReset(reset: success);
+        } else {
+          yield VerifyingPasswordResetError(
+              message: 'Error on verifying password');
+        }
+      } catch (e) {
+        yield VerifyingPasswordResetError(
+            message: 'Error on verifying password');
+        throw Exception(e);
+      }
     }
   }
 }

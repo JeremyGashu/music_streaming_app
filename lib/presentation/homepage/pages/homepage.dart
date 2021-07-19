@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                             );
-                          } else if (state is LoadingPlaylistError) {
+                          } else if (state is LoadingAlbumError) {
                             return Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -259,8 +259,8 @@ class _HomePageState extends State<HomePage> {
                                         size: 45,
                                       ),
                                       onPressed: () {
-                                        BlocProvider.of<PlaylistBloc>(context)
-                                            .add(LoadPlaylists());
+                                        BlocProvider.of<AlbumBloc>(context)
+                                            .add(LoadAlbums());
                                       }),
                                 ],
                               ),

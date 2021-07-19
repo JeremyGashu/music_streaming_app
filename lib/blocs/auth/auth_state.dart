@@ -93,6 +93,45 @@ class SendingRefreshTokenFailed extends AuthState {
   List<Object> get props => [];
 }
 
+//TODO add the states for request_reset_password
+class SendingResetPasswordRequest extends AuthState {}
+
+class SentPasswordResetRequest extends AuthState {
+  final String phoneNo;
+
+  SentPasswordResetRequest({this.phoneNo});
+  @override
+  List<Object> get props => [phoneNo];
+}
+
+class SendingPasswordResetFailed extends AuthState {
+  final String message;
+
+  SendingPasswordResetFailed({this.message});
+  @override
+  List<Object> get props => [message];
+}
+
+///
+//TODO add the states for request_reset_password
+class SendingVerifyPasswordReset extends AuthState {}
+
+class VerifiedPasswordReset extends AuthState {
+  final bool reset;
+
+  VerifiedPasswordReset({this.reset});
+  @override
+  List<Object> get props => [reset];
+}
+
+class VerifyingPasswordResetError extends AuthState {
+  final String message;
+
+  VerifyingPasswordResetError({this.message});
+  @override
+  List<Object> get props => [message];
+}
+
 ///
 class CheckingAuthOnStartup extends AuthState {
   @override

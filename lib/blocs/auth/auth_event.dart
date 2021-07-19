@@ -42,6 +42,28 @@ class SendOTPVerification extends AuthEvent {
   List<Object> get props => [phoneNo, otp];
 }
 
+//todo add events for require reset and verify password
+class ResetPassword extends AuthEvent {
+  final String phoneNo;
+
+  ResetPassword({this.phoneNo});
+  @override
+  List<Object> get props => [phoneNo];
+}
+
+class VerifyPasswordReset extends AuthEvent {
+  final String phoneNo;
+  final String password;
+  final String confirmPassword;
+  final String resetCode;
+
+  VerifyPasswordReset(
+      {this.phoneNo, this.password, this.confirmPassword, this.resetCode});
+
+  @override
+  List<Object> get props => [phoneNo, password, confirmPassword, resetCode];
+}
+
 class VerifyPhoneNumberEvent extends AuthEvent {
   final String phoneNo;
   VerifyPhoneNumberEvent({@required this.phoneNo}) : assert(phoneNo != null);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/button_builder.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/phone_input_page.dart';
@@ -84,24 +83,24 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 50.0),
-                  height: 50.0,
-                  child: SignInButtonBuilder(
-                    text: 'Sign up with Google',
-                    image: Image.asset('assets/images/google_icon.png'),
-                    onPressed: () {},
-                    width: kWidth(context),
-                    height: 50.0,
-                    textColor: kBlack,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25))),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              )
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: Container(
+              //     margin: EdgeInsets.only(bottom: 50.0),
+              //     height: 50.0,
+              //     child: SignInButtonBuilder(
+              //       text: 'Sign up with Google',
+              //       image: Image.asset('assets/images/google_icon.png'),
+              //       onPressed: () {},
+              //       width: kWidth(context),
+              //       height: 50.0,
+              //       textColor: kBlack,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.all(Radius.circular(25))),
+              //       backgroundColor: Colors.white,
+              //     ),
+              //   ),
+              // )
             ],
           ),
         ),
