@@ -5,17 +5,22 @@ import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
+import 'package:streaming_mobile/presentation/login/login_page.dart';
 
-class LoginPage extends StatefulWidget {
+class VerifyPasswordResetPage extends StatefulWidget {
+  final String phoneNo;
+
+  const VerifyPasswordResetPage({this.phoneNo});
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _VerifyPasswordResetPageState createState() =>
+      _VerifyPasswordResetPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneNumberController = TextEditingController();
   final _passwordTextController = TextEditingController();
+  final _confirmPasswordTextController = TextEditingController();
+  final _resetCodeTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,10 +40,15 @@ class _LoginPageState extends State<LoginPage> {
                 begin: Alignment.topCenter,
                 end: Alignment(0.8, 0.8),
               )),
-          child: BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
-            if (state is AuthenticationError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+          child:
+              BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) async {
+            if (state is VerifiedPasswordReset) {
+              await Future.delayed(Duration(seconds: 2));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (ctx) => LoginPage()));
+            } else if (state is VerifyingPasswordResetError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Please check your reset code')));
             }
           }, builder: (context, state) {
             return SingleChildScrollView(
@@ -66,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Container(
                                 margin: EdgeInsets.only(right: 40),
                                 child: Text(
-                                  'LOG IN',
+                                  'VERIFY CODE',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white70),
                                   textAlign: TextAlign.center,
@@ -90,27 +100,19 @@ class _LoginPageState extends State<LoginPage> {
                                   BorderRadius.all(Radius.circular(10.0)),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 20),
-                            child: Expanded(
-                              child: TextFormField(
-                                controller: _phoneNumberController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter username!';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 20),
-                                    hintText: 'Phone...',
-                                    enabledBorder: _inputBorderStyle(),
-                                    border: _inputBorderStyle(),
-                                    focusedBorder: _inputBorderStyle()),
-                              ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'Code sent to ${widget.phoneNo}',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 17,
                             ),
                           ),
-
+                          SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             margin: EdgeInsets.only(top: 20),
                             child: Expanded(
@@ -132,42 +134,113 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-
                           SizedBox(
                             height: 15,
                           ),
-
-                          state is Unauthenticated
-                              ? Text('Incorrect username or password!')
-                              : Container(),
-
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Expanded(
+                              child: TextFormField(
+                                controller: _confirmPasswordTextController,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      _confirmPasswordTextController
+                                              .value.text !=
+                                          _passwordTextController.value.text) {
+                                    return 'Can\'t be empty or different from password!';
+                                  }
+                                  return null;
+                                },
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 20),
+                                    hintText: 'Confirm Password',
+                                    enabledBorder: _inputBorderStyle(),
+                                    border: _inputBorderStyle(),
+                                    focusedBorder: _inputBorderStyle()),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Expanded(
+                              child: TextFormField(
+                                controller: _resetCodeTextController,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      _resetCodeTextController
+                                              .value.text.length !=
+                                          4) {
+                                    return 'Can\'t be empty or different from 4 digits!';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 20),
+                                    hintText: 'Reset Code (E.g 1234)',
+                                    enabledBorder: _inputBorderStyle(),
+                                    border: _inputBorderStyle(),
+                                    focusedBorder: _inputBorderStyle()),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
                           Container(
                             width: kWidth(context),
                             height: 50,
                             margin: EdgeInsets.only(top: 30),
-                            child: state is SendingLoginData
+                            child: state is SendingVerifyPasswordReset
                                 ? Center(child: CircularProgressIndicator())
-                                : state is Authenticated
+                                : state is VerifiedPasswordReset
                                     ? Center(
-                                        child: Icon(
-                                        Icons.check,
-                                        color: Colors.green,
-                                        size: 40,
+                                        child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                            size: 40,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            'Password Reset Successfully!',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
                                       ))
                                     : OutlinedButton(
                                         onPressed: () {
                                           if (_formKey.currentState
                                               .validate()) {
                                             BlocProvider.of<AuthBloc>(context)
-                                                .add(LoginEvent(
-                                              phone: _phoneNumberController
-                                                  .value.text,
-                                              password: _passwordTextController
-                                                  .value.text,
-                                            ));
+                                                .add(VerifyPasswordReset(
+                                                    password:
+                                                        _passwordTextController
+                                                            .value.text,
+                                                    confirmPassword:
+                                                        _confirmPasswordTextController
+                                                            .value.text,
+                                                    resetCode:
+                                                        _resetCodeTextController
+                                                            .value.text,
+                                                    phoneNo: widget.phoneNo));
                                           }
                                         },
-                                        child: Text('Log In',
+                                        child: Text('Confirm',
                                             style:
                                                 TextStyle(color: Colors.white)),
                                         style: ButtonStyle(
@@ -185,35 +258,6 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(
                             height: 10,
                           ),
-
-                          Container(
-                            width: double.infinity,
-                            child: Align(
-                              alignment: AlignmentDirectional.centerEnd,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              ResetPasswordPage()));
-                                },
-                                child: Text(
-                                  'Forgot Password',
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(
-                            height: 10,
-                          ),
-                          // Text('Don\'t have account?',
-                          //     style: TextStyle(fontSize: 18))
                         ],
                       ),
                     ),

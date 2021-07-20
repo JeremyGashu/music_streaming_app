@@ -23,6 +23,27 @@ class AuthRepository {
     return authToken;
   }
 
+  Future<bool> resetPassword({String phoneNo}) async {
+    http.Response resetData =
+        await dataProvider.resetPassword(phoneNo: phoneNo);
+    bool success = jsonDecode(resetData.body)['success'];
+    return success;
+  }
+
+  Future<bool> verifyPasswordReset(
+      {String phoneNo,
+      String password,
+      String confirmPassword,
+      String resetCode}) async {
+    http.Response verifyResponse = await dataProvider.verifyPasswordReset(
+        phoneNo: phoneNo,
+        password: password,
+        confirmPassword: confirmPassword,
+        resetCode: resetCode);
+    bool success = jsonDecode(verifyResponse.body)['success'];
+    return success;
+  }
+
   Future<AuthData> loginUser({String phone, String password}) async {
     http.Response response = await dataProvider.loginUser(
       password: password,
