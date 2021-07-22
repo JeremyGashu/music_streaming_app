@@ -18,6 +18,7 @@ import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
+import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
@@ -32,6 +33,7 @@ import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/search_data_provider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
@@ -39,6 +41,7 @@ import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/data/repository/search_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_profie_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
@@ -89,8 +92,11 @@ void main() async {
       AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
   final _trackRepo =
       TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
+  final _searchRepo =
+      SearchRepository(dataProvider: SearchDataProvider(client: http.Client()));
 
-  final _genreRepo = GenreRepository(genreDataProvider: GenreDataProvider(client: http.Client()));
+  final _genreRepo = GenreRepository(
+      genreDataProvider: GenreDataProvider(client: http.Client()));
 
   /// initialize [UserLocationBloc]
   UserLocationBloc _userLocationBloc =
@@ -134,7 +140,11 @@ void main() async {
           ArtistBloc(artistRepository: _artistRepo)..add(LoadArtists()),
     ),
     BlocProvider(
-      create: (context) => GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
+      create: (context) =>
+          GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
+    ),
+    BlocProvider(
+      create: (context) => SearchBloc(searchRepository: _searchRepo),
     ),
   ], child: MyApp()));
 }
