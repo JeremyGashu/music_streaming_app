@@ -207,7 +207,11 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                 if (duration != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 20.0),
-                    child: Text(prettyDuration(mediaItem.duration)),
+                    child: Text(prettyDuration(widget.track.song != null
+                        ? (widget.track.song.duration != null
+                        ? Duration(seconds: widget.track.song.duration)
+                        : mediaItem.duration)
+                        : Duration(seconds: 0)),),
                   ),
               ],
             ),

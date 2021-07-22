@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
@@ -36,8 +35,8 @@ class _SingleAlbumState extends State<SingleAlbum> {
                             child: Container(
                               width: 100,
                               height: 100,
-                              child: SvgPicture.asset(
-                                'assets/svg/album.svg',
+                              child: Image.asset(
+                                'assets/images/album_disk_new.png',
                                 fit: BoxFit.cover,
                                 color: Colors.black,
                               ),
@@ -116,8 +115,8 @@ class _SingleAlbumState extends State<SingleAlbum> {
                       child: Container(
                         width: 100,
                         height: 100,
-                        child: SvgPicture.asset(
-                          'assets/svg/album.svg',
+                        child: Image.asset(
+                          'assets/images/album_disk_new.png',
                           fit: BoxFit.cover,
                           color: Colors.black,
                         ),
@@ -133,7 +132,10 @@ class _SingleAlbumState extends State<SingleAlbum> {
                         child: Image.asset(
                           'assets/images/album_one.jpg',
                           fit: BoxFit.cover,
+                          width: 140.0,
+                          height: 120,
                         ),
+
                       ),
                     )
                   ],

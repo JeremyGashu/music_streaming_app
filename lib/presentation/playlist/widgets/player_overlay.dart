@@ -2,10 +2,10 @@ import 'package:animated_overflow/animated_overflow.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/spinning_image.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
@@ -41,7 +41,17 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                             duration: Duration(milliseconds: 500),
                             height: _expandList ? 300 : 0,
                             width: kWidth(context),
-                            color: kPlaylistBg,
+                            decoration: BoxDecoration(
+                              color: kPlaylistBg,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3), // changes position of shadow
+                                ),
+                              ]
+                            ),
                             padding: EdgeInsets.all(16.0),
                             child: Column(children: [
                               Row(
@@ -76,6 +86,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                               playbackSnapshot) =>
                                       playbackSnapshot.hasData
                                           ? ListView.builder(
+                                              physics: NeverScrollableScrollPhysics(),
                                               padding: EdgeInsets.zero,
                                               itemCount: snapshot.data.length,
                                               itemBuilder: (context, index) {
@@ -244,10 +255,11 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          SvgPicture.asset(
-            "assets/svg/album.svg",
-            height: 40,
-          ),
+          // SvgPicture.asset(
+          //   "assets/svg/album_disk_new.svg",
+          //   height: 40,
+          // ),
+          SpinningImage(imageUrl: "assets/png/album_disk_new.png", spin: playing,),
           Expanded(
             child: StreamBuilder(
               stream: AudioService.currentMediaItemStream,
