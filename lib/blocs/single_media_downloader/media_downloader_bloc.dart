@@ -180,7 +180,6 @@ class MediaDownloaderBloc
     return taskId;
   }
 
-
   /// clear the download task
   void _handleClearDownload() {
     if (_tasks.length != 0) {

@@ -35,6 +35,10 @@ class LocalHelper {
   static Future<bool> isFileDownloaded(String fileId) async {
     var box = await Hive.openBox("downloadedMedias");
     var trackDownloaded = await box.get(fileId);
+    print("Box Length ${box.length}");
+    await box.values.forEach((element) {
+      print(element);
+    });
     return trackDownloaded != null;
   }
 
