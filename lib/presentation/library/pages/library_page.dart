@@ -77,6 +77,7 @@ class LibraryPage extends StatelessWidget {
               ),
               ListView(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 children: [
                   _trackListItem(),
                   _trackListItem(),

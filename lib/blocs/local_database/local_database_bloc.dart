@@ -25,6 +25,7 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
       /// save only when download is done
       if (downloadState is DownloadDone){
         print("MediaDownloaderBloc: Download Finished");
+        print("MediaDownloaderBloc: ${downloadState.downloadedTask.track_id}");
         add(WriteToLocalDB(boxName: 'downloadedMedias', key: "${downloadState.downloadedTask.track_id}", value: "downloaded"));
       }
     });
@@ -42,7 +43,7 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
   @override
   Stream<LocalDatabaseState> mapEventToState(LocalDatabaseEvent event) async*{
     try{
-      LazyBox box;
+      Box box;
       yield LocalDBBusy();
       if(event is InitLocalDB){
         print("Initializing localDb");
@@ -50,22 +51,24 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
         await Hive.openLazyBox<DownloadTask>('downloadTasks');
         await Hive.openLazyBox('downloadedMedias');
       }else if(event is ReadLocalDB){
-         box = Hive.lazyBox(event.boxName);
+         box = await Hive.box(event.boxName);
          yield LocalDBSuccess(data: await box.get(event.key));
       }else if(event is WriteToLocalDB){
-        box = Hive.lazyBox(event.boxName);
+        box = await Hive.box(event.boxName);
         box.put(event.key, event.value);
         yield LocalDBSuccess(data: null);
       }else if(event is UpdateFromLocalDB){
-        box = Hive.lazyBox(event.boxName);
+        box = await Hive.box(event.boxName);
         box.put(event.key, event.value);
         yield LocalDBSuccess(data: null);
       }else if(event is DeleteFromLocalDB){
-        box = Hive.lazyBox(event.boxName);
+        box = Hive.box(event.boxName);
         box.delete(event.key);
         yield LocalDBSuccess(data: null);
       }
     }catch(error){
+      print(error);
+      print("Error in local database");
       yield LocalDBFailed();
     }
   }

@@ -229,8 +229,11 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     print("tracks length: ${widget.tracks.length}");
     print("index: $index");
     print("tracks: ${widget.tracks}");
+    print("trackId: ${widget.tracks[0].trackId}");
+    print("songId: ${widget.tracks[0].songId}");
 
     for (Track track in widget.tracks) {
+      print("trackId: ${track.songId}");
       String source = 'https://138.68.163.236:8787/track/${track.songId}';
       if (await LocalHelper.isFileDownloaded(track.songId)) {
         print("${track.songId}: downloaded");
@@ -274,12 +277,12 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     var _trackToPlay = widget.tracks[index];
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
-    if (!(await LocalHelper.isFileDownloaded(_trackToPlay.song.songId))) {
+    if (!(await LocalHelper.isFileDownloaded(_trackToPlay.songId))) {
       // var m3u8FilePath = '$dir/${_trackToPlay.data.id}/main.m3u8';
       HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
               await parseHLS.downloadFile(
-                  'https://138.68.163.236:8787/track/${_trackToPlay.song.songId}',
-                  '$dir/${_trackToPlay.song.songId}',
+                  'https://138.68.163.236:8787/track/${_trackToPlay.songId}',
+                  '$dir/${_trackToPlay.songId}',
                   "main.m3u8"))
           .readAsStringSync());
       // TODO: update this after correct m3u8 is generated
