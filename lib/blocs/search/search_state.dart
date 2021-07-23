@@ -16,8 +16,7 @@ class SearchingState extends SearchState {
 }
 
 class SearchFinished extends SearchState {
-  //TODO: make the search data type and change the dynamic DT to SearchResult data type
-  final dynamic result;
+  final Map<String, dynamic> result;
 
   SearchFinished({this.result});
   @override

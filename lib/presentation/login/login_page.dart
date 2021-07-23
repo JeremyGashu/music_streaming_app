@@ -25,16 +25,23 @@ class _LoginPageState extends State<LoginPage> {
         fit: StackFit.expand,
         children: [
           Container(
-            height: kHeight(context),
-            width: kWidth(context),
-            child: SvgPicture.asset("assets/svg/login_bg.svg", fit: BoxFit.cover, height: kHeight(context), width: kWidth(context),)
-          ),
+              height: kHeight(context),
+              width: kWidth(context),
+              child: SvgPicture.asset(
+                "assets/svg/login_bg.svg",
+                fit: BoxFit.cover,
+                height: kHeight(context),
+                width: kWidth(context),
+              )),
           BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
             if (state is AuthenticationError) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
-            }else if(state is Authenticated){
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()), (route) => false);
+            } else if (state is Authenticated) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainPage()),
+                  (route) => false);
             }
           }, builder: (context, state) {
             return SingleChildScrollView(
@@ -81,7 +88,8 @@ class _LoginPageState extends State<LoginPage> {
                             width: 120,
                             height: 120,
                             margin: EdgeInsets.only(top: 15),
-                            child: Image.asset("assets/images/app_logo_white.png"),
+                            child:
+                                Image.asset("assets/images/app_logo_white.png"),
                           ),
                           SizedBox(
                             height: 20.0,
@@ -98,16 +106,14 @@ class _LoginPageState extends State<LoginPage> {
                                   return null;
                                 },
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 20),
-                                    hintText: 'Phone number',
-                                    enabledBorder: _inputBorderStyle(),
-                                    border: _inputBorderStyle(),
-                                    focusedBorder: _inputBorderStyle(),
+                                  contentPadding: EdgeInsets.only(left: 20),
+                                  hintText: 'Phone number',
+                                  enabledBorder: _inputBorderStyle(),
+                                  border: _inputBorderStyle(),
+                                  focusedBorder: _inputBorderStyle(),
                                   fillColor: Colors.white,
                                   filled: true,
-                                  hintStyle: TextStyle(
-                                    fontSize: 14.0
-                                  ),
+                                  hintStyle: TextStyle(fontSize: 14.0),
                                   prefixIcon: Icon(
                                     Icons.phone,
                                     color: kBlack,
@@ -131,16 +137,14 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                                 obscureText: true,
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 20),
-                                    hintText: 'Password',
-                                    enabledBorder: _inputBorderStyle(),
-                                    border: _inputBorderStyle(),
-                                    focusedBorder: _inputBorderStyle(),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                  hintStyle: TextStyle(
-                                      fontSize: 14.0
-                                  ),
+                                  contentPadding: EdgeInsets.only(left: 20),
+                                  hintText: 'Password',
+                                  enabledBorder: _inputBorderStyle(),
+                                  border: _inputBorderStyle(),
+                                  focusedBorder: _inputBorderStyle(),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintStyle: TextStyle(fontSize: 14.0),
                                   prefixIcon: Icon(
                                     Icons.lock_rounded,
                                     color: kBlack,
@@ -163,41 +167,41 @@ class _LoginPageState extends State<LoginPage> {
                             width: kWidth(context),
                             height: 50,
                             child: state is SendingLoginData
-                                ? Center(child: CircularProgressIndicator(color: Colors.white,))
+                                ? Center(child: CircularProgressIndicator())
                                 : state is Authenticated
-                                ? Center(
-                                child: Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 40,
-                                ))
-                                : OutlinedButton(
-                              onPressed: () {
-                                if (_formKey.currentState
-                                    .validate()) {
-                                  BlocProvider.of<AuthBloc>(context)
-                                      .add(LoginEvent(
-                                    phone: _phoneNumberController
-                                        .value.text,
-                                    password: _passwordTextController
-                                        .value.text,
-                                  ));
-                                }
-                              },
-                              child: Text('LOG IN',
-                                  style:
-                                  TextStyle(color: Colors.white)),
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                  MaterialStateProperty.all<
-                                      Color>(kYellow),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(25)),
-                                      ))),
-                            ),
+                                    ? Center(
+                                        child: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ))
+                                    : OutlinedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState
+                                              .validate()) {
+                                            BlocProvider.of<AuthBloc>(context)
+                                                .add(LoginEvent(
+                                              phone: _phoneNumberController
+                                                  .value.text,
+                                              password: _passwordTextController
+                                                  .value.text,
+                                            ));
+                                          }
+                                        },
+                                        child: Text('LOG IN',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(kYellow),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(25)),
+                                            ))),
+                                      ),
                           ),
                           SizedBox(
                             height: 10,
@@ -219,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                                   'Forgot Password',
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
-                                    color: Colors.black54,
+                                    color: Colors.white70,
                                   ),
                                 ),
                               ),

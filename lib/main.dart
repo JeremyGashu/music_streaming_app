@@ -15,6 +15,7 @@ import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
+import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
@@ -29,6 +30,7 @@ import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/search_data_provider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
@@ -36,6 +38,7 @@ import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/data/repository/search_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
@@ -82,6 +85,8 @@ void main() async {
       AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
   final _trackRepo =
       TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
+  final _searchRepo =
+      SearchRepository(dataProvider: SearchDataProvider(client: http.Client()));
 
   final _genreRepo = GenreRepository(
       genreDataProvider: GenreDataProvider(client: http.Client()));
@@ -131,6 +136,9 @@ void main() async {
       create: (context) =>
           GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
     ),
+    BlocProvider(
+      create: (context) => SearchBloc(searchRepository: _searchRepo),
+    ),
   ], child: MyApp()));
 }
 
@@ -140,7 +148,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     initializeAudioService();

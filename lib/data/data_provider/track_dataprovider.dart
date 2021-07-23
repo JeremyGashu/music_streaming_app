@@ -38,7 +38,7 @@ class TrackDataProvider {
     };
 
     http.Response response = await client.get(
-      Uri.parse(TRACKS_URL),
+      Uri.parse(SONG_URL),
       headers: headers,
     );
 
