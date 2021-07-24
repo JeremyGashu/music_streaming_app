@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/album.dart';
@@ -31,22 +32,28 @@ class _AlbumResultState extends State<AlbumResult> {
 
   @override
   Widget build(BuildContext context) {
-    //todo: set the current page from here
+    int length;
+    if ((widget.result['albums'] as AlbumsResponse) != null &&
+        (widget.result['albums'] as AlbumsResponse).data != null) {
+      length = (widget.result['albums'] as AlbumsResponse).data.data.length;
+    }
 
-    int length = (widget.result['albums'] as AlbumsResponse).data.data.length;
-
-    return length != 0
-        ? GridView.count(
-            crossAxisCount: 2,
-            children: (widget.result['albums'] as AlbumsResponse)
-                .data
-                .data
-                .map((album) {
-              return SingleAlbum(
-                album: album,
-              );
-            }).toList(),
+    return length == null
+        ? SpinKitRipple(
+            color: Colors.grey,
           )
-        : Center(child: Text('No song found!'));
+        : length != 0
+            ? GridView.count(
+                crossAxisCount: 2,
+                children: (widget.result['albums'] as AlbumsResponse)
+                    .data
+                    .data
+                    .map((album) {
+                  return SingleAlbum(
+                    album: album,
+                  );
+                }).toList(),
+              )
+            : Center(child: Text('No song found!'));
   }
 }

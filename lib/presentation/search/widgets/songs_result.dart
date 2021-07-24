@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/track.dart';
@@ -31,20 +32,26 @@ class _SongsResultState extends State<SongsResult> {
 
   @override
   Widget build(BuildContext context) {
-    //todo: set the current page from here
+    int length;
+    if ((widget.result['songs'] as TracksResponse) != null &&
+        (widget.result['songs'] as TracksResponse).data != null) {
+      length = (widget.result['songs'] as TracksResponse).data.data.length;
+    }
 
-    int length = (widget.result['songs'] as TracksResponse).data.data.length;
-
-    return length != 0
-        ? GridView.count(
-            crossAxisCount: 2,
-            children: (widget.result['songs'] as TracksResponse)
-                .data
-                .data
-                .map((songs) {
-              return SingleTrack(track: songs);
-            }).toList(),
+    return length == null
+        ? SpinKitRipple(
+            color: Colors.grey,
           )
-        : Center(child: Text('No song found!'));
+        : length != 0
+            ? GridView.count(
+                crossAxisCount: 2,
+                children: (widget.result['songs'] as TracksResponse)
+                    .data
+                    .data
+                    .map((songs) {
+                  return SingleTrack(track: songs);
+                }).toList(),
+              )
+            : Center(child: Text('No song found!'));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
@@ -31,19 +32,27 @@ class _ArtistsResultState extends State<ArtistsResult> {
 
   @override
   Widget build(BuildContext context) {
-    int length = (widget.result['artists'] as ArtistsResponse).data.data.length;
-    return length != 0
-        ? GridView.count(
-            crossAxisCount: 2,
-            children: (widget.result['artists'] as ArtistsResponse)
-                .data
-                .data
-                .map((artist) {
-              return Artist(
-                artist: artist,
-              );
-            }).toList(),
+    int length;
+    if ((widget.result['artists'] as ArtistsResponse) != null &&
+        (widget.result['artists'] as ArtistsResponse).data != null) {
+      length = (widget.result['artists'] as ArtistsResponse).data.data.length;
+    }
+    return length == null
+        ? SpinKitRipple(
+            color: Colors.grey,
           )
-        : Center(child: Text('No Artist found!'));
+        : length != 0
+            ? GridView.count(
+                crossAxisCount: 2,
+                children: (widget.result['artists'] as ArtistsResponse)
+                    .data
+                    .data
+                    .map((artist) {
+                  return Artist(
+                    artist: artist,
+                  );
+                }).toList(),
+              )
+            : Center(child: Text('No Artist found!'));
   }
 }
