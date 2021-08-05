@@ -10,3 +10,10 @@ class LoadTracks extends TrackEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadSongsByArtistId extends TrackEvent {
+  final String artistId;
+  LoadSongsByArtistId({this.artistId});
+  @override
+  List<Object> get props => [artistId];
+}

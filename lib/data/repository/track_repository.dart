@@ -16,4 +16,13 @@ class TrackRepository {
     print('decoded track => ${decodedPlaylists}');
     return TracksResponse.fromJson(decodedPlaylists);
   }
+
+  Future<TracksResponse> getTracksByArtisId({String artistId}) async {
+    http.Response songs =
+        await dataProvider.getTracksByArtisId(artistId: artistId);
+    print('songs loaded by artist= > ${songs.body}');
+    var decodedSongs = jsonDecode(songs.body);
+    print('decoded songs => ${decodedSongs}');
+    return TracksResponse.fromJson(decodedSongs);
+  }
 }

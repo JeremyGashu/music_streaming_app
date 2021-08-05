@@ -74,7 +74,7 @@ class Track {
         albumId: json["album_id"],
         album: json["album"] != null ? Album.fromJson(json["album"]) : null,
         songId: json["song_id"],
-        song: Song.fromJson(json["song"]),
+        song: json["song"] != null ? Song.fromJson(json["song"]) : Song(),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );

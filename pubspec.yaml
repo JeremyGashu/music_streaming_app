@@ -64,7 +64,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   hive_generator: ^1.0.1
-  build_runner: ^1.12.2
+  build_runner:
   flutter_native_splash: ^1.1.8+4
 flutter_native_splash:
   color: "#ffffff"
