@@ -22,6 +22,17 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
         yield LoadingAlbumError(message: "Error on loading Album");
         throw Exception(e);
       }
+    } else if (event is LoadAlbumsByArtistId) {
+      try {
+        yield LoadingAlbum();
+        var albumsResponse =
+            await albumRepository.getAlbumsByArtistId(artistId: event.artistId);
+        yield LoadedAlbum(albums: albumsResponse.data.data);
+      } catch (e) {
+        print("ERROR ON BLOC " + e.toString());
+        yield LoadingAlbumError(message: "Error on loading Album");
+        throw Exception(e);
+      }
     }
   }
 }

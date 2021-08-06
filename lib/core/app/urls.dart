@@ -14,6 +14,10 @@ final RESET_PASSWORD_URL =
     'http://138.68.163.236:8866/v1/request_reset_password';
 final VERIFY_PASSWORD_RESET_URL =
     'http://138.68.163.236:8866/v1/verify_and_reset_password';
+final SONG_BY_ARTIST =
+    'http://138.68.163.236:8889/v1/songs/?page=1&per_page=10&sort=DESC&search_by=artist_id&search_key=';
+final ALBUM_BY_ARTIST =
+    'http://138.68.163.236:8889/v1/albums?page=1&per_page=10&sort=ASC&search_by=artist_id&search_key=';
 //todo: genre
 //todo: analytics
 //todo: getOtp

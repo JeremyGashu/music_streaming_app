@@ -64,14 +64,16 @@ class AlbumDataProvider {
     return response;
   }
 
-  Future<http.Response> getAlbumsByArtist(String artistId, int page,
-      {int perPage, String sort, String sortKey}) async {
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
-    String url =
-        '$BASE_URL/artist/albums?artist_id=${artistId}&page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
-    http.Response response = await client.get(Uri.parse(url));
+  Future<http.Response> getAlbumByArtistId({String artistId}) async {
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
+    http.Response response = await client.get(
+      Uri.parse(ALBUM_BY_ARTIST + artistId),
+      headers: headers,
+    );
     return response;
   }
 

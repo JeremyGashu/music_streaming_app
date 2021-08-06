@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
+import 'package:streaming_mobile/blocs/artist/artist_event.dart';
+import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
 
 class ArtistsGrid extends StatelessWidget {
@@ -11,70 +16,76 @@ class ArtistsGrid extends StatelessWidget {
           //back button and search page
           _upperSection(context),
           // Divider(),
-          Expanded(
-              child: GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            children: [
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-              _artistTile(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
-              }),
-            ],
-          )),
+          BlocBuilder<ArtistBloc, ArtistState>(builder: (context, state) {
+            if (state is LoadedArtist) {
+              return Expanded(
+                  child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                children: state.artists.map((artist) {
+                  return _artistTile(
+                      onTap: () {
+                        print('artist id => ${artist.artistId}');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ArtistDetailPage(
+                                      artistId: artist.artistId,
+                                    )));
+                      },
+                      name: artist.firstName + ' ' + artist.lastName,
+                      imageUrl: artist.image,
+                      likes: 0.toString());
+                }).toList(),
+              ));
+            } else if (state is LoadingArtist) {
+              return Center(
+                child: SpinKitRipple(
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              );
+            } else if (state is LoadingArtistError) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Error Loading Artists!',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 20,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    IconButton(
+                        icon: Icon(
+                          Icons.update,
+                          color: Colors.redAccent.withOpacity(0.8),
+                          size: 45,
+                        ),
+                        onPressed: () {
+                          BlocProvider.of<ArtistBloc>(context)
+                              .add(LoadArtists());
+                        }),
+                  ],
+                ),
+              );
+            }
+            return Container();
+          }),
         ],
       ),
     ));
   }
 }
 
-Widget _artistTile({Function onTap}) {
+Widget _artistTile(
+    {Function onTap, String name, String likes, String imageUrl}) {
   return Card(
     child: InkWell(
       onTap: onTap,
@@ -103,7 +114,7 @@ Widget _artistTile({Function onTap}) {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Dawit Getachew',
+                    name,
                     style: TextStyle(
                         color: Colors.black.withOpacity(0.8),
                         fontWeight: FontWeight.bold,
@@ -126,7 +137,7 @@ Widget _artistTile({Function onTap}) {
                       SizedBox(
                         width: 5,
                       ),
-                      Text('35,926'),
+                      Text(likes),
                     ],
                   ),
                 ],
