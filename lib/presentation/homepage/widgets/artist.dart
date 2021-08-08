@@ -19,7 +19,9 @@ class Artist extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
+                        builder: (context) => ArtistDetailPage(
+                              artistId: artist.artistId,
+                            )));
               },
               child: Container(
                 width: 120,

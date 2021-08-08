@@ -18,6 +18,8 @@ final SONG_BY_ARTIST =
     'http://138.68.163.236:8889/v1/songs/?page=1&per_page=10&sort=DESC&search_by=artist_id&search_key=';
 final ALBUM_BY_ARTIST =
     'http://138.68.163.236:8889/v1/albums?page=1&per_page=10&sort=ASC&search_by=artist_id&search_key=';
+final NEW_RELEASE =
+    'http://138.68.163.236:8889/v1/new_releases?page=1&per_page=10';
 //todo: genre
 //todo: analytics
 //todo: getOtp

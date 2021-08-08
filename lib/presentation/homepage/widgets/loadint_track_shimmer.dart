@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class LoadingTrackShimmer extends StatelessWidget {
+class RectangularShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
@@ -14,7 +14,10 @@ class LoadingTrackShimmer extends StatelessWidget {
             height: 100,
             width: 130,
             margin: EdgeInsets.all(5),
-            color: Colors.grey.withOpacity(0.3),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.grey.withOpacity(0.3),
+            ),
           ),
           SizedBox(
             height: 5,

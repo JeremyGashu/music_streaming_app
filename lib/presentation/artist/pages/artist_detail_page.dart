@@ -147,9 +147,9 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: [
-                                  LoadingTrackShimmer(),
-                                  LoadingTrackShimmer(),
-                                  LoadingTrackShimmer(),
+                                  RectangularShimmer(),
+                                  RectangularShimmer(),
+                                  RectangularShimmer(),
                                 ],
                               ),
                             );
@@ -252,9 +252,9 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: [
-                                  LoadingTrackShimmer(),
-                                  LoadingTrackShimmer(),
-                                  LoadingTrackShimmer(),
+                                  RectangularShimmer(),
+                                  RectangularShimmer(),
+                                  RectangularShimmer(),
                                 ],
                               ),
                             );
