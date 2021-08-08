@@ -13,6 +13,7 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
+import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
@@ -24,7 +25,8 @@ import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dar
 
 class PlaylistDetail extends StatefulWidget {
   final List<Track> tracks;
-  PlaylistDetail({this.tracks});
+  final Playlist playlistInfo;
+  PlaylistDetail({this.tracks, this.playlistInfo});
   @override
   _PlaylistDetailState createState() => _PlaylistDetailState();
 }
@@ -46,11 +48,11 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
             mainAxisSize: MainAxisSize.min,
             children: [
               //upper section containing the image, svg, shuffle button and healing track
-              upperSection(context),
+              upperSection(context, playlist: widget.playlistInfo),
               SizedBox(
                 height: 20,
               ),
-              playListStat(),
+              playListStat(playlist: widget.playlistInfo),
               SizedBox(
                 height: 8,
               ),
@@ -96,7 +98,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                         'Shuffle Play',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 15,
                         ),
                       ),
                     ),
@@ -229,7 +231,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     print("tracks length: ${widget.tracks.length}");
     print("index: $index");
     print("tracks: ${widget.tracks}");
-    print("trackId: ${widget.tracks[0].trackId}");
+    print("trackId: ${widget.tracks[0].songId}");
     print("songId: ${widget.tracks[0].songId}");
 
     for (Track track in widget.tracks) {
@@ -243,12 +245,12 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       print("Source: $source");
       mediaItems.add(MediaItem(
           id: track.songId,
-          album: track.albumId,
-          title: track.song.title,
+          album: '',
+          title: track.title,
           genre: 'genre goes here',
           // artist: track.artist.firstName,
-          duration: Duration(seconds: track.song.duration),
-          artUri: Uri.parse(track.song.coverImageUrl),
+          duration: Duration(seconds: track.duration),
+          artUri: Uri.parse(track.coverImageUrl),
           // extras: {'source': m3u8FilePath});
           extras: {'source': source}));
     }

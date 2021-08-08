@@ -193,6 +193,8 @@
 //       ];
 // }
 
+import 'package:streaming_mobile/data/models/track.dart';
+
 class PlaylistsResponse {
   PlaylistsResponse({
     this.success,
@@ -293,7 +295,7 @@ class SongData {
   String id;
   String playlistId;
   String songId;
-  Song song;
+  Track song;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -301,7 +303,7 @@ class SongData {
         id: json["id"],
         playlistId: json["playlist_id"],
         songId: json["song_id"],
-        song: Song.fromJson(json["song"]),
+        song: Track.fromJson(json["song"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
@@ -311,82 +313,6 @@ class SongData {
         "playlist_id": playlistId,
         "song_id": songId,
         "song": song.toJson(),
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class Song {
-  Song({
-    this.songId,
-    this.artistId,
-    this.artist,
-    this.title,
-    this.coverImageUrl,
-    this.songUrl,
-    this.genreId,
-    this.genre,
-    this.views,
-    this.duration,
-    this.lyricsLocation,
-    this.imageLocation,
-    this.trackLocation,
-    this.releasedAt,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  String songId;
-  String artistId;
-  Artist artist;
-  String title;
-  String coverImageUrl;
-  String songUrl;
-  String genreId;
-  Genre genre;
-  int views;
-  int duration;
-  String lyricsLocation;
-  String imageLocation;
-  String trackLocation;
-  DateTime releasedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Song.fromJson(Map<String, dynamic> json) => Song(
-        songId: json["song_id"],
-        artistId: json["artist_id"],
-        artist: Artist.fromJson(json["artist"]),
-        title: json["title"],
-        coverImageUrl: json["cover_image_url"],
-        songUrl: json["song_url"],
-        genreId: json["genre_id"],
-        genre: Genre.fromJson(json["Genre"]),
-        views: json["views"],
-        duration: json["duration"],
-        lyricsLocation: json["lyrics_location"],
-        imageLocation: json["image_location"],
-        trackLocation: json["track_location"],
-        releasedAt: DateTime.parse(json["released_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "song_id": songId,
-        "artist_id": artistId,
-        "artist": artist.toJson(),
-        "title": title,
-        "cover_image_url": coverImageUrl,
-        "song_url": songUrl,
-        "genre_id": genreId,
-        "Genre": genre.toJson(),
-        "views": views,
-        "duration": duration,
-        "lyrics_location": lyricsLocation,
-        "image_location": imageLocation,
-        "track_location": trackLocation,
-        "released_at": releasedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };

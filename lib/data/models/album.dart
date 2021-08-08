@@ -63,17 +63,26 @@ class Album {
   DateTime createdAt;
   DateTime updatedAt;
 
-  factory Album.fromJson(Map<String, dynamic> json) => Album(
-        albumId: json["album_id"],
-        artistId: json["artist_id"],
-        artist: Artist.fromJson(json["artist"]),
-        title: json["title"],
-        coverImageUrl: json["cover_image_url"],
-        views: json["views"],
-        tracks: List<Track>.from(json["tracks"].map((x) => Track.fromJson(x))),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
+  factory Album.fromJson(Map<String, dynamic> json) {
+    // print('this is it ${json["tracks"]['song']}');
+    return Album(
+      albumId: json["album_id"],
+      artistId: json["artist_id"],
+      artist: json["artist"] != null ? Artist.fromJson(json["artist"]) : null,
+      title: json["title"],
+      coverImageUrl: json["cover_image_url"],
+      views: json["views"] ?? 0,
+      tracks: json["tracks"] != null
+          ? List<Track>.from(json["tracks"].map((x) {
+              print('parse parse parse ${x}');
+              return Track.fromJson(x['song']);
+            }))
+          : [],
+      // tracks: [],
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "album_id": albumId,
@@ -123,54 +132,6 @@ class Artist {
         "last_name": lastName,
         "image": image,
         "email": email,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class Song {
-  Song({
-    this.songId,
-    this.title,
-    this.coverImageUrl,
-    this.songUrl,
-    this.views,
-    this.duration,
-    this.releasedAt,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  String songId;
-  String title;
-  String coverImageUrl;
-  String songUrl;
-  int views;
-  int duration;
-  DateTime releasedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Song.fromJson(Map<String, dynamic> json) => Song(
-        songId: json["song_id"],
-        title: json["title"],
-        coverImageUrl: json["cover_image_url"],
-        songUrl: json["song_url"],
-        views: json["views"],
-        duration: json["duration"],
-        releasedAt: DateTime.parse(json["released_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "song_id": songId,
-        "title": title,
-        "cover_image_url": coverImageUrl,
-        "song_url": songUrl,
-        "views": views,
-        "duration": duration,
-        "released_at": releasedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };

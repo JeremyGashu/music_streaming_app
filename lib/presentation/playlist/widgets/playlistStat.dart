@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:streaming_mobile/core/utils/pretty_duration.dart';
+import 'package:streaming_mobile/data/models/playlist.dart';
 
-Widget playListStat() {
+Widget playListStat({Playlist playlist}) {
+  int duration = 0;
+
+  playlist.songs.forEach((song) {
+    duration += song.song.duration;
+  });
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Padding(
         padding: EdgeInsets.only(left: 10),
         child: Text(
-          '38 songs, 1hr 28 min',
+          '${playlist.songs.length} songs, ${prettyDuration(Duration(seconds: duration))} length',
           style: TextStyle(
-            fontSize: 19,
-            color: Colors.yellow[900].withOpacity(0.5),
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            color: Colors.orange[900],
           ),
         ),
       ),
@@ -22,7 +28,7 @@ Widget playListStat() {
             Icon(
               Icons.favorite,
               color: Colors.purple,
-              size: 30,
+              size: 20,
             ),
             SizedBox(
               width: 5,
@@ -39,7 +45,7 @@ Widget playListStat() {
             Icon(
               Icons.more_vert,
               color: Colors.black,
-              size: 30,
+              size: 20,
             ),
           ],
         ),

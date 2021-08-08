@@ -13,7 +13,6 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
-import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_state.dart';
@@ -83,42 +82,52 @@ class _HomePageState extends State<HomePage> {
             if (state is LoadingTrackError) {
               BlocProvider.of<AuthBloc>(context).add(RefreshToken());
             }
-            //todo incase one of the endpoints fail for some reason, add refresh tokens for album,playlists and artist
-            //todo also add pull-to-refresh feature
-          },
-        ),
-        BlocListener<AlbumBloc, AlbumState>(
-          listener: (ctx, state) {
-            if (state is LoadingAlbumError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<PlaylistBloc, PlaylistState>(
-          listener: (ctx, state) {
-            if (state is LoadingPlaylistError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<ArtistBloc, ArtistState>(
-          listener: (ctx, state) {
-            if (state is LoadingArtistError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<AuthBloc, AuthState>(
-          listener: (ctx, state) {
-            if (state is TokenRefreshSuccessful) {
-              BlocProvider.of<TrackBloc>(context).add(LoadTracks());
-              BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
-              BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
-              BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-            }
+            //todo in case one of the endpoints fail for some reason, add refresh tokens for album,playlists and artist
           },
         ),
       ],
+      // listeners: [
+      //   BlocListener<TrackBloc, TrackState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingTrackError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //       //todo in case one of the endpoints fail for some reason, add refresh tokens for album,playlists and artist
+      //       //todo also add pull-to-refresh feature
+      //     },
+      //   ),
+      //   BlocListener<AlbumBloc, AlbumState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingAlbumError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<PlaylistBloc, PlaylistState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingPlaylistError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<ArtistBloc, ArtistState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingArtistError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<AuthBloc, AuthState>(
+      //     listener: (ctx, state) {
+      //       if (state is TokenRefreshSuccessful) {
+      //         BlocProvider.of<TrackBloc>(context).add(LoadTracks());
+      //         BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
+      //         BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
+      //         BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+      //       }
+      //     },
+      //   ),
+      // ],
       child: RefreshIndicator(
         onRefresh: () async {
           BlocProvider.of<TrackBloc>(context).add(LoadTracks());
@@ -215,9 +224,9 @@ class _HomePageState extends State<HomePage> {
                     _sectionTitle(title: "Popular Playlists", callback: () {}),
                     Container(
                       height: 170,
-                      child: BlocBuilder<AlbumBloc, AlbumState>(
+                      child: BlocBuilder<PlaylistBloc, PlaylistState>(
                         builder: (ctx, state) {
-                          if (state is LoadingAlbum) {
+                          if (state is LoadingPlaylist) {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -226,13 +235,13 @@ class _HomePageState extends State<HomePage> {
                                 LoadingPlaylistShimmer(),
                               ],
                             );
-                          } else if (state is LoadedAlbum) {
+                          } else if (state is LoadedPlaylist) {
                             return ListView.builder(
-                              itemCount: state.albums.length,
+                              itemCount: state.playlists.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (ctx, index) {
                                 return SinglePlaylist(
-                                  album: state.albums[index],
+                                  playlist: state.playlists[index],
                                 );
                               },
                             );

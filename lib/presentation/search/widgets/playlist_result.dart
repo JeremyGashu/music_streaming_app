@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
@@ -18,7 +19,7 @@ class _PlaylistResultState extends State<PlaylistResult> {
   @override
   void initState() {
     BlocProvider.of<SearchBloc>(context)
-        .add(SetCurrentPage(currentPage: SearchIn.SONGS));
+        .add(SetCurrentPage(currentPage: SearchIn.PLAYLISTS));
     if (widget.result['playlists'] == null) {
       BlocProvider.of<SearchBloc>(context).add(Search(
           searchKey: widget.result['currentKey'],
@@ -33,21 +34,29 @@ class _PlaylistResultState extends State<PlaylistResult> {
 
   @override
   Widget build(BuildContext context) {
-    //todo: set the current page from here
+    int length;
+    if ((widget.result['playlists'] as PlaylistsResponse) != null &&
+        (widget.result['playlists'] as PlaylistsResponse).data != null) {
+      length =
+          (widget.result['playlists'] as PlaylistsResponse).data.data.length;
+    }
 
-    int length =
-        (widget.result['playlists'] as PlaylistsResponse).data.data.length;
-
-    return length != 0
-        ? GridView.count(
-            crossAxisCount: 2,
-            children: (widget.result['plsylists'] as PlaylistsResponse)
-                .data
-                .data
-                .map((playlist) {
-              return SinglePlaylist();
-            }).toList(),
+    return length == null
+        ? SpinKitRipple(
+            color: Colors.grey,
           )
-        : Center(child: Text('No song found!'));
+        : length != 0
+            ? GridView.count(
+                crossAxisCount: 2,
+                children: (widget.result['playlists'] as PlaylistsResponse)
+                    .data
+                    .data
+                    .map((plist) {
+                  return SinglePlaylist(
+                    playlist: plist,
+                  );
+                }).toList(),
+              )
+            : Center(child: Text('No playlist found!'));
   }
 }

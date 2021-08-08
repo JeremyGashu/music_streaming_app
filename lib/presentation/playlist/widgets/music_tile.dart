@@ -23,22 +23,22 @@ Widget musicTile(Track music, Function onPressed,
               errorWidget: (context, url, error) {
                 return Image.asset(
                   'assets/images/album_one.jpg',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 );
               },
               imageUrl: music != null
-                  ? music.song.coverImageUrl
+                  ? music.coverImageUrl
                   : mediaItem.artUri.toString(),
               placeholder: (context, url) => CircularProgressIndicator(),
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
         ),
       ),
       title: Text(
         music != null
-            ? music.song.title != null
-                ? music.song.title
+            ? music.title != null
+                ? music.title
                 : "-------"
             : mediaItem.title != null
                 ? mediaItem.title
@@ -53,7 +53,7 @@ Widget musicTile(Track music, Function onPressed,
       ),
       subtitle: Text(
         music != null
-            ? music.song.title
+            ? music.title
             : mediaItem.artist != null
                 ? mediaItem.artist
                 : "-----",
@@ -80,8 +80,8 @@ Widget musicTile(Track music, Function onPressed,
               : SizedBox(),
           Text(
             prettyDuration(music != null
-                ? (music.song.duration != null
-                    ? Duration(seconds: music.song.duration)
+                ? (music.duration != null
+                    ? Duration(seconds: music.duration)
                     : mediaItem.duration)
                 : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),

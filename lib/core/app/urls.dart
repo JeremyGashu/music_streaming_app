@@ -8,7 +8,7 @@ final ALBUM_URL =
 final ARTIST_URL =
     'http://138.68.163.236:8889/v1/artists/?page=1&per_page=10&sort=ASC';
 final SONG_URL =
-    'http://138.68.163.236:8889/v1/songs?page=1&per_page=20&singles=true';
+    'http://138.68.163.236:8889/v1/songs?page=1&per_page=10&single=true';
 final REFRESH_TOKEN_URL = 'http://138.68.163.236:8866/v1/refresh_token';
 final RESET_PASSWORD_URL =
     'http://138.68.163.236:8866/v1/request_reset_password';

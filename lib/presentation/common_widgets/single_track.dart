@@ -63,7 +63,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     placeholder: (context, url) => CircularProgressIndicator(
                       strokeWidth: 1,
                     ),
-                    imageUrl: widget.track.song.coverImageUrl,
+                    imageUrl: widget.track.coverImageUrl,
                     errorWidget: (context, url, error) {
                       return Image.asset(
                         'assets/images/singletrack_one.jpg',
@@ -72,7 +72,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     },
                     width: 140.0,
                     height: 120,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -88,7 +88,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        '${widget.track.album.title}',
+                        '${widget.track.artist.firstName} ${widget.track.artist.lastName} ',
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 14.0),
                       ),
@@ -96,7 +96,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0),
                       child: Text(
-                        '${widget.track.album.artist.firstName} ${widget.track.album.artist.lastName}',
+                        '${widget.track.title}',
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: kGray,
@@ -109,7 +109,7 @@ class _SingleTrackState extends State<SingleTrack> {
                   padding: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     '${prettyDuration(Duration(
-                      seconds: widget.track.song.duration,
+                      seconds: widget.track.duration,
                     ))}',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
@@ -134,7 +134,7 @@ void playSingleTrack(BuildContext context, Track track,
       .path;
   var m3u8FilePath;
 
-  final id = track.song.songId;
+  final id = track.songId;
 
   var box = await Hive.openBox("downloadedMedias");
   var trackDownloaded = await box.get("$id");
@@ -143,7 +143,7 @@ void playSingleTrack(BuildContext context, Track track,
   ParseHls parseHLS = ParseHls();
   HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
           await parseHLS.downloadFile(
-              'https://138.68.163.236:8787/track/${track.song.songId}',
+              'https://138.68.163.236:8787/track/${track.songId}',
               '$dir/$id',
               "main.m3u8"))
       .readAsStringSync());
@@ -156,7 +156,7 @@ void playSingleTrack(BuildContext context, Track track,
         segment_number: segmentIndex,
         downloadType: DownloadType.media,
         downloaded: false,
-        download_path: '$dir/${track.song.songId}/',
+        download_path: '$dir/${track.songId}/',
         url: segment.url));
   });
   // print("DownloadTasks: ");
@@ -167,11 +167,11 @@ void playSingleTrack(BuildContext context, Track track,
   if (playFromLocal) {
     /// TODO: check if all segments presented before playing from local storage
     print("playing from local");
-    m3u8FilePath = '$dir/${track.song.songId}/main.m3u8';
+    m3u8FilePath = '$dir/${track.songId}/main.m3u8';
     await parseHLS.updateLocalM3u8(m3u8FilePath);
   } else {
     print("playing from remote");
-    m3u8FilePath = 'https://138.68.163.236:8787/track/${track.song.songId}';
+    m3u8FilePath = 'https://138.68.163.236:8787/track/${track.songId}';
 
     /// TODO: Start download here
     BlocProvider.of<MediaDownloaderBloc>(context)
@@ -179,46 +179,46 @@ void playSingleTrack(BuildContext context, Track track,
   }
 
   MediaItem _mediaItem = MediaItem(
-      id: track.song.songId,
-      album: track.album.albumId,
-      title: track.song.title,
+      id: track.songId,
+      album: '',
+      title: track.title,
       genre: 'genre goes here',
-      artist: track.album.artist.firstName,
-      duration: Duration(milliseconds: track.song.duration),
-      artUri: Uri.parse(track.song.coverImageUrl),
+      artist: track.artist.firstName + ' ' + track.artist.firstName,
+      duration: Duration(milliseconds: track.duration),
+      artUri: Uri.parse(track.coverImageUrl),
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
 
   MediaItem _mediaItem2 = MediaItem(
-      id: track.song.songId + '2',
-      album: track.album.albumId,
-      title: track.song.title,
+      id: track.songId + '2',
+      album: '',
+      title: track.title,
       genre: 'genre goes here',
-      artist: track.album.artist.firstName,
-      duration: Duration(milliseconds: track.song.duration),
-      artUri: Uri.parse(track.song.coverImageUrl),
+      artist: track.artist.firstName,
+      duration: Duration(milliseconds: track.duration),
+      artUri: Uri.parse(track.coverImageUrl),
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
 
   MediaItem _mediaItem3 = MediaItem(
-      id: track.song.songId + '3',
-      album: track.album.albumId,
-      title: track.song.title,
+      id: track.songId + '3',
+      album: '',
+      title: track.title,
       genre: 'genre goes here',
-      artist: track.album.artist.firstName,
-      duration: Duration(milliseconds: track.song.duration),
-      artUri: Uri.parse(track.song.coverImageUrl),
+      artist: track.artist.firstName,
+      duration: Duration(milliseconds: track.duration),
+      artUri: Uri.parse(track.coverImageUrl),
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
 
   MediaItem _mediaItem4 = MediaItem(
-      id: track.song.songId + '4',
-      album: track.album.albumId,
-      title: track.song.title,
+      id: track.songId + '4',
+      album: '',
+      title: track.title,
       genre: 'genre goes here',
-      artist: track.album.artist.firstName,
-      duration: Duration(milliseconds: track.song.duration),
-      artUri: Uri.parse(track.song.coverImageUrl),
+      artist: track.artist.firstName,
+      duration: Duration(milliseconds: track.duration),
+      artUri: Uri.parse(track.coverImageUrl),
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
 

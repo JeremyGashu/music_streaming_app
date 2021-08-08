@@ -72,7 +72,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       searchResult['albumsParam'] = '';
       searchResult['isSearching'] = false;
       yield InitialState();
-      //TODO when the user has no typed anything or cleared all the texts, we will show the search page
     } else if (event is SetCurrentPage) {
       searchResult['currentPage'] = event.currentPage;
       yield SearchFinished(result: searchResult);

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 // import 'package:streaming_mobile/blocs/search/search_state.dart' as searchState;
 import 'package:streaming_mobile/blocs/search/search_state.dart' as searchState;
@@ -16,6 +18,7 @@ import 'package:streaming_mobile/presentation/search/widgets/album_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/artists_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/custom_list_tile.dart';
 import 'package:streaming_mobile/presentation/search/widgets/custom_title_text.dart';
+import 'package:streaming_mobile/presentation/search/widgets/playlist_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/search_field.dart';
 import 'package:streaming_mobile/presentation/search/widgets/songs_result.dart';
 
@@ -48,7 +51,7 @@ class _SearchPageState extends State<SearchPage>
     return SafeArea(
       child: BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
         return DefaultTabController(
-          length: 3,
+          length: 4,
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -67,9 +70,9 @@ class _SearchPageState extends State<SearchPage>
                           Tab(
                             text: 'Artists',
                           ),
-                          // Tab(
-                          //   text: 'Playlists',
-                          // ),
+                          Tab(
+                            text: 'Playlists',
+                          ),
                           Tab(
                             text: 'Albums',
                           ),
@@ -96,6 +99,15 @@ class _SearchPageState extends State<SearchPage>
                           )
                         : state is searchState.SearchFinished
                             ? ArtistsResult(
+                                result: state.result,
+                              )
+                            : Container(),
+                    state is searchState.SearchingState
+                        ? SpinKitRipple(
+                            color: Colors.grey,
+                          )
+                        : state is searchState.SearchFinished
+                            ? PlaylistResult(
                                 result: state.result,
                               )
                             : Container(),
@@ -139,7 +151,7 @@ class _SearchPageState extends State<SearchPage>
                         ),
                         Container(
                           height: 170,
-                          child: BlocBuilder<AlbumBloc, AlbumState>(
+                          child: BlocBuilder<PlaylistBloc, PlaylistState>(
                             builder: (ctx, state) {
                               if (state is LoadingAlbum) {
                                 return Row(
@@ -151,13 +163,13 @@ class _SearchPageState extends State<SearchPage>
                                     LoadingPlaylistShimmer(),
                                   ],
                                 );
-                              } else if (state is LoadedAlbum) {
+                              } else if (state is LoadedPlaylist) {
                                 return ListView.builder(
-                                  itemCount: state.albums.length,
+                                  itemCount: state.playlists.length,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (ctx, index) {
                                     return SinglePlaylist(
-                                      album: state.albums[index],
+                                      playlist: state.playlists[index],
                                     );
                                   },
                                 );

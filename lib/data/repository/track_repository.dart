@@ -13,7 +13,7 @@ class TrackRepository {
     http.Response playlists = await dataProvider.getTracks();
     print('tracks loaded = > ${playlists.body}');
     var decodedPlaylists = jsonDecode(playlists.body);
-    print('decoded track => ${decodedPlaylists}');
+    print('decoded track => ${TracksResponse.fromJson(decodedPlaylists)}');
     return TracksResponse.fromJson(decodedPlaylists);
   }
 
