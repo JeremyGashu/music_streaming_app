@@ -44,14 +44,10 @@ class ArtistDataProvider {
 
   ArtistDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getAllArtists(
-      {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'first_name';
+  Future<http.Response> getAllArtists({int page}) async {
+    page ??= 1;
     String url =
-        '$BASE_URL/artists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        '$BASE_URL/artists?page=${page}&per_page=10&sort=ASC&sort_key=first_name';
     var authBox = await Hive.openBox<AuthData>('auth_box');
     var authData = authBox.get('auth_data');
     var headers = {

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
@@ -42,9 +43,11 @@ class SinglePlaylist extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(200),
                                 child: CachedNetworkImage(
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(
-                                    strokeWidth: 1,
+                                  placeholder: (context, url) => Center(
+                                    child: SpinKitRipple(
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   imageUrl:
                                       playlist.songs[0].song.coverImageUrl,
@@ -83,12 +86,20 @@ class SinglePlaylist extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Text(
-                            '${playlist.songs.length} new songs',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14.0),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          '${playlist.title}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14.0),
+                        ),
+                        Text(
+                          '${playlist.songs.length} new songs',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            color: Colors.orange,
                           ),
                         ),
                         Row(

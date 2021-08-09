@@ -1,24 +1,30 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/album.dart';
-import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 
-class SingleAlbum extends StatefulWidget {
+class SingleAlbumSmall extends StatefulWidget {
   final Album album;
-  SingleAlbum({@required this.album});
+  SingleAlbumSmall({@required this.album});
   @override
-  _SingleAlbumState createState() => _SingleAlbumState();
+  _SingleAlbumSmallState createState() => _SingleAlbumSmallState();
 }
 
-class _SingleAlbumState extends State<SingleAlbum> {
+class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
   @override
   Widget build(BuildContext context) {
     return widget.album != null
         ? GestureDetector(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AlbumPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AlbumDetail(
+                            album: widget.album,
+                            tracks: widget.album.tracks,
+                          )));
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -26,15 +32,15 @@ class _SingleAlbumState extends State<SingleAlbum> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 180,
-                      height: 120,
+                      width: 140,
+                      height: 100,
                       child: Stack(
                         children: [
                           Align(
                             alignment: Alignment.centerRight,
                             child: Container(
-                              width: 100,
-                              height: 100,
+                              width: 60,
+                              height: 60,
                               child: Image.asset(
                                 'assets/images/album_disk_new.png',
                                 fit: BoxFit.cover,
@@ -50,9 +56,11 @@ class _SingleAlbumState extends State<SingleAlbum> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    CircularProgressIndicator(
-                                  strokeWidth: 1,
+                                placeholder: (context, url) => Center(
+                                  child: SpinKitRipple(
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 imageUrl: widget.album.coverImageUrl,
                                 errorWidget: (context, url, error) {
@@ -61,8 +69,8 @@ class _SingleAlbumState extends State<SingleAlbum> {
                                     fit: BoxFit.cover,
                                   );
                                 },
-                                width: 140.0,
-                                height: 120,
+                                width: 120.0,
+                                height: 160,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -135,7 +143,6 @@ class _SingleAlbumState extends State<SingleAlbum> {
                           width: 140.0,
                           height: 120,
                         ),
-
                       ),
                     )
                   ],

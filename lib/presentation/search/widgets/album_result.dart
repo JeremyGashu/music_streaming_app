@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/album.dart';
-import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
 
 class AlbumResult extends StatefulWidget {
@@ -54,15 +54,17 @@ class _AlbumResultState extends State<AlbumResult> {
                     title: '${album.artist.firstName} ${album.artist.lastName}',
                     subtitle: album.title,
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AlbumPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AlbumDetail(
+                                    album: album,
+                                    tracks: album.tracks,
+                                  )));
                     },
                   );
-                  // return SingleAlbum(
-                  //   album: album,
-                  // );
                 }).toList(),
               )
-            : Center(child: Text('No song found!'));
+            : Center(child: Text('No Album found!'));
   }
 }

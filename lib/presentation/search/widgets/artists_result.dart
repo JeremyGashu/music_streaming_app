@@ -56,6 +56,7 @@ class _ArtistsResultState extends State<ArtistsResult> {
                           MaterialPageRoute(
                               builder: (context) => ArtistDetailPage(
                                     artistId: artist.artistId,
+                                    artist: artist,
                                   )));
                     },
                     title: '${artist.firstName} ${artist.lastName}',

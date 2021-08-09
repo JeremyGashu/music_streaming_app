@@ -45,12 +45,8 @@ class AlbumRepository {
   var decodeAlbums;
   AlbumRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<AlbumsResponse> getAllAlbums(
-      {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
+  Future<AlbumsResponse> getAllAlbums({int page}) async {
+    page ??= 1;
 
     var albumBox = await Hive.openBox('albums');
     ConnectivityResult connectivityResult =
@@ -58,8 +54,7 @@ class AlbumRepository {
 
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      albums = await dataProvider.getAllAlbums(
-          page: page, perPage: perPage, sort: sort, sortKey: sortKey);
+      albums = await dataProvider.getAllAlbums(page: page);
 
       var decoded = jsonDecode(albums.body);
       if (decoded['success']) {

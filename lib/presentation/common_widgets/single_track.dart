@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
@@ -60,8 +61,11 @@ class _SingleTrackState extends State<SingleTrack> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: CachedNetworkImage(
-                    placeholder: (context, url) => CircularProgressIndicator(
-                      strokeWidth: 1,
+                    placeholder: (context, url) => Center(
+                      child: SpinKitRipple(
+                        size: 50,
+                        color: Colors.grey,
+                      ),
                     ),
                     imageUrl: widget.track.coverImageUrl,
                     errorWidget: (context, url, error) {
