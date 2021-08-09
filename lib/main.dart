@@ -13,6 +13,8 @@ import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
+import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
+import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
@@ -29,6 +31,7 @@ import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/search_data_provider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
@@ -37,6 +40,7 @@ import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
+import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/search_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
@@ -78,6 +82,9 @@ void main() async {
 
   final _artistRepo =
       ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
+
+  final _newReleaseRepo = NewReleaseRepository(
+      dataProvider: NewReleaseDataProvider(client: http.Client()));
 
   final _playlistRepo = PlaylistRepository(
       dataProvider: PlaylistDataProvider(client: http.Client()));
@@ -138,6 +145,10 @@ void main() async {
     ),
     BlocProvider(
       create: (context) => SearchBloc(searchRepository: _searchRepo),
+    ),
+    BlocProvider(
+      create: (context) => NewReleaseBloc(newReleaseRepository: _newReleaseRepo)
+        ..add(LoadNewReleases()),
     ),
   ], child: MyApp()));
 }

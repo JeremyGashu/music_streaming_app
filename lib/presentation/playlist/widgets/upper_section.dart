@@ -1,24 +1,30 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:streaming_mobile/data/models/playlist.dart';
 
-Widget upperSection(context) {
+Widget upperSection(context, {Playlist playlist}) {
   return Column(
     children: [
       Stack(
         alignment: AlignmentDirectional.center,
         children: [
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: Image.asset(
-              'assets/images/artist_image.jpg',
-              fit: BoxFit.cover,
+          Opacity(
+            opacity: 0.5,
+            child: Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: Image.asset(
+                'assets/images/artist_image.jpg',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.4,
-            color: Colors.grey.withOpacity(0.85),
+            color: Colors.grey.withOpacity(0.5),
           ),
           Container(
             margin: EdgeInsets.only(bottom: 40),
@@ -48,7 +54,7 @@ Widget upperSection(context) {
               icon: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
-                size: 27,
+                size: 20,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -61,12 +67,12 @@ Widget upperSection(context) {
               child: Column(
                 children: [
                   Text(
-                    'Healing',
+                    playlist.title,
                     style: TextStyle(
                       color: Colors.black,
                       letterSpacing: 1.01,
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
@@ -74,7 +80,7 @@ Widget upperSection(context) {
                     style: TextStyle(
                       letterSpacing: 1.01,
                       color: Colors.black,
-                      fontSize: 23,
+                      fontSize: 20,
                     ),
                   ),
                 ],

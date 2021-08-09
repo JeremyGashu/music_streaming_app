@@ -13,10 +13,12 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
-import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_state.dart';
+import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
+import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
+import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -83,48 +85,58 @@ class _HomePageState extends State<HomePage> {
             if (state is LoadingTrackError) {
               BlocProvider.of<AuthBloc>(context).add(RefreshToken());
             }
-            //todo incase one of the endpoints fail for some reason, add refresh tokens for album,playlists and artist
-            //todo also add pull-to-refresh feature
-          },
-        ),
-        BlocListener<AlbumBloc, AlbumState>(
-          listener: (ctx, state) {
-            if (state is LoadingAlbumError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<PlaylistBloc, PlaylistState>(
-          listener: (ctx, state) {
-            if (state is LoadingPlaylistError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<ArtistBloc, ArtistState>(
-          listener: (ctx, state) {
-            if (state is LoadingArtistError) {
-              BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-            }
-          },
-        ),
-        BlocListener<AuthBloc, AuthState>(
-          listener: (ctx, state) {
-            if (state is TokenRefreshSuccessful) {
-              BlocProvider.of<TrackBloc>(context).add(LoadTracks());
-              BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
-              BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
-              BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-            }
+            //todo in case one of the endpoints fail for some reason, add refresh tokens for album,playlists and artist
+            //todo for later use if the status code is 401 use the refresh token
           },
         ),
       ],
+      // listeners: [
+      //   BlocListener<TrackBloc, TrackState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingTrackError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //     },
+      //   ),
+      //   BlocListener<AlbumBloc, AlbumState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingAlbumError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<PlaylistBloc, PlaylistState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingPlaylistError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<ArtistBloc, ArtistState>(
+      //     listener: (ctx, state) {
+      //       if (state is LoadingArtistError) {
+      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
+      //       }
+      //     },
+      //   ),
+      //   BlocListener<AuthBloc, AuthState>(
+      //     listener: (ctx, state) {
+      //       if (state is TokenRefreshSuccessful) {
+      //         BlocProvider.of<TrackBloc>(context).add(LoadTracks());
+      //         BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
+      //         BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
+      //         BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+      //       }
+      //     },
+      //   ),
+      // ],
       child: RefreshIndicator(
         onRefresh: () async {
           BlocProvider.of<TrackBloc>(context).add(LoadTracks());
           BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
           BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
           BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+          BlocProvider.of<NewReleaseBloc>(context).add(LoadNewReleases());
+          BlocProvider.of<GenresBloc>(context).add(FetchGenres());
         },
         child: SafeArea(
           child: Stack(
@@ -197,55 +209,41 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Ad(size),
                     //TODO: do the featured lists
-                    _sectionTitle(title: "New Releases", callback: () {}),
+                    _sectionTitle(
+                        title: "Newly Released Songs", callback: () {}),
                     Container(
                       height: 200,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          SingleAlbum(
-                            album: null,
-                          ),
-                          SingleAlbum(
-                            album: null,
-                          ),
-                        ],
-                      ),
-                    ),
-                    _sectionTitle(title: "Popular Playlists", callback: () {}),
-                    Container(
-                      height: 170,
-                      child: BlocBuilder<AlbumBloc, AlbumState>(
+                      child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
                         builder: (ctx, state) {
-                          if (state is LoadingAlbum) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          if (state is LoadingNewReleases) {
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
                               children: [
-                                LoadingPlaylistShimmer(),
-                                LoadingPlaylistShimmer(),
-                                LoadingPlaylistShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
                               ],
                             );
-                          } else if (state is LoadedAlbum) {
+                          } else if (state is LoadedNewReleases) {
                             return ListView.builder(
-                              itemCount: state.albums.length,
+                              itemCount: state.newRelease.songs.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (ctx, index) {
-                                return SinglePlaylist(
-                                  album: state.albums[index],
+                                return SingleTrack(
+                                  track: state.newRelease.songs[index].song,
                                 );
                               },
                             );
-                          } else if (state is LoadingAlbumError) {
+                          } else if (state is LoadingNewReleasesError) {
                             return Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Error Loading Playlist!',
+                                    'Error Loading New Songs!',
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 20,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -256,11 +254,132 @@ class _HomePageState extends State<HomePage> {
                                         Icons.update,
                                         color:
                                             Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
+                                        size: 30,
                                       ),
                                       onPressed: () {
-                                        BlocProvider.of<AlbumBloc>(context)
-                                            .add(LoadAlbums());
+                                        BlocProvider.of<NewReleaseBloc>(context)
+                                            .add(LoadNewReleases());
+                                      }),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return Container();
+                        },
+                      ),
+                    ),
+
+                    _sectionTitle(
+                        title: "Newly Released Albums", callback: () {}),
+                    Container(
+                      height: 200,
+                      child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
+                        builder: (ctx, state) {
+                          if (state is LoadingNewReleases) {
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                RectangularShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
+                              ],
+                            );
+                          } else if (state is LoadedNewReleases) {
+                            return ListView.builder(
+                              itemCount: state.newRelease.albums.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (ctx, index) {
+                                return SingleAlbum(
+                                  album: state.newRelease.albums[index],
+                                );
+                              },
+                            );
+                          } else if (state is LoadingNewReleasesError) {
+                            return Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Error Loading New Albums!',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.update,
+                                        color:
+                                            Colors.redAccent.withOpacity(0.8),
+                                        size: 30,
+                                      ),
+                                      onPressed: () {
+                                        BlocProvider.of<NewReleaseBloc>(context)
+                                            .add(LoadNewReleases());
+                                      }),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return Container();
+                        },
+                      ),
+                    ),
+
+                    _sectionTitle(title: "Popular Playlists", callback: () {}),
+                    Container(
+                      height: 170,
+                      child: BlocBuilder<PlaylistBloc, PlaylistState>(
+                        builder: (ctx, state) {
+                          if (state is LoadingPlaylist) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                CircularShimmer(),
+                                CircularShimmer(),
+                                CircularShimmer(),
+                              ],
+                            );
+                          } else if (state is LoadedPlaylist) {
+                            return ListView.builder(
+                              itemCount: state.playlists.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (ctx, index) {
+                                return SinglePlaylist(
+                                  playlist: state.playlists[index],
+                                );
+                              },
+                            );
+                          } else if (state is LoadingPlaylistError) {
+                            return Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Error Loading Playlists!',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.update,
+                                        color:
+                                            Colors.redAccent.withOpacity(0.8),
+                                        size: 30,
+                                      ),
+                                      onPressed: () {
+                                        BlocProvider.of<PlaylistBloc>(context)
+                                            .add(LoadPlaylists());
                                       }),
                                 ],
                               ),
@@ -310,10 +429,10 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'Error Loading Genres!!',
+                                      'Error Loading Genres!',
                                       style: TextStyle(
                                         color: Colors.grey,
-                                        fontSize: 20,
+                                        fontSize: 16,
                                       ),
                                     ),
                                     SizedBox(
@@ -324,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                                           Icons.update,
                                           color:
                                               Colors.redAccent.withOpacity(0.8),
-                                          size: 45,
+                                          size: 30,
                                         ),
                                         onPressed: () {
                                           BlocProvider.of<GenresBloc>(context)
@@ -354,9 +473,9 @@ class _HomePageState extends State<HomePage> {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                LoadingPlaylistShimmer(),
-                                LoadingPlaylistShimmer(),
-                                LoadingPlaylistShimmer(),
+                                CircularShimmer(),
+                                CircularShimmer(),
+                                CircularShimmer(),
                               ],
                             );
                           } else if (state is LoadedArtist) {
@@ -375,10 +494,10 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Error Loading Artists!',
+                                    'Error Loading Artist!',
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 20,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -389,7 +508,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.update,
                                         color:
                                             Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
+                                        size: 30,
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<ArtistBloc>(context)
@@ -419,9 +538,9 @@ class _HomePageState extends State<HomePage> {
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: [
-                                LoadingTrackShimmer(),
-                                LoadingTrackShimmer(),
-                                LoadingTrackShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
                               ],
                             );
                           } else if (state is LoadedAlbum) {
@@ -440,10 +559,10 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Error Loading Albums!!',
+                                    'Error Loading Album!',
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 20,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -454,7 +573,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.update,
                                         color:
                                             Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
+                                        size: 30,
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<AlbumBloc>(context)
@@ -478,9 +597,9 @@ class _HomePageState extends State<HomePage> {
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: [
-                                LoadingTrackShimmer(),
-                                LoadingTrackShimmer(),
-                                LoadingTrackShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
+                                RectangularShimmer(),
                               ],
                             );
                           } else if (state is LoadedTracks) {
@@ -502,10 +621,10 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Error Loading Tracks!',
+                                    'Error Loading Songs!',
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 20,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -516,7 +635,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.update,
                                         color:
                                             Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
+                                        size: 30,
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<TrackBloc>(context)

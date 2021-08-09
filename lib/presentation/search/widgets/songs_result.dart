@@ -35,7 +35,8 @@ class _SongsResultState extends State<SongsResult> {
     int length;
     if ((widget.result['songs'] as TracksResponse) != null &&
         (widget.result['songs'] as TracksResponse).data != null) {
-      length = (widget.result['songs'] as TracksResponse).data.data.length;
+      length =
+          (widget.result['songs'] as TracksResponse).data.data.songs.length;
     }
 
     return length == null
@@ -48,8 +49,9 @@ class _SongsResultState extends State<SongsResult> {
                 children: (widget.result['songs'] as TracksResponse)
                     .data
                     .data
-                    .map((songs) {
-                  return SingleTrack(track: songs);
+                    .songs
+                    .map((songElement) {
+                  return SingleTrack(track: songElement.song);
                 }).toList(),
               )
             : Center(child: Text('No song found!'));
