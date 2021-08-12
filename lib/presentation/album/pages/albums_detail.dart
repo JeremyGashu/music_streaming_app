@@ -12,26 +12,26 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
+import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
-import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/album/widgets/album_stat.dart';
+import 'package:streaming_mobile/presentation/album/widgets/upper_section.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/common_widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
-import 'package:streaming_mobile/presentation/playlist/widgets/playlist_stat.dart';
-import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
 
-class PlaylistDetail extends StatefulWidget {
+class AlbumDetail extends StatefulWidget {
   final List<Track> tracks;
-  final Playlist playlistInfo;
-  PlaylistDetail({this.tracks, this.playlistInfo});
+  final Album album;
+  AlbumDetail({this.tracks, this.album});
   @override
-  _PlaylistDetailState createState() => _PlaylistDetailState();
+  _AlbumDetailState createState() => _AlbumDetailState();
 }
 
-class _PlaylistDetailState extends State<PlaylistDetail> {
+class _AlbumDetailState extends State<AlbumDetail> {
   SharedPreferences sharedPreferences;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -48,11 +48,11 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
             mainAxisSize: MainAxisSize.min,
             children: [
               //upper section containing the image, svg, shuffle button and healing track
-              upperSection(context, playlist: widget.playlistInfo),
+              upperSection(context, album: widget.album),
               SizedBox(
                 height: 20,
               ),
-              playListStat(playlist: widget.playlistInfo),
+              albumStat(album: widget.album),
               SizedBox(
                 height: 8,
               ),
@@ -75,20 +75,26 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                       ),
                     ),
                     onPressed: () async {
-                      // TODO: play playlist
-                      if (!AudioService.running) {
-                        await AudioService.start(
-                          backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-                          androidNotificationChannelName: 'Playback',
-                          androidNotificationColor: 0xFF2196f3,
-                          androidStopForegroundOnPause: true,
-                          androidEnableQueue: true,
-                        );
+                      // TODO: play album
+                      if (widget.tracks.length == 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text('There are no tracks in this Album.')));
+                      } else {
+                        if (!AudioService.running) {
+                          await AudioService.start(
+                            backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+                            androidNotificationChannelName: 'Playback',
+                            androidNotificationColor: 0xFF2196f3,
+                            androidStopForegroundOnPause: true,
+                            androidEnableQueue: true,
+                          );
+                        }
+                        await AudioService.setShuffleMode(
+                            AudioServiceShuffleMode.all);
+                        playAudio(Random().nextInt(widget.tracks.length),
+                            sharedPreferences);
                       }
-                      await AudioService.setShuffleMode(
-                          AudioServiceShuffleMode.all);
-                      playAudio(Random().nextInt(widget.tracks.length),
-                          sharedPreferences);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -211,7 +217,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
       if (pos != null) {
         position = Duration(seconds: pos);
       }
-      playPlayList(context, position, index);
+      playAlbum(context, position, index);
     }
     // else{
     //   AudioService.play();
@@ -219,7 +225,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     // }
   }
 
-  Future<void> playPlayList(context, Duration position, index) async {
+  Future<void> playAlbum(context, Duration position, index) async {
     Navigator.push(
         context,
         MaterialPageRoute(

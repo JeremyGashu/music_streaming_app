@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/genre.dart';
 
@@ -16,11 +18,24 @@ class GenreWidget extends StatelessWidget {
           width: 140,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
           child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                'assets/images/artist_one.jpg',
-                fit: BoxFit.cover,
-              )),
+            borderRadius: BorderRadius.circular(10.0),
+            child: CachedNetworkImage(
+              errorWidget: (context, url, error) {
+                return Image.asset(
+                  'assets/images/artist_one.jpg',
+                  fit: BoxFit.cover,
+                );
+              },
+              imageUrl: genre.name,
+              placeholder: (context, url) => Center(
+                child: SpinKitRipple(
+                  size: 50,
+                  color: Colors.grey,
+                ),
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         Container(
           decoration: BoxDecoration(

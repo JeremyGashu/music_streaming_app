@@ -47,12 +47,8 @@ class ArtistRepository {
   ArtistRepository({@required this.dataProvider})
       : assert(dataProvider != null);
 
-  Future<ArtistsResponse> getAllArtists(
-      {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
+  Future<ArtistsResponse> getAllArtists({int page}) async {
+    page ??= 1;
 
     var artistsBox = await Hive.openBox('artists');
     ConnectivityResult connectivityResult =
@@ -60,8 +56,7 @@ class ArtistRepository {
 
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      artists = await dataProvider.getAllArtists(
-          page: page, perPage: perPage, sort: sort, sortKey: sortKey);
+      artists = await dataProvider.getAllArtists(page: page);
 
       var decoded = jsonDecode(artists.body);
       if (decoded['success']) {

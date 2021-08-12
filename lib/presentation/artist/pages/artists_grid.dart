@@ -33,6 +33,7 @@ class ArtistsGrid extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (context) => ArtistDetailPage(
                                       artistId: artist.artistId,
+                                      artist: artist,
                                     )));
                       },
                       name: artist.firstName + ' ' + artist.lastName,

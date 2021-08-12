@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
@@ -10,15 +10,18 @@ import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
+import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
-import 'package:streaming_mobile/presentation/common_widgets/album.dart';
+import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
+import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
+import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shimmer.dart';
 
 class ArtistDetailPage extends StatefulWidget {
   final String artistId;
-  ArtistDetailPage({this.artistId});
+  final ArtistModel artist;
+  ArtistDetailPage({this.artistId, this.artist});
 
   @override
   _ArtistDetailPageState createState() => _ArtistDetailPageState();
@@ -48,7 +51,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               //the name and back navigator icon and vertical more option
-              _upperSection(context),
+              _upperSection(context, widget.artist),
               Divider(),
               //circular artist image
               Padding(
@@ -58,8 +61,17 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                   child: Container(
                     width: 140,
                     height: 140,
-                    child: Image.asset(
-                      'assets/images/artist_image.jpg',
+                    child: CachedNetworkImage(
+                      placeholder: (context, url) => CircularProgressIndicator(
+                        strokeWidth: 1,
+                      ),
+                      imageUrl: widget.artist.image,
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          'assets/images/artist_one.jpg',
+                          fit: BoxFit.cover,
+                        );
+                      },
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -67,7 +79,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
               ),
               //artist username
               Text(
-                '@dawitgetachew',
+                '${widget.artist.firstName}${widget.artist.lastName} ',
                 style: TextStyle(
                     fontSize: 17, color: Colors.black.withOpacity(0.5)),
               ),
@@ -114,12 +126,12 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                 child: Column(
                   children: [
                     //tab selectors
-                    _tabSelectors(),
+                    // _tabSelectors(),
 
                     SizedBox(
                       height: 10,
                     ),
-
+                    SectionTitle(title: 'Albums', callback: () {}),
                     //album section
                     BlocBuilder<AlbumBloc, AlbumState>(
                         bloc: albumBloc,
@@ -190,42 +202,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                       height: 10,
                     ),
                     Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Single Tracks',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black.withOpacity(0.7),
-                            letterSpacing: 1.01,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Row(
-                              children: [
-                                Text(
-                                  'View All',
-                                  style: TextStyle(
-                                    color: Colors.purple,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.navigate_next,
-                                  color: Colors.purple,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    SectionTitle(title: 'Songs', callback: () {}),
                     BlocBuilder<TrackBloc, TrackState>(
                         bloc: trackBloc,
                         builder: (context, state) {
@@ -355,7 +332,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
 }
 
 //back nav, name and more vertical iconBuilder
-Widget _upperSection(BuildContext context) {
+Widget _upperSection(BuildContext context, ArtistModel artist) {
   return Padding(
     padding: EdgeInsets.all(5),
     child: Row(
@@ -371,7 +348,7 @@ Widget _upperSection(BuildContext context) {
           },
         ),
         Text(
-          'Dawit Getachew',
+          '${artist.firstName} ${artist.lastName}',
           style: TextStyle(
             fontSize: 21,
             fontWeight: FontWeight.bold,
@@ -528,35 +505,35 @@ Widget _adContainer(String path) {
   );
 }
 
-Widget _tabSelectors() {
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      horizontal: 10,
-      vertical: 20,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _tabItem('home.svg'),
-        _tabItem('search.svg'),
-        _tabItem('Pressed Library Icon (notification).svg'),
-        _tabItem('account.svg'),
-      ],
-    ),
-  );
-}
-
-Widget _tabItem(String svgName) {
-  return Container(
-    width: 25,
-    height: 25,
-    child: SvgPicture.asset(
-      'assets/svg/$svgName',
-      height: 22,
-      width: 22,
-    ),
-  );
-}
+// Widget _tabSelectors() {
+//   return Padding(
+//     padding: EdgeInsets.symmetric(
+//       horizontal: 10,
+//       vertical: 20,
+//     ),
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         _tabItem('home.svg'),
+//         _tabItem('search.svg'),
+//         _tabItem('Pressed Library Icon (notification).svg'),
+//         _tabItem('account.svg'),
+//       ],
+//     ),
+//   );
+// }
+//
+// Widget _tabItem(String svgName) {
+//   return Container(
+//     width: 25,
+//     height: 25,
+//     child: SvgPicture.asset(
+//       'assets/svg/$svgName',
+//       height: 22,
+//       width: 22,
+//     ),
+//   );
+// }
 
 // Widget _trackBuilder(Track track) {
 //   return Padding(

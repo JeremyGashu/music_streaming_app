@@ -4,7 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
+import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
 
 class ArtistsResult extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -42,15 +43,28 @@ class _ArtistsResultState extends State<ArtistsResult> {
             color: Colors.grey,
           )
         : length != 0
-            ? GridView.count(
-                crossAxisCount: 2,
+            ? ListView(
                 children: (widget.result['artists'] as ArtistsResponse)
                     .data
                     .data
                     .map((artist) {
-                  return Artist(
-                    artist: artist,
+                  return ResultListTile(
+                    imageUrl: artist.image,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ArtistDetailPage(
+                                    artistId: artist.artistId,
+                                    artist: artist,
+                                  )));
+                    },
+                    title: '${artist.firstName} ${artist.lastName}',
+                    subtitle: '${artist.firstName} ${artist.lastName}',
                   );
+                  // return Artist(
+                  //   artist: artist,
+                  // );
                 }).toList(),
               )
             : Center(child: Text('No Artist found!'));

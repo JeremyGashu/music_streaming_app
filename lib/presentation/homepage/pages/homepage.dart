@@ -27,18 +27,24 @@ import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/audio_player_task.dart';
-import 'package:streaming_mobile/presentation/artist/pages/artists_grid.dart';
-import 'package:streaming_mobile/presentation/common_widgets/album.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
+import 'package:streaming_mobile/presentation/common_widgets/ad_container.dart';
+import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
+import 'package:streaming_mobile/presentation/common_widgets/genre.dart';
+import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
+import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
+import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/artist.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/genre.dart';
+import 'package:streaming_mobile/presentation/common_widgets/tracklistitem.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loading_genre_shimmer.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/loading_playlist_shimmer.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/loadint_track_shimmer.dart';
-import 'package:streaming_mobile/presentation/homepage/widgets/tracklistitem.dart';
-import 'package:streaming_mobile/presentation/library/pages/album_page.dart';
-import 'package:streaming_mobile/presentation/playlist/widgets/player_overlay.dart';
+import 'package:streaming_mobile/presentation/new_releases/all_newrelease_albums.dart';
+import 'package:streaming_mobile/presentation/new_releases/all_newrelease_tracks.dart';
+import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart';
+import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
 
 backgroundTaskEntryPoint() {
   AudioServiceBackground.run(() => AudioPlayerTask());
@@ -77,7 +83,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return MultiBlocListener(
       listeners: [
         BlocListener<TrackBloc, TrackState>(
@@ -207,10 +212,16 @@ class _HomePageState extends State<HomePage> {
                             .toList(),
                       ),
                     ),
-                    Ad(size),
+                    adContainer('ad.png'),
                     //TODO: do the featured lists
-                    _sectionTitle(
-                        title: "Newly Released Songs", callback: () {}),
+                    SectionTitle(
+                        title: "Newly Released Songs",
+                        callback: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => AllNewReleaseTracks()));
+                        }),
                     Container(
                       height: 200,
                       child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -270,8 +281,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    _sectionTitle(
-                        title: "Newly Released Albums", callback: () {}),
+                    SectionTitle(
+                        title: "Newly Released Albums",
+                        callback: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) =>
+                                      AllNewReleasedAlbumsPage()));
+                        }),
                     Container(
                       height: 200,
                       child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -331,7 +349,14 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    _sectionTitle(title: "Popular Playlists", callback: () {}),
+                    SectionTitle(
+                        title: "Popular Playlists",
+                        callback: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => AllPlaylistsPage()));
+                        }),
                     Container(
                       height: 170,
                       child: BlocBuilder<PlaylistBloc, PlaylistState>(
@@ -390,7 +415,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    _sectionTitle(title: "Most Played Tracks", callback: () {}),
+                    SectionTitle(title: "Most Played Tracks", callback: () {}),
                     ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -400,7 +425,7 @@ class _HomePageState extends State<HomePage> {
                         TrackListItem(),
                       ],
                     ),
-                    _sectionTitle(title: "Genres", callback: () {}),
+                    SectionTitle(title: "Genres", callback: () {}),
                     Container(
                         height: 130,
                         child: BlocBuilder<GenresBloc, GenresState>(
@@ -457,13 +482,13 @@ class _HomePageState extends State<HomePage> {
                           },
                         )),
 
-                    _sectionTitle(
+                    SectionTitle(
                         title: "Artists",
                         callback: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (ctx) => ArtistsGrid()));
+                                  builder: (ctx) => AllArtistsPage()));
                         }),
                     Container(
                       height: 180,
@@ -523,12 +548,14 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    Ad(size),
-                    _sectionTitle(
+                    adContainer('ad.png'),
+                    SectionTitle(
                         title: "Albums",
                         callback: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) => AlbumPage()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => AllAlbumsPage()));
                         }),
                     Container(
                       height: 200,
@@ -588,7 +615,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    _sectionTitle(title: "Single Tracks", callback: () {}),
+                    SectionTitle(
+                        title: "Single Tracks",
+                        callback: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (ctx) => AllTracks()));
+                        }),
                     Container(
                       height: 200,
                       child: BlocBuilder<TrackBloc, TrackState>(
@@ -684,61 +716,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  _sectionTitle({title, callback}) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 8.0,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            '$title',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: kBlack, fontSize: 16),
-          ),
-          GestureDetector(
-            onTap: () => callback(),
-            child: Text(
-              'View All >',
-              style: TextStyle(
-                  fontWeight: FontWeight.w600, color: kPurple, fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Ad(size) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 16.0),
-      child: Stack(
-        children: [
-          Image.asset(
-            'assets/images/ad_one.jpg',
-            height: 140,
-            width: size.width,
-            fit: BoxFit.cover,
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-              margin: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                  color: Colors.white70,
-                  borderRadius: BorderRadius.circular(5.0)),
-              child: Text('Ad'),
-            ),
-          )
-        ],
       ),
     );
   }

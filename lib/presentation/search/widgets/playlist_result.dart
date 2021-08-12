@@ -4,7 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
-import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
+import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
+import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
 
 class PlaylistResult extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -46,15 +47,28 @@ class _PlaylistResultState extends State<PlaylistResult> {
             color: Colors.grey,
           )
         : length != 0
-            ? GridView.count(
-                crossAxisCount: 2,
+            ? ListView(
                 children: (widget.result['playlists'] as PlaylistsResponse)
                     .data
                     .data
                     .map((plist) {
-                  return SinglePlaylist(
-                    playlist: plist,
+                  return ResultListTile(
+                    imageUrl: plist.songs[0].song.coverImageUrl,
+                    title: plist.title,
+                    subtitle: '${plist.songs.length} Songs',
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return PlaylistDetail(
+                          tracks: plist.songs.map((e) => e.song).toList(),
+                          playlistInfo: plist,
+                        );
+                      }));
+                    },
                   );
+                  // return SinglePlaylist(
+                  //   playlist: plist,
+                  // );
                 }).toList(),
               )
             : Center(child: Text('No playlist found!'));

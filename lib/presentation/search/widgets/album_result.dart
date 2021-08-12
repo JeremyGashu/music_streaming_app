@@ -4,7 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/album.dart';
-import 'package:streaming_mobile/presentation/common_widgets/album.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
+import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
 
 class AlbumResult extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -43,17 +44,27 @@ class _AlbumResultState extends State<AlbumResult> {
             color: Colors.grey,
           )
         : length != 0
-            ? GridView.count(
-                crossAxisCount: 2,
+            ? ListView(
                 children: (widget.result['albums'] as AlbumsResponse)
                     .data
                     .data
                     .map((album) {
-                  return SingleAlbum(
-                    album: album,
+                  return ResultListTile(
+                    imageUrl: album.coverImageUrl,
+                    title: '${album.artist.firstName} ${album.artist.lastName}',
+                    subtitle: album.title,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AlbumDetail(
+                                    album: album,
+                                    tracks: album.tracks,
+                                  )));
+                    },
                   );
                 }).toList(),
               )
-            : Center(child: Text('No song found!'));
+            : Center(child: Text('No Album found!'));
   }
 }

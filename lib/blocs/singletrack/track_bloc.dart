@@ -6,6 +6,8 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
 
 class TrackBloc extends Bloc<TrackEvent, TrackState> {
+  int page = 1;
+  bool isLoading = false;
   final TrackRepository trackRepository;
   TrackBloc({@required this.trackRepository}) : super(InitialState());
 
@@ -36,6 +38,9 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
             .toList();
 
         yield LoadedTracks(tracks: tracks);
+        print('page before increment => ${page}');
+        page++;
+        print('page after increment => ${page}');
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading songs!");

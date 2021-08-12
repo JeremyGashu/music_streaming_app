@@ -29,6 +29,7 @@ import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/services/audio_service_initializer.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/analytics_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
@@ -38,6 +39,7 @@ import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
+import 'package:streaming_mobile/data/repository/analytics_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
@@ -50,6 +52,7 @@ import 'package:streaming_mobile/presentation/splashpage/splashpage.dart';
 import 'package:streaming_mobile/simple_bloc_observer.dart';
 
 import 'blocs/albums/album_bloc.dart';
+import 'blocs/analytics/analytics_bloc.dart';
 import 'blocs/artist/artist_event.dart';
 import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
@@ -79,6 +82,9 @@ void main() async {
       AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
   final _signUpRepo =
       SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
+
+  final _analyticsRepo = AnalyticsRepository(
+      dataProvider: AnalyticsDataProvider(client: http.Client()));
 
   final _artistRepo =
       ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
@@ -150,6 +156,9 @@ void main() async {
       create: (context) => NewReleaseBloc(newReleaseRepository: _newReleaseRepo)
         ..add(LoadNewReleases()),
     ),
+    BlocProvider(
+        create: (context) =>
+            AnalyticsBloc(analyticsRepository: _analyticsRepo)),
   ], child: MyApp()));
 }
 

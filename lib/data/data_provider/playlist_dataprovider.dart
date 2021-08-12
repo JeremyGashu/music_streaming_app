@@ -44,10 +44,7 @@ class PlaylistDataProvider {
 
   Future<http.Response> getPlaylists(
       {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
+    page ??= 1;
 
     var authBox = await Hive.openBox<AuthData>('auth_box');
     var authData = authBox.get('auth_data');
@@ -56,7 +53,7 @@ class PlaylistDataProvider {
     };
 
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
+        '$BASE_URL/playlists?page=${page}&per_page=10&sort=ASC&sort_key=title';
     http.Response response = await client.get(
       Uri.parse(url),
       headers: headers,

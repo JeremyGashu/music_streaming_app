@@ -4,7 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
+import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
 
 class SongsResult extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -44,14 +45,27 @@ class _SongsResultState extends State<SongsResult> {
             color: Colors.grey,
           )
         : length != 0
-            ? GridView.count(
-                crossAxisCount: 2,
+            ? ListView(
                 children: (widget.result['songs'] as TracksResponse)
                     .data
                     .data
                     .songs
                     .map((songElement) {
-                  return SingleTrack(track: songElement.song);
+                  return ResultListTile(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SingleTrackPlayerPage(
+                                    track: songElement.song,
+                                  )));
+                    },
+                    subtitle: songElement.song.title,
+                    title:
+                        '${songElement.song.artist.firstName} ${songElement.song.artist.lastName}',
+                    imageUrl: songElement.song.coverImageUrl,
+                  );
+                  // return SingleTrack(track: songElement.song);
                 }).toList(),
               )
             : Center(child: Text('No song found!'));

@@ -5,6 +5,8 @@ import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 
 class NewReleaseBloc extends Bloc<NewReleaseEvent, NewReleaseState> {
+  int page = 0;
+  bool isLoading = false;
   final NewReleaseRepository newReleaseRepository;
   NewReleaseBloc({@required this.newReleaseRepository}) : super(InitialState());
 
@@ -17,6 +19,7 @@ class NewReleaseBloc extends Bloc<NewReleaseEvent, NewReleaseState> {
         var newReleaseResponse = await newReleaseRepository.getNewReleases();
 
         yield LoadedNewReleases(newRelease: newReleaseResponse.data.data);
+        page++;
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingNewReleasesError(message: "Error on New Releases");
