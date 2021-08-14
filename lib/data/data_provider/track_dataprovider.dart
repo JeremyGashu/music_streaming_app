@@ -16,8 +16,7 @@ class TrackDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url =
-        'http://138.68.163.236:8889/v1/songs?page=${page}&per_page=10&single=true';
+    String url = '$BASE_URL/songs?page=${page}&per_page=10&single=true';
 
     http.Response response = await client.get(
       Uri.parse(url),
