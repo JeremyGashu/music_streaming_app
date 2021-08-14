@@ -57,6 +57,7 @@ dependencies:
   flutter_signin_button: ^1.1.0
   international_phone_input: ^1.0.4
   otp_text_field: ^1.1.1
+  package_info_plus: ^1.0.4
 
 
 dev_dependencies:
@@ -67,9 +68,10 @@ dev_dependencies:
   flutter_native_splash: ^1.1.8+4
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/images/splash_image.png
+  image: assets/images/sewasew_logo.png
   android: true
   ios : true
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

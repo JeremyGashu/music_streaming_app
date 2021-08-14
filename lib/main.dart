@@ -11,6 +11,8 @@ import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
+import 'package:streaming_mobile/blocs/config/config_bloc.dart';
+import 'package:streaming_mobile/blocs/config/config_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
@@ -31,6 +33,7 @@ import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/analytics_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/config_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
@@ -42,6 +45,7 @@ import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/analytics_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
+import 'package:streaming_mobile/data/repository/config_repository.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/search_repository.dart';
@@ -62,6 +66,34 @@ import 'data/data_provider/auth_dataprovider.dart';
 import 'data/repository/genre_repository.dart';
 import 'data/repository/signup_repository.dart';
 
+final _authRepo =
+    AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
+final _signUpRepo =
+    SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
+
+final _analyticsRepo = AnalyticsRepository(
+    dataProvider: AnalyticsDataProvider(client: http.Client()));
+
+final _artistRepo =
+    ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
+
+final _newReleaseRepo = NewReleaseRepository(
+    dataProvider: NewReleaseDataProvider(client: http.Client()));
+
+final _playlistRepo = PlaylistRepository(
+    dataProvider: PlaylistDataProvider(client: http.Client()));
+final _albumRepository =
+    AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
+final _trackRepo =
+    TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
+final _searchRepo =
+    SearchRepository(dataProvider: SearchDataProvider(client: http.Client()));
+
+final _genreRepo = GenreRepository(
+    genreDataProvider: GenreDataProvider(client: http.Client()));
+final _configRepo = ConfigRepository(
+    configDataProvider: ConfigDataProvider(client: http.Client()));
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -72,37 +104,12 @@ void main() async {
   await FlutterDownloader.initialize(debug: true);
 
   await Firebase.initializeApp();
+
   initMessaging();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.log(details.toString());
   };
-
-  final _authRepo =
-      AuthRepository(dataProvider: AuthDataProvider(client: http.Client()));
-  final _signUpRepo =
-      SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
-
-  final _analyticsRepo = AnalyticsRepository(
-      dataProvider: AnalyticsDataProvider(client: http.Client()));
-
-  final _artistRepo =
-      ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
-
-  final _newReleaseRepo = NewReleaseRepository(
-      dataProvider: NewReleaseDataProvider(client: http.Client()));
-
-  final _playlistRepo = PlaylistRepository(
-      dataProvider: PlaylistDataProvider(client: http.Client()));
-  final _albumRepository =
-      AlbumRepository(dataProvider: AlbumDataProvider(client: http.Client()));
-  final _trackRepo =
-      TrackRepository(dataProvider: TrackDataProvider(client: http.Client()));
-  final _searchRepo =
-      SearchRepository(dataProvider: SearchDataProvider(client: http.Client()));
-
-  final _genreRepo = GenreRepository(
-      genreDataProvider: GenreDataProvider(client: http.Client()));
 
   /// initialize [UserLocationBloc]
   UserLocationBloc _userLocationBloc =
@@ -159,6 +166,9 @@ void main() async {
     BlocProvider(
         create: (context) =>
             AnalyticsBloc(analyticsRepository: _analyticsRepo)),
+    BlocProvider(
+        create: (context) =>
+            ConfigBloc(configRepository: _configRepo)..add(LoadConfigData())),
   ], child: MyApp()));
 }
 
@@ -179,20 +189,22 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Streaming App',
-      home: BlocListener<UserLocationBloc, UserLocationState>(
-          listener: (mContext, state) {
-            if (state is UserLocationLoadFailed) {
-              showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (ctx) {
-                  return LocationDisabledPage();
-                },
-              );
-            }
-          },
-          child: BlocListener<VPNBloc, VPNState>(
-            listenWhen: (prev, current) => prev != current,
+      home: MultiBlocListener(
+        listeners: [
+          BlocListener<UserLocationBloc, UserLocationState>(
+            listener: (mContext, state) {
+              if (state is UserLocationLoadFailed) {
+                showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) {
+                    return LocationDisabledPage();
+                  },
+                );
+              }
+            },
+          ),
+          BlocListener<VPNBloc, VPNState>(
             listener: (context, state) {
               if (state is VPNEnabled) {
                 Navigator.of(context).pushAndRemoveUntil(
@@ -202,8 +214,10 @@ class _MyAppState extends State<MyApp> {
               // return Container();
               // return AudioServiceWidget(child: HomePage());
             },
-            child: SplashPage(),
-          )),
+          ),
+        ],
+        child: SplashPage(),
+      ),
     );
   }
 }

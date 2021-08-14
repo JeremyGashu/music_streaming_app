@@ -188,40 +188,7 @@ void playSingleTrack(BuildContext context, Track track,
       title: track.title,
       genre: 'genre goes here',
       artist: track.artist.firstName + ' ' + track.artist.firstName,
-      duration: Duration(milliseconds: track.duration),
-      artUri: Uri.parse(track.coverImageUrl),
-      // extras: {'source': m3u8FilePath});
-      extras: {'source': m3u8FilePath});
-
-  MediaItem _mediaItem2 = MediaItem(
-      id: track.songId + '2',
-      album: '',
-      title: track.title,
-      genre: 'genre goes here',
-      artist: track.artist.firstName,
-      duration: Duration(milliseconds: track.duration),
-      artUri: Uri.parse(track.coverImageUrl),
-      // extras: {'source': m3u8FilePath});
-      extras: {'source': m3u8FilePath});
-
-  MediaItem _mediaItem3 = MediaItem(
-      id: track.songId + '3',
-      album: '',
-      title: track.title,
-      genre: 'genre goes here',
-      artist: track.artist.firstName,
-      duration: Duration(milliseconds: track.duration),
-      artUri: Uri.parse(track.coverImageUrl),
-      // extras: {'source': m3u8FilePath});
-      extras: {'source': m3u8FilePath});
-
-  MediaItem _mediaItem4 = MediaItem(
-      id: track.songId + '4',
-      album: '',
-      title: track.title,
-      genre: 'genre goes here',
-      artist: track.artist.firstName,
-      duration: Duration(milliseconds: track.duration),
+      duration: Duration(seconds: track.duration),
       artUri: Uri.parse(track.coverImageUrl),
       // extras: {'source': m3u8FilePath});
       extras: {'source': m3u8FilePath});
@@ -244,9 +211,6 @@ void playSingleTrack(BuildContext context, Track track,
     )) {
       final List<MediaItem> queue = [];
       queue.add(_mediaItem);
-      queue.add(_mediaItem2);
-      queue.add(_mediaItem3);
-      queue.add(_mediaItem4);
 
       await AudioService.updateMediaItem(queue[0]);
       await AudioService.updateQueue(queue);

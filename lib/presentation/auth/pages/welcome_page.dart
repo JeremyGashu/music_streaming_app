@@ -16,92 +16,72 @@ class WelcomePage extends StatelessWidget {
                 colors: [kRed, Colors.yellow],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/playlist_top_bg.png',
-                    height: 200,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/playlist_top_bg.png',
+                  height: 200,
+                ),
+                Container(
+                  width: 120,
+                  height: 120,
+                  margin: EdgeInsets.only(bottom: 40),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  Container(
-                    width: 120,
-                    height: 120,
-                    margin: EdgeInsets.only(bottom: 40),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
+                  child: Image.asset(
+                    "assets/images/sewasew_logo.png",
+                    fit: BoxFit.cover,
                   ),
-                  Container(
-                    width: kWidth(context),
-                    height: 50,
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },
-                      child:
-                          Text('LOG IN', style: TextStyle(color: Colors.white)),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(kBlack),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                          ))),
-                    ),
+                ),
+                Container(
+                  width: kWidth(context),
+                  height: 50,
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    child:
+                        Text('LOG IN', style: TextStyle(color: Colors.white)),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(kBlack),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                        ))),
                   ),
-                  Container(
-                    width: kWidth(context),
-                    height: 50,
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PhoneInputPage()));
-                      },
-                      child: Text('SIGN UP', style: TextStyle(color: kBlack)),
-                      style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(25)),
-                                      side: BorderSide(
-                                          color: kBlack, width: 2.0)))),
-                    ),
+                ),
+                Container(
+                  width: kWidth(context),
+                  height: 50,
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PhoneInputPage()));
+                    },
+                    child: Text('SIGN UP', style: TextStyle(color: kBlack)),
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty
+                            .all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25)),
+                                side: BorderSide(color: kBlack, width: 2.0)))),
                   ),
-                ],
-              ),
-              // Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: Container(
-              //     margin: EdgeInsets.only(bottom: 50.0),
-              //     height: 50.0,
-              //     child: SignInButtonBuilder(
-              //       text: 'Sign up with Google',
-              //       image: Image.asset('assets/images/google_icon.png'),
-              //       onPressed: () {},
-              //       width: kWidth(context),
-              //       height: 50.0,
-              //       textColor: kBlack,
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.all(Radius.circular(25))),
-              //       backgroundColor: Colors.white,
-              //     ),
-              //   ),
-              // )
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
