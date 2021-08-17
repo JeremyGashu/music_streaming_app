@@ -11,3 +11,8 @@ class LoadPlaylists extends PlaylistEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadPlaylistsInit extends PlaylistEvent {
+  @override
+  List<Object> get props => [];
+}

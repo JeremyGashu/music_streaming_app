@@ -9,8 +9,9 @@ class TrackRepository {
   final TrackDataProvider dataProvider;
   TrackRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<TracksResponse> getTracks() async {
-    http.Response playlists = await dataProvider.getTracks();
+  Future<TracksResponse> getTracks({int page}) async {
+    page ??= 1;
+    http.Response playlists = await dataProvider.getTracks(page: page);
     print('tracks loaded = > ${playlists.body}');
     var decodedPlaylists = jsonDecode(playlists.body);
     print('decoded track => ${TracksResponse.fromJson(decodedPlaylists)}');

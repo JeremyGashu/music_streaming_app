@@ -9,3 +9,8 @@ class LoadArtists extends ArtistEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadInitArtists extends ArtistEvent {
+  @override
+  List<Object> get props => [];
+}

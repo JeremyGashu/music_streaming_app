@@ -31,14 +31,15 @@ class PlaylistRepository {
   PlaylistRepository({@required this.dataProvider})
       : assert(dataProvider != null);
 
-  Future<List<Playlist>> getPlaylists() async {
+  Future<List<Playlist>> getPlaylists({int page}) async {
+    page ??= 1;
     var playlistBox = await Hive.openBox('playlists');
 
     ConnectivityResult connectivityResult =
         await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      playlists = await dataProvider.getPlaylists();
+      playlists = await dataProvider.getPlaylists(page: page);
       var decoded = jsonDecode(playlists.body);
       if (decoded['success']) {
         print('getPlaylists: online and saving data ' + playlists.body);

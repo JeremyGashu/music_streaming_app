@@ -9,3 +9,8 @@ class LoadNewReleases extends NewReleaseEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadNewReleasesInit extends NewReleaseEvent {
+  @override
+  List<Object> get props => [];
+}

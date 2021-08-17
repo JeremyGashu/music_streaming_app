@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
@@ -102,7 +103,8 @@ class ArtistProfilePage extends StatelessWidget {
                     color: Colors.purple,
                     size: 25,
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await AudioService.stop();
                     BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
                     Navigator.pushAndRemoveUntil(
                         context,

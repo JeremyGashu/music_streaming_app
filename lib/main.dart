@@ -126,7 +126,7 @@ void main() async {
     ),
     BlocProvider(
       create: (context) =>
-          AlbumBloc(albumRepository: _albumRepository)..add(LoadAlbums()),
+          AlbumBloc(albumRepository: _albumRepository)..add(LoadInitAlbums()),
     ),
     BlocProvider(
       create: (context) =>
@@ -138,19 +138,19 @@ void main() async {
     BlocProvider(
         create: (context) => _userLocationBloc..add(UserLocationEvent.Init)),
     BlocProvider(
-      create: (context) =>
-          PlaylistBloc(playlistRepository: _playlistRepo)..add(LoadPlaylists()),
+      create: (context) => PlaylistBloc(playlistRepository: _playlistRepo)
+        ..add(LoadPlaylistsInit()),
     ),
     BlocProvider(
         create: (context) =>
             VPNBloc()..add(StartListening(intervalInSeconds: 2))),
     BlocProvider(
       create: (context) =>
-          TrackBloc(trackRepository: _trackRepo)..add(LoadTracks()),
+          TrackBloc(trackRepository: _trackRepo)..add(LoadTracksInit()),
     ),
     BlocProvider(
       create: (context) =>
-          ArtistBloc(artistRepository: _artistRepo)..add(LoadArtists()),
+          ArtistBloc(artistRepository: _artistRepo)..add(LoadInitArtists()),
     ),
     BlocProvider(
       create: (context) =>
@@ -161,7 +161,7 @@ void main() async {
     ),
     BlocProvider(
       create: (context) => NewReleaseBloc(newReleaseRepository: _newReleaseRepo)
-        ..add(LoadNewReleases()),
+        ..add(LoadNewReleasesInit()),
     ),
     BlocProvider(
         create: (context) =>
