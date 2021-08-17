@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -28,7 +29,6 @@ import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
-import 'package:streaming_mobile/core/services/audio_service_initializer.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/analytics_dataprovider.dart';
@@ -105,8 +105,6 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  initMessaging();
-
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.log(details.toString());
   };
@@ -178,9 +176,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
-    initializeAudioService();
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+
+    initMessaging();
+
     super.initState();
   }
 
@@ -220,28 +230,64 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
 
-initMessaging() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  Future onSelectNotification(String payload) async {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return new AlertDialog(
+          title: Text("PayLoad"),
+          content: Text("Payload : $payload"),
+        );
+      },
+    );
+  }
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-  String token = await messaging.getToken();
-  print("USER TOKEN:" + token);
+  void showNotification(String title, String body) async {
+    await _demoNotification(title, body);
+  }
 
-  FirebaseMessaging.onMessage.listen((message) {
-    print('NOTIFICATION RECEIVED');
-    print('TITLE: ' + message.notification.title);
-    print('BODY: ' + message.notification.body);
-  });
+  Future<void> _demoNotification(String title, String body) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'FLUTTER_STREAMING_APP',
+        'STREAMING_APP',
+        'FLUTTER_CHANNEL_TO_SEND_NOTIFICATION',
+        importance: Importance.max,
+        playSound: true,
+        showProgress: true,
+        priority: Priority.high,
+        ticker: 'test ticker');
 
-  print('User granted permission: ${settings.authorizationStatus}');
+    var iOSChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: 'test');
+  }
+
+  initMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    String token = await messaging.getToken();
+    print("USER TOKEN:" + token);
+
+    FirebaseMessaging.onMessage.listen((message) {
+      //todo => use flutter local notification to show notification in the background
+      print('NOTIFICATION RECEIVED');
+      showNotification(message.notification.title, message.notification.body);
+      print('TITLE: ' + message.notification.title);
+      print('BODY: ' + message.notification.body);
+    });
+
+    print('User granted permission: ${settings.authorizationStatus}');
+  }
 }
