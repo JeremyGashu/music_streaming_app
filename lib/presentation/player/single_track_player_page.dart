@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
@@ -116,10 +117,24 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     //     );
                     //   },
                     // );
-                    return Center(
-                      child: SpinKitWave(
-                        color: Colors.white,
-                        size: 30,
+                    return Container(
+                      color: Colors.white,
+                      width: kWidth(context),
+                      height: kHeight(context),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Preparing The Player'),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            SpinKitRipple(
+                              color: Colors.grey,
+                              size: 40,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }),
@@ -340,45 +355,42 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Padding _songTitleRow(MediaItem mediaItem) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 40, 24, 30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(
-            Icons.add,
-            size: 36,
-            color: Colors.white,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '${mediaItem.title}',
-                style: TextStyle(
-                    letterSpacing: 1.2,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-              Text(
-                '${mediaItem.artist}',
-                style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              ),
-            ],
-          ),
-          Icon(
-            Icons.more_vert_outlined,
-            size: 36,
-            color: Colors.white,
-          ),
-        ],
-      ),
+  Widget _songTitleRow(MediaItem mediaItem) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          Icons.add,
+          size: 30,
+          color: Colors.white,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${mediaItem.title}',
+              style: TextStyle(
+                  letterSpacing: 1.2,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
+            ),
+            Text(
+              '${mediaItem.artist}',
+              style: TextStyle(
+                  letterSpacing: 1,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+            ),
+          ],
+        ),
+        Icon(
+          Icons.more_vert_outlined,
+          size: 30,
+          color: Colors.white,
+        ),
+      ],
     );
   }
 
@@ -403,16 +415,22 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                       Navigator.of(context).pop();
                     }),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: CachedNetworkImage(
-                  imageUrl: mediaItem.artUri.toString(),
-                  fit: BoxFit.cover,
-                  width: 200,
-                  height: 300,
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 50, left: 30, right: 30, top: 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: CachedNetworkImage(
+                    imageUrl: mediaItem.artUri.toString(),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               _songTitleRow(mediaItem),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ));

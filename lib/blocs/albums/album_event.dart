@@ -10,6 +10,11 @@ class LoadAlbums extends AlbumEvent {
   List<Object> get props => [];
 }
 
+class LoadInitAlbums extends AlbumEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class LoadAlbumsByArtistId extends AlbumEvent {
   final String artistId;
   LoadAlbumsByArtistId({this.artistId});

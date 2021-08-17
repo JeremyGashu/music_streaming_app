@@ -42,8 +42,7 @@ class PlaylistDataProvider {
 
   PlaylistDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getPlaylists(
-      {int page, int perPage, String sort, String sortKey}) async {
+  Future<http.Response> getPlaylists({int page}) async {
     page ??= 1;
 
     var authBox = await Hive.openBox<AuthData>('auth_box');

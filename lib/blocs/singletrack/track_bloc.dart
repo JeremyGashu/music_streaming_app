@@ -17,12 +17,28 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
     if (event is LoadTracks) {
       try {
         yield LoadingTrack();
-        var tracksResponse = await trackRepository.getTracks();
+        var tracksResponse = await trackRepository.getTracks(page: page);
         List<Track> tracks = tracksResponse.data.data.songs
             .map((songElement) => songElement.song)
             .toList();
 
         yield LoadedTracks(tracks: tracks);
+        page++;
+      } catch (e) {
+        print("ERROR ON BLOC " + e.toString());
+        yield LoadingTrackError(message: "Error one loading playlists");
+        throw Exception(e);
+      }
+    } else if (event is LoadTracksInit) {
+      try {
+        yield LoadingTrack();
+        var tracksResponse = await trackRepository.getTracks(page: 1);
+        List<Track> tracks = tracksResponse.data.data.songs
+            .map((songElement) => songElement.song)
+            .toList();
+
+        yield LoadedTracks(tracks: tracks);
+        page = 1;
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading playlists");
@@ -38,9 +54,6 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
             .toList();
 
         yield LoadedTracks(tracks: tracks);
-        print('page before increment => ${page}');
-        page++;
-        print('page after increment => ${page}');
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading songs!");

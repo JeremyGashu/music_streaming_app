@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -87,8 +86,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } else if (event is LogOutEvent) {
       var authBox = await Hive.openBox<AuthData>('auth_box');
-
-      await AudioService.stop();
       print('clearing auth data on log out');
       await authBox.clear();
 

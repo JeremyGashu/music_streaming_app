@@ -136,11 +136,11 @@ class _HomePageState extends State<HomePage> {
       // ],
       child: RefreshIndicator(
         onRefresh: () async {
-          BlocProvider.of<TrackBloc>(context).add(LoadTracks());
-          BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
-          BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
-          BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-          BlocProvider.of<NewReleaseBloc>(context).add(LoadNewReleases());
+          BlocProvider.of<TrackBloc>(context).add(LoadTracksInit());
+          BlocProvider.of<AlbumBloc>(context).add(LoadInitAlbums());
+          BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylistsInit());
+          BlocProvider.of<ArtistBloc>(context).add(LoadInitArtists());
+          BlocProvider.of<NewReleaseBloc>(context).add(LoadNewReleasesInit());
           BlocProvider.of<GenresBloc>(context).add(FetchGenres());
         },
         child: SafeArea(
@@ -269,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<NewReleaseBloc>(context)
-                                            .add(LoadNewReleases());
+                                            .add(LoadNewReleasesInit());
                                       }),
                                 ],
                               ),
@@ -337,7 +337,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<NewReleaseBloc>(context)
-                                            .add(LoadNewReleases());
+                                            .add(LoadNewReleasesInit());
                                       }),
                                 ],
                               ),
@@ -404,7 +404,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<PlaylistBloc>(context)
-                                            .add(LoadPlaylists());
+                                            .add(LoadPlaylistsInit());
                                       }),
                                 ],
                               ),
@@ -537,7 +537,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<ArtistBloc>(context)
-                                            .add(LoadArtists());
+                                            .add(LoadInitArtists());
                                       }),
                                 ],
                               ),
@@ -604,7 +604,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<AlbumBloc>(context)
-                                            .add(LoadAlbums());
+                                            .add(LoadInitAlbums());
                                       }),
                                 ],
                               ),
@@ -671,7 +671,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       onPressed: () {
                                         BlocProvider.of<TrackBloc>(context)
-                                            .add(LoadTracks());
+                                            .add(LoadTracksInit());
                                       }),
                                 ],
                               ),

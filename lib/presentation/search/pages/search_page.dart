@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
@@ -18,11 +19,11 @@ import 'package:streaming_mobile/presentation/common_widgets/circular_loading_sh
 import 'package:streaming_mobile/presentation/common_widgets/music_tile.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
+import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/search/widgets/album_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/artists_result.dart';
-import 'package:streaming_mobile/presentation/search/widgets/custom_title_text.dart';
 import 'package:streaming_mobile/presentation/search/widgets/playlist_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/search_field.dart';
 import 'package:streaming_mobile/presentation/search/widgets/songs_result.dart';
@@ -135,10 +136,9 @@ class _SearchPageState extends State<SearchPage>
                 : SingleChildScrollView(
                     child: Column(
                       children: [
-                        CustomTitleText(
-                          text: 'Recently Searched',
-                          onTapHandler: () {},
-                        ),
+                        SectionTitle(
+                            title: 'Recently Searched', callback: () {}),
+
                         Container(
                           height: 220,
                           padding: EdgeInsets.only(right: 4, left: 4),
@@ -151,73 +151,9 @@ class _SearchPageState extends State<SearchPage>
                                 return MusicListTile();
                               }),
                         ),
-                        CustomTitleText(
-                          text: 'Popular Playlist',
-                          onTapHandler: () {},
-                        ),
-                        Container(
-                          height: 170,
-                          child: BlocBuilder<PlaylistBloc, PlaylistState>(
-                            builder: (ctx, state) {
-                              if (state is LoadingAlbum) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    CircularShimmer(),
-                                    CircularShimmer(),
-                                    CircularShimmer(),
-                                  ],
-                                );
-                              } else if (state is LoadedPlaylist) {
-                                return ListView.builder(
-                                  itemCount: state.playlists.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (ctx, index) {
-                                    return SinglePlaylist(
-                                      playlist: state.playlists[index],
-                                    );
-                                  },
-                                );
-                              } else if (state is LoadingAlbumError) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Error Loading Playlist!',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.update,
-                                            color: Colors.redAccent
-                                                .withOpacity(0.8),
-                                            size: 45,
-                                          ),
-                                          onPressed: () {
-                                            BlocProvider.of<AlbumBloc>(context)
-                                                .add(LoadAlbums());
-                                          }),
-                                    ],
-                                  ),
-                                );
-                              }
 
-                              return Container();
-                            },
-                          ),
-                        ),
-                        CustomTitleText(
-                          text: 'Newly Released Albums',
-                          onTapHandler: () {},
-                        ),
+                        SectionTitle(
+                            title: 'Newly Released Albums', callback: () {}),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -266,7 +202,7 @@ class _SearchPageState extends State<SearchPage>
                                           onPressed: () {
                                             BlocProvider.of<NewReleaseBloc>(
                                                     context)
-                                                .add(LoadNewReleases());
+                                                .add(LoadNewReleasesInit());
                                           }),
                                     ],
                                   ),
@@ -278,10 +214,8 @@ class _SearchPageState extends State<SearchPage>
                           ),
                         ),
 
-                        CustomTitleText(
-                          text: 'Newly Released Songs',
-                          onTapHandler: () {},
-                        ),
+                        SectionTitle(
+                            title: 'Newly Released Songs', callback: () {}),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -330,7 +264,7 @@ class _SearchPageState extends State<SearchPage>
                                           onPressed: () {
                                             BlocProvider.of<NewReleaseBloc>(
                                                     context)
-                                                .add(LoadNewReleases());
+                                                .add(LoadNewReleasesInit());
                                           }),
                                     ],
                                   ),
@@ -342,10 +276,8 @@ class _SearchPageState extends State<SearchPage>
                           ),
                         ),
 
-                        CustomTitleText(
-                          text: 'Recently Searched',
-                          onTapHandler: () {},
-                        ),
+                        SectionTitle(
+                            title: 'Popular Playlists', callback: () {}),
                         Container(
                           height: 170,
                           child: BlocBuilder<PlaylistBloc, PlaylistState>(
@@ -370,7 +302,7 @@ class _SearchPageState extends State<SearchPage>
                                     );
                                   },
                                 );
-                              } else if (state is LoadingAlbumError) {
+                              } else if (state is LoadingPlaylistError) {
                                 return Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -393,8 +325,9 @@ class _SearchPageState extends State<SearchPage>
                                             size: 45,
                                           ),
                                           onPressed: () {
-                                            BlocProvider.of<AlbumBloc>(context)
-                                                .add(LoadAlbums());
+                                            BlocProvider.of<PlaylistBloc>(
+                                                    context)
+                                                .add(LoadPlaylistsInit());
                                           }),
                                     ],
                                   ),
@@ -405,10 +338,7 @@ class _SearchPageState extends State<SearchPage>
                             },
                           ),
                         ),
-                        CustomTitleText(
-                          text: 'Albums',
-                          onTapHandler: () {},
-                        ),
+                        SectionTitle(title: 'Albums', callback: () {}),
                         Container(
                           height: 200,
                           child: BlocBuilder<AlbumBloc, AlbumState>(
@@ -456,7 +386,7 @@ class _SearchPageState extends State<SearchPage>
                                           ),
                                           onPressed: () {
                                             BlocProvider.of<AlbumBloc>(context)
-                                                .add(LoadAlbums());
+                                                .add(LoadInitAlbums());
                                           }),
                                     ],
                                   ),
