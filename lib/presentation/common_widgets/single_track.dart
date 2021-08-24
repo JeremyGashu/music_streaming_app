@@ -38,14 +38,6 @@ class _SingleTrackState extends State<SingleTrack> {
           /// Start playing the audio
           playAudio(sharedPreferences);
 
-          /// Pass the track data to [SingletrackPlayer] page
-          /// using state.track
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => SingleTrackPlayerPage(
-          //               track: widget.track,
-          //             )));
         },
         child: Container(
           width: 140,
@@ -135,11 +127,7 @@ class _SingleTrackState extends State<SingleTrack> {
       if (widget.track.songId == AudioService.currentMediaItem.id) {
         print(
             "PlayListPage[playlist_detail]: already running with the same media id");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    SingleTrackPlayerPage(track: widget.track)));
+        Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: widget.track);
         return;
       }
     }
@@ -157,10 +145,7 @@ class _SingleTrackState extends State<SingleTrack> {
   }
 
   Future<void> playSong(context, Duration position) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SingleTrackPlayerPage(track: widget.track)));
+    Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: widget.track);
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];

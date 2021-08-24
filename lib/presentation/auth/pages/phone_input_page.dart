@@ -14,6 +14,8 @@ import 'package:streaming_mobile/data/models/country_codes.dart';
 import 'otp_page.dart';
 
 class PhoneInputPage extends StatefulWidget {
+  static const String phoneInputStorageRouterName =
+      'phone_input_storage_router_name';
   @override
   _PhoneInputPageState createState() => _PhoneInputPageState();
 }
@@ -166,14 +168,10 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                             phoneNo: _phoneNumberController
                                                 .value.text));
 
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (ctx) => OTP(
-                                                  phoneNumber:
-                                                      _phoneNumberController
-                                                          .value.text,
-                                                )));
+                                    Navigator.pushNamed(
+                                        context, OTP.otpPageRouterName,
+                                        arguments:
+                                            _phoneNumberController.value.text);
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(

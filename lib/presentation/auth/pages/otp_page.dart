@@ -12,6 +12,7 @@ import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 
 class OTP extends StatefulWidget {
+  static const String otpPageRouterName = 'otp_page_router_name';
   final String phoneNumber;
   OTP({@required this.phoneNumber});
   @override
@@ -50,12 +51,7 @@ class _OTPState extends State<OTP> {
           child: BlocListener<AuthBloc, AuthState>(
             listener: (ctx, state) {
               if (state is OTPVerified) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => SignUpPage(
-                              phone: widget.phoneNumber,
-                            )));
+                Navigator.pushNamed(context, SignUpPage.signUpPageRouterName, arguments: state.phoneNo);
               }
             },
             child: BlocBuilder<AuthBloc, AuthState>(

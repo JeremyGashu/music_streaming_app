@@ -244,12 +244,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
   Widget _controlButtonsRow(bool playing) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SingleTrackPlayerPage(
-                      track: Track(),
-                    )));
+        Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: Track());
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

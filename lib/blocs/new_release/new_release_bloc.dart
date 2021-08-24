@@ -18,9 +18,13 @@ class NewReleaseBloc extends Bloc<NewReleaseEvent, NewReleaseState> {
         yield LoadingNewReleases();
         var newReleaseResponse =
             await newReleaseRepository.getNewReleases(page: page);
-
-        yield LoadedNewReleases(newRelease: newReleaseResponse.data.data);
-        page++;
+        if (page > newReleaseResponse.data.metaData.pageCount) {
+          //todo => check the new release pagination
+          yield LoadedNewReleases(newRelease: newReleaseResponse.data.data);
+        } else {
+          yield LoadedNewReleases(newRelease: newReleaseResponse.data.data);
+          page++;
+        }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingNewReleasesError(message: "Error on New Releases");

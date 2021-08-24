@@ -9,6 +9,7 @@ import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
 
 class SplashPage extends StatefulWidget {
+  static const splashPageRuterName = 'splash_page_router_name';
   State<SplashPage> createState() {
     return _SplashPageState();
   }

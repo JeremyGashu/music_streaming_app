@@ -11,6 +11,7 @@ import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 
 class AllPlaylistsPage extends StatefulWidget {
+  static const String allPlaylistsRouterName = 'all_playlists_router_name';
   @override
   _AllPlaylistsPageState createState() => _AllPlaylistsPageState();
 }

@@ -24,9 +24,9 @@ import 'package:streaming_mobile/presentation/playlist/widgets/playlist_stat.dar
 import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
 
 class PlaylistDetail extends StatefulWidget {
-  final List<Track> tracks;
+  static const String playlistDetailRouterName = 'playlist_detail_router_name';
   final Playlist playlistInfo;
-  PlaylistDetail({this.tracks, this.playlistInfo});
+  PlaylistDetail({this.playlistInfo});
   @override
   _PlaylistDetailState createState() => _PlaylistDetailState();
 }
@@ -87,7 +87,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                       }
                       await AudioService.setShuffleMode(
                           AudioServiceShuffleMode.all);
-                      playAudio(Random().nextInt(widget.tracks.length),
+                      playAudio(Random().nextInt(widget.playlistInfo.songs.length),
                           sharedPreferences);
                     },
                     child: Padding(
@@ -123,7 +123,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
                       print("Snapshot: ${snapshot.data}");
                       print(snapshot.hasData &&
-                          (snapshot.data.id == widget.tracks[0].songId));
+                          (snapshot.data.id == widget.playlistInfo.songs[0].songId));
                       // print(snapshot.hasData &&
                       //     (snapshot.data.id == tracks[0].data.id));
                       return StreamBuilder(
@@ -136,15 +136,15 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                             ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: widget.tracks.length,
+                                itemCount: widget.playlistInfo.songs.length,
                                 itemBuilder: (context, index) {
-                                  return musicTile(widget.tracks[index], () {
+                                  return musicTile(widget.playlistInfo.songs[index].song, () {
                                     print("play playlist");
                                     playAudio(index, sharedPreferences);
                                   },
                                       snapshot.hasData &&
                                           (snapshot.data.id ==
-                                              widget.tracks[index].songId) &&
+                                              widget.playlistInfo.songs[index].songId) &&
                                           playbackSnapshot.hasData &&
                                           playbackSnapshot.data.playing);
                                 }),
@@ -191,14 +191,14 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
   void playAudio(int index, SharedPreferences prefs) async {
     if (AudioService.playbackState.playing) {
-      if (widget.tracks[index].songId == AudioService.currentMediaItem.id) {
+      if (widget.playlistInfo.songs[index].songId == AudioService.currentMediaItem.id) {
         print(
             "PlayListPage[playlist_detail]: already running with the same media id");
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    SingleTrackPlayerPage(track: widget.tracks[index])));
+                    SingleTrackPlayerPage(track: widget.playlistInfo.songs[index].song)));
         return;
       }
     }
@@ -220,21 +220,15 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   }
 
   Future<void> playPlayList(context, Duration position, index) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                SingleTrackPlayerPage(track: widget.tracks[index])));
+
+    Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,arguments: widget.playlistInfo.songs[index].song);
+    
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];
-    print("tracks length: ${widget.tracks.length}");
-    print("index: $index");
-    print("tracks: ${widget.tracks}");
-    print("trackId: ${widget.tracks[0].songId}");
-    print("songId: ${widget.tracks[0].songId}");
 
-    for (Track track in widget.tracks) {
+
+    for (Track track in widget.playlistInfo.songs.map((e) => e.song)) {
       print("trackId: ${track.songId}");
       String source = 'https://138.68.163.236:8787/track/${track.songId}';
       if (await LocalHelper.isFileDownloaded(track.songId)) {
@@ -276,7 +270,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
     // await AudioService.addQueueItems(mediaItems);
     /// check if currently clicked media file is not downloaded and start download
-    var _trackToPlay = widget.tracks[index];
+    var _trackToPlay = widget.playlistInfo.songs[index].song;
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
     if (!(await LocalHelper.isFileDownloaded(_trackToPlay.songId))) {

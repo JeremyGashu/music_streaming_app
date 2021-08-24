@@ -7,6 +7,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 
 class SignUpPage extends StatefulWidget {
+  static const String signUpPageRouterName = 'signup_page_router_name';
   final String phone;
   SignUpPage({@required this.phone});
   @override
