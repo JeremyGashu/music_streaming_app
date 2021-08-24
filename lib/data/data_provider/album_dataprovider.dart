@@ -44,12 +44,11 @@ class AlbumDataProvider {
 
   AlbumDataProvider({this.client}) : assert(client != null);
 
-  Future<http.Response> getAllAlbums(
-      {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
+  Future<http.Response> getAllAlbums({int page}) async {
+    page ??= 1;
+    String url = '$BASE_ALBUM_URL?page=$page&per_page=10&sort=ASC';
+
+    print('album endpoint $url');
 
     var authBox = await Hive.openBox<AuthData>('auth_box');
     var authData = authBox.get('auth_data');
@@ -58,20 +57,21 @@ class AlbumDataProvider {
     };
 
     //todo use the correct page, perPage sort and sort key once the backend is finished
-    http.Response response =
-        await client.get(Uri.parse(ALBUM_URL), headers: headers);
+    http.Response response = await client.get(Uri.parse(url), headers: headers);
 
     return response;
   }
 
-  Future<http.Response> getAlbumsByArtist(String artistId, int page,
-      {int perPage, String sort, String sortKey}) async {
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
-    String url =
-        '$BASE_URL/artist/albums?artist_id=${artistId}&page=${page}&per_page=${perPage}&sort=${sort}&sort_key=${sortKey}';
-    http.Response response = await client.get(Uri.parse(url));
+  Future<http.Response> getAlbumByArtistId({String artistId}) async {
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
+    http.Response response = await client.get(
+      Uri.parse(ALBUM_BY_ARTIST + artistId),
+      headers: headers,
+    );
     return response;
   }
 

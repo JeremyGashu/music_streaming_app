@@ -45,12 +45,8 @@ class AlbumRepository {
   var decodeAlbums;
   AlbumRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<AlbumsResponse> getAllAlbums(
-      {int page, int perPage, String sort, String sortKey}) async {
-    page ??= 0;
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
+  Future<AlbumsResponse> getAllAlbums({int page}) async {
+    page ??= 1;
 
     var albumBox = await Hive.openBox('albums');
     ConnectivityResult connectivityResult =
@@ -58,8 +54,7 @@ class AlbumRepository {
 
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      albums = await dataProvider.getAllAlbums(
-          page: page, perPage: perPage, sort: sort, sortKey: sortKey);
+      albums = await dataProvider.getAllAlbums(page: page);
 
       var decoded = jsonDecode(albums.body);
       if (decoded['success']) {
@@ -88,20 +83,12 @@ class AlbumRepository {
     return AlbumsResponse.fromJson(decodeAlbums);
   }
 
-  Future<Album> getAlbumById(String albumId) async {
-    http.Response album = await dataProvider.getAlbumById(albumId);
-    var decodedAlbum = jsonDecode(album.body)['data']['data'];
-    return Album.fromJson(decodedAlbum);
-  }
-
-  Future<List<Album>> getAlbumByArtist(String artistId, int page,
-      {int perPage, String sort, String sortKey}) async {
-    perPage ??= 10;
-    sort ??= 'ASC';
-    sortKey ??= 'title';
-    http.Response albums = await dataProvider.getAlbumsByArtist(artistId, page,
-        perPage: perPage, sortKey: sortKey, sort: sort);
-    var decodedAlbum = jsonDecode(albums.body)['data']['data'] as List;
-    return decodedAlbum.map((album) => Album.fromJson(album)).toList();
+  Future<AlbumsResponse> getAlbumsByArtistId({String artistId}) async {
+    http.Response albums =
+        await dataProvider.getAlbumByArtistId(artistId: artistId);
+    print('albums loaded by artist= > ${albums.body}');
+    var decodedAlbums = jsonDecode(albums.body);
+    print('decoded albums => ${decodedAlbums}');
+    return AlbumsResponse.fromJson(decodedAlbums);
   }
 }

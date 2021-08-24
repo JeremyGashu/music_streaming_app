@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (authData.isAuthenticated) {
         yield Authenticated(authData: authData);
       } else {
-        yield Unauthenticated(authData: authData);
+        yield InitialState();
       }
     } else if (event is SendOTPVerification) {
       yield VerifyingOTP();

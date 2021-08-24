@@ -61,10 +61,10 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
             event.track.songId,
             LocalDownloadTask(
                 songId: event.track.songId,
-                title: event.track.song.title,
-                coverImageUrl: event.track.song.coverImageUrl,
-                songUrl: event.track.song.songUrl,
-                duration: event.track.song.duration));
+                title: event.track.title,
+                coverImageUrl: event.track.coverImageUrl,
+                songUrl: event.track.songUrl,
+                duration: event.track.duration));
       }
       if (event is DeleteDownload) {
         var userDownloadBox = await Hive.openBox<LocalDownloadTask>('user_downloads');

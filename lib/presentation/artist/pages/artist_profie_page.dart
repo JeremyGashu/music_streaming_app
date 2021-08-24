@@ -1,7 +1,9 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
+import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class ArtistProfilePage extends StatelessWidget {
   @override
@@ -42,22 +44,22 @@ class ArtistProfilePage extends StatelessWidget {
                 height: 13,
               ),
 
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: Colors.purple,
-                ),
-                width: 160,
-                height: 35,
-                child: Center(
-                    child: Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                )),
-              ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(40),
+              //     color: Colors.purple,
+              //   ),
+              //   width: 160,
+              //   height: 35,
+              //   child: Center(
+              //       child: Text(
+              //     'Edit Profile',
+              //     style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20,
+              //     ),
+              //   )),
+              // ),
               Divider(),
               SizedBox(
                 height: 20,
@@ -79,14 +81,21 @@ class ArtistProfilePage extends StatelessWidget {
               ),
 
               _listSelectorTiles(
-                title: 'Setting',
+                title: 'Edit Profile',
                 icon: Icon(
-                  Icons.settings,
+                  Icons.person,
                   color: Colors.purple,
                   size: 25,
                 ),
               ),
-
+              // _listSelectorTiles(
+              //   title: 'Setting',
+              //   icon: Icon(
+              //     Icons.settings,
+              //     color: Colors.purple,
+              //     size: 25,
+              //   ),
+              // ),
               _listSelectorTiles(
                   title: 'Log Out',
                   icon: Icon(
@@ -94,8 +103,13 @@ class ArtistProfilePage extends StatelessWidget {
                     color: Colors.purple,
                     size: 25,
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    await AudioService.stop();
                     BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false);
                   }),
             ],
           ),

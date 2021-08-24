@@ -9,11 +9,21 @@ class TrackRepository {
   final TrackDataProvider dataProvider;
   TrackRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<TracksResponse> getTracks() async {
-    http.Response playlists = await dataProvider.getTracks();
+  Future<TracksResponse> getTracks({int page}) async {
+    page ??= 1;
+    http.Response playlists = await dataProvider.getTracks(page: page);
     print('tracks loaded = > ${playlists.body}');
     var decodedPlaylists = jsonDecode(playlists.body);
-    print('decoded track => ${decodedPlaylists}');
+    print('decoded track => ${TracksResponse.fromJson(decodedPlaylists)}');
     return TracksResponse.fromJson(decodedPlaylists);
+  }
+
+  Future<TracksResponse> getTracksByArtisId({String artistId}) async {
+    http.Response songs =
+        await dataProvider.getTracksByArtisId(artistId: artistId);
+    print('songs loaded by artist= > ${songs.body}');
+    var decodedSongs = jsonDecode(songs.body);
+    print('decoded songs => ${decodedSongs}');
+    return TracksResponse.fromJson(decodedSongs);
   }
 }

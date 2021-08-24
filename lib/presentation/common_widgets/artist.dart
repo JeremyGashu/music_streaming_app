@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 
-import '../../artist/pages/artist_detail_page.dart';
+import '../artist/pages/artist_detail_page.dart';
 
 class Artist extends StatelessWidget {
   final ArtistModel artist;
@@ -19,7 +20,10 @@ class Artist extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
+                        builder: (context) => ArtistDetailPage(
+                              artistId: artist.artistId,
+                              artist: artist,
+                            )));
               },
               child: Container(
                 width: 120,
@@ -44,8 +48,12 @@ class Artist extends StatelessWidget {
                                 );
                               },
                               imageUrl: artist.image,
-                              placeholder: (context, url) =>
-                                  Center(child: CircularProgressIndicator()),
+                              placeholder: (context, url) => Center(
+                                child: SpinKitRipple(
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -108,7 +116,10 @@ class Artist extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage()));
+                        builder: (context) => ArtistDetailPage(
+                              artist: artist,
+                              artistId: artist.artistId,
+                            )));
               },
               child: Container(
                 width: 120,

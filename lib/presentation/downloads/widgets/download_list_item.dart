@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
-import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 class DownloadListItem extends StatelessWidget {
@@ -16,7 +14,7 @@ class DownloadListItem extends StatelessWidget {
     return ListTile(
       onTap: (){
         if(downloadTask.progress == 100.0){
-          playSingleTrack(context, Track(album: Album(albumId: null, artist: Artist(firstName: "None")), songId: downloadTask.songId, trackId: downloadTask.songId, song: Song(songId: downloadTask.songId, duration: downloadTask.duration, coverImageUrl: downloadTask.coverImageUrl)));
+          // playSingleTrack(context, Track(album: Album(albumId: null, artist: Artist(firstName: "None")), songId: downloadTask.songId, trackId: downloadTask.songId, song: Song(songId: downloadTask.songId, duration: downloadTask.duration, coverImageUrl: downloadTask.coverImageUrl)));
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => SingleTrackPlayerPage(track: null),));
         }
       },

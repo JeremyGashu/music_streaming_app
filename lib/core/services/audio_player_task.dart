@@ -265,11 +265,13 @@ class AudioPlayerTask extends BackgroundAudioTask {
     // Shutdown background task
     debugPrint(
         'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
+
     await AudioServiceBackground.setState(
       controls: [],
       processingState: AudioProcessingState.stopped,
       playing: false,
     );
+
     await super.onStop();
   }
 

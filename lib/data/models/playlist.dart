@@ -193,6 +193,9 @@
 //       ];
 // }
 
+import 'package:streaming_mobile/data/models/api_metadata.dart';
+import 'package:streaming_mobile/data/models/track.dart';
+
 class PlaylistsResponse {
   PlaylistsResponse({
     this.success,
@@ -293,7 +296,7 @@ class SongData {
   String id;
   String playlistId;
   String songId;
-  Song song;
+  Track song;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -301,7 +304,7 @@ class SongData {
         id: json["id"],
         playlistId: json["playlist_id"],
         songId: json["song_id"],
-        song: Song.fromJson(json["song"]),
+        song: Track.fromJson(json["song"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
@@ -311,122 +314,6 @@ class SongData {
         "playlist_id": playlistId,
         "song_id": songId,
         "song": song.toJson(),
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class Song {
-  Song({
-    this.songId,
-    this.artistId,
-    this.artist,
-    this.title,
-    this.coverImageUrl,
-    this.songUrl,
-    this.genreId,
-    this.genre,
-    this.views,
-    this.duration,
-    this.lyricsLocation,
-    this.imageLocation,
-    this.trackLocation,
-    this.releasedAt,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  String songId;
-  String artistId;
-  Artist artist;
-  String title;
-  String coverImageUrl;
-  String songUrl;
-  String genreId;
-  Genre genre;
-  int views;
-  int duration;
-  String lyricsLocation;
-  String imageLocation;
-  String trackLocation;
-  DateTime releasedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Song.fromJson(Map<String, dynamic> json) => Song(
-        songId: json["song_id"],
-        artistId: json["artist_id"],
-        artist: Artist.fromJson(json["artist"]),
-        title: json["title"],
-        coverImageUrl: json["cover_image_url"],
-        songUrl: json["song_url"],
-        genreId: json["genre_id"],
-        genre: Genre.fromJson(json["Genre"]),
-        views: json["views"],
-        duration: json["duration"],
-        lyricsLocation: json["lyrics_location"],
-        imageLocation: json["image_location"],
-        trackLocation: json["track_location"],
-        releasedAt: DateTime.parse(json["released_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "song_id": songId,
-        "artist_id": artistId,
-        "artist": artist.toJson(),
-        "title": title,
-        "cover_image_url": coverImageUrl,
-        "song_url": songUrl,
-        "genre_id": genreId,
-        "Genre": genre.toJson(),
-        "views": views,
-        "duration": duration,
-        "lyrics_location": lyricsLocation,
-        "image_location": imageLocation,
-        "track_location": trackLocation,
-        "released_at": releasedAt.toIso8601String(),
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class Artist {
-  Artist({
-    this.artistId,
-    this.firstName,
-    this.lastName,
-    this.image,
-    this.email,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  String artistId;
-  String firstName;
-  String lastName;
-  String image;
-  String email;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Artist.fromJson(Map<String, dynamic> json) => Artist(
-        artistId: json["artist_id"],
-        firstName: json["first_name"],
-        lastName: json["last_name"],
-        image: json["image"],
-        email: json["email"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "artist_id": artistId,
-        "first_name": firstName,
-        "last_name": lastName,
-        "image": image,
-        "email": email,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };
@@ -457,69 +344,5 @@ class Genre {
         "name": name,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-      };
-}
-
-class MetaData {
-  MetaData({
-    this.page,
-    this.perPage,
-    this.pageCount,
-    this.totalCount,
-    this.links,
-  });
-
-  int page;
-  int perPage;
-  int pageCount;
-  int totalCount;
-  List<Link> links;
-
-  factory MetaData.fromJson(Map<String, dynamic> json) => MetaData(
-        page: json["page"],
-        perPage: json["per_page"],
-        pageCount: json["page_count"],
-        totalCount: json["total_count"],
-        links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "page": page,
-        "per_page": perPage,
-        "page_count": pageCount,
-        "total_count": totalCount,
-        "links": List<dynamic>.from(links.map((x) => x.toJson())),
-      };
-}
-
-class Link {
-  Link({
-    this.self,
-    this.first,
-    this.previous,
-    this.next,
-    this.last,
-  });
-
-  String self;
-  String first;
-  String previous;
-  String next;
-  String last;
-
-  factory Link.fromJson(Map<String, dynamic> json) => Link(
-        self: json["self"] == null ? null : json["self"],
-        first: json["first"] == null ? null : json["first"],
-        previous: json["previous"] == null ? null : json["previous"],
-        next: json["next"] == null ? null : json["next"],
-        last: json["last"] == null ? null : json["last"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "self": self == null ? null : self,
-        "first": first == null ? null : first,
-        "previous": previous == null ? null : previous,
-        "next": next == null ? null : next,
-        "last": last == null ? null : last,
       };
 }

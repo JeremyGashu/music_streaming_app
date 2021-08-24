@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
@@ -38,7 +39,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
 
     playbackStateSubscription = AudioService.playbackStateStream
         .where((state) => state != null)
-        .listen((state) async{
+        .listen((state) async {
       if (state.playing) {
         periodicSubscription.resume();
         // await LocalHelper.getFilePath(context);
@@ -47,14 +48,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       }
     });
     AudioService.playbackStateStream.listen((PlaybackState event) {
-      if(event.processingState == AudioProcessingState.stopped){
+      if (event.processingState == AudioProcessingState.stopped) {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           Navigator.of(context).pop();
         });
       }
     });
     super.initState();
-
   }
 
   @override
@@ -77,52 +77,69 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     return Scaffold(
       backgroundColor: Colors.black87,
       body: StreamBuilder(
-        stream: AudioService.playbackStateStream,
-        builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
-          return SafeArea(
-            child: StreamBuilder<MediaItem>(
-                stream: AudioService.currentMediaItemStream,
-                builder: (ctx, snapshot) {
-                  if(playBackSnapshot.hasData && (playBackSnapshot.data.playing || (playBackSnapshot.data.processingState == AudioProcessingState.ready) ) ){
-                  if (snapshot.hasData) {
-                    return _nowPlayingWidget(playBackSnapshot.data,mediaItem: snapshot.data);
-                  }
-                  }
-                  // return FutureBuilder<SharedPreferences>(
-                  //   future: sharedPreferences,
-                  //   builder: (ctx, prefSnapshot) {
-                  //     if (prefSnapshot.hasData) {
-                  //       final prefs = prefSnapshot.data;
-                  //       if (prefs.containsKey('id')) {
-                  //         final mediaItem = MediaItem(
-                  //           id: prefs.getString('id'),
-                  //           album: prefs.getString('album'),
-                  //           title: prefs.getString('title'),
-                  //           artist: prefs.getString('artist'),
-                  //           duration: Duration(seconds: prefs.getInt('duration')),
-                  //           genre: prefs.getString('genre'),
-                  //           artUri: Uri.parse(prefs.getString('artUri')),
-                  //           extras: {'source': prefs.getString('source')},
-                  //         );
-                  //         return _nowPlayingWidget(
-                  //             mediaItem: mediaItem, loadFromPrefs: prefs);
-                  //       }
-                  //     }
-                  //     return Center(
-                  //       child: CircularProgressIndicator(),
-                  //     );
-                  //   },
-                  // );
-                  return Center(
-                    child: SpinKitWave(
+          stream: AudioService.playbackStateStream,
+          builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
+            return SafeArea(
+              child: StreamBuilder<MediaItem>(
+                  stream: AudioService.currentMediaItemStream,
+                  builder: (ctx, snapshot) {
+                    if (playBackSnapshot.hasData &&
+                        (playBackSnapshot.data.playing ||
+                            (playBackSnapshot.data.processingState ==
+                                AudioProcessingState.ready))) {
+                      if (snapshot.hasData) {
+                        return _nowPlayingWidget(playBackSnapshot.data,
+                            mediaItem: snapshot.data);
+                      }
+                    }
+                    // return FutureBuilder<SharedPreferences>(
+                    //   future: sharedPreferences,
+                    //   builder: (ctx, prefSnapshot) {
+                    //     if (prefSnapshot.hasData) {
+                    //       final prefs = prefSnapshot.data;
+                    //       if (prefs.containsKey('id')) {
+                    //         final mediaItem = MediaItem(
+                    //           id: prefs.getString('id'),
+                    //           album: prefs.getString('album'),
+                    //           title: prefs.getString('title'),
+                    //           artist: prefs.getString('artist'),
+                    //           duration: Duration(seconds: prefs.getInt('duration')),
+                    //           genre: prefs.getString('genre'),
+                    //           artUri: Uri.parse(prefs.getString('artUri')),
+                    //           extras: {'source': prefs.getString('source')},
+                    //         );
+                    //         return _nowPlayingWidget(
+                    //             mediaItem: mediaItem, loadFromPrefs: prefs);
+                    //       }
+                    //     }
+                    //     return Center(
+                    //       child: CircularProgressIndicator(),
+                    //     );
+                    //   },
+                    // );
+                    return Container(
                       color: Colors.white,
-                      size: 30,
-                    ),
-                  );
-                }),
-          );
-        }
-      ),
+                      width: kWidth(context),
+                      height: kHeight(context),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Preparing The Player'),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            SpinKitRipple(
+                              color: Colors.grey,
+                              size: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+            );
+          }),
     );
   }
 
@@ -134,16 +151,15 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
         // Spacer(),
         /// SeekBar
         Container(
-          padding: const EdgeInsets.only(top:24.0, left: 8.0, right:8.0),
+          padding: const EdgeInsets.only(top: 24.0, left: 8.0, right: 8.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-            color: Colors.white
-          ),
+              borderRadius: BorderRadius.circular(20.0), color: Colors.white),
           child: Column(
             children: [
               Stack(
                 children: [
-                  bufferedIndicator(mediaItem?.duration?.inMilliseconds?.toDouble()),
+                  bufferedIndicator(
+                      mediaItem?.duration?.inMilliseconds?.toDouble()),
                   positionIndicator(mediaItem, loadFromPrefs),
                 ],
               ),
@@ -207,11 +223,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                 if (duration != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 20.0),
-                    child: Text(prettyDuration(widget.track.song != null
-                        ? (widget.track.song.duration != null
-                        ? Duration(seconds: widget.track.song.duration)
-                        : mediaItem.duration)
-                        : Duration(seconds: 0)),),
+                    child: Text(
+                      prettyDuration(widget.track != null
+                          ? (widget.track.duration != null
+                              ? Duration(seconds: widget.track.duration)
+                              : mediaItem.duration)
+                          : Duration(seconds: 0)),
+                    ),
                   ),
               ],
             ),
@@ -245,7 +263,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Padding _controlButtonsRow(SharedPreferences preferences, PlaybackState playbackState) {
+  Padding _controlButtonsRow(
+      SharedPreferences preferences, PlaybackState playbackState) {
     return Padding(
       padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
       child: Row(
@@ -254,13 +273,21 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           IconButton(
               onPressed: () async {
                 print("SHUFFLE MODE ${playbackState.shuffleMode}");
-                if(playbackState.shuffleMode == AudioServiceShuffleMode.none){
-                     await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
-                }else {
-                    await AudioService.setShuffleMode(AudioServiceShuffleMode.none);
+                if (playbackState.shuffleMode == AudioServiceShuffleMode.none) {
+                  await AudioService.setShuffleMode(
+                      AudioServiceShuffleMode.all);
+                } else {
+                  await AudioService.setShuffleMode(
+                      AudioServiceShuffleMode.none);
                 }
               },
-              icon: Icon( playbackState.shuffleMode == AudioServiceShuffleMode.all ? Icons.playlist_play :  Icons.shuffle, color: Colors.orange.shade300, size: 30,)),
+              icon: Icon(
+                playbackState.shuffleMode == AudioServiceShuffleMode.all
+                    ? Icons.playlist_play
+                    : Icons.shuffle,
+                color: Colors.orange.shade300,
+                size: 30,
+              )),
           IconButton(
             onPressed: () async {
               await AudioService.skipToPrevious();
@@ -311,14 +338,15 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             ),
           ),
           IconButton(
-            onPressed: (){
-              playbackState.repeatMode == AudioServiceRepeatMode.one ?
-                  AudioService.setRepeatMode(AudioServiceRepeatMode.none):
-              AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+            onPressed: () {
+              playbackState.repeatMode == AudioServiceRepeatMode.one
+                  ? AudioService.setRepeatMode(AudioServiceRepeatMode.none)
+                  : AudioService.setRepeatMode(AudioServiceRepeatMode.one);
             },
             icon: Icon(
-              playbackState.repeatMode == AudioServiceRepeatMode.one ?
-              Icons.repeat_one_outlined : Icons.repeat,
+              playbackState.repeatMode == AudioServiceRepeatMode.one
+                  ? Icons.repeat_one_outlined
+                  : Icons.repeat,
               color: Colors.orange.shade300,
             ),
           )
@@ -327,79 +355,85 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Padding _songTitleRow(MediaItem mediaItem) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 40, 24, 30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(
-            Icons.add,
-            size: 36,
-            color: Colors.white,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '${mediaItem.title}',
-                style: TextStyle(
-                    letterSpacing: 1.2,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-              Text(
-                '${mediaItem.artist}',
-                style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              ),
-            ],
-          ),
-          Icon(
-            Icons.more_vert_outlined,
-            size: 36,
-            color: Colors.white,
-          ),
-        ],
-      ),
+  Widget _songTitleRow(MediaItem mediaItem) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          Icons.add,
+          size: 30,
+          color: Colors.white,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${mediaItem.title}',
+              style: TextStyle(
+                  letterSpacing: 1.2,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
+            ),
+            Text(
+              '${mediaItem.artist}',
+              style: TextStyle(
+                  letterSpacing: 1,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+            ),
+          ],
+        ),
+        Icon(
+          Icons.more_vert_outlined,
+          size: 30,
+          color: Colors.white,
+        ),
+      ],
     );
   }
 
   Container _songImage(BuildContext context, MediaItem mediaItem) {
     return Container(
-      color: Colors.black87,
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.5,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(icon: Icon(Icons.arrow_back,color: Colors.white70,), onPressed: (){
-                Navigator.of(context).pop();
-              }),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: CachedNetworkImage(
-                imageUrl: mediaItem.artUri.toString(),
-                fit: BoxFit.cover,
-                width: 200,
-                height: 300,
+        color: Colors.black87,
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white70,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
               ),
-            ),
-            _songTitleRow(mediaItem),
-
-          ],
-        ),
-      )
-    );
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 50, left: 30, right: 30, top: 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: CachedNetworkImage(
+                    imageUrl: mediaItem.artUri.toString(),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              _songTitleRow(mediaItem),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ));
   }
 
   play(SharedPreferences prefs) async {

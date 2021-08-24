@@ -1,17 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
-import 'package:streaming_mobile/data/models/album.dart';
+import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 
 class SinglePlaylist extends StatelessWidget {
-  final Album album;
-  SinglePlaylist({this.album});
+  final Playlist playlist;
+  SinglePlaylist({this.playlist});
   @override
   Widget build(BuildContext context) {
-    return album != null
+    return playlist != null
         ? Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
@@ -24,7 +25,8 @@ class SinglePlaylist extends StatelessWidget {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return PlaylistDetail(
-                            tracks: album.tracks,
+                            tracks: playlist.songs.map((e) => e.song).toList(),
+                            playlistInfo: playlist,
                           );
                         }));
                       },
@@ -41,20 +43,23 @@ class SinglePlaylist extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(200),
                                 child: CachedNetworkImage(
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(
-                                    strokeWidth: 1,
+                                  placeholder: (context, url) => Center(
+                                    child: SpinKitRipple(
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                  imageUrl: album.coverImageUrl,
+                                  imageUrl:
+                                      playlist.songs[0].song.coverImageUrl,
                                   errorWidget: (context, url, error) {
                                     return Image.asset(
                                       'assets/images/singletrack_one.jpg',
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     );
                                   },
                                   width: 140.0,
                                   height: 120,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
@@ -81,12 +86,20 @@ class SinglePlaylist extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Text(
-                            '${album.tracks.length} new songs',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14.0),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          '${playlist.title}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14.0),
+                        ),
+                        Text(
+                          '${playlist.songs.length} new songs',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            color: Colors.orange,
                           ),
                         ),
                         Row(
@@ -103,7 +116,7 @@ class SinglePlaylist extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text(
-                                '${album.views}',
+                                '${playlist.songs[0].song.views}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: kGray,
