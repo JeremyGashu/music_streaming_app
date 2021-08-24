@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,6 +19,8 @@ import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
@@ -32,6 +35,7 @@ import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
+import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
@@ -48,9 +52,11 @@ import 'blocs/local_database/local_database_bloc.dart';
 import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
+import 'core/utils/service_locator.dart';
 import 'data/data_provider/auth_dataprovider.dart';
 import 'data/repository/genre_repository.dart';
 import 'data/repository/signup_repository.dart';
+import 'data/models/auth_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,10 +65,17 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(AuthDataAdapter());
+  Hive.registerAdapter(LocalDownloadTaskAdapter());
   await FlutterDownloader.initialize(debug: true);
+
+  /// Initialized DIO
+  final Dio dio = Dio();
+  /// setup getit
 
   await Firebase.initializeApp();
   initMessaging();
+
+  await setupLocator();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.log(details.toString());
@@ -131,6 +144,7 @@ void main() async {
       create: (context) =>
           GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
     ),
+    BlocProvider(create: (context) => UserDownloadBloc(dio: dio)..add(Init()), lazy: false,),
   ], child: MyApp()));
 }
 

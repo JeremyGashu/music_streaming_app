@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 
 part 'auth_data.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class AuthData extends Equatable {
   @HiveField(0)
   final bool isAuthenticated;

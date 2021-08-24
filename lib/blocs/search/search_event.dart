@@ -12,7 +12,7 @@ class Search extends SearchEvent {
 
   Search({this.searchBy, this.searchKey, this.searchIn = SearchIn.SONGS});
   @override
-  List<Object> get props => [searchKey];
+  List<Object> get props => [searchKey, searchBy, searchIn];
 }
 
 class ExitSearch extends SearchEvent {

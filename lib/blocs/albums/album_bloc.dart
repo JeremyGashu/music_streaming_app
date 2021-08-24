@@ -17,10 +17,11 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
         var albumsResponse = await albumRepository.getAllAlbums();
 
         yield LoadedAlbum(albums: albumsResponse.data.data);
-      } catch (e) {
+      } catch (e, stk) {
         print("ERROR ON BLOC " + e.toString());
+        print(stk);
         yield LoadingAlbumError(message: "Error on loading Album");
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

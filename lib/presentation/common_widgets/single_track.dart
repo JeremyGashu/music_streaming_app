@@ -136,7 +136,7 @@ void playSingleTrack(BuildContext context, Track track,
 
   final id = track.song.songId;
 
-  var box = await Hive.openBox("downloadedMedias");
+  var box = await Hive.openLazyBox("downloadedMedias");
   var trackDownloaded = await box.get("$id");
   print("ID: $id");
 

@@ -58,6 +58,8 @@ dependencies:
   flutter_signin_button: ^1.1.0
   international_phone_input: ^1.0.4
   otp_text_field: ^1.1.1
+  dio: ^4.0.0
+  get_it: ^7.2.0
 
 
 dev_dependencies:

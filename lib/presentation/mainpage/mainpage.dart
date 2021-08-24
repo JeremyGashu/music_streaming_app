@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_profie_page.dart';
+import 'package:streaming_mobile/presentation/downloads/downloads_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
@@ -17,6 +18,7 @@ class _MainPageState extends State<MainPage> {
     AudioServiceWidget(child: HomePage()),
     SearchPage(),
     LibraryPage(),
+    DownloadsPage(),
     ArtistProfilePage(),
   ];
   @override
@@ -62,8 +64,17 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.person,
+              Icons.download_rounded,
               color: _currentIndex == 3
+                  ? Colors.black
+                  : Colors.grey,
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: '',
+            icon: Icon(
+              Icons.person,
+              color: _currentIndex == 4
                   ? Colors.black
                   : Colors.grey,
             ),

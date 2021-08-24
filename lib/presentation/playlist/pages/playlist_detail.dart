@@ -139,7 +139,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                   return musicTile(widget.tracks[index], () {
                                     print("play playlist");
                                     playAudio(index, sharedPreferences);
-                                  },
+                                  },context,
                                       snapshot.hasData &&
                                           (snapshot.data.id ==
                                               widget.tracks[index].songId) &&
