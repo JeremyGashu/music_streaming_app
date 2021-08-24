@@ -57,13 +57,8 @@ class _PlaylistResultState extends State<PlaylistResult> {
                     title: plist.title,
                     subtitle: '${plist.songs.length} Songs',
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return PlaylistDetail(
-                          tracks: plist.songs.map((e) => e.song).toList(),
-                          playlistInfo: plist,
-                        );
-                      }));
+                      Navigator.pushNamed(context, PlaylistDetail.playlistDetailRouterName, arguments: plist);
+                      
                     },
                   );
                   // return SinglePlaylist(

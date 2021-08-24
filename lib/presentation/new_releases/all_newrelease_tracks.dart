@@ -11,6 +11,7 @@ import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class AllNewReleaseTracks extends StatefulWidget {
+  static const String allNewReleaseTracksRouterName = 'all_new_release_tracks_router_name';
   @override
   _AllNewReleaseTracksState createState() => _AllNewReleaseTracksState();
 }

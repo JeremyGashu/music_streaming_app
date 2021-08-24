@@ -18,13 +18,7 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
     return widget.album != null
         ? GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AlbumDetail(
-                            album: widget.album,
-                            tracks: widget.album.tracks,
-                          )));
+              Navigator.pushNamed(context,AlbumDetail.albumDetailRouterName, arguments: widget.album);
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

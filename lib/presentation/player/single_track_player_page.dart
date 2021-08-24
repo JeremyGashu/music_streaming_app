@@ -13,6 +13,7 @@ import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
+  static const String singleTrackPlayerPageRouteName = 'single_track_player_page_router_name';
   final Track track;
   const SingleTrackPlayerPage({@required this.track});
 

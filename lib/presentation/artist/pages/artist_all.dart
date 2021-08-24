@@ -11,6 +11,7 @@ import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 
 class AllArtistsPage extends StatefulWidget {
+  static const String allPArtistsRouterName = 'all_artists_router_name';
   @override
   _AllArtistsPageState createState() => _AllArtistsPageState();
 }
