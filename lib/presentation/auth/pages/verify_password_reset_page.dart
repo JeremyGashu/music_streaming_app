@@ -8,6 +8,7 @@ import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class VerifyPasswordResetPage extends StatefulWidget {
+  static const String verifyPasswordResetPageRouterName = 'verify_password_reset_page_router_name';
   final String phoneNo;
 
   const VerifyPasswordResetPage({this.phoneNo});
@@ -44,8 +45,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
               BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) async {
             if (state is VerifiedPasswordReset) {
               await Future.delayed(Duration(seconds: 2));
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (ctx) => LoginPage()));
+              Navigator.pushNamed(context, LoginPage.loginPageRouteName);
             } else if (state is VerifyingPasswordResetError) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Please check your reset code')));

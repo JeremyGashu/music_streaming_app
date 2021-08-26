@@ -8,6 +8,7 @@ import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
 
 class ResetPasswordPage extends StatefulWidget {
+  static const String resetPasswordPageRouterName = 'reset_password_page_router_name';
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
@@ -22,12 +23,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         child: BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
           if (state is SentPasswordResetRequest) {
             print('the state is listened');
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => VerifyPasswordResetPage(
-                          phoneNo: state.phoneNo,
-                        )));
+            Navigator.pushNamed(context, VerifyPasswordResetPage.verifyPasswordResetPageRouterName, arguments: state.phoneNo);
           }
         }, builder: (context, state) {
           return Container(

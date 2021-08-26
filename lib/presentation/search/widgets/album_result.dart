@@ -54,13 +54,7 @@ class _AlbumResultState extends State<AlbumResult> {
                     title: '${album.artist.firstName} ${album.artist.lastName}',
                     subtitle: album.title,
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AlbumDetail(
-                                    album: album,
-                                    tracks: album.tracks,
-                                  )));
+                      Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: album);
                     },
                   );
                 }).toList(),

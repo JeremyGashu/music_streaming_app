@@ -12,6 +12,7 @@ import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 class MainPage extends StatefulWidget {
+  static const String mainPageRouterName = 'main_page_router_name';
   @override
   _MainPageState createState() => _MainPageState();
 }

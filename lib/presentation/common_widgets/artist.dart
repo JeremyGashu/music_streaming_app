@@ -17,13 +17,9 @@ class Artist extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage(
-                              artistId: artist.artistId,
-                              artist: artist,
-                            )));
+                Navigator.pushNamed(
+                    context, ArtistDetailPage.artistDetailPageRouteName,
+                    arguments: artist);
               },
               child: Container(
                 width: 120,
@@ -113,13 +109,9 @@ class Artist extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ArtistDetailPage(
-                              artist: artist,
-                              artistId: artist.artistId,
-                            )));
+                Navigator.pushNamed(
+                    context, ArtistDetailPage.artistDetailPageRouteName,
+                    arguments: artist);
               },
               child: Container(
                 width: 120,

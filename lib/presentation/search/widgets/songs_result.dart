@@ -53,12 +53,7 @@ class _SongsResultState extends State<SongsResult> {
                     .map((songElement) {
                   return ResultListTile(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SingleTrackPlayerPage(
-                                    track: songElement.song,
-                                  )));
+                      Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: songElement.song);
                     },
                     subtitle: songElement.song.title,
                     title:

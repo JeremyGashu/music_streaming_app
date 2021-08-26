@@ -11,6 +11,7 @@ import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class AllTracks extends StatefulWidget {
+  static const String allTracksRouterName = 'all_tracks_router_name';
   @override
   _AllTracksState createState() => _AllTracksState();
 }
