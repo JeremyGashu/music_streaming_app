@@ -40,6 +40,7 @@ import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/search_data_provider.dart';
 import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
+import 'package:streaming_mobile/data/models/analytics.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/analytics_repository.dart';
@@ -94,6 +95,7 @@ final _genreRepo = GenreRepository(
 final _configRepo = ConfigRepository(
     configDataProvider: ConfigDataProvider(client: http.Client()));
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -101,6 +103,15 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(AuthDataAdapter());
+  Hive.registerAdapter(AnalyticsAdapter());
+
+  var ab = await Hive.openBox<Analytics>('analytics_box');
+
+
+  debugPrint('analytics => box opened ${ab.values.toList()}');
+
+  // await setupLocator();
+
   await FlutterDownloader.initialize(debug: true);
 
   await Firebase.initializeApp();
@@ -130,6 +141,8 @@ void main() async {
       create: (context) =>
           AuthBloc(authRepository: _authRepo)..add(CheckAuthOnStartUp()),
     ),
+    BlocProvider(
+        create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
     BlocProvider(
         create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
     BlocProvider(create: (context) => _localDatabaseBloc),

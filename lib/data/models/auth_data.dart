@@ -25,5 +25,5 @@ class AuthData extends Equatable {
       this.refreshToken});
 
   @override
-  List<Object> get props => [isAuthenticated, phone];
+  List<Object> get props => [isAuthenticated, phone, token, message, refreshToken];
 }

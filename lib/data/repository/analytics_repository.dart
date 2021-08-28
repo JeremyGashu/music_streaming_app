@@ -10,7 +10,7 @@ class AnalyticsRepository {
   AnalyticsRepository({@required this.dataProvider})
       : assert(dataProvider != null);
 
-  Future<bool> sendAnalyticsData({Analytics analytics}) async {
+  Future<bool> sendAnalyticsData({List<Analytics> analytics}) async {
     http.Response response =
         await dataProvider.sendAnalyticsData(analytics: analytics);
     var decodedResponse = jsonDecode(response.body);

@@ -11,6 +11,10 @@ class SendingAnalyticsData extends AnalyticsState {}
 
 class SentAnalyticsData extends AnalyticsState {}
 
+class SavingAnalyticsData extends AnalyticsState {}
+
+class SavedAnalyticsData extends AnalyticsState {}
+
 class SendingAnalyticsDataError extends AnalyticsState {
   final String message;
 

@@ -7,9 +7,17 @@ class AnalyticsEvent extends Equatable {
 }
 
 class SendAnalyticsData extends AnalyticsEvent {
+
+  @override
+  List<Object> get props => [];
+}
+
+
+class SaveAnalyticsData extends AnalyticsEvent {
   final Analytics analytics;
 
-  SendAnalyticsData({this.analytics});
+  SaveAnalyticsData({this.analytics});
+
   @override
   List<Object> get props => [analytics];
 }

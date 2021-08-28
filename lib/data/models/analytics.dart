@@ -1,4 +1,27 @@
-class Analytics {
+
+import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+
+part 'analytics.g.dart';
+
+@HiveType(typeId: 3)
+class Analytics extends Equatable{
+  @HiveField(0)
+  final String analyticsId;
+  @HiveField(1)
+  final String songId;
+  @HiveField(2)
+  final String userId;
+  @HiveField(3)
+  final int duration;
+  @HiveField(4)
+  final DateTime listenedAt;
+  @HiveField(5)
+  final String location;
+  @HiveField(6)
+  final DateTime createdAt;
+  @HiveField(7)
+  final DateTime updatedAt;
   Analytics({
     this.analyticsId,
     this.songId,
@@ -10,14 +33,7 @@ class Analytics {
     this.updatedAt,
   });
 
-  String analyticsId;
-  String songId;
-  String userId;
-  int duration;
-  DateTime listenedAt;
-  String location;
-  DateTime createdAt;
-  DateTime updatedAt;
+  
 
   factory Analytics.fromJson(Map<String, dynamic> json) => Analytics(
         analyticsId: json["analytics_id"],
@@ -40,4 +56,7 @@ class Analytics {
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };
+
+      @override
+      List<Object> get props => [analyticsId, songId, userId, duration, listenedAt, location, createdAt, updatedAt];
 }

@@ -9,10 +9,12 @@ class AnalyticsDataProvider {
   final http.Client client;
   AnalyticsDataProvider({@required this.client}) : assert(client != null);
 
-  Future<http.Response> sendAnalyticsData({Analytics analytics}) async {
+  Future<http.Response> sendAnalyticsData({List<Analytics> analytics}) async {
+
+    var json = {'analytics' : analytics.map((analyticsData) => analyticsData.toJson()).toList()};
     http.Response response = await http.post(Uri.parse(ANALYTICS_URL),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(analytics.toJson()));
+        body: jsonEncode(json));
     return response;
   }
 }
