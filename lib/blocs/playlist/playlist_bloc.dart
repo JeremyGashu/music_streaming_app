@@ -17,11 +17,14 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       try {
         yield LoadingPlaylist();
         var playlists = await playlistRepository.getPlaylists(page: page);
-
-        yield LoadedPlaylist(playlists: playlists);
-        print('page before increment => ${page}');
-        page++;
-        print('page after increment => ${page}');
+        if (playlists.length == 0) {
+          yield LoadedPlaylist(playlists: []);
+        } else {
+          yield LoadedPlaylist(playlists: playlists);
+          print('page before increment => ${page}');
+          page++;
+          print('page after increment => ${page}');
+        }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingPlaylistError(message: "Error on loading playlists");

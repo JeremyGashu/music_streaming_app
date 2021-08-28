@@ -101,7 +101,10 @@ final _configRepo = ConfigRepository(
     configDataProvider: ConfigDataProvider(client: http.Client()));
 final _featuredAlbumRepo = FeaturedAlbumRepository(
     dataProvider: FeaturedDataProvider(client: http.Client()));
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature_manual_downloader
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

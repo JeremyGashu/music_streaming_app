@@ -17,11 +17,13 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
       try {
         yield LoadingAlbum();
         var albumsResponse = await albumRepository.getAllAlbums(page: page);
-
-        yield LoadedAlbum(albums: albumsResponse.data.data);
-        print('page before increment => ${page}');
-        page++;
-        print('page after increment => ${page}');
+        if(page > albumsResponse.data.metaData.pageCount) {
+          yield LoadedAlbum(albums: []);
+        }
+        else {
+          yield LoadedAlbum(albums: albumsResponse.data.data);
+          page++;
+        }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingAlbumError(message: "Error on loading Album");

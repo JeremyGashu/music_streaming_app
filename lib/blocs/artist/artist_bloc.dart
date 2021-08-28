@@ -18,11 +18,14 @@ class ArtistBloc extends Bloc<ArtistEvent, ArtistState> {
       try {
         yield LoadingArtist();
         var artistResponse = await artistRepository.getAllArtists(page: page);
-
-        yield LoadedArtist(artists: artistResponse.data.data);
-        print('page before increment => ${page}');
-        page++;
-        print('page after increment => ${page}');
+        if (page > artistResponse.data.metaData.pageCount) {
+          yield LoadedArtist(artists: []);
+        } else {
+          yield LoadedArtist(artists: artistResponse.data.data);
+          print('page before increment => ${page}');
+          page++;
+          print('page after increment => ${page}');
+        }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingArtistError(message: "Error on loading Artists");
