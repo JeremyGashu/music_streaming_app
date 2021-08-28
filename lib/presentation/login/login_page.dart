@@ -10,6 +10,7 @@ import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dar
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String loginPageRouteName = 'login_page_route_name';
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -39,10 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
               } else if (state is Authenticated) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => MainPage()),
-                    (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, MainPage.mainPageRouterName, (route) => false);
               }
             }, builder: (context, state) {
               return Column(
@@ -224,11 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                               alignment: AlignmentDirectional.centerEnd,
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              ResetPasswordPage()));
+                                  Navigator.pushNamed(context,ResetPasswordPage.resetPasswordPageRouterName);
                                 },
                                 child: Text(
                                   'Forgot Password',

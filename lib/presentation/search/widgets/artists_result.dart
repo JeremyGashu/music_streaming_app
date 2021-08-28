@@ -51,13 +51,7 @@ class _ArtistsResultState extends State<ArtistsResult> {
                   return ResultListTile(
                     imageUrl: artist.image,
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ArtistDetailPage(
-                                    artistId: artist.artistId,
-                                    artist: artist,
-                                  )));
+                      Navigator.pushNamed(context, ArtistDetailPage.artistDetailPageRouteName, arguments: artist);
                     },
                     title: '${artist.firstName} ${artist.lastName}',
                     subtitle: '${artist.firstName} ${artist.lastName}',

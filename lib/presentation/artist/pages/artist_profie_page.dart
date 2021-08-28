@@ -106,10 +106,7 @@ class ArtistProfilePage extends StatelessWidget {
                   onTap: () async {
                     await AudioService.stop();
                     BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
                   }),
             ],
           ),

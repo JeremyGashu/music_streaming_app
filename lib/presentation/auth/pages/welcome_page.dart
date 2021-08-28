@@ -45,8 +45,7 @@ class WelcomePage extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 20),
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                      Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                     },
                     child:
                         Text('LOG IN', style: TextStyle(color: Colors.white)),
@@ -66,10 +65,7 @@ class WelcomePage extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 20),
                   child: TextButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PhoneInputPage()));
+                      Navigator.pushNamed(context, PhoneInputPage.phoneInputStorageRouterName);
                     },
                     child: Text('SIGN UP', style: TextStyle(color: kBlack)),
                     style: ButtonStyle(

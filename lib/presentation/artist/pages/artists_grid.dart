@@ -28,13 +28,7 @@ class ArtistsGrid extends StatelessWidget {
                   return _artistTile(
                       onTap: () {
                         print('artist id => ${artist.artistId}');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ArtistDetailPage(
-                                      artistId: artist.artistId,
-                                      artist: artist,
-                                    )));
+                        Navigator.pushNamed(context, ArtistDetailPage.artistDetailPageRouteName, arguments: artist);
                       },
                       name: artist.firstName + ' ' + artist.lastName,
                       imageUrl: artist.image,

@@ -14,6 +14,8 @@ import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/config/config_bloc.dart';
 import 'package:streaming_mobile/blocs/config/config_event.dart';
+import 'package:streaming_mobile/blocs/featured/featured_bloc.dart';
+import 'package:streaming_mobile/blocs/featured/featured_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
@@ -29,11 +31,13 @@ import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
+import 'package:streaming_mobile/core/app/app_router.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/analytics_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/config_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/featured_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/genre_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
@@ -47,6 +51,7 @@ import 'package:streaming_mobile/data/repository/analytics_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
 import 'package:streaming_mobile/data/repository/config_repository.dart';
+import 'package:streaming_mobile/data/repository/featured_repository.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/data/repository/search_repository.dart';
@@ -94,6 +99,8 @@ final _genreRepo = GenreRepository(
     genreDataProvider: GenreDataProvider(client: http.Client()));
 final _configRepo = ConfigRepository(
     configDataProvider: ConfigDataProvider(client: http.Client()));
+final _featuredAlbumRepo = FeaturedAlbumRepository(
+    dataProvider: FeaturedDataProvider(client: http.Client()));
 
 
 void main() async {
@@ -165,6 +172,11 @@ void main() async {
     ),
     BlocProvider(
       create: (context) =>
+          FeaturedAlbumBloc(featuredAlbumRepo: _featuredAlbumRepo)
+            ..add(LoadFeaturedAlbumsInit()),
+    ),
+    BlocProvider(
+      create: (context) =>
           GenresBloc(genreRepository: _genreRepo)..add(FetchGenres()),
     ),
     BlocProvider(
@@ -212,6 +224,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Streaming App',
+      onGenerateRoute: AppRouter.onGeneratedRoute,
       home: MultiBlocListener(
         listeners: [
           BlocListener<UserLocationBloc, UserLocationState>(

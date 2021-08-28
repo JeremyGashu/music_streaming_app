@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
@@ -13,6 +14,9 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
+import 'package:streaming_mobile/blocs/featured/featured_bloc.dart';
+import 'package:streaming_mobile/blocs/featured/featured_event.dart';
+import 'package:streaming_mobile/blocs/featured/featured_state.dart';
 import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
 import 'package:streaming_mobile/blocs/genres/genres_event.dart';
 import 'package:streaming_mobile/blocs/genres/genres_state.dart';
@@ -25,9 +29,9 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
-import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/audio_player_task.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/ad_container.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
@@ -40,6 +44,7 @@ import 'package:streaming_mobile/presentation/common_widgets/section_title.dart'
 import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/tracklistitem.dart';
+import 'package:streaming_mobile/presentation/homepage/widgets/featured_album.dart';
 import 'package:streaming_mobile/presentation/homepage/widgets/loading_genre_shimmer.dart';
 import 'package:streaming_mobile/presentation/new_releases/all_newrelease_albums.dart';
 import 'package:streaming_mobile/presentation/new_releases/all_newrelease_tracks.dart';
@@ -142,6 +147,7 @@ class _HomePageState extends State<HomePage> {
           BlocProvider.of<ArtistBloc>(context).add(LoadInitArtists());
           BlocProvider.of<NewReleaseBloc>(context).add(LoadNewReleasesInit());
           BlocProvider.of<GenresBloc>(context).add(FetchGenres());
+          BlocProvider.of<FeaturedAlbumBloc>(context).add(LoadFeaturedAlbumsInit());
         },
         child: SafeArea(
           child: Stack(
@@ -153,63 +159,58 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       decoration: BoxDecoration(color: Colors.white),
                       height: 220,
-                      child: CarouselSlider(
-                        options: CarouselOptions(
-                            height: 220,
-                            viewportFraction: 1,
-                            initialPage: 0,
-                            enableInfiniteScroll: false),
-                        items: carouselImages
-                            .map((e) => Container(
-                                  margin: EdgeInsets.only(right: 8.0),
-                                  child: Stack(children: [
-                                    Image.asset(
-                                      e,
-                                      fit: BoxFit.cover,
-                                      width: 1000,
+                      child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
+                        builder: (context, state) {
+                          if(state is LoadedFeaturedAlbum) {
+                            return state.albums.length == 0 ? Center(child: Text('No Featured Album!', style: TextStyle(fontSize: 30, ),),) : CarouselSlider(
+                              options: CarouselOptions(
+                                  height: 220,
+                                  viewportFraction: 1,
+                                  initialPage: 0,
+                                  enableInfiniteScroll: false),
+                              items: state.albums
+                                  .map((e) => GestureDetector(onTap: () {
+                                    Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: e);
+                              },child: FeaturedAlbum(e)))
+                                  .toList(),
+                            );
+                          }
+                          else if(state is LoadingFeaturedAlbum) {
+                            return Center(child: SpinKitRipple(color: Colors.grey,size: 60,),);
+                          }
+                          else if(state is LoadingFeaturedAlbumError){
+                            return Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Error Loading Featured Albums!',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
                                     ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                        height: 100.0,
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.bottomCenter,
-                                                end: Alignment.topCenter,
-                                                colors: [
-                                              kPurple,
-                                              kViolet.withOpacity(0.0)
-                                            ])),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.update,
+                                        color:
+                                        Colors.redAccent.withOpacity(0.8),
+                                        size: 30,
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Amelkalew',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                            Text(
-                                              'Dawit Getachew',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: kYellow),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ]),
-                                ))
-                            .toList(),
+                                      onPressed: () {
+                                        BlocProvider.of<FeaturedAlbumBloc>(context)
+                                            .add(LoadFeaturedAlbumsInit());
+                                      }),
+                                ],
+                              ),
+                            );
+                          }
+                          return Container();
+
+                        }
                       ),
                     ),
                     adContainer('ad.png'),
@@ -217,10 +218,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Newly Released Songs",
                         callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => AllNewReleaseTracks()));
+                          Navigator.pushNamed(context, AllNewReleaseTracks.allNewReleaseTracksRouterName);
                         }),
                     Container(
                       height: 200,
@@ -284,11 +282,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Newly Released Albums",
                         callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) =>
-                                      AllNewReleasedAlbumsPage()));
+                          Navigator.pushNamed(context,AllNewReleasedAlbumsPage.allNewReleaseAlbumsRouterName);
                         }),
                     Container(
                       height: 200,
@@ -352,10 +346,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Popular Playlists",
                         callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => AllPlaylistsPage()));
+                          Navigator.pushNamed(context,AllPlaylistsPage.allPlaylistsRouterName);
                         }),
                     Container(
                       height: 170,
@@ -485,10 +476,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Artists",
                         callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => AllArtistsPage()));
+                          Navigator.pushNamed(context,AllArtistsPage.allPArtistsRouterName);
                         }),
                     Container(
                       height: 180,
@@ -552,10 +540,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Albums",
                         callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => AllAlbumsPage()));
+                          Navigator.pushNamed(context,AllAlbumsPage.allAlbumsRouterName);
                         }),
                     Container(
                       height: 200,
@@ -618,8 +603,7 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Single Tracks",
                         callback: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) => AllTracks()));
+                          Navigator.pushNamed(context,AllTracks.allTracksRouterName);
                         }),
                     Container(
                       height: 200,

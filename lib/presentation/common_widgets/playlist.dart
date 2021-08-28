@@ -22,13 +22,7 @@ class SinglePlaylist extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return PlaylistDetail(
-                            tracks: playlist.songs.map((e) => e.song).toList(),
-                            playlistInfo: playlist,
-                          );
-                        }));
+                        Navigator.pushNamed(context, PlaylistDetail.playlistDetailRouterName, arguments: playlist);
                       },
                       child: Stack(
                         children: [
@@ -139,10 +133,7 @@ class SinglePlaylist extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return PlaylistDetail();
-                        }));
+                        Navigator.pushNamed(context, PlaylistDetail.playlistDetailRouterName, arguments: playlist);
                       },
                       child: Stack(
                         children: [

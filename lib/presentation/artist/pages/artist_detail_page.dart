@@ -19,9 +19,9 @@ import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class ArtistDetailPage extends StatefulWidget {
-  final String artistId;
+  static const String artistDetailPageRouteName = 'artist_detail_page_route_name';
   final ArtistModel artist;
-  ArtistDetailPage({this.artistId, this.artist});
+  ArtistDetailPage({this.artist});
 
   @override
   _ArtistDetailPageState createState() => _ArtistDetailPageState();
@@ -37,8 +37,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
 
   @override
   void initState() {
-    albumBloc.add(LoadAlbumsByArtistId(artistId: widget.artistId));
-    trackBloc.add(LoadSongsByArtistId(artistId: widget.artistId));
+    albumBloc.add(LoadAlbumsByArtistId(artistId: widget.artist.artistId));
+    trackBloc.add(LoadSongsByArtistId(artistId: widget.artist.artistId));
     super.initState();
   }
 
@@ -189,7 +189,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                                       ),
                                       onPressed: () {
                                         albumBloc.add(LoadAlbumsByArtistId(
-                                            artistId: widget.artistId));
+                                            artistId: widget.artist.artistId));
                                       }),
                                 ],
                               ),
@@ -259,7 +259,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                                       ),
                                       onPressed: () {
                                         trackBloc.add(LoadSongsByArtistId(
-                                            artistId: widget.artistId));
+                                            artistId: widget.artist.artistId));
                                       }),
                                 ],
                               ),

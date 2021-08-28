@@ -11,6 +11,7 @@ import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 class AllNewReleasedAlbumsPage extends StatefulWidget {
+  static const String allNewReleaseAlbumsRouterName = 'all_new_release_albums_router_name';
   @override
   _AllNewReleasedAlbumsPageState createState() =>
       _AllNewReleasedAlbumsPageState();
