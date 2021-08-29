@@ -23,15 +23,13 @@ class AnalyticsAdapter extends TypeAdapter<Analytics> {
       duration: fields[3] as int,
       listenedAt: fields[4] as DateTime,
       location: fields[5] as String,
-      createdAt: fields[6] as DateTime,
-      updatedAt: fields[7] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Analytics obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.analyticsId)
       ..writeByte(1)
@@ -43,11 +41,7 @@ class AnalyticsAdapter extends TypeAdapter<Analytics> {
       ..writeByte(4)
       ..write(obj.listenedAt)
       ..writeByte(5)
-      ..write(obj.location)
-      ..writeByte(6)
-      ..write(obj.createdAt)
-      ..writeByte(7)
-      ..write(obj.updatedAt);
+      ..write(obj.location);
   }
 
   @override

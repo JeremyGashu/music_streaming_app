@@ -59,7 +59,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               color: Colors.white70,
                             ),
                             iconSize: 40,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                         Expanded(

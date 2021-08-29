@@ -110,6 +110,9 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !playlistBloc.isLoading) {
+                                  if(playlistBloc.state is LoadedPlaylist) {
+                                    if((playlistBloc.state as LoadedPlaylist).playlists.length == 0) return;
+                                  }
                               playlistBloc
                                 ..isLoading = true
                                 ..add(LoadPlaylists());
@@ -136,7 +139,10 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
                       state is LoadedPlaylist
                           ? state.playlists.length == 0
-                              ? Text('No More Playlists!')
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 25),
+                                child: Text('No More Playlists!'),
+                              )
                               : Container()
                           : Container(),
                     ],

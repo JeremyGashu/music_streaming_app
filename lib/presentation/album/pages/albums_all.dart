@@ -102,12 +102,16 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                     children: [
                       Expanded(
                           child: GridView.count(
+                            primary: false,
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !albumBloc.isLoading) {
+                                  if(albumBloc.state is LoadedAlbum) {
+                                    if((albumBloc.state as LoadedAlbum).albums.length == 0) return;
+                                  }
                               albumBloc
                                 ..isLoading = true
                                 ..add(LoadAlbums());
@@ -130,7 +134,10 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
                       state is LoadedAlbum
                           ? state.albums.length == 0
-                              ? Text('No More Albums!')
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 25),
+                                child: Text('No More Albums!'),
+                              )
                               : Container()
                           : Container(),
                     ],

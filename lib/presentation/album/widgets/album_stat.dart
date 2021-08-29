@@ -34,7 +34,7 @@ Widget albumStat({Album album}) {
               width: 5,
             ),
             Text(
-              '${album.views}',
+              '${album.likeCount ?? 0}',
               style: TextStyle(
                 fontSize: 18,
               ),

@@ -5,40 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
 
-var testData = '''
-{
-  "_metadata": {
-    "page": 5,
-    "per_page": 20,
-    "page_count": 20,
-    "total_count": 521,
-    "Links": [
-      {
-        "self": "/songs?page=5&per_page=20",
-        "first": "/songs?page=0&per_page=20",
-        "previous": "/songs?page=4&per_page=20",
-        "next": "/songs?page=6&per_page=20",
-        "last": "/songs?page=26&per_page=20"
-      }
-    ]
-  },
-  "data": {
-    "id": "id",
-    "title": "title",
-    "description": "description",
-    "created_by": "created_by",
-    "created_at": "created_at",
-    "cover_img": "cover_img",
-    "views": 123,
-    "track_count": 12,
-    "type": "type",
-    "likes": 123
-  },
-  "success": true,
-  "status": 200
-}
-''';
-
 class ArtistDataProvider {
   final http.Client client;
 

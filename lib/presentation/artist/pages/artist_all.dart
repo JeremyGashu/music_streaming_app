@@ -109,6 +109,9 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !artistBloc.isLoading) {
+                                  if(artistBloc.state is LoadedArtist) {
+                                    if((artistBloc.state as LoadedArtist).artists.length == 0) return;
+                                  }
                               artistBloc
                                 ..isLoading = true
                                 ..add(LoadArtists());
@@ -131,7 +134,10 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
                       state is LoadedArtist
                           ? state.artists.length == 0
-                              ? Text('No More Artists!')
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 25),
+                                child: Text('No More Artists!'),
+                              )
                               : Container()
                           : Container(),
                     ],

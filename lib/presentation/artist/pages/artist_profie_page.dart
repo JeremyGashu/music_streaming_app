@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
-import 'package:streaming_mobile/presentation/login/login_page.dart';
+import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
+import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 
 class ArtistProfilePage extends StatelessWidget {
   @override
@@ -65,12 +66,11 @@ class ArtistProfilePage extends StatelessWidget {
                 height: 20,
               ),
               //ad container
-              _adContainer('ad.png'),
+              // _adContainer('ad.png'),
 
               SizedBox(
                 height: 10,
               ),
-
               _listSelectorTiles(
                 title: 'Notification',
                 icon: Icon(
@@ -81,12 +81,15 @@ class ArtistProfilePage extends StatelessWidget {
               ),
 
               _listSelectorTiles(
-                title: 'Edit Profile',
+                title: 'Change Password',
                 icon: Icon(
-                  Icons.person,
+                  Icons.lock,
                   color: Colors.purple,
                   size: 25,
                 ),
+                onTap: () {
+                  Navigator.pushNamed(context, ResetPasswordPage.resetPasswordPageRouterName);
+                }
               ),
               // _listSelectorTiles(
               //   title: 'Setting',
@@ -106,7 +109,7 @@ class ArtistProfilePage extends StatelessWidget {
                   onTap: () async {
                     await AudioService.stop();
                     BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
-                    Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(context, WelcomePage.welcomePageRouteName, (route) => false);
                   }),
             ],
           ),

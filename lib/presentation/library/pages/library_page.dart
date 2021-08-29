@@ -44,7 +44,7 @@ class LibraryPage extends StatelessWidget {
                   ],
                 ),
               ),
-              AdContainer('ad.png'),
+              // AdContainer('ad.png'),
               Container(
                 height: 60,
                 color: kPurple.withOpacity(.2),

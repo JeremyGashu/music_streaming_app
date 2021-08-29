@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 
@@ -34,9 +36,12 @@ final skipToNextControl = MediaControl(
 class AudioPlayerTask extends BackgroundAudioTask {
   final _audioPlayer = AudioPlayer();
 
+  bool isOpen = Hive.isBoxOpen("analytics_box");
+
   int _queueIndex = 0;
   static int clickDelay = 0;
   int _timeCounter = -1;
+  Map<String, List<Map>> _analyticsData = {'data': []};
 
   List<MediaItem> _queue = <MediaItem>[];
   StreamSubscription playerEventSubscription;
@@ -63,6 +68,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
     analyticsTimerStream.pause();
     print('analytics => started analytics');
     print('analytics => current data $_timeCounter');
+
+    LocationData locationData = await LocalHelper.getUserLocation();
+    print('location => ${locationData.toString()}');
 
     /// Audio playback event listener.
     ///
@@ -106,20 +114,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
     if ((_currentMediaItemId != null) &&
         (_currentMediaItemId != _mediaItem.id)) {
       Analytics _analytics = Analytics(
-          duration: _timeCounter,
-          location: '',
-          songId: _currentMediaItemId,
-          listenedAt: DateTime.now(),
-          userId: '');
-      print('analytics => to send $_analytics');
-      var analyticsBox = await Hive.box<Analytics>('analytics_box');
-      debugPrint('analytics => before write ${analyticsBox.values.toList()}');
+        duration: _timeCounter,
+        songId: _mediaItem.id,);
+      print('analytics => to save ${_analytics.toJson()}');
+      _analyticsData['data'].add(_analytics.toJson());
+      prefs.setString('analytics_data', jsonEncode(_analyticsData));
 
-      await analyticsBox.add(_analytics);
-      debugPrint('analytics => after write ${analyticsBox.values.toList()}');
+      print('analytics => after write ${_analyticsData}}');
       _currentMediaItemId = _mediaItem.id;
       _timeCounter = -1;
-      debugPrint('analytics => changed music, reset the counter and save the data');
+      debugPrint(
+          'analytics => changed music, reset the counter and save the data');
     }
     if (analyticsTimerStream.isPaused) {
       analyticsTimerStream.resume();
@@ -303,6 +308,24 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStop() async {
+    print('analytics => onStop being called');
+
+    analyticsTimerStream.pause();
+    Analytics _analytics = Analytics(
+        duration: _timeCounter,
+        songId: _mediaItem.id,);
+    print('analytics => to send $_analytics');
+    _analyticsData['data'].add(_analytics.toJson());
+
+    print('analytics => after write ${_analyticsData}');
+    await prefs.setString('analytics_data', jsonEncode(_analyticsData));
+    print('analytics => saved _analytics data');
+    _timeCounter = -1;
+
+    print('analytics => paused and sending analytics data');
+    print('analytics => current data $_timeCounter');
+    print('analytics => current data $_currentMediaItemId}');
+
     await _audioPlayer.stop();
 
     // Save the current media item details.
@@ -323,25 +346,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       processingState: AudioProcessingState.stopped,
       playing: false,
     );
-    analyticsTimerStream.pause();
-    Analytics _analytics = Analytics(
-        duration: _timeCounter,
-        location: '',
-        songId: _mediaItem.id,
-        listenedAt: DateTime.now(),
-        userId: '');
-    print('analytics => to send $_analytics');
-    print('analytics => to send $_analytics');
-      var analyticsBox = await Hive.box<Analytics>('analytics_box');
-      print('analytics => before write ${analyticsBox.values.toList()}');
 
-      await analyticsBox.add(_analytics);
-      print('analytics => after write ${analyticsBox.values.toList()}');
-    _timeCounter = -1;
-
-    print('analytics => paused and sending analytics data');
-    print('analytics => current data $_timeCounter');
-    print('analytics => current data $_currentMediaItemId}');
     await super.onStop();
   }
 

@@ -390,8 +390,10 @@ class Track {
     this.releasedAt,
     this.createdAt,
     this.updatedAt,
+    this.likeCount,
   });
 
+  int likeCount;
   String songId;
   String artistId;
   ArtistModel artist;
@@ -430,6 +432,7 @@ class Track {
         releasedAt: DateTime.parse(json["released_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        likeCount: json['like_counts']
       );
 
   Map<String, dynamic> toJson() => {

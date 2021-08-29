@@ -90,7 +90,7 @@ class Artist extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(top: 2.0),
                                 child: Text(
-                                  '35,926',
+                                  '${artist.likeCount ?? 0}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       color: kGray,
@@ -170,7 +170,7 @@ class Artist extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(top: 2.0),
                                 child: Text(
-                                  '35,926',
+                                  '${artist.likeCount}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       color: kGray,

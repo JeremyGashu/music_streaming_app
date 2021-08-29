@@ -110,7 +110,7 @@ class SinglePlaylist extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text(
-                                '${playlist.songs[0].song.views}',
+                                '${playlist.likeCount}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: kGray,

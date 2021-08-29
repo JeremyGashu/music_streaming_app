@@ -95,10 +95,10 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                             height: 120,
                             margin: EdgeInsets.only(top: 15),
                             decoration: BoxDecoration(
-                              color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10.0)),
                             ),
+                            child: Image.asset('assets/images/sewasew_logo.png'),
                           ),
                           SizedBox(
                             height: 10,

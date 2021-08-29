@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,7 +10,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
+import 'package:streaming_mobile/blocs/analytics/analytics_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
@@ -33,6 +38,7 @@ import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
 import 'package:streaming_mobile/core/app/app_router.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/analytics_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
@@ -77,8 +83,7 @@ final _authRepo =
 final _signUpRepo =
     SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
 
-final _analyticsRepo = AnalyticsRepository(
-    dataProvider: AnalyticsDataProvider(client: http.Client()));
+
 
 final _artistRepo =
     ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
@@ -101,10 +106,8 @@ final _configRepo = ConfigRepository(
     configDataProvider: ConfigDataProvider(client: http.Client()));
 final _featuredAlbumRepo = FeaturedAlbumRepository(
     dataProvider: FeaturedDataProvider(client: http.Client()));
-<<<<<<< HEAD
+    
 
-=======
->>>>>>> feature_manual_downloader
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -114,11 +117,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AuthDataAdapter());
   Hive.registerAdapter(AnalyticsAdapter());
-
-  var ab = await Hive.openBox<Analytics>('analytics_box');
-
-
-  debugPrint('analytics => box opened ${ab.values.toList()}');
+  
 
   // await setupLocator();
 
@@ -189,9 +188,6 @@ void main() async {
       create: (context) => NewReleaseBloc(newReleaseRepository: _newReleaseRepo)
         ..add(LoadNewReleasesInit()),
     ),
-    BlocProvider(
-        create: (context) =>
-            AnalyticsBloc(analyticsRepository: _analyticsRepo)),
     BlocProvider(
         create: (context) =>
             ConfigBloc(configRepository: _configRepo)..add(LoadConfigData())),

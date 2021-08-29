@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 
-Widget FeaturedAlbum (Album album) {
+Widget FeaturedAlbum(Album album) {
   return Container(
     margin: EdgeInsets.only(right: 8.0),
     child: Stack(children: [
@@ -15,7 +15,7 @@ Widget FeaturedAlbum (Album album) {
             color: Colors.grey,
           ),
         ),
-        imageUrl: album.artist.image,
+        imageUrl: album != null ? album.artist.image : '',
         errorWidget: (context, url, error) {
           return Image.asset(
             'assets/images/artist_image.jpg',
@@ -33,10 +33,7 @@ Widget FeaturedAlbum (Album album) {
               gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [
-                    kPurple,
-                    kViolet.withOpacity(0.0)
-                  ])),
+                  colors: [kPurple, kViolet.withOpacity(0.0)])),
         ),
       ),
       Align(
@@ -45,20 +42,18 @@ Widget FeaturedAlbum (Album album) {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                album.title,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                album != null ? album.title : 'Unknown Album',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               ),
               Text(
-                '${album.artist.firstName} ${album.artist.firstName}',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: kYellow),
+                album != null
+                    ? '${album.artist.firstName} ${album.artist.firstName}'
+                    : 'Unknown Artist',
+                style: TextStyle(fontWeight: FontWeight.bold, color: kYellow),
               ),
             ],
           ),

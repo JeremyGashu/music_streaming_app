@@ -1,9 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/analytics/analytics_state.dart';
-import 'package:streaming_mobile/core/utils/analytics_database.dart';
-import 'package:streaming_mobile/core/utils/locator.dart';
-import 'package:streaming_mobile/data/models/analytics.dart';
 import 'package:streaming_mobile/data/repository/analytics_repository.dart';
 
 import 'analytics_event.dart';
@@ -14,13 +11,23 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
 
   @override
   Stream<AnalyticsState> mapEventToState(AnalyticsEvent event) async* {
-    if (event is SendAnalyticsData) {
+    if (event is SendAnalyticsDataOnAppInit) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print('analytic => data to be sent ${prefs.getString('analytics_data')}');
       yield SendingAnalyticsData();
       try {
+        String savedAnalytics = prefs.getString('analytics_data');
+        if(savedAnalytics == null) {
+          yield InitialState();
+          return;
+        }
         bool isSent =
-            await analyticsRepository.sendAnalyticsData(analytics: []);
+            await analyticsRepository.sendAnalyticsData(analytics: savedAnalytics);
+        
         if (isSent) {
           yield SentAnalyticsData();
+          bool removed = await prefs.remove('analytics_data');
+          print('analytics => sent and removed $removed');
         } else {
           yield SendingAnalyticsDataError(
               message: 'Failed to send analytics data!');
@@ -30,12 +37,6 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
             message: 'Failed to send analytics data!');
         print(e);
       }
-    } else if (event is SaveAnalyticsData) {
-      var analyticsBox = await Hive.box<Analytics>('analytics_box');
-      // AnalyticsDatabase analyticsDatabase = AnalyticsDatabase(analyticsBox);
-      yield SavingAnalyticsData();
-      analyticsBox.add(event.analytics);
-      yield SavedAnalyticsData();
     }
   }
 }

@@ -53,8 +53,10 @@ class Album {
     this.tracks,
     this.createdAt,
     this.updatedAt,
+    this.likeCount,
   });
 
+  int likeCount;
   String albumId;
   String artistId;
   ArtistModel artist;
@@ -70,6 +72,7 @@ class Album {
     return Album(
       albumId: json["album_id"],
       artistId: json["artist_id"],
+      likeCount: json['like_counts'],
       artist:
           json["artist"] != null ? ArtistModel.fromJson(json["artist"]) : null,
       title: json["title"],
