@@ -153,6 +153,7 @@ class ArtistModel {
     this.email,
     this.createdAt,
     this.updatedAt,
+    this.likeCount,
   });
 
   String artistId;
@@ -162,6 +163,7 @@ class ArtistModel {
   String email;
   DateTime createdAt;
   DateTime updatedAt;
+  int likeCount;
 
   factory ArtistModel.fromJson(Map<String, dynamic> json) => ArtistModel(
         artistId: json["artist_id"],
@@ -171,6 +173,7 @@ class ArtistModel {
         email: json["email"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        likeCount: json['like_counts']
       );
 
   Map<String, dynamic> toJson() => {

@@ -17,22 +17,29 @@ class FeaturedAlbumBloc extends Bloc<FeaturedAlbumEvent, FeaturedAlbumState> {
     if (event is LoadFeaturedAlbums) {
       try {
         yield LoadingFeaturedAlbum();
-        var featuredAlbumResponse = await featuredAlbumRepo.getFeaturedAlbums(page: page);
-        List<Album> albums = featuredAlbumResponse.data.data
-            .map((albumInfo) => albumInfo.album)
-            .toList();
+        var featuredAlbumResponse =
+            await featuredAlbumRepo.getFeaturedAlbums(page: page);
+        if (page > featuredAlbumResponse.data.metaData.pageCount) {
+          yield LoadedFeaturedAlbum(albums: []);
+        } else {
+          List<Album> albums = featuredAlbumResponse.data.data
+              .map((albumInfo) => albumInfo.album)
+              .toList();
 
-        yield LoadedFeaturedAlbum(albums: albums);
-        page++;
+          yield LoadedFeaturedAlbum(albums: albums);
+          page++;
+        }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingFeaturedAlbumError(message: "Error one loading featured album!");
+        yield LoadingFeaturedAlbumError(
+            message: "Error one loading featured album!");
         throw Exception(e);
       }
     } else if (event is LoadFeaturedAlbumsInit) {
       try {
         yield LoadingFeaturedAlbum();
-        var featuredAlbumResponse = await featuredAlbumRepo.getFeaturedAlbums(page: 1);
+        var featuredAlbumResponse =
+            await featuredAlbumRepo.getFeaturedAlbums(page: 1);
         List<Album> albums = featuredAlbumResponse.data.data
             .map((albumInfo) => albumInfo.album)
             .toList();
@@ -41,7 +48,8 @@ class FeaturedAlbumBloc extends Bloc<FeaturedAlbumEvent, FeaturedAlbumState> {
         page = 1;
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingFeaturedAlbumError(message: "Error one loading featured album!");
+        yield LoadingFeaturedAlbumError(
+            message: "Error one loading featured album!");
         throw Exception(e);
       }
     }

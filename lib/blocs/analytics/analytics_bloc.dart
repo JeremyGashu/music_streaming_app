@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/analytics/analytics_state.dart';
 import 'package:streaming_mobile/data/repository/analytics_repository.dart';
 
@@ -10,13 +11,23 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
 
   @override
   Stream<AnalyticsState> mapEventToState(AnalyticsEvent event) async* {
-    if (event is SendAnalyticsData) {
+    if (event is SendAnalyticsDataOnAppInit) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print('analytic => data to be sent ${prefs.getString('analytics_data')}');
       yield SendingAnalyticsData();
       try {
-        bool isSent = await analyticsRepository.sendAnalyticsData(
-            analytics: event.analytics);
+        String savedAnalytics = prefs.getString('analytics_data');
+        if(savedAnalytics == null) {
+          yield InitialState();
+          return;
+        }
+        bool isSent =
+            await analyticsRepository.sendAnalyticsData(analytics: savedAnalytics);
+        
         if (isSent) {
           yield SentAnalyticsData();
+          bool removed = await prefs.remove('analytics_data');
+          print('analytics => sent and removed $removed');
         } else {
           yield SendingAnalyticsDataError(
               message: 'Failed to send analytics data!');

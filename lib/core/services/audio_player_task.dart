@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
+
+import 'package:streaming_mobile/data/models/analytics.dart';
 
 final playControl = MediaControl(
   androidIcon: 'drawable/ic_action_play_arrow',
@@ -30,11 +35,20 @@ final skipToNextControl = MediaControl(
 
 class AudioPlayerTask extends BackgroundAudioTask {
   final _audioPlayer = AudioPlayer();
+
+  bool isOpen = Hive.isBoxOpen("analytics_box");
+
   int _queueIndex = 0;
   static int clickDelay = 0;
+  int _timeCounter = -1;
+  Map<String, List<Map>> _analyticsData = {'data': []};
 
   List<MediaItem> _queue = <MediaItem>[];
   StreamSubscription playerEventSubscription;
+
+  StreamSubscription analyticsTimerStream;
+  String _currentMediaItemId;
+
   SharedPreferences prefs;
 
   bool get hasNext => _queueIndex + 1 < _queue.length;
@@ -46,6 +60,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStart(Map<String, dynamic> params) async {
     prefs = await SharedPreferences.getInstance();
+
+    analyticsTimerStream = Stream.periodic(Duration(seconds: 1)).listen((_) {
+      _timeCounter++;
+    });
+    print('analytics => started analytics');
+    analyticsTimerStream.pause();
+    print('analytics => started analytics');
+    print('analytics => current data $_timeCounter');
+
+    LocationData locationData = await LocalHelper.getUserLocation();
+    print('location => ${locationData.toString()}');
 
     /// Audio playback event listener.
     ///
@@ -86,6 +111,28 @@ class AudioPlayerTask extends BackgroundAudioTask {
         controls: [MediaControl.pause, MediaControl.stop],
         playing: true,
         processingState: AudioProcessingState.ready);
+    if ((_currentMediaItemId != null) &&
+        (_currentMediaItemId != _mediaItem.id)) {
+      Analytics _analytics = Analytics(
+        duration: _timeCounter,
+        songId: _mediaItem.id,);
+      print('analytics => to save ${_analytics.toJson()}');
+      _analyticsData['data'].add(_analytics.toJson());
+      prefs.setString('analytics_data', jsonEncode(_analyticsData));
+
+      print('analytics => after write ${_analyticsData}}');
+      _currentMediaItemId = _mediaItem.id;
+      _timeCounter = -1;
+      debugPrint(
+          'analytics => changed music, reset the counter and save the data');
+    }
+    if (analyticsTimerStream.isPaused) {
+      analyticsTimerStream.resume();
+      print('analytics => resumed counter again');
+      print('analytics => current data $_timeCounter');
+      _currentMediaItemId = _mediaItem.id;
+      print('analytics => current media_id ${_mediaItem.id}');
+    }
   }
 
   @override
@@ -96,6 +143,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
       await _audioPlayer.pause();
       // Save the current player position in seconds.
       await prefs.setInt('position', _audioPlayer.position.inSeconds);
+      analyticsTimerStream.pause();
+      print('analytics => paused counter');
+      print('analytics => current data $_timeCounter');
+      print('analytics => current data ${_mediaItem.id}');
     }
   }
 
@@ -140,8 +191,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
       /// To play from local path
       await playFromLocal(_mediaItem.extras['source']);
     } else {
-      /// To play directly from the given url in [MediaItem]
-      // TODO: start download here
       print("download started from skip method");
       LocalHelper.downloadMedia(_mediaItem.extras['source'], _mediaItem.id);
       // await _audioPlayer.setUrl(_mediaItem.extras['source']);
@@ -150,6 +199,14 @@ class AudioPlayerTask extends BackgroundAudioTask {
       );
       await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
+    analyticsTimerStream.pause();
+    print('analytics => paused and sending analytics data');
+    print('analytics => current data $_timeCounter');
+    print('analytics => current data $_currentMediaItemId}');
+    _timeCounter = -1;
+
+    print('analytics => reset data $_timeCounter}');
+
     await onUpdateMediaItem(_mediaItem);
     await onPlay();
   }
@@ -251,6 +308,24 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStop() async {
+    print('analytics => onStop being called');
+
+    analyticsTimerStream.pause();
+    Analytics _analytics = Analytics(
+        duration: _timeCounter,
+        songId: _mediaItem.id,);
+    print('analytics => to send $_analytics');
+    _analyticsData['data'].add(_analytics.toJson());
+
+    print('analytics => after write ${_analyticsData}');
+    await prefs.setString('analytics_data', jsonEncode(_analyticsData));
+    print('analytics => saved _analytics data');
+    _timeCounter = -1;
+
+    print('analytics => paused and sending analytics data');
+    print('analytics => current data $_timeCounter');
+    print('analytics => current data $_currentMediaItemId}');
+
     await _audioPlayer.stop();
 
     // Save the current media item details.

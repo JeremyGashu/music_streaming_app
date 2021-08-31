@@ -74,7 +74,9 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                   color: Colors.white70,
                                 ),
                                 iconSize: 40,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                               ),
                             ),
                             Expanded(
@@ -97,8 +99,8 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                               width: 120,
                               height: 120,
                               margin: EdgeInsets.only(top: 40),
+                              child: Image.asset('assets/images/sewasew_logo.png'),
                               decoration: BoxDecoration(
-                                color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
                               ),

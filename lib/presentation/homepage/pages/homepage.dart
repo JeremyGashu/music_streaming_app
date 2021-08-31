@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
@@ -33,7 +34,6 @@ import 'package:streaming_mobile/core/services/audio_player_task.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
-import 'package:streaming_mobile/presentation/common_widgets/ad_container.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/genre.dart';
@@ -147,7 +147,8 @@ class _HomePageState extends State<HomePage> {
           BlocProvider.of<ArtistBloc>(context).add(LoadInitArtists());
           BlocProvider.of<NewReleaseBloc>(context).add(LoadNewReleasesInit());
           BlocProvider.of<GenresBloc>(context).add(FetchGenres());
-          BlocProvider.of<FeaturedAlbumBloc>(context).add(LoadFeaturedAlbumsInit());
+          BlocProvider.of<FeaturedAlbumBloc>(context)
+              .add(LoadFeaturedAlbumsInit());
         },
         child: SafeArea(
           child: Stack(
@@ -160,65 +161,83 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(color: Colors.white),
                       height: 220,
                       child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
-                        builder: (context, state) {
-                          if(state is LoadedFeaturedAlbum) {
-                            return state.albums.length == 0 ? Center(child: Text('No Featured Album!', style: TextStyle(fontSize: 30, ),),) : CarouselSlider(
-                              options: CarouselOptions(
-                                  height: 220,
-                                  viewportFraction: 1,
-                                  initialPage: 0,
-                                  enableInfiniteScroll: false),
-                              items: state.albums
-                                  .map((e) => GestureDetector(onTap: () {
-                                    Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: e);
-                              },child: FeaturedAlbum(e)))
-                                  .toList(),
-                            );
-                          }
-                          else if(state is LoadingFeaturedAlbum) {
-                            return Center(child: SpinKitRipple(color: Colors.grey,size: 60,),);
-                          }
-                          else if(state is LoadingFeaturedAlbumError){
-                            return Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Error Loading Featured Albums!',
+                          builder: (context, state) {
+                        if (state is LoadedFeaturedAlbum) {
+                          return state.albums.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Featured Album!',
                                     style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 16,
+                                      fontSize: 30,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
+                                )
+                              : CarouselSlider(
+                                  options: CarouselOptions(
+                                      height: 220,
+                                      viewportFraction: 1,
+                                      initialPage: 0,
+                                      enableInfiniteScroll: false),
+                                  items: state.albums
+                                      .map((e) => GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context,
+                                                AlbumDetail
+                                                    .albumDetailRouterName,
+                                                arguments: e);
+                                          },
+                                          child: FeaturedAlbum(e)))
+                                      .toList(),
+                                );
+                        } else if (state is LoadingFeaturedAlbum) {
+                          return Center(
+                            child: SpinKitRipple(
+                              color: Colors.grey,
+                              size: 60,
+                            ),
+                          );
+                        } else if (state is LoadingFeaturedAlbumError) {
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Error Loading Featured Albums!',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
                                   ),
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.update,
-                                        color:
-                                        Colors.redAccent.withOpacity(0.8),
-                                        size: 30,
-                                      ),
-                                      onPressed: () {
-                                        BlocProvider.of<FeaturedAlbumBloc>(context)
-                                            .add(LoadFeaturedAlbumsInit());
-                                      }),
-                                ],
-                              ),
-                            );
-                          }
-                          return Container();
-
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.update,
+                                      color: Colors.redAccent.withOpacity(0.8),
+                                      size: 30,
+                                    ),
+                                    onPressed: () {
+                                      BlocProvider.of<FeaturedAlbumBloc>(
+                                              context)
+                                          .add(LoadFeaturedAlbumsInit());
+                                    }),
+                              ],
+                            ),
+                          );
                         }
-                      ),
+                        return Container();
+                      }),
                     ),
-                    adContainer('ad.png'),
-                    //TODO: do the featured lists
+                    // adContainer('ad.png'),
                     SectionTitle(
                         title: "Newly Released Songs",
                         callback: () {
-                          Navigator.pushNamed(context, AllNewReleaseTracks.allNewReleaseTracksRouterName);
+                          Navigator.pushNamed(
+                              context,
+                              AllNewReleaseTracks
+                                  .allNewReleaseTracksRouterName);
                         }),
                     Container(
                       height: 200,
@@ -282,7 +301,10 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Newly Released Albums",
                         callback: () {
-                          Navigator.pushNamed(context,AllNewReleasedAlbumsPage.allNewReleaseAlbumsRouterName);
+                          Navigator.pushNamed(
+                              context,
+                              AllNewReleasedAlbumsPage
+                                  .allNewReleaseAlbumsRouterName);
                         }),
                     Container(
                       height: 200,
@@ -346,7 +368,8 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Popular Playlists",
                         callback: () {
-                          Navigator.pushNamed(context,AllPlaylistsPage.allPlaylistsRouterName);
+                          Navigator.pushNamed(
+                              context, AllPlaylistsPage.allPlaylistsRouterName);
                         }),
                     Container(
                       height: 170,
@@ -476,7 +499,8 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Artists",
                         callback: () {
-                          Navigator.pushNamed(context,AllArtistsPage.allPArtistsRouterName);
+                          Navigator.pushNamed(
+                              context, AllArtistsPage.allPArtistsRouterName);
                         }),
                     Container(
                       height: 180,
@@ -536,11 +560,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    adContainer('ad.png'),
+                    // adContainer('ad.png'),
                     SectionTitle(
                         title: "Albums",
                         callback: () {
-                          Navigator.pushNamed(context,AllAlbumsPage.allAlbumsRouterName);
+                          Navigator.pushNamed(
+                              context, AllAlbumsPage.allAlbumsRouterName);
                         }),
                     Container(
                       height: 200,
@@ -603,7 +628,8 @@ class _HomePageState extends State<HomePage> {
                     SectionTitle(
                         title: "Single Tracks",
                         callback: () {
-                          Navigator.pushNamed(context,AllTracks.allTracksRouterName);
+                          Navigator.pushNamed(
+                              context, AllTracks.allTracksRouterName);
                         }),
                     Container(
                       height: 200,

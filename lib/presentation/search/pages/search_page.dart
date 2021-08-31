@@ -15,6 +15,7 @@ import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/blocs/search/search_state.dart' as searchState;
 import 'package:streaming_mobile/blocs/search/search_state.dart';
 import 'package:streaming_mobile/core/app/size_configs.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/music_tile.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
@@ -22,6 +23,9 @@ import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+import 'package:streaming_mobile/presentation/new_releases/all_newrelease_albums.dart';
+import 'package:streaming_mobile/presentation/new_releases/all_newrelease_tracks.dart';
+import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart';
 import 'package:streaming_mobile/presentation/search/widgets/album_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/artists_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/playlist_result.dart';
@@ -153,7 +157,13 @@ class _SearchPageState extends State<SearchPage>
                         ),
 
                         SectionTitle(
-                            title: 'Newly Released Albums', callback: () {}),
+                            title: "Newly Released Albums",
+                            callback: () {
+                              Navigator.pushNamed(
+                                  context,
+                                  AllNewReleasedAlbumsPage
+                                      .allNewReleaseAlbumsRouterName);
+                            }),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -215,7 +225,13 @@ class _SearchPageState extends State<SearchPage>
                         ),
 
                         SectionTitle(
-                            title: 'Newly Released Songs', callback: () {}),
+                            title: "Newly Released Songs",
+                            callback: () {
+                              Navigator.pushNamed(
+                                  context,
+                                  AllNewReleaseTracks
+                                      .allNewReleaseTracksRouterName);
+                            }),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -277,7 +293,11 @@ class _SearchPageState extends State<SearchPage>
                         ),
 
                         SectionTitle(
-                            title: 'Popular Playlists', callback: () {}),
+                            title: "Popular Playlists",
+                            callback: () {
+                              Navigator.pushNamed(context,
+                                  AllPlaylistsPage.allPlaylistsRouterName);
+                            }),
                         Container(
                           height: 170,
                           child: BlocBuilder<PlaylistBloc, PlaylistState>(
@@ -338,7 +358,11 @@ class _SearchPageState extends State<SearchPage>
                             },
                           ),
                         ),
-                        SectionTitle(title: 'Albums', callback: () {}),
+                        SectionTitle(
+                        title: "Albums",
+                        callback: () {
+                          Navigator.pushNamed(context,AllAlbumsPage.allAlbumsRouterName);
+                        }),
                         Container(
                           height: 200,
                           child: BlocBuilder<AlbumBloc, AlbumState>(

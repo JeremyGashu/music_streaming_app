@@ -59,7 +59,7 @@ class Datum {
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     featuredAlbumId: json["featured_album_id"],
     albumId: json["album_id"],
-    album: Album.fromJson(json["album"]),
+    album:json["album"] != null ? Album.fromJson(json["album"]) : null,
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );

@@ -109,6 +109,9 @@ class _AllTracksState extends State<AllTracks> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !trackBloc.isLoading) {
+                                  if(trackBloc.state is LoadedTracks) {
+                                    if((trackBloc.state as LoadedTracks).tracks.length == 0) return;
+                                  }
                               trackBloc
                                 ..isLoading = true
                                 ..add(LoadTracks());
@@ -135,7 +138,10 @@ class _AllTracksState extends State<AllTracks> {
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
                       state is LoadedTracks
                           ? state.tracks.length == 0
-                              ? Text('No More Tracks!')
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 25),
+                                child: Text('No More Tracks!'),
+                              )
                               : Container()
                           : Container(),
                     ],

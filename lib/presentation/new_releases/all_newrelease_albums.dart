@@ -112,6 +112,9 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !newReleaseBloc.isLoading) {
+                                  if(newReleaseBloc.state is LoadedNewReleases) {
+                                    if((newReleaseBloc.state as LoadedNewReleases).newRelease.albums.length == 0) return;
+                                  }
                               newReleaseBloc
                                 ..isLoading = true
                                 ..add(LoadNewReleases());
@@ -138,7 +141,10 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
                       state is LoadedNewReleases
                           ? state.newRelease.songs.length == 0
-                              ? Text('No More New Album!')
+                              ? Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 25),
+                                child: Text('No More Albums!'),
+                              )
                               : Container()
                           : Container(),
                     ],

@@ -8,6 +8,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
+import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const String loginPageRouteName = 'login_page_route_name';
@@ -40,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
               } else if (state is Authenticated) {
-                Navigator.pushNamedAndRemoveUntil(context, MainPage.mainPageRouterName, (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MainPage.mainPageRouterName, (route) => false);
               }
             }, builder: (context, state) {
               return Column(
@@ -61,7 +63,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.white70,
                             ),
                             iconSize: 40,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                         Expanded(
@@ -216,13 +220,18 @@ class _LoginPageState extends State<LoginPage> {
                             height: 10,
                           ),
 
+                          
+
                           Container(
                             width: double.infinity,
                             child: Align(
                               alignment: AlignmentDirectional.centerEnd,
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(context,ResetPasswordPage.resetPasswordPageRouterName);
+                                  Navigator.pushNamed(
+                                      context,
+                                      ResetPasswordPage
+                                          .resetPasswordPageRouterName);
                                 },
                                 child: Text(
                                   'Forgot Password',

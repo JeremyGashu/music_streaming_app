@@ -23,7 +23,7 @@ final ALBUM_BY_ARTIST =
     'http://138.68.163.236:8889/v1/albums?page=1&per_page=10&sort=ASC&search_by=artist_id&search_key=';
 final NEW_RELEASE =
     'http://138.68.163.236:8889/v1/new_releases?page=1&per_page=10';
-final ANALYTICS_URL = 'http://138.68.163.236:8889/v1/analytics';
+final ANALYTICS_URL = 'http://138.68.163.236:8889/v1/analytics/bulk';
 //todo: genre
 //todo: analytics
 //todo: getOtp

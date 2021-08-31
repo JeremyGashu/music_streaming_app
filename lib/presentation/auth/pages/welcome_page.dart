@@ -5,6 +5,7 @@ import 'package:streaming_mobile/presentation/auth/pages/phone_input_page.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class WelcomePage extends StatelessWidget {
+  static const String welcomePageRouteName = 'welcome_page_router_name';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

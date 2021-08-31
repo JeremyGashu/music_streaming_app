@@ -248,8 +248,10 @@ class Playlist {
     this.songs,
     this.createdAt,
     this.updatedAt,
+    this.likeCount,
   });
 
+  int likeCount;
   String playlistId;
   String userId;
   String title;
@@ -265,6 +267,7 @@ class Playlist {
         title: json["title"],
         createdBy: json["created_by"],
         type: json["type"],
+        likeCount: json['like_counts'],
         songs:
             List<SongData>.from(json["songs"].map((x) => SongData.fromJson(x))),
         createdAt: DateTime.parse(json["created_at"]),

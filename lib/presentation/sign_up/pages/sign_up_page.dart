@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_event.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_state.dart';
@@ -56,7 +57,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             color: Colors.white70,
                           ),
                           iconSize: 40,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                       Expanded(
@@ -81,8 +84,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           width: 120,
                           height: 120,
                           margin: EdgeInsets.only(top: 15),
+                          child: Image.asset('assets/images/sewasew_logo.png'),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)),
                           ),
@@ -187,7 +191,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             height: 50,
                             margin: EdgeInsets.only(top: 30),
                             child: state is SendingSignUpData
-                                ? CircularProgressIndicator()
+                                ? Container(height: 50,width:50, child: Center(child: SpinKitRipple(color: Colors.grey,size: 50,)))
                                 : OutlinedButton(
                                     onPressed: () {
                                       if (_formKey.currentState.validate()) {

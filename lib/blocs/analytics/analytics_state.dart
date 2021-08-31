@@ -13,8 +13,5 @@ class SentAnalyticsData extends AnalyticsState {}
 
 class SendingAnalyticsDataError extends AnalyticsState {
   final String message;
-
   SendingAnalyticsDataError({this.message});
-  @override
-  List<Object> get props => [message];
 }

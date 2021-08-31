@@ -7,6 +7,7 @@ import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/phone_input_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
+import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
 import 'package:streaming_mobile/presentation/new_releases/all_newrelease_albums.dart';
@@ -82,6 +83,8 @@ class AppRouter {
 
       case AllTracks.allTracksRouterName:
         return MaterialPageRoute(builder: (_) => AllTracks());
+      case WelcomePage.welcomePageRouteName:
+        return MaterialPageRoute(builder: (_) => WelcomePage());
 
       default:
         return null;
