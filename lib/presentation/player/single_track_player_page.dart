@@ -22,6 +22,7 @@ class SingleTrackPlayerPage extends StatefulWidget {
 }
 
 class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
+  bool _isCollapsed = true;
   SliderThemeData _sliderThemeData;
   final BehaviorSubject<double> _dragPositionSubject =
       BehaviorSubject.seeded(null);
@@ -169,6 +170,46 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           ),
         )
       ],
+    );
+  }
+
+    Widget _menuSelector(BuildContext context) {
+    return AnimatedPositioned(
+      duration: Duration(milliseconds: 240),
+      top: !_isCollapsed ? kHeight(context) - 250 : kHeight(context),
+      left: 0,
+      right: 0,
+      child: Container(
+        width: kWidth(context),
+        height: 250,
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isCollapsed = !_isCollapsed;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: kWidth(context),
+                child: Align(
+                    alignment: AlignmentDirectional.topEnd,
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.redAccent,
+                    )),
+              ),
+            ),
+          ],
+        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+            )),
+      ),
     );
   }
 

@@ -1,4 +1,3 @@
-//load playlist
 import 'package:equatable/equatable.dart';
 
 class PlaylistEvent extends Equatable {
@@ -7,9 +6,30 @@ class PlaylistEvent extends Equatable {
 }
 
 class LoadPlaylists extends PlaylistEvent {
-  //maybe give parameters here
   @override
   List<Object> get props => [];
+}
+
+class CreatePrivatePlaylist extends PlaylistEvent {
+  final String title;
+
+  CreatePrivatePlaylist({this.title});
+  @override
+  List<Object> get props => [title];
+}
+
+class GetPrivatePlaylists extends PlaylistEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class AddSongsToPrivatePlaylists extends PlaylistEvent {
+  final String playlistId;
+  final String songId;
+
+  AddSongsToPrivatePlaylists({this.playlistId, this.songId});
+  @override
+  List<Object> get props => [playlistId, songId];
 }
 
 class LoadPlaylistsInit extends PlaylistEvent {

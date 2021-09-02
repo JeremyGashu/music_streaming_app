@@ -27,11 +27,11 @@ String defaultPlaylistStringValue = '''
 class PlaylistRepository {
   final PlaylistDataProvider dataProvider;
   http.Response playlists;
-  List decodedPlaylists;
+  var decodedPlaylists;
   PlaylistRepository({@required this.dataProvider})
       : assert(dataProvider != null);
 
-  Future<List<Playlist>> getPlaylists({int page}) async {
+  Future<PlaylistsResponse> getPlaylists({int page}) async {
     page ??= 1;
     var playlistBox = await Hive.openBox('playlists');
 
@@ -58,15 +58,44 @@ class PlaylistRepository {
         decodedPlaylists = jsonDecode(playlistCache)['data']['data'] as List;
       }
     } else {
-      //TODO: if there is no network and the cache is empty show error message in the UI
       String playlistCache =
           playlistBox.get(0, defaultValue: defaultPlaylistStringValue);
       print('getPlaylists: offline and retrieving data... ' + playlistCache);
 
-      decodedPlaylists = jsonDecode(playlistCache)['data']['data'] as List;
+      decodedPlaylists = jsonDecode(playlistCache);
     }
-    return decodedPlaylists
-        .map((playlist) => Playlist.fromJson(playlist))
-        .toList();
+    return PlaylistsResponse.fromJson(decodedPlaylists);
+  }
+
+  ///Adds music to previoisly created playlist
+  Future<bool> addMusicToPrivatePlaylist(
+      {String playlistId, String songId}) async {
+    http.Response response = await dataProvider.addMusicToPrivatePlaylist(
+      playlistId: playlistId,
+      songId: songId,
+    );
+
+    Map<String, dynamic> decodedResponse = jsonDecode(response.body) as Map;
+    return decodedResponse['success'];
+  }
+
+  ///Creates Playlist, with the title provided.
+  Future<bool> createPlaylist({String title}) async {
+    http.Response response = await dataProvider.createPlaylist(
+      title: title,
+    );
+
+    Map<String, dynamic> decodedResponse = jsonDecode(response.body) as Map;
+    return decodedResponse['success'];
+  }
+
+  ///Gets private playlists a specific user has created
+  Future<PlaylistsResponse> getPrivatePlaylists({int page}) async {
+    http.Response playlistResponse =
+        await dataProvider.getPrivatePlaylists(page: page);
+    print('private playlist loaded = > ${playlistResponse.body}');
+    var decodedPlaylists = jsonDecode(playlistResponse.body);
+    print('decoded private playlists => $decodedPlaylists');
+    return PlaylistsResponse.fromJson(decodedPlaylists);
   }
 }
