@@ -11,21 +11,17 @@ import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
 
-class PrivatePlaylistList extends StatefulWidget {
-  final String songId;
-
-  const PrivatePlaylistList({this.songId});
+class AddPlaylistPage extends StatefulWidget {
   @override
-  _PrivatePlaylistListState createState() => _PrivatePlaylistListState();
+  _AddPlaylistPageState createState() => _AddPlaylistPageState();
 }
 
-class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
+class _AddPlaylistPageState extends State<AddPlaylistPage> {
   final PlaylistBloc playlistBloc = PlaylistBloc(
       playlistRepository: PlaylistRepository(
           dataProvider: PlaylistDataProvider(client: http.Client())));
   @override
   void initState() {
-    playlistBloc.add(GetPrivatePlaylists());
     super.initState();
   }
 
@@ -36,14 +32,9 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
     return BlocConsumer<PlaylistBloc, PlaylistState>(
         bloc: playlistBloc,
         listener: (context, state) {
-          if (state is ErrorState || state is LoadingPlaylistError) {
+          if (state is LoadingPlaylistError) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Loading Private playlist Error!')));
-          }
-          if (state is SuccessState) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Added To Playlist!')));
           }
         },
         builder: (context, state) {
@@ -53,27 +44,6 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
             child: Padding(
               padding: const EdgeInsets.only(
                   top: 30, left: 30, right: 30, bottom: 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: _buildOnState(context, state),
-                  ),
-                  // SizedBox(height: 30,),
-                  Divider(),
-                  Container(
-                    width: double.infinity,
-                    child: Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Cancel')),
-                    ),
-                  ),
-                ],
-              ),
             ),
           );
         });
@@ -96,21 +66,17 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('No Playlist Found!'),
-                  SizedBox(height: 10,),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context,
-                            PrivatePlaylistsPage.privatePlaylistRouteName);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add),
-                          Text('Create Playlist'),
-                        ],
-                      ))
+                  Text('No Playlist!'),
+                  TextButton(onPressed: () {
+                    Navigator.pushNamed(context, PrivatePlaylistsPage.privatePlaylistRouteName);
+                  }, child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add),
+                      Text('Create Playlist'),
+                    ],
+                  ))
                 ],
               ),
             )
@@ -119,11 +85,6 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
               itemBuilder: (context, index) {
                 //yield listile and add sending state from here
                 return ListTile(
-                  onTap: () {
-                    playlistBloc.add(AddSongsToPrivatePlaylists(
-                        playlistId: state.playlists[index].playlistId,
-                        songId: widget.songId));
-                  },
                   leading: Icon(Icons.music_note),
                   title: Text(state.playlists[index].title),
                   subtitle: Text('${state.playlists.length} Musics'),

@@ -12,8 +12,7 @@ import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
+
 
 class SingleTrackPlayerPage extends StatefulWidget {
   static const String singleTrackPlayerPageRouteName =
@@ -220,7 +219,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         context: context,
                         builder: (context) {
                           return Dialog(
-                            child: PrivatePlaylistList(),
+                            child: PrivatePlaylistList(songId: widget.track.songId,),
                             // child: Text('Private Playlists'),
                           );
                         });

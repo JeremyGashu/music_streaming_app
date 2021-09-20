@@ -15,6 +15,7 @@ import 'package:streaming_mobile/presentation/new_releases/all_newrelease_tracks
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart';
+import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
 
@@ -85,6 +86,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AllTracks());
       case WelcomePage.welcomePageRouteName:
         return MaterialPageRoute(builder: (_) => WelcomePage());
+      case PrivatePlaylistsPage.privatePlaylistRouteName:
+      return MaterialPageRoute(builder: (_) => PrivatePlaylistsPage());
 
       default:
         return null;

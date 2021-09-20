@@ -64,6 +64,7 @@ class PlaylistDataProvider {
 
     String url =
         '$BASE_URL/playlists?page=${page}&per_page=10&search_by=user_id&search_key=${authData.userId}';
+        print('private url => $url');
         print('private playlist url => ${authData.userId}');
     http.Response response = await client.get(
       Uri.parse(url),
