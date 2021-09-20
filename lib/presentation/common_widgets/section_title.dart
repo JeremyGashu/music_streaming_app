@@ -5,7 +5,7 @@ SectionTitle({title, callback}) {
   return Container(
     padding: EdgeInsets.symmetric(
       horizontal: 20.0,
-      vertical: 8.0,
+      vertical: 3.0,
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -19,11 +19,11 @@ SectionTitle({title, callback}) {
         InkWell(
           onTap: () => callback(),
           child: Padding(
-            padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+            padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
             child: Text(
               'View All >',
               style: TextStyle(
-                  fontWeight: FontWeight.w600, color: kPurple, fontSize: 12),
+                  fontWeight: FontWeight.w600, color: Colors.orange[700], fontSize: 12),
             ),
           ),
         ),

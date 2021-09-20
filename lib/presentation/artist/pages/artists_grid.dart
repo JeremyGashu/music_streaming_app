@@ -5,6 +5,7 @@ import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 
 class ArtistsGrid extends StatelessWidget {
   @override
@@ -28,7 +29,9 @@ class ArtistsGrid extends StatelessWidget {
                   return _artistTile(
                       onTap: () {
                         print('artist id => ${artist.artistId}');
-                        Navigator.pushNamed(context, ArtistDetailPage.artistDetailPageRouteName, arguments: artist);
+                        Navigator.pushNamed(
+                            context, ArtistDetailPage.artistDetailPageRouteName,
+                            arguments: artist);
                       },
                       name: artist.firstName + ' ' + artist.lastName,
                       imageUrl: artist.image,
@@ -43,33 +46,11 @@ class ArtistsGrid extends StatelessWidget {
                 ),
               );
             } else if (state is LoadingArtistError) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Error Loading Artists!',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 20,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    IconButton(
-                        icon: Icon(
-                          Icons.update,
-                          color: Colors.redAccent.withOpacity(0.8),
-                          size: 45,
-                        ),
-                        onPressed: () {
-                          BlocProvider.of<ArtistBloc>(context)
-                              .add(LoadArtists());
-                        }),
-                  ],
-                ),
-              );
+              return CustomErrorWidget(
+                  onTap: () {
+                    BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+                  },
+                  message: 'Error Loading Artists!');
             }
             return Container();
           }),

@@ -8,10 +8,12 @@ import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 class AllNewReleasedAlbumsPage extends StatefulWidget {
-  static const String allNewReleaseAlbumsRouterName = 'all_new_release_albums_router_name';
+  static const String allNewReleaseAlbumsRouterName =
+      'all_new_release_albums_router_name';
   @override
   _AllNewReleasedAlbumsPageState createState() =>
       _AllNewReleasedAlbumsPageState();
@@ -73,32 +75,11 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                   );
                 } else if (state is LoadingNewReleasesError &&
                     _albums.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading New Albums!!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
-                              newReleaseBloc.add(LoadNewReleases());
-                            }),
-                      ],
-                    ),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        newReleaseBloc.add(LoadNewReleases());
+                      },
+                      message: 'Error Loading New Albums!');
                 }
                 return Expanded(
                   child: Column(
@@ -112,9 +93,13 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !newReleaseBloc.isLoading) {
-                                  if(newReleaseBloc.state is LoadedNewReleases) {
-                                    if((newReleaseBloc.state as LoadedNewReleases).newRelease.albums.length == 0) return;
-                                  }
+                              if (newReleaseBloc.state is LoadedNewReleases) {
+                                if ((newReleaseBloc.state as LoadedNewReleases)
+                                        .newRelease
+                                        .albums
+                                        .length ==
+                                    0) return;
+                              }
                               newReleaseBloc
                                 ..isLoading = true
                                 ..add(LoadNewReleases());
@@ -142,9 +127,10 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                       state is LoadedNewReleases
                           ? state.newRelease.songs.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Albums!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Albums!'),
+                                )
                               : Container()
                           : Container(),
                     ],

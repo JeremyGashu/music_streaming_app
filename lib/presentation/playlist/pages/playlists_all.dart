@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 
 class AllPlaylistsPage extends StatefulWidget {
@@ -71,32 +72,11 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                   );
                 } else if (state is LoadingPlaylistError &&
                     _playlists.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading Playlists!!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
-                              playlistBloc.add(LoadPlaylists());
-                            }),
-                      ],
-                    ),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        playlistBloc.add(LoadPlaylists());
+                      },
+                      message: 'Error Loading Playlists!');
                 }
                 return Expanded(
                   child: Column(
@@ -110,9 +90,12 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !playlistBloc.isLoading) {
-                                  if(playlistBloc.state is LoadedPlaylist) {
-                                    if((playlistBloc.state as LoadedPlaylist).playlists.length == 0) return;
-                                  }
+                              if (playlistBloc.state is LoadedPlaylist) {
+                                if ((playlistBloc.state as LoadedPlaylist)
+                                        .playlists
+                                        .length ==
+                                    0) return;
+                              }
                               playlistBloc
                                 ..isLoading = true
                                 ..add(LoadPlaylists());
@@ -140,9 +123,10 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                       state is LoadedPlaylist
                           ? state.playlists.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Playlists!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Playlists!'),
+                                )
                               : Container()
                           : Container(),
                     ],

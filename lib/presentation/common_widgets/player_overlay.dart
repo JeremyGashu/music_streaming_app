@@ -33,12 +33,14 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                     children: [
                       GestureDetector(
                         onVerticalDragEnd: (details) {
-                          setState(() {
-                            _expandList = false;
-                          });
+                          if(details.velocity.pixelsPerSecond.dy > 100) {
+                            setState(() {
+                              _expandList = false;
+                            });
+                          }
                         },
                         child: AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
+                            duration: Duration(milliseconds: 200),
                             height: _expandList ? 300 : 0,
                             width: kWidth(context),
                             decoration: BoxDecoration(
@@ -184,7 +186,14 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                       // Divider(
                                       //   color: Colors.white54,
                                       // ),
-                                      _controlButtonsRow(widget.playing),
+                                      GestureDetector(onPanEnd: (detail) {
+                                        print('details => $detail');
+                                        if(detail.velocity.pixelsPerSecond.dy < -100) {
+                                          setState(() {
+                                            _expandList = true;
+                                          });
+                                        }
+                                      },child: _controlButtonsRow(widget.playing)),
                                       // Divider(
                                       //   color: Colors.white54,
                                       // ),
@@ -242,128 +251,131 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
   // }
 
   Widget _controlButtonsRow(bool playing) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: Track());
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          // SvgPicture.asset(
-          //   "assets/svg/album_disk_new.svg",
-          //   height: 40,
-          // ),
-          SpinningImage(imageUrl: "assets/png/album_disk_new.png", spin: playing,),
-          Expanded(
-            child: StreamBuilder(
-              stream: AudioService.currentMediaItemStream,
-              builder: (context,
-                      AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
-                  currentMediaSnapshot.hasData
-                      ?
-                      // Text(
-                      //         "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
-                      //         style: TextStyle(
-                      //             fontWeight: FontWeight.w600, color: Colors.white70),
-                      //         overflow: TextOverflow.ellipsis, maxLines: 1,
-                      //       )
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: AnimatedOverflow(
-                            animatedOverflowDirection:
-                                AnimatedOverflowDirection.HORIZONTAL,
-                            child: Text(
-                              "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white70),
-                              overflow: TextOverflow.visible,
-                              maxLines: 1,
+    return Container(
+      height: 30,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: Track());
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            // SvgPicture.asset(
+            //   "assets/svg/album_disk_new.svg",
+            //   height: 40,
+            // ),
+            SpinningImage(imageUrl: "assets/png/album_disk_new.png",),
+            Expanded(
+              child: StreamBuilder(
+                stream: AudioService.currentMediaItemStream,
+                builder: (context,
+                        AsyncSnapshot<MediaItem> currentMediaSnapshot) =>
+                    currentMediaSnapshot.hasData
+                        ?
+                        // Text(
+                        //         "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
+                        //         style: TextStyle(
+                        //             fontWeight: FontWeight.w600, color: Colors.white70),
+                        //         overflow: TextOverflow.ellipsis, maxLines: 1,
+                        //       )
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: AnimatedOverflow(
+                              animatedOverflowDirection:
+                                  AnimatedOverflowDirection.HORIZONTAL,
+                              child: Text(
+                                "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white70),
+                                overflow: TextOverflow.visible,
+                                maxLines: 1,
+                              ),
+                              maxWidth: 200,
+                              padding: 40.0,
+                              speed: 50.0,
                             ),
-                            maxWidth: 200,
-                            padding: 40.0,
-                            speed: 50.0,
-                          ),
-                        )
-                      : Text(
-                          "-----",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-            ),
-          ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  await AudioService.skipToPrevious();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(
-                    Icons.skip_previous,
-                    size: 25,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  if (playing) {
-                    AudioService.pause();
-                  } else {
-                    // play(widget.track, preferences);
-                    AudioService.play();
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.orange.shade300),
-                    child: playing
-                        ? Icon(
-                            Icons.pause,
-                            color: Colors.white,
-                            size: 32,
                           )
-                        : Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                            size: 32,
+                        : Text(
+                            "-----",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                  ),
-                ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  await AudioService.skipToNext();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(
-                    Icons.skip_next,
-                    size: 25,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _expandList = true;
-              });
-            },
-            child: Icon(
-              Icons.queue_music,
-              color: Colors.white54,
-              size: 25.0,
             ),
-          ),
-        ],
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    await AudioService.skipToPrevious();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
+                      Icons.skip_previous,
+                      size: 25,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    if (playing) {
+                      AudioService.pause();
+                    } else {
+                      // play(widget.track, preferences);
+                      AudioService.play();
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.orange.shade300),
+                      child: playing
+                          ? Icon(
+                              Icons.pause,
+                              color: Colors.white,
+                              size: 20,
+                            )
+                          : Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    await AudioService.skipToNext();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
+                      Icons.skip_next,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _expandList = true;
+                });
+              },
+              child: Icon(
+                Icons.queue_music,
+                color: Colors.white54,
+                size: 25.0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -12,6 +12,10 @@ class AuthRepository {
   Future<String> verifyPhoneNumber({String phoneNo}) async {
     http.Response authData =
         await dataProvider.verifyPhoneNumber(phoneNo: phoneNo);
+        print('status code ${authData.statusCode}');
+    if (authData.statusCode != 200) {
+      return null;
+    }
     var otp = jsonDecode(authData.body)['data'];
     return otp;
   }
@@ -56,6 +60,7 @@ class AuthRepository {
           phone: phone,
           token: decodedResponse['data']['token'],
           message: '',
+          userId: decodedResponse['data']['user_id'],
           refreshToken: decodedResponse['data']['refresh_token']);
     }
 

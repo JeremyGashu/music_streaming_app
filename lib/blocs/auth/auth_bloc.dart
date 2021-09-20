@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
@@ -20,15 +21,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         String otp =
             await authRepository.verifyPhoneNumber(phoneNo: event.phoneNo);
-        if (otp != '') {
+        if (otp != '' && otp != null) {
           yield OTPReceived(otp: otp, phoneNo: event.phoneNo);
         } else {
-          yield Unauthenticated(authData: AuthData(isAuthenticated: false));
+          yield AuthenticationError(message: 'Error verifying your phone! Please try Again!');
+          // yield Unauthenticated(authData: AuthData(isAuthenticated: false));
         }
       } catch (e) {
         print(e.toString());
         yield AuthenticationError();
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is CheckAuthOnStartUp) {
       yield CheckingAuthOnStartup();
@@ -58,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         print(e.toString());
         yield AuthenticationError();
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoginEvent) {
       yield SendingLoginData();
@@ -71,6 +73,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           var authBox = await Hive.openBox<AuthData>('auth_box');
           print('saving auth data into  hive');
+          print('saving user_id in shared prefernce');
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          sharedPreferences.setString('user_id', authData.userId);
           await authBox.put('auth_data', authData);
 
           print(
@@ -82,7 +87,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print(e.toString());
         yield AuthenticationError(
             message: 'Please check your internet connection!');
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LogOutEvent) {
       var authBox = await Hive.openBox<AuthData>('auth_box');
@@ -119,7 +124,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print(e.toString());
         // yield AuthenticationError(
         //     message: 'Please check your internet connection!');
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is ResetPassword) {
       yield SendingResetPasswordRequest();
@@ -135,7 +140,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         yield SendingPasswordResetFailed(
             message: 'Error on sending reset password');
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is VerifyPasswordReset) {
       yield SendingVerifyPasswordReset();
@@ -155,7 +160,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         yield VerifyingPasswordResetError(
             message: 'Error on verifying password');
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

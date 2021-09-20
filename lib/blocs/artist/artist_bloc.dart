@@ -29,7 +29,7 @@ class ArtistBloc extends Bloc<ArtistEvent, ArtistState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingArtistError(message: "Error on loading Artists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadInitArtists) {
       try {
@@ -43,7 +43,7 @@ class ArtistBloc extends Bloc<ArtistEvent, ArtistState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingArtistError(message: "Error on loading Artists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

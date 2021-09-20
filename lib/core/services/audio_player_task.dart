@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
-
 import 'package:streaming_mobile/data/models/analytics.dart';
 
 final playControl = MediaControl(
@@ -36,11 +32,11 @@ final skipToNextControl = MediaControl(
 class AudioPlayerTask extends BackgroundAudioTask {
   final _audioPlayer = AudioPlayer();
 
-  bool isOpen = Hive.isBoxOpen("analytics_box");
-
   int _queueIndex = 0;
   static int clickDelay = 0;
   int _timeCounter = -1;
+  String userId;
+  String latLang;
   Map<String, List<Map>> _analyticsData = {'data': []};
 
   List<MediaItem> _queue = <MediaItem>[];
@@ -68,9 +64,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
     analyticsTimerStream.pause();
     print('analytics => started analytics');
     print('analytics => current data $_timeCounter');
+    userId = prefs.getString('user_id');
+    latLang = prefs.getString('lat_lang');
 
-    LocationData locationData = await LocalHelper.getUserLocation();
-    print('location => ${locationData.toString()}');
+    // LocationData locationData = await LocalHelper.getUserLocation();
+    // print('location => ${locationData.toString()}');
 
     /// Audio playback event listener.
     ///
@@ -115,7 +113,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
         (_currentMediaItemId != _mediaItem.id)) {
       Analytics _analytics = Analytics(
         duration: _timeCounter,
-        songId: _mediaItem.id,);
+        songId: _mediaItem.id,
+        userId: userId,
+        location: latLang != null
+            ? latLang
+            : '');
       print('analytics => to save ${_analytics.toJson()}');
       _analyticsData['data'].add(_analytics.toJson());
       prefs.setString('analytics_data', jsonEncode(_analyticsData));
@@ -141,8 +143,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
     if (_audioPlayer.processingState == ProcessingState.loading ||
         _audioPlayer.playing) {
       await _audioPlayer.pause();
-      // Save the current player position in seconds.
-      await prefs.setInt('position', _audioPlayer.position.inSeconds);
       analyticsTimerStream.pause();
       print('analytics => paused counter');
       print('analytics => current data $_timeCounter');
@@ -313,7 +313,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
     analyticsTimerStream.pause();
     Analytics _analytics = Analytics(
         duration: _timeCounter,
-        songId: _mediaItem.id,);
+        songId: _mediaItem.id,
+        userId: userId,
+        location: latLang != null
+            ? latLang
+            : '');
     print('analytics => to send $_analytics');
     _analyticsData['data'].add(_analytics.toJson());
 

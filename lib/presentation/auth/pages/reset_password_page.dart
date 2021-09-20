@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
@@ -8,7 +10,8 @@ import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  static const String resetPasswordPageRouterName = 'reset_password_page_router_name';
+  static const String resetPasswordPageRouterName =
+      'reset_password_page_router_name';
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
@@ -19,157 +22,156 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
           if (state is SentPasswordResetRequest) {
             print('the state is listened');
-            Navigator.pushNamed(context, VerifyPasswordResetPage.verifyPasswordResetPageRouterName, arguments: state.phoneNo);
+            Navigator.pushNamed(context,
+                VerifyPasswordResetPage.verifyPasswordResetPageRouterName,
+                arguments: state.phoneNo);
+          }
+
+          if(state is SendingPasswordResetFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error Resetting password. Please try Again!')));
           }
         }, builder: (context, state) {
-          return Container(
-            height: kHeight(context),
-            width: kWidth(context),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    "assets/images/playlist_top_bg.png",
+          return Stack(
+            children: [
+              Positioned(
+                top: -50,
+                child: Container(
+                  width: kWidth(context),
+                  height: kHeight(context) * 0.25,
+                  margin: EdgeInsets.only(top: 40),
+                  child: SvgPicture.asset('assets/svg/melody.svg'),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  alignment: Alignment.topCenter,
                 ),
-                gradient: LinearGradient(
-                  colors: [kRed, Colors.yellow],
-                  begin: Alignment.topCenter,
-                  end: Alignment(0.8, 0.8),
-                )),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: Icon(
-                              Icons.chevron_left,
-                              color: Colors.white70,
-                            ),
-                            iconSize: 40,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        Expanded(
-                            child: Container(
-                                margin: EdgeInsets.only(right: 40),
-                                child: Text(
-                                  'RESET PASSWORD',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white70),
-                                  textAlign: TextAlign.center,
-                                )))
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 120,
-                            margin: EdgeInsets.only(top: 15),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            child:
-                                Image.asset('assets/images/sewasew_logo.png'),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 20),
-                            child: Expanded(
-                              child: TextFormField(
-                                controller: _phoneNumberController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter phone number!';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 20),
-                                    hintText: 'Phone...',
-                                    enabledBorder: _inputBorderStyle(),
-                                    border: _inputBorderStyle(),
-                                    focusedBorder: _inputBorderStyle()),
+              ),
+              Container(
+                height: kHeight(context),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              margin: EdgeInsets.only(top: 40),
+                              child: SvgPicture.asset('assets/svg/Logo.svg'),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              height: 20,
+                            ),
 
-                          SizedBox(
-                            height: 15,
-                          ),
-
-                          Container(
-                            width: kWidth(context),
-                            height: 50,
-                            margin: EdgeInsets.only(top: 30),
-                            child: state is SendingResetPasswordRequest
-                                ? Center(child: CircularProgressIndicator())
-                                : state is SentPasswordResetRequest
-                                    ? Center(
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              margin: EdgeInsets.only(top: 30),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 75,
+                                    height: 50,
+                                    child: Center(
                                         child: Icon(
-                                        Icons.check,
-                                        color: Colors.green,
-                                        size: 40,
-                                      ))
-                                    : OutlinedButton(
-                                        onPressed: () {
-                                          if (_formKey.currentState
-                                              .validate()) {
-                                            BlocProvider.of<AuthBloc>(context)
-                                                .add(ResetPassword(
-                                                    phoneNo:
-                                                        _phoneNumberController
-                                                            .value.text));
-                                          }
-                                        },
-                                        child: Text('Confirm',
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<
-                                                    Color>(kBlack),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(25)),
-                                            ))),
-                                      ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                                      Icons.phone,
+                                      color: Colors.white,
+                                    )),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[800],
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(30),
+                                          bottomLeft: Radius.circular(30)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.phone,
+                                      controller: _phoneNumberController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter phone number!';
+                                        }
+                                        return null;
+                                      },
 
-                          // Text('Don\'t have account?',
-                          //     style: TextStyle(fontSize: 18))
-                        ],
+                                      decoration: InputDecoration(
+
+                                          contentPadding:
+                                              EdgeInsets.only(left: 20),
+                                          hintText: 'Phone Number',
+                                          enabledBorder: _inputBorderStyle(),
+                                          border: _inputBorderStyle(),
+                                          focusedBorder: _inputBorderStyle()),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+
+                            SizedBox(
+                              height: 15,
+                            ),
+
+                            Container(
+                              width: kWidth(context),
+                              height: 50,
+                              margin: EdgeInsets.only(top: 30),
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: state is SendingResetPasswordRequest
+                                  ? Center(child: Center(child: SpinKitRipple(color: Colors.grey,size: 30,),))
+                                  : OutlinedButton(
+                                          onPressed: () {
+                                            if (_formKey.currentState
+                                                .validate()) {
+                                              BlocProvider.of<AuthBloc>(context)
+                                                  .add(ResetPassword(
+                                                      phoneNo:
+                                                          _phoneNumberController
+                                                              .value.text));
+                                            }
+                                          },
+                                          child: Text('Confirm',
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                      Color>(kBlack),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(25)),
+                                              ))),
+                                        )
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+
+                            // Text('Don\'t have account?',
+                            //     style: TextStyle(fontSize: 18))
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
+            ],
           );
         }),
       ),
@@ -177,8 +179,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 }
 
+
 _inputBorderStyle() {
   return OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.white, width: 1.0),
-      borderRadius: BorderRadius.circular(25));
+      borderSide: BorderSide(color: Colors.grey[800], width: 1),
+      borderRadius: BorderRadius.only(
+          topRight: Radius.circular(25), bottomRight: Radius.circular(25)));
 }

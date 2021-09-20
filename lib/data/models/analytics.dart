@@ -36,12 +36,11 @@ class Analytics extends Equatable {
       );
 
   Map<String, dynamic> toJson() => {
-        // "analytics_id": analyticsId ?? '',
         "song_id": songId ?? '',
-        // "user_id": userId ?? '',
+        "user_id": userId ?? '',
         "duration": duration ?? 0,
         // "listened_at": DateTime.now(),
-        // "location": location ?? '',
+        "location": location ?? '',
       };
 
   @override

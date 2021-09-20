@@ -37,7 +37,7 @@ class SearchField extends StatelessWidget {
               ),
             ),
             contentPadding:
-                EdgeInsets.symmetric(horizontal: 5, vertical: getHeight(20)),
+                EdgeInsets.symmetric(horizontal: 5, vertical: 10),
             hintStyle: TextStyle(fontSize: 14, color: Color(0x882D2D2D)),
             border: InputBorder.none,
             focusedBorder: InputBorder.none,

@@ -2,21 +2,22 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
+import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/album/widgets/album_stat.dart';
-import 'package:streaming_mobile/presentation/album/widgets/upper_section.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/common_widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
@@ -47,73 +48,74 @@ class _AlbumDetailState extends State<AlbumDetail> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 10,),
               //upper section containing the image, svg, shuffle button and healing track
               upperSection(context, album: widget.album),
               SizedBox(
                 height: 20,
               ),
-              albumStat(album: widget.album),
-              SizedBox(
-                height: 8,
-              ),
-              Divider(
-                height: 1,
-                color: Colors.grey.withOpacity(0.8),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Container(
-                  width: 160,
-                  height: 40,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.deepPurple,
-                      ),
-                    ),
-                    onPressed: () async {
-                      // TODO: play album
-                      if (widget.album.tracks.length == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text('There are no tracks in this Album.')));
-                      } else {
-                        if (!AudioService.running) {
-                          await AudioService.start(
-                            backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-                            androidNotificationChannelName: 'Playback',
-                            androidNotificationColor: 0xFF2196f3,
-                            androidStopForegroundOnPause: true,
-                            androidEnableQueue: true,
-                          );
-                        }
-                        await AudioService.setShuffleMode(
-                            AudioServiceShuffleMode.all);
-                        playAudio(Random().nextInt(widget.album.tracks.length),
-                            sharedPreferences);
-                      }
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      child: Text(
-                        'Shuffle Play',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
+              // albumStat(album: widget.album),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // Divider(
+              //   height: 1,
+              //   color: Colors.grey.withOpacity(0.8),
+              // ),
+              // SizedBox(
+              //   height: 15,
+              // ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(30),
+              //   child: Container(
+              //     width: 160,
+              //     height: 40,
+              //     child: TextButton(
+              //       style: ButtonStyle(
+              //         backgroundColor: MaterialStateProperty.all<Color>(
+              //           Colors.deepPurple,
+              //         ),
+              //       ),
+              //       onPressed: () async {
+              //         // TODO: play album
+              //         if (widget.album.tracks.length == 0) {
+              //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //               content:
+              //                   Text('There are no tracks in this Album.')));
+              //         } else {
+              //           if (!AudioService.running) {
+              //             await AudioService.start(
+              //               backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+              //               androidNotificationChannelName: 'Playback',
+              //               androidNotificationColor: 0xFF2196f3,
+              //               androidStopForegroundOnPause: true,
+              //               androidEnableQueue: true,
+              //             );
+              //           }
+              //           await AudioService.setShuffleMode(
+              //               AudioServiceShuffleMode.all);
+              //           playAudio(Random().nextInt(widget.album.tracks.length),
+              //               sharedPreferences);
+              //         }
+              //       },
+              //       child: Padding(
+              //         padding: EdgeInsets.symmetric(
+              //           horizontal: 10,
+              //         ),
+              //         child: Text(
+              //           'Shuffle Play',
+              //           style: TextStyle(
+              //             color: Colors.white,
+              //             fontSize: 15,
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 15,
+              // ),
               //ad section
               // _adContainer('ad.png'),
               SizedBox(
@@ -193,7 +195,234 @@ class _AlbumDetailState extends State<AlbumDetail> {
         ),
       ]),
     ));
+
+    
   }
+
+  Widget upperSection(context, {Album album}) {
+    int duration = 0;
+    album.tracks.forEach((element) { 
+      duration += element.duration;
+    });
+  return Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 180,
+                        height: 120,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Container(
+                                width: 90,
+                                height: 90,
+                                child: Image.asset(
+                                  'assets/images/album.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Card(
+                                  margin: EdgeInsets.zero,
+                                  elevation: 3.0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: CachedNetworkImage(
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(
+                                        strokeWidth: 1,
+                                      ),
+                                      imageUrl: album.coverImageUrl,
+                                      errorWidget: (context, url, error) {
+                                        return Image.asset(
+                                          'assets/images/album_one.jpg',
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                      width: 140.0,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Opacity(
+                                  opacity: 0.4,
+                                  child: Card(
+                                    margin: EdgeInsets.zero,
+                                    elevation: 3.0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Container(
+                                        width: 140.0,
+                                        height: 120,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SvgPicture.asset('assets/svg/playlist.svg'),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ]),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      album.title,
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                        album.tracks != null
+                            ? '${album.tracks.length} Tracks'
+                            : '0 Tracks',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                        )),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: () async {
+                        if(AudioService.playbackState.playing) {
+                          Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName);
+                          return;
+                        }
+                        if (album.tracks.length == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content:
+                                  Text('There are no tracks in this Album.')));
+                        } else {
+                          if (!AudioService.running) {
+                            await AudioService.start(
+                              backgroundTaskEntrypoint:
+                                  backgroundTaskEntryPoint,
+                              androidNotificationChannelName: 'Playback',
+                              androidNotificationColor: 0xFF2196f3,
+                              androidStopForegroundOnPause: true,
+                              androidEnableQueue: true,
+                            );
+                          }
+                          await AudioService.setShuffleMode(
+                              AudioServiceShuffleMode.all);
+                          playAudio(
+                              Random().nextInt(widget.album.tracks.length),
+                              sharedPreferences);
+                        }
+                      },
+                      child: Container(
+                        width: 140,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.purple.shade500, width: 2.5),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.shuffle,
+                              color: Colors.purple.shade500,
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text('Shuffle Play',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.purple.shade500,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                    //Shuffle button
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              album.tracks != null
+                  ? '${album.tracks.length} Songs, ${prettyDuration(Duration(seconds: duration))}'
+                  : '',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 3,
+                ),
+                Text(
+                    album.likeCount != null ? album.likeCount.toString() : '0'),
+                SizedBox(
+                  width: 5,
+                ),
+                Icon(
+                  Icons.more_vert,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
 
   void playAudio(int index, SharedPreferences prefs) async {
     if (AudioService.playbackState.playing) {

@@ -2,7 +2,6 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 
 class PlaylistState extends Equatable {
@@ -23,6 +22,13 @@ class LoadingPlaylist extends PlaylistState {
 class LoadedPlaylist extends PlaylistState {
   final List<Playlist> playlists;
   LoadedPlaylist({@required this.playlists}) : assert(playlists != null);
+  @override
+  List<Object> get props => [playlists];
+}
+
+class LoadedPrivatePlaylist extends PlaylistState {
+  final List<Playlist> playlists;
+  LoadedPrivatePlaylist({@required this.playlists}) : assert(playlists != null);
   @override
   List<Object> get props => [playlists];
 }

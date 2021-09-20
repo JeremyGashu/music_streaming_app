@@ -27,7 +27,7 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingAlbumError(message: "Error on loading Album");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadInitAlbums) {
       try {
@@ -40,7 +40,7 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingAlbumError(message: "Error on loading Album");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadAlbumsByArtistId) {
       try {
@@ -51,7 +51,7 @@ class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingAlbumError(message: "Error on loading Album");
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
+import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/data/models/country_codes.dart';
 
 import 'otp_page.dart';
@@ -37,60 +41,39 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         }
         return true;
       },
-      child: SafeArea(
-        child: Scaffold(
-          body: Stack(
+      child: Scaffold(
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is OTPReceived) {
+              Navigator.pushNamed(context, OTP.otpPageRouterName,
+                  arguments: _phoneNumberController.value.text);
+            }
+
+            if(state is AuthenticationError) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          builder:(context, state) => Stack(
             children: [
+              Positioned(
+                top: -50,
+                child: Container(
+                  width: kWidth(context),
+                  height: kHeight(context) * 0.25,
+                  margin: EdgeInsets.only(top: 40),
+                  child: SvgPicture.asset('assets/svg/melody.svg'),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                ),
+              ),
               Container(
                 height: kHeight(context),
                 width: kWidth(context),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "assets/images/playlist_top_bg.png",
-                      ),
-                      alignment: Alignment.topCenter,
-                    ),
-                    gradient: LinearGradient(
-                      colors: [kRed, Colors.yellow],
-                      begin: Alignment.topCenter,
-                      end: Alignment(0.8, 0.8),
-                    )),
-                child: SingleChildScrollView(
+                child: Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.chevron_left,
-                                  color: Colors.white70,
-                                ),
-                                iconSize: 40,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                            Expanded(
-                                child: Container(
-                                    margin: EdgeInsets.only(right: 40),
-                                    child: Text(
-                                      'SIGN UP',
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.white70),
-                                      textAlign: TextAlign.center,
-                                    )))
-                          ],
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Column(
@@ -99,23 +82,26 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                               width: 120,
                               height: 120,
                               margin: EdgeInsets.only(top: 40),
-                              child: Image.asset('assets/images/sewasew_logo.png'),
+                              child: SvgPicture.asset('assets/svg/Logo.svg'),
                               decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
                               ),
                             ),
+
                             Container(
                               height: 50.0,
-                              margin: EdgeInsets.only(top: 20),
+                              margin: EdgeInsets.only(top: 50),
+                              padding: EdgeInsets.symmetric(horizontal: 5),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Container(
                                       height: 50.0,
-                                      padding: EdgeInsets.all(12.0),
+                                      padding:
+                                          EdgeInsets.only(left: 15, right: 15),
                                       decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Colors.grey[800],
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(25),
                                               bottomLeft: Radius.circular(25))),
@@ -131,10 +117,13 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                             children: [
                                               Text(
                                                 '$_countryCode',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16),
                                               ),
                                               Icon(
                                                 Icons.arrow_drop_down,
-                                                color: Colors.grey,
+                                                color: Colors.white,
                                               )
                                             ],
                                           ),
@@ -143,7 +132,13 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                   Expanded(
                                     child: TextField(
                                       controller: _phoneNumberController,
+                                      keyboardType: TextInputType.phone,
                                       decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.only(
+                                              left: 15,
+                                              top: 15,
+                                              bottom: 10,
+                                              right: 10),
                                           hintText: 'Phone Number',
                                           enabledBorder: _inputBorderStyle(),
                                           border: _inputBorderStyle(),
@@ -153,27 +148,23 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                 ],
                               ),
                             ),
-                            Container(
+                            SizedBox(
+                              height: 20,
+                            ),
+                            state is SendingPhoneVerification ? Center(child: SpinKitRipple(color: Colors.grey[800],size: 40,),) : Container(
                               width: kWidth(context),
                               height: 50,
-                              margin: EdgeInsets.only(top: 100),
+                              margin: EdgeInsets.only(top: 20),
+                              padding: EdgeInsets.symmetric(horizontal: 5),
                               child: OutlinedButton(
                                 onPressed: () {
-                                  String pattern =
-                                      r'(^(?:[+0]9)?[0-9]{10,12}$)';
-                                  RegExp regExp = new RegExp(pattern);
 
-                                  if (regExp.hasMatch(
-                                      _phoneNumberController.value.text)) {
+                                  if (isPhoneNumber(
+                                      _phoneNumberController.value.text) &&  _phoneNumberController.value.text.length == 9) {
                                     BlocProvider.of<AuthBloc>(context).add(
                                         VerifyPhoneNumberEvent(
                                             phoneNo: _phoneNumberController
                                                 .value.text));
-
-                                    Navigator.pushNamed(
-                                        context, OTP.otpPageRouterName,
-                                        arguments:
-                                            _phoneNumberController.value.text);
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(
@@ -218,7 +209,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
 
   _inputBorderStyle() {
     return OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white, width: 3.0),
+        borderSide: BorderSide(color: Colors.grey[800], width: 1),
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(25), bottomRight: Radius.circular(25)));
   }

@@ -31,7 +31,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading playlists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadTracksInit) {
       try {
@@ -46,7 +46,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingTrackError(message: "Error one loading playlists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadSongsByArtistId) {
       try {

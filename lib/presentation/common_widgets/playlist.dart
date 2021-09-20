@@ -14,7 +14,7 @@ class SinglePlaylist extends StatelessWidget {
   Widget build(BuildContext context) {
     return playlist != null
         ? Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 15, right: 5),
             child: Container(
               width: 120,
               child: Column(

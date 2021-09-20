@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 
 Widget FeaturedAlbum(Album album) {
@@ -18,7 +17,7 @@ Widget FeaturedAlbum(Album album) {
         imageUrl: album != null ? album.artist.image : '',
         errorWidget: (context, url, error) {
           return Image.asset(
-            'assets/images/artist_image.jpg',
+            'assets/images/dawit_new.jpg',
             fit: BoxFit.cover,
           );
         },
@@ -28,12 +27,12 @@ Widget FeaturedAlbum(Album album) {
       Align(
         alignment: Alignment.bottomCenter,
         child: Container(
-          height: 100.0,
+          height: 120.0,
           decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [kPurple, kViolet.withOpacity(0.0)])),
+                  colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.0)])),
         ),
       ),
       Align(
@@ -44,17 +43,29 @@ Widget FeaturedAlbum(Album album) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                album != null ? album.title : 'Unknown Album',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  album != null ? album.title : 'Unknown Album',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 23),
+                ),
               ),
-              Text(
-                album != null
-                    ? '${album.artist.firstName} ${album.artist.firstName}'
-                    : 'Unknown Artist',
-                style: TextStyle(fontWeight: FontWeight.bold, color: kYellow),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  album != null ? album.title : 'Unknown Artist',
+                  style:
+                  TextStyle(color: Colors.white, fontSize: 15),
+                ),
               ),
+              // Text(
+              //   album != null
+              //       ? '${album.artist.firstName} ${album.artist.firstName}'
+              //       : 'Unknown Artist',
+              //   style: TextStyle(fontWeight: FontWeight.bold, color: kYellow),
+              // ),
             ],
           ),
         ),

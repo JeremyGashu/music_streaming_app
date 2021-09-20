@@ -33,7 +33,7 @@ class FeaturedAlbumBloc extends Bloc<FeaturedAlbumEvent, FeaturedAlbumState> {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingFeaturedAlbumError(
             message: "Error one loading featured album!");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadFeaturedAlbumsInit) {
       try {
@@ -50,7 +50,7 @@ class FeaturedAlbumBloc extends Bloc<FeaturedAlbumEvent, FeaturedAlbumState> {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingFeaturedAlbumError(
             message: "Error one loading featured album!");
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

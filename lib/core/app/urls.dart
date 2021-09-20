@@ -25,6 +25,8 @@ final NEW_RELEASE =
     'http://138.68.163.236:8889/v1/new_releases?page=1&per_page=10';
 final ANALYTICS_URL = 'http://138.68.163.236:8889/v1/analytics/bulk';
 
+final REQUEST_OTP = 'http://138.68.163.236:8866/v1/request_otp';
+
 final POST_PLAYLIST_URL = '$BASE_URL/playlist/song';
 
 //todo: genre

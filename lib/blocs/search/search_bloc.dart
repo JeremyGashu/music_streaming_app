@@ -63,7 +63,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } catch (e) {
         print(e);
         yield SearchError(message: 'Error searching!');
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is ExitSearch) {
       searchResult['artistsParam'] = '';

@@ -18,7 +18,8 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
     return widget.album != null
         ? GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context,AlbumDetail.albumDetailRouterName, arguments: widget.album);
+              Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName,
+                  arguments: widget.album);
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -26,19 +27,18 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 140,
+                      width: 150,
                       height: 100,
                       child: Stack(
                         children: [
                           Align(
                             alignment: Alignment.centerRight,
                             child: Container(
-                              width: 60,
-                              height: 60,
+                              width: 75,
+                              height: 75,
                               child: Image.asset(
-                                'assets/images/album_disk_new.png',
+                                'assets/images/album.png',
                                 fit: BoxFit.cover,
-                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -118,9 +118,8 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                         width: 100,
                         height: 100,
                         child: Image.asset(
-                          'assets/images/album_disk_new.png',
+                          'assets/images/album.png',
                           fit: BoxFit.cover,
-                          color: Colors.black,
                         ),
                       ),
                     ),

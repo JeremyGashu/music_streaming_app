@@ -47,7 +47,7 @@ class PlaylistRepository {
         await playlistBox.clear();
         print('getPlaylists: WRITING DATA: ');
         await playlistBox.add(playlists.body);
-        decodedPlaylists = jsonDecode(playlists.body)['data']['data'] as List;
+        decodedPlaylists = jsonDecode(playlists.body);
       } else {
         print(
             'getPlaylists: but can\'t save the data as it have errors in loading so I am returning the old valid cache ' +
@@ -55,7 +55,7 @@ class PlaylistRepository {
         String playlistCache =
             playlistBox.get(0, defaultValue: defaultPlaylistStringValue);
 
-        decodedPlaylists = jsonDecode(playlistCache)['data']['data'] as List;
+        decodedPlaylists = jsonDecode(playlistCache);
       }
     } else {
       String playlistCache =

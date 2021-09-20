@@ -75,22 +75,22 @@ class ArtistProfilePage extends StatelessWidget {
                 title: 'Notification',
                 icon: Icon(
                   Icons.notification_important,
-                  color: Colors.purple,
+                  color: Colors.grey,
                   size: 25,
                 ),
               ),
 
               _listSelectorTiles(
-                title: 'Change Password',
-                icon: Icon(
-                  Icons.lock,
-                  color: Colors.purple,
-                  size: 25,
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, ResetPasswordPage.resetPasswordPageRouterName);
-                }
-              ),
+                  title: 'Change Password',
+                  icon: Icon(
+                    Icons.lock,
+                    color: Colors.grey,
+                    size: 25,
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context, ResetPasswordPage.resetPasswordPageRouterName);
+                  }),
               // _listSelectorTiles(
               //   title: 'Setting',
               //   icon: Icon(
@@ -103,13 +103,36 @@ class ArtistProfilePage extends StatelessWidget {
                   title: 'Log Out',
                   icon: Icon(
                     Icons.logout,
-                    color: Colors.purple,
+                    color: Colors.grey,
                     size: 25,
                   ),
-                  onTap: () async {
-                    await AudioService.stop();
-                    BlocProvider.of<AuthBloc>(context).add(LogOutEvent());
-                    Navigator.pushNamedAndRemoveUntil(context, WelcomePage.welcomePageRouteName, (route) => false);
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Text('Are you sure you want to logout?'),
+                            title: Text('Log Out'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () async {
+                                    await AudioService.stop();
+                                    BlocProvider.of<AuthBloc>(context)
+                                        .add(LogOutEvent());
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        WelcomePage.welcomePageRouteName,
+                                        (route) => false);
+                                  },
+                                  child: Text('Yes')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No')),
+                            ],
+                          );
+                        });
                   }),
             ],
           ),
@@ -181,14 +204,15 @@ Widget _upperSection() {
           ),
           onPressed: () {},
         ),
-        Text(
-          'Dawit Getachew',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black.withOpacity(0.6),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Spacer(),
+        // Text(
+        //   'Dawit Getachew',
+        //   style: TextStyle(
+        //     fontSize: 20,
+        //     color: Colors.black.withOpacity(0.6),
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
         IconButton(
           icon: Icon(
             Icons.more_vert,
@@ -202,16 +226,16 @@ Widget _upperSection() {
 }
 
 //the add image under the upper section
-Widget _adContainer(String path) {
-  return Container(
-    margin: EdgeInsets.symmetric(
-      vertical: 10,
-    ),
-    width: double.infinity,
-    height: 120,
-    child: Image.asset(
-      'assets/images/$path',
-      fit: BoxFit.cover,
-    ),
-  );
-}
+// Widget _adContainer(String path) {
+//   return Container(
+//     margin: EdgeInsets.symmetric(
+//       vertical: 10,
+//     ),
+//     width: double.infinity,
+//     height: 120,
+//     child: Image.asset(
+//       'assets/images/$path',
+//       fit: BoxFit.cover,
+//     ),
+//   );
+// }

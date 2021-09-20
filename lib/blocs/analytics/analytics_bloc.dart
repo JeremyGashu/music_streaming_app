@@ -13,7 +13,6 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   Stream<AnalyticsState> mapEventToState(AnalyticsEvent event) async* {
     if (event is SendAnalyticsDataOnAppInit) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      print('analytic => data to be sent ${prefs.getString('analytics_data')}');
       yield SendingAnalyticsData();
       try {
         String savedAnalytics = prefs.getString('analytics_data');

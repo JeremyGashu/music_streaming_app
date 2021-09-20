@@ -11,9 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
+import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
-  static const String singleTrackPlayerPageRouteName = 'single_track_player_page_router_name';
+  static const String singleTrackPlayerPageRouteName =
+      'single_track_player_page_router_name';
   final Track track;
   const SingleTrackPlayerPage({@required this.track});
 
@@ -90,8 +94,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                             (playBackSnapshot.data.processingState ==
                                 AudioProcessingState.ready))) {
                       if (snapshot.hasData) {
-                        return _nowPlayingWidget(playBackSnapshot.data,
-                            mediaItem: snapshot.data);
+                        return Stack(
+                          children: [
+                            _nowPlayingWidget(playBackSnapshot.data,
+                                mediaItem: snapshot.data),
+                            _menuSelector(context, songId: snapshot.data.id),
+                          ],
+                        );
                       }
                     }
                     // return FutureBuilder<SharedPreferences>(
@@ -127,9 +136,9 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('Preparing The Player'),
+                            // Text('Preparing The Player'),
                             SizedBox(
-                              height: 30,
+                              height: 45,
                             ),
                             SpinKitRipple(
                               color: Colors.grey,
@@ -173,7 +182,9 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-    Widget _menuSelector(BuildContext context) {
+  Widget _menuSelector(BuildContext context, {String songId}) {
+    //todo get the song id from here
+    // BlocProvider.of<PlaylistBloc>(context).add(GetPrivatePlaylists());
     return AnimatedPositioned(
       duration: Duration(milliseconds: 240),
       top: !_isCollapsed ? kHeight(context) - 250 : kHeight(context),
@@ -200,6 +211,35 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                       color: Colors.redAccent,
                     )),
               ),
+            ),
+            Divider(),
+            
+            ListTile(
+              onTap: () {
+                showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child: PrivatePlaylistList(),
+                            // child: Text('Private Playlists'),
+                          );
+                        });
+                
+                // BlocProvider.of<PlaylistBloc>(context).add(AddSongsToPrivatePlaylists(songId: widget.track.songId,));
+              },
+              leading: Icon(
+                Icons.playlist_add,
+              ),
+              title: Text('Add to playlist'),
+            ),
+            Divider(),
+
+            ListTile(
+              onTap: () {},
+              leading: Icon(
+                Icons.queue_play_next_rounded,
+              ),
+              title: Text('Play Next'),
             ),
           ],
         ),
@@ -231,10 +271,10 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               SliderTheme(
                 data: _sliderThemeData.copyWith(
                   trackHeight: 2.0,
-                  activeTrackColor: Colors.red.shade300,
-                  thumbColor: Colors.red.shade300,
+                  activeTrackColor: Colors.orange,
+                  thumbColor: Colors.orange,
                   thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
-                  overlayColor: Colors.red.withAlpha(36),
+                  overlayColor: Colors.orange,
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 16),
                   inactiveTrackColor: Colors.transparent,
                 ),
@@ -292,8 +332,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             percent: max(0.0, min(bufferedPosition / duration, 1.0)),
             linearStrokeCap: LinearStrokeCap.butt,
             lineHeight: 2.0,
-            progressColor: Colors.orange.shade300,
-            backgroundColor: Colors.orange.shade200,
+            progressColor: Colors.orangeAccent.withOpacity(0.5),
+            backgroundColor: Colors.black12,
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 16.0,
@@ -327,7 +367,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                 playbackState.shuffleMode == AudioServiceShuffleMode.all
                     ? Icons.playlist_play
                     : Icons.shuffle,
-                color: Colors.orange.shade300,
+                color: Colors.orange,
                 size: 30,
               )),
           IconButton(
@@ -355,7 +395,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     width: 50,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        color: Colors.orange.shade300),
+                        color: Colors.orange),
                     child: snapshot.hasData && snapshot.data.playing
                         ? Icon(
                             Icons.pause,
@@ -389,7 +429,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               playbackState.repeatMode == AudioServiceRepeatMode.one
                   ? Icons.repeat_one_outlined
                   : Icons.repeat,
-              color: Colors.orange.shade300,
+              color: Colors.orange,
+              size: 30,
             ),
           )
         ],
@@ -427,10 +468,18 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             ),
           ],
         ),
-        Icon(
-          Icons.more_vert_outlined,
-          size: 30,
-          color: Colors.white,
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isCollapsed = !_isCollapsed;
+            });
+            // BlocProvider.of<PlaylistBloc>(context).add(GetPrivatePlaylists());
+          },
+          child: Icon(
+            Icons.more_vert_outlined,
+            size: 30,
+            color: Colors.white,
+          ),
         ),
       ],
     );
@@ -486,3 +535,4 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       await AudioService.play();
   }
 }
+

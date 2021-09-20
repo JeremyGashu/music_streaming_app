@@ -31,12 +31,12 @@ class _SingleTrackState extends State<SingleTrack> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      margin: EdgeInsets.only(left: 15,),
       child: GestureDetector(
         onTap: () {
           /// Start playing the audio
-          playAudio(sharedPreferences);
+          playAudio();
 
         },
         child: Container(
@@ -46,9 +46,12 @@ class _SingleTrackState extends State<SingleTrack> {
             Container(
               width: 140,
               height: 120,
+
               child: Card(
                 margin: EdgeInsets.zero,
-                elevation: 3.0,
+                elevation: 1.0,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                // shadowColor: Colors.grey,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: ClipRRect(
@@ -74,6 +77,7 @@ class _SingleTrackState extends State<SingleTrack> {
                 ),
               ),
             ),
+            SizedBox(height: 5,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +114,7 @@ class _SingleTrackState extends State<SingleTrack> {
                     ))}',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: kYellow,
+                        color: Colors.grey,
                         fontSize: 12.0),
                   ),
                 )
@@ -122,7 +126,7 @@ class _SingleTrackState extends State<SingleTrack> {
     );
   }
 
-  void playAudio(SharedPreferences prefs) async {
+  void playAudio() async {
     if (AudioService.playbackState.playing) {
       if (widget.track.songId == AudioService.currentMediaItem.id) {
         print(
@@ -173,27 +177,6 @@ class _SingleTrackState extends State<SingleTrack> {
         artUri: Uri.parse(widget.track.coverImageUrl),
         extras: {'source': source}));
 
-    // await tracks.forEach((element) async {
-    //   String source = element.data.trackUrl;
-    //   if (await LocalHelper.isFileDownloaded(element.data.id)) {
-    //     print("${element.data.id}: downloaded");
-    //     source = '$dir/${element.data.id}/main.m3u8';
-    //   }
-    //   print("Source: $source");
-    //   mediaItems.add(MediaItem(
-    //       id: element.data.id,
-    //       album: element.data.albumId,
-    //       title: element.data.title,
-    //       genre: 'genre goes here',
-    //       artist: element.data.artistId,
-    //       duration: Duration(milliseconds: element.data.duration),
-    //       artUri: Uri.parse(element.data.coverImgUrl),
-    //       // extras: {'source': m3u8FilePath});
-    //       extras: {'source': source}));
-    // });
-
-    // await AudioService.addQueueItems(mediaItems);
-    /// check if currently clicked media file is not downloaded and start download
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
     if (!(await LocalHelper.isFileDownloaded(widget.track.songId))) {

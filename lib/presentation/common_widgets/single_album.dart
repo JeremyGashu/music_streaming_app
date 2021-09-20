@@ -21,7 +21,7 @@ class _SingleAlbumState extends State<SingleAlbum> {
               Navigator.pushNamed(context,AlbumDetail.albumDetailRouterName, arguments: widget.album);
             },
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 15, right: 5),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -36,9 +36,8 @@ class _SingleAlbumState extends State<SingleAlbum> {
                               width: 100,
                               height: 100,
                               child: Image.asset(
-                                'assets/images/album_disk_new.png',
+                                'assets/images/album.png',
                                 fit: BoxFit.cover,
-                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -120,7 +119,6 @@ class _SingleAlbumState extends State<SingleAlbum> {
                         child: Image.asset(
                           'assets/images/album_disk_new.png',
                           fit: BoxFit.cover,
-                          color: Colors.black,
                         ),
                       ),
                     ),

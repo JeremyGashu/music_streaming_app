@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class AllTracks extends StatefulWidget {
@@ -70,32 +71,11 @@ class _AllTracksState extends State<AllTracks> {
                     ),
                   );
                 } else if (state is LoadingTrackError && _tracks.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading Tracks!!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
-                              trackBloc.add(LoadTracks());
-                            }),
-                      ],
-                    ),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        trackBloc.add(LoadTracks());
+                      },
+                      message: 'Error Loading Tracks!');
                 }
                 return Expanded(
                   child: Column(
@@ -109,9 +89,12 @@ class _AllTracksState extends State<AllTracks> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !trackBloc.isLoading) {
-                                  if(trackBloc.state is LoadedTracks) {
-                                    if((trackBloc.state as LoadedTracks).tracks.length == 0) return;
-                                  }
+                              if (trackBloc.state is LoadedTracks) {
+                                if ((trackBloc.state as LoadedTracks)
+                                        .tracks
+                                        .length ==
+                                    0) return;
+                              }
                               trackBloc
                                 ..isLoading = true
                                 ..add(LoadTracks());
@@ -139,9 +122,10 @@ class _AllTracksState extends State<AllTracks> {
                       state is LoadedTracks
                           ? state.tracks.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Tracks!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Tracks!'),
+                                )
                               : Container()
                           : Container(),
                     ],

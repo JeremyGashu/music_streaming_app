@@ -13,13 +13,15 @@ import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/track_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class ArtistDetailPage extends StatefulWidget {
-  static const String artistDetailPageRouteName = 'artist_detail_page_route_name';
+  static const String artistDetailPageRouteName =
+      'artist_detail_page_route_name';
   final ArtistModel artist;
   ArtistDetailPage({this.artist});
 
@@ -87,7 +89,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                 height: 20,
               ),
 
-              _likeAndFollowersStat(),
+              _likeAndFollowersStat(widget.artist),
 
               // _followSection(),
               SizedBox(
@@ -115,7 +117,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
               //   height: 10,
               // ),
               //ad container
-              _adContainer('ad.png'),
 
               // SizedBox(
               //   height: 10,
@@ -166,34 +167,12 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                               ),
                             );
                           } else if (state is LoadingAlbumError) {
-                            return Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Error Loading Albums!',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.update,
-                                        color:
-                                            Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
-                                      ),
-                                      onPressed: () {
-                                        albumBloc.add(LoadAlbumsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      }),
-                                ],
-                              ),
-                            );
+                            return CustomErrorWidget(
+                                onTap: () {
+                                  albumBloc.add(LoadAlbumsByArtistId(
+                                      artistId: widget.artist.artistId));
+                                },
+                                message: 'Error Loading Albums!');
                           }
 
                           return Container();
@@ -236,34 +215,12 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                               ),
                             );
                           } else if (state is LoadingTrackError) {
-                            return Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Error Loading Tracks!',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.update,
-                                        color:
-                                            Colors.redAccent.withOpacity(0.8),
-                                        size: 45,
-                                      ),
-                                      onPressed: () {
-                                        trackBloc.add(LoadSongsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      }),
-                                ],
-                              ),
-                            );
+                            return CustomErrorWidget(
+                                onTap: () {
+                                  trackBloc.add(LoadSongsByArtistId(
+                                      artistId: widget.artist.artistId));
+                                },
+                                message: 'Error Loading Tracks!');
                           }
 
                           return Container();
@@ -366,7 +323,7 @@ Widget _upperSection(BuildContext context, ArtistModel artist) {
   );
 }
 
-Widget _likeAndFollowersStat() {
+Widget _likeAndFollowersStat(ArtistModel artist) {
   return Padding(
     padding: EdgeInsets.all(10),
     child: Row(
@@ -375,7 +332,7 @@ Widget _likeAndFollowersStat() {
         Column(
           children: [
             Text(
-              '2,168',
+              '${artist.likeCount ?? 0}',
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -397,7 +354,7 @@ Widget _likeAndFollowersStat() {
         Column(
           children: [
             Text(
-              '19,168',
+              '${artist.likeCount ?? 0}',
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -492,18 +449,7 @@ Widget _descriptionSection() {
   );
 }
 
-Widget _adContainer(String path) {
-  return Container(
-    margin: EdgeInsets.symmetric(
-      vertical: 0,
-    ),
-    width: double.infinity,
-    child: Image.asset(
-      'assets/images/$path',
-      fit: BoxFit.cover,
-    ),
-  );
-}
+
 
 // Widget _tabSelectors() {
 //   return Padding(

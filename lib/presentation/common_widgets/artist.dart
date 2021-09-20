@@ -14,7 +14,7 @@ class Artist extends StatelessWidget {
   Widget build(BuildContext context) {
     return artist != null
         ? Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0).copyWith(left: 15, right: 5),
             child: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(

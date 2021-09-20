@@ -295,8 +295,11 @@
 //
 //     final tracksResponse = tracksResponseFromJson(jsonString);
 
+import 'package:hive/hive.dart';
 import 'package:streaming_mobile/data/models/api_metadata.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
+
+part 'track.g.dart';
 
 class TracksResponse {
   TracksResponse({
@@ -371,6 +374,7 @@ class SongElement {
       };
 }
 
+@HiveType(typeId: 5)
 class Track {
   Track({
     this.songId,
@@ -393,47 +397,59 @@ class Track {
     this.likeCount,
   });
 
+  @HiveField(0)
   int likeCount;
+  @HiveField(1)
   String songId;
+  @HiveField(3)
   String artistId;
   ArtistModel artist;
+  @HiveField(5)
   String title;
+  @HiveField(6)
   String coverImageUrl;
+  @HiveField(7)
   String songUrl;
+  @HiveField(8)
   bool isSingle;
+  @HiveField(9)
   String genreId;
   Genre genre;
+  @HiveField(11)
   int views;
+  @HiveField(12)
   int duration;
+  @HiveField(13)
   String lyricsLocation;
+  @HiveField(14)
   String imageLocation;
+  @HiveField(15)
   String trackLocation;
+  @HiveField(16)
   DateTime releasedAt;
   DateTime createdAt;
   DateTime updatedAt;
 
   factory Track.fromJson(Map<String, dynamic> json) => Track(
-        songId: json["song_id"],
-        artistId: json["artist_id"],
-        artist: json["artist"] != null
-            ? ArtistModel.fromJson(json["artist"])
-            : null,
-        title: json["title"],
-        coverImageUrl: json["cover_image_url"],
-        songUrl: json["song_url"],
-        isSingle: json["is_single"],
-        genreId: json["genre_id"],
-        genre: json["Genre"] != null ? Genre.fromJson(json["Genre"]) : null,
-        views: json["views"],
-        duration: json["duration"],
-        lyricsLocation: json["lyrics_location"],
-        imageLocation: json["image_location"],
-        trackLocation: json["track_location"],
-        releasedAt: DateTime.parse(json["released_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        likeCount: json['like_counts']
-      );
+      songId: json["song_id"],
+      artistId: json["artist_id"],
+      artist:
+          json["artist"] != null ? ArtistModel.fromJson(json["artist"]) : null,
+      title: json["title"],
+      coverImageUrl: json["cover_image_url"],
+      songUrl: json["song_url"],
+      isSingle: json["is_single"],
+      genreId: json["genre_id"],
+      genre: json["Genre"] != null ? Genre.fromJson(json["Genre"]) : null,
+      views: json["views"],
+      duration: json["duration"],
+      lyricsLocation: json["lyrics_location"],
+      imageLocation: json["image_location"],
+      trackLocation: json["track_location"],
+      releasedAt: DateTime.parse(json["released_at"]),
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
+      likeCount: json['like_counts']);
 
   Map<String, dynamic> toJson() => {
         "song_id": songId,

@@ -63,7 +63,8 @@ class PlaylistDataProvider {
     };
 
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=10&search_by=user_id&search_key=$testUserId';
+        '$BASE_URL/playlists?page=${page}&per_page=10&search_by=user_id&search_key=${authData.userId}';
+        print('private playlist url => ${authData.userId}');
     http.Response response = await client.get(
       Uri.parse(url),
       headers: headers,
@@ -84,8 +85,8 @@ class PlaylistDataProvider {
       Uri.parse(POST_PLAYLIST_URL),
       headers: headers,
       body: jsonEncode({
-        'playlist_id': testUserId,
-        'song_id': testSongId,
+        'playlist_id': testPlaylistId,
+        'song_id': songId,
       }),
     );
     return response;

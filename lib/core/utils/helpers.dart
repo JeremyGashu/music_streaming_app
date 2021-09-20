@@ -226,7 +226,7 @@ class LocalHelper {
     } catch (error, stacktrace) {
       print(error);
       print(stacktrace);
-      throw Exception();
+      // throw Exception();
     }
   }
 
@@ -251,7 +251,7 @@ class LocalHelper {
     } catch (error, stacktrace) {
       print(error);
       print(stacktrace);
-      throw Exception("encryption failed");
+      // throw Exception("encryption failed");
     }
   }
 
@@ -287,7 +287,7 @@ class LocalHelper {
       if (file.existsSync()) {
         file.deleteSync();
       }
-      throw Exception("decryption failed");
+      // throw Exception("decryption failed");
     }
   }
 }

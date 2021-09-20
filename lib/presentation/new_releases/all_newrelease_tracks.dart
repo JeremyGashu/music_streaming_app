@@ -8,10 +8,12 @@ import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
 class AllNewReleaseTracks extends StatefulWidget {
-  static const String allNewReleaseTracksRouterName = 'all_new_release_tracks_router_name';
+  static const String allNewReleaseTracksRouterName =
+      'all_new_release_tracks_router_name';
   @override
   _AllNewReleaseTracksState createState() => _AllNewReleaseTracksState();
 }
@@ -74,32 +76,11 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                   );
                 } else if (state is LoadingNewReleasesError &&
                     _tracks.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading New Songs!!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
-                              newReleaseBloc.add(LoadNewReleases());
-                            }),
-                      ],
-                    ),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        newReleaseBloc.add(LoadNewReleases());
+                      },
+                      message: 'Error Loading New Songs!');
                 }
                 return Expanded(
                   child: Column(
@@ -113,9 +94,13 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !newReleaseBloc.isLoading) {
-                                  if(newReleaseBloc.state is LoadedNewReleases) {
-                                    if((newReleaseBloc.state as LoadedNewReleases).newRelease.songs.length == 0) return;
-                                  }
+                              if (newReleaseBloc.state is LoadedNewReleases) {
+                                if ((newReleaseBloc.state as LoadedNewReleases)
+                                        .newRelease
+                                        .songs
+                                        .length ==
+                                    0) return;
+                              }
                               newReleaseBloc
                                 ..isLoading = true
                                 ..add(LoadNewReleases());
@@ -143,9 +128,10 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                       state is LoadedNewReleases
                           ? state.newRelease.songs.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Songs!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Songs!'),
+                                )
                               : Container()
                           : Container(),
                     ],

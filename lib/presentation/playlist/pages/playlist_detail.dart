@@ -2,16 +2,19 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
+import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/models/track.dart';
@@ -20,8 +23,6 @@ import 'package:streaming_mobile/presentation/common_widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
-import 'package:streaming_mobile/presentation/playlist/widgets/playlist_stat.dart';
-import 'package:streaming_mobile/presentation/playlist/widgets/upper_section.dart';
 
 class PlaylistDetail extends StatefulWidget {
   static const String playlistDetailRouterName = 'playlist_detail_router_name';
@@ -47,12 +48,13 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 10,),
               //upper section containing the image, svg, shuffle button and healing track
               upperSection(context, playlist: widget.playlistInfo),
               SizedBox(
                 height: 20,
               ),
-              playListStat(playlist: widget.playlistInfo),
+              // playListStat(playlist: widget.playlistInfo),
               SizedBox(
                 height: 8,
               ),
@@ -63,48 +65,48 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               SizedBox(
                 height: 15,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Container(
-                  width: 160,
-                  height: 40,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.deepPurple,
-                      ),
-                    ),
-                    onPressed: () async {
-                      // TODO: play playlist
-                      if (!AudioService.running) {
-                        await AudioService.start(
-                          backgroundTaskEntrypoint: backgroundTaskEntryPoint,
-                          androidNotificationChannelName: 'Playback',
-                          androidNotificationColor: 0xFF2196f3,
-                          androidStopForegroundOnPause: true,
-                          androidEnableQueue: true,
-                        );
-                      }
-                      await AudioService.setShuffleMode(
-                          AudioServiceShuffleMode.all);
-                      playAudio(Random().nextInt(widget.playlistInfo.songs.length),
-                          sharedPreferences);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      child: Text(
-                        'Shuffle Play',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(30),
+              //   child: Container(
+              //     width: 160,
+              //     height: 40,
+              //     child: TextButton(
+              //       style: ButtonStyle(
+              //         backgroundColor: MaterialStateProperty.all<Color>(
+              //           Colors.deepPurple,
+              //         ),
+              //       ),
+              //       onPressed: () async {
+              //         // TODO: play playlist
+              //         if (!AudioService.running) {
+              //           await AudioService.start(
+              //             backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+              //             androidNotificationChannelName: 'Playback',
+              //             androidNotificationColor: 0xFF2196f3,
+              //             androidStopForegroundOnPause: true,
+              //             androidEnableQueue: true,
+              //           );
+              //         }
+              //         await AudioService.setShuffleMode(
+              //             AudioServiceShuffleMode.all);
+              //         playAudio(Random().nextInt(widget.playlistInfo.songs.length),
+              //             sharedPreferences);
+              //       },
+              //       child: Padding(
+              //         padding: EdgeInsets.symmetric(
+              //           horizontal: 10,
+              //         ),
+              //         child: Text(
+              //           'Shuffle Play',
+              //           style: TextStyle(
+              //             color: Colors.white,
+              //             fontSize: 15,
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: 15,
               ),
@@ -123,7 +125,8 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
                       print("Snapshot: ${snapshot.data}");
                       print(snapshot.hasData &&
-                          (snapshot.data.id == widget.playlistInfo.songs[0].songId));
+                          (snapshot.data.id ==
+                              widget.playlistInfo.songs[0].songId));
                       // print(snapshot.hasData &&
                       //     (snapshot.data.id == tracks[0].data.id));
                       return StreamBuilder(
@@ -138,13 +141,16 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                 shrinkWrap: true,
                                 itemCount: widget.playlistInfo.songs.length,
                                 itemBuilder: (context, index) {
-                                  return musicTile(widget.playlistInfo.songs[index].song, () {
+                                  return musicTile(
+                                      widget.playlistInfo.songs[index].song,
+                                      () {
                                     print("play playlist");
                                     playAudio(index, sharedPreferences);
                                   },
                                       snapshot.hasData &&
                                           (snapshot.data.id ==
-                                              widget.playlistInfo.songs[index].songId) &&
+                                              widget.playlistInfo.songs[index]
+                                                  .songId) &&
                                           playbackSnapshot.hasData &&
                                           playbackSnapshot.data.playing);
                                 }),
@@ -189,16 +195,247 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
     ));
   }
 
+  Widget upperSection(context, {Playlist playlist}) {
+    int duration = 0;
+    playlist.songs.forEach((element) { 
+      duration += element.song.duration;
+    });
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 180,
+                          height: 120,
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                  width: 90,
+                                  height: 90,
+                                  child: Image.asset(
+                                    'assets/images/album.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Card(
+                                    margin: EdgeInsets.zero,
+                                    elevation: 3.0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: CachedNetworkImage(
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(
+                                          strokeWidth: 1,
+                                        ),
+                                        imageUrl: playlist.songs[0] != null
+                                            ? playlist
+                                                .songs[0].song.coverImageUrl
+                                            : '',
+                                        errorWidget: (context, url, error) {
+                                          return Image.asset(
+                                            'assets/images/album_one.jpg',
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                        width: 140.0,
+                                        height: 120,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Opacity(
+                                    opacity: 0.4,
+                                    child: Card(
+                                      margin: EdgeInsets.zero,
+                                      elevation: 3.0,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0)),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        child: Container(
+                                          width: 140.0,
+                                          height: 120,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SvgPicture.asset('assets/svg/playlist.svg'),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ]),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        playlist.title ?? 'Unknown Title',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                          playlist.songs.length != null
+                              ? '${playlist.songs.length} Songs'
+                              : '0 Tracks',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey,
+                          )),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(30),
+                        onTap: () async {
+                          if(AudioService.playbackState.playing) {
+                          Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName);
+                          return;
+                        }
+                          if (playlist.songs.length == 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    'There are no tracks in this Playlist.')));
+                          } else {
+                            if (!AudioService.running) {
+                              await AudioService.start(
+                                backgroundTaskEntrypoint:
+                                    backgroundTaskEntryPoint,
+                                androidNotificationChannelName: 'Playback',
+                                androidNotificationColor: 0xFF2196f3,
+                                androidStopForegroundOnPause: true,
+                                androidEnableQueue: true,
+                              );
+                            }
+                            await AudioService.setShuffleMode(
+                                AudioServiceShuffleMode.all);
+                            playAudio(Random().nextInt(playlist.songs.length),
+                                sharedPreferences);
+                          }
+                        },
+                        child: Container(
+                          width: 140,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.purple.shade500, width: 2.5),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.shuffle,
+                                color: Colors.purple.shade500,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text('Shuffle Play',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.purple.shade500,
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                      //Shuffle button
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                playlist.songs != null
+                    ? '${playlist.songs.length} Songs, ${prettyDuration(Duration(seconds: duration))}'
+                    : '',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 3,
+                  ),
+                  Text(playlist.likeCount != null
+                      ? playlist.likeCount.toString()
+                      : '0'),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.more_vert,
+                    color: Colors.grey,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   void playAudio(int index, SharedPreferences prefs) async {
     if (AudioService.playbackState.playing) {
-      if (widget.playlistInfo.songs[index].songId == AudioService.currentMediaItem.id) {
+      if (widget.playlistInfo.songs[index].songId ==
+          AudioService.currentMediaItem.id) {
         print(
             "PlayListPage[playlist_detail]: already running with the same media id");
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SingleTrackPlayerPage(track: widget.playlistInfo.songs[index].song)));
+                builder: (context) => SingleTrackPlayerPage(
+                    track: widget.playlistInfo.songs[index].song)));
         return;
       }
     }
@@ -220,13 +457,13 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
   }
 
   Future<void> playPlayList(context, Duration position, index) async {
+    Navigator.pushNamed(
+        context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+        arguments: widget.playlistInfo.songs[index].song);
 
-    Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,arguments: widget.playlistInfo.songs[index].song);
-    
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];
-
 
     for (Track track in widget.playlistInfo.songs.map((e) => e.song)) {
       print("trackId: ${track.songId}");

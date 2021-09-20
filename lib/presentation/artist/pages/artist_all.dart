@@ -9,6 +9,7 @@ import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 
 class AllArtistsPage extends StatefulWidget {
   static const String allPArtistsRouterName = 'all_artists_router_name';
@@ -70,32 +71,9 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                     ),
                   );
                 } else if (state is LoadingArtistError && _artists.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading Artists!!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
+                  return CustomErrorWidget(onTap: () {
                               artistBloc.add(LoadArtists());
-                            }),
-                      ],
-                    ),
-                  );
+                            }, message: 'Error Loading Artists!');
                 }
                 return Expanded(
                   child: Column(

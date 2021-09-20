@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
@@ -17,7 +16,7 @@ import 'package:streaming_mobile/blocs/search/search_state.dart';
 import 'package:streaming_mobile/core/app/size_configs.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
-import 'package:streaming_mobile/presentation/common_widgets/music_tile.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
@@ -29,6 +28,7 @@ import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart'
 import 'package:streaming_mobile/presentation/search/widgets/album_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/artists_result.dart';
 import 'package:streaming_mobile/presentation/search/widgets/playlist_result.dart';
+import 'package:streaming_mobile/presentation/search/widgets/recently_searched.dart';
 import 'package:streaming_mobile/presentation/search/widgets/search_field.dart';
 import 'package:streaming_mobile/presentation/search/widgets/songs_result.dart';
 
@@ -91,7 +91,13 @@ class _SearchPageState extends State<SearchPage>
                   : PreferredSize(child: SizedBox(), preferredSize: Size.zero),
               backgroundColor: Colors.white,
               elevation: 0,
-              title: SearchField(),
+              title: Container(
+                height: 120,
+                margin: EdgeInsets.only(
+                  top: 90,
+                ),
+                child: SearchField(),
+              ),
             ),
             body: !(state is searchState.InitialState)
                 ? TabBarView(children: [
@@ -140,20 +146,22 @@ class _SearchPageState extends State<SearchPage>
                 : SingleChildScrollView(
                     child: Column(
                       children: [
+                        // SearchField(),
+
+                        SizedBox(
+                          height: 30,
+                        ),
                         SectionTitle(
                             title: 'Recently Searched', callback: () {}),
 
                         Container(
                           height: 220,
                           padding: EdgeInsets.only(right: 4, left: 4),
-                          child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.only(top: getHeight(6)),
-                              shrinkWrap: true,
-                              itemCount: 3,
-                              itemBuilder: (context, index) {
-                                return MusicListTile();
-                              }),
+                          child: RecentlyeSearched(),
+                        ),
+
+                        SizedBox(
+                          height: 10,
                         ),
 
                         SectionTitle(
@@ -164,6 +172,9 @@ class _SearchPageState extends State<SearchPage>
                                   AllNewReleasedAlbumsPage
                                       .allNewReleaseAlbumsRouterName);
                             }),
+                        SizedBox(
+                          height: 15,
+                        ),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -188,35 +199,12 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingNewReleasesError) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Error on loading new Albums!!',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.update,
-                                            color: Colors.redAccent
-                                                .withOpacity(0.8),
-                                            size: 45,
-                                          ),
-                                          onPressed: () {
-                                            BlocProvider.of<NewReleaseBloc>(
-                                                    context)
-                                                .add(LoadNewReleasesInit());
-                                          }),
-                                    ],
-                                  ),
-                                );
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      BlocProvider.of<NewReleaseBloc>(context)
+                                          .add(LoadNewReleasesInit());
+                                    },
+                                    message: 'Error Loading New Albums!');
                               }
 
                               return Container();
@@ -232,6 +220,9 @@ class _SearchPageState extends State<SearchPage>
                                   AllNewReleaseTracks
                                       .allNewReleaseTracksRouterName);
                             }),
+                        SizedBox(
+                          height: 25,
+                        ),
                         Container(
                           height: 200,
                           child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -251,40 +242,18 @@ class _SearchPageState extends State<SearchPage>
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (ctx, index) {
                                     return SingleTrack(
-                                      track: state.newRelease.songs[index].song,
+                                      track:
+                                          state.newRelease.songs[index].song,
                                     );
                                   },
                                 );
                               } else if (state is LoadingNewReleasesError) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Error on loading new Songs!!',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.update,
-                                            color: Colors.redAccent
-                                                .withOpacity(0.8),
-                                            size: 45,
-                                          ),
-                                          onPressed: () {
-                                            BlocProvider.of<NewReleaseBloc>(
-                                                    context)
-                                                .add(LoadNewReleasesInit());
-                                          }),
-                                    ],
-                                  ),
-                                );
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      BlocProvider.of<NewReleaseBloc>(context)
+                                          .add(LoadNewReleasesInit());
+                                    },
+                                    message: 'Error Loading New Songs!');
                               }
 
                               return Container();
@@ -298,6 +267,9 @@ class _SearchPageState extends State<SearchPage>
                               Navigator.pushNamed(context,
                                   AllPlaylistsPage.allPlaylistsRouterName);
                             }),
+                        SizedBox(
+                          height: 15,
+                        ),
                         Container(
                           height: 170,
                           child: BlocBuilder<PlaylistBloc, PlaylistState>(
@@ -323,35 +295,12 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingPlaylistError) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Error Loading Playlist!',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.update,
-                                            color: Colors.redAccent
-                                                .withOpacity(0.8),
-                                            size: 45,
-                                          ),
-                                          onPressed: () {
-                                            BlocProvider.of<PlaylistBloc>(
-                                                    context)
-                                                .add(LoadPlaylistsInit());
-                                          }),
-                                    ],
-                                  ),
-                                );
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      BlocProvider.of<PlaylistBloc>(context)
+                                          .add(LoadPlaylistsInit());
+                                    },
+                                    message: 'Error Loading Playlists!');
                               }
 
                               return Container();
@@ -359,10 +308,14 @@ class _SearchPageState extends State<SearchPage>
                           ),
                         ),
                         SectionTitle(
-                        title: "Albums",
-                        callback: () {
-                          Navigator.pushNamed(context,AllAlbumsPage.allAlbumsRouterName);
-                        }),
+                            title: "Albums",
+                            callback: () {
+                              Navigator.pushNamed(
+                                  context, AllAlbumsPage.allAlbumsRouterName);
+                            }),
+                        SizedBox(
+                          height: 15,
+                        ),
                         Container(
                           height: 200,
                           child: BlocBuilder<AlbumBloc, AlbumState>(
@@ -387,125 +340,18 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingAlbumError) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Error Loading Albums!!',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.update,
-                                            color: Colors.redAccent
-                                                .withOpacity(0.8),
-                                            size: 45,
-                                          ),
-                                          onPressed: () {
-                                            BlocProvider.of<AlbumBloc>(context)
-                                                .add(LoadInitAlbums());
-                                          }),
-                                    ],
-                                  ),
-                                );
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      BlocProvider.of<NewReleaseBloc>(context)
+                                          .add(LoadNewReleasesInit());
+                                    },
+                                    message: 'Error Loading New Albums!');
                               }
 
                               return Container();
                             },
                           ),
                         )
-                        // state is searchState.InitialState
-                        //     ?
-                        //     : Padding(
-                        //         padding: EdgeInsets.only(top: 50),
-                        //         child: Column(
-                        //           children: [
-                        //             TabBar(
-                        //               controller: _tabController,
-                        //               // give the indicator a decoration (color and border radius)
-                        //
-                        //               labelColor: Colors.black,
-                        //               unselectedLabelColor: Colors.black45,
-                        //               tabs: [
-                        //                 // first tab [you can add an icon using the icon property]
-                        //                 Tab(
-                        //                   text: 'Songs',
-                        //                 ),
-                        //
-                        //                 // second tab [you can add an icon using the icon property]
-                        //                 Tab(
-                        //                   text: 'Albums',
-                        //                 ),
-                        //                 Tab(
-                        //                   text: 'Artists',
-                        //                 ),
-                        //                 Tab(
-                        //                   text: 'Albums',
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             TabBarView(
-                        //               controller: _tabController,
-                        //               children: [
-                        //                 // first tab bar view widget
-                        //                 Expanded(
-                        //                   child: Center(
-                        //                     child: Text(
-                        //                       'Place Bid',
-                        //                       style: TextStyle(
-                        //                         fontSize: 25,
-                        //                         fontWeight: FontWeight.w600,
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //
-                        //                 // second tab bar view widget
-                        //                 Expanded(
-                        //                   child: Center(
-                        //                     child: Text(
-                        //                       'Buy Now',
-                        //                       style: TextStyle(
-                        //                         fontSize: 25,
-                        //                         fontWeight: FontWeight.w600,
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 Expanded(
-                        //                   child: Center(
-                        //                     child: Text(
-                        //                       'Buy Now',
-                        //                       style: TextStyle(
-                        //                         fontSize: 25,
-                        //                         fontWeight: FontWeight.w600,
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 Expanded(
-                        //                   child: Center(
-                        //                     child: Text(
-                        //                       'Buy Now',
-                        //                       style: TextStyle(
-                        //                         fontSize: 25,
-                        //                         fontWeight: FontWeight.w600,
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       ),
                       ],
                     ),
                   ),

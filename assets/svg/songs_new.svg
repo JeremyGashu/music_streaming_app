@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38.535" height="38.535" viewBox="0 0 38.535 38.535">
+  <g id="songs" transform="translate(-210.546 -73.793)">
+    <g id="Group_30" data-name="Group 30" transform="translate(-1 -1)">
+      <g id="Rectangle_10" data-name="Rectangle 10" transform="translate(216 79)" fill="none" stroke="#747474" stroke-width="3">
+        <rect width="30" height="31" rx="3" stroke="none"/>
+        <rect x="1.5" y="1.5" width="27" height="28" rx="1.5" fill="none"/>
+      </g>
+      <g id="audiotrack_black_24dp" transform="translate(216.859 81.489)">
+        <path id="Path_5" data-name="Path 5" d="M0,0H28.636V26.5H0Z" transform="translate(0)" fill="none"/>
+        <path id="Path_6" data-name="Path 6" d="M13.142,3V14.325a5.156,5.156,0,0,0-2.381-.59A4.544,4.544,0,0,0,6,18.029a4.544,4.544,0,0,0,4.761,4.294,4.544,4.544,0,0,0,4.761-4.294V7.294h4.761V3ZM10.761,20.175a2.28,2.28,0,0,1-2.381-2.147,2.28,2.28,0,0,1,2.381-2.147,2.28,2.28,0,0,1,2.381,2.147A2.28,2.28,0,0,1,10.761,20.175Z" transform="translate(1.176 0.588)" fill="#747474"/>
+      </g>
+    </g>
+    <path id="Path_28" data-name="Path 28" d="M0,0H38.535V38.535H0Z" transform="translate(210.546 73.793)" fill="none"/>
+  </g>
+</svg>

@@ -28,7 +28,7 @@ class NewReleaseBloc extends Bloc<NewReleaseEvent, NewReleaseState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingNewReleasesError(message: "Error on New Releases");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadNewReleasesInit) {
       try {
@@ -41,7 +41,7 @@ class NewReleaseBloc extends Bloc<NewReleaseEvent, NewReleaseState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingNewReleasesError(message: "Error on New Releases");
-        throw Exception(e);
+        // throw Exception(e);
       }
     }
   }

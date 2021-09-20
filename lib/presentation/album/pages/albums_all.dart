@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/albums/album_state.dart';
 import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 class AllAlbumsPage extends StatefulWidget {
@@ -70,48 +71,30 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                     ),
                   );
                 } else if (state is LoadingAlbumError && _albums.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Error Loading Album!',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.update,
-                              color: Colors.redAccent.withOpacity(0.8),
-                              size: 45,
-                            ),
-                            onPressed: () {
-                              albumBloc.add(LoadAlbums());
-                            }),
-                      ],
-                    ),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        albumBloc.add(LoadAlbums());
+                      },
+                      message: 'Error Loading Album!');
                 }
                 return Expanded(
                   child: Column(
                     children: [
                       Expanded(
                           child: GridView.count(
-                            primary: false,
+                        primary: false,
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !albumBloc.isLoading) {
-                                  if(albumBloc.state is LoadedAlbum) {
-                                    if((albumBloc.state as LoadedAlbum).albums.length == 0) return;
-                                  }
+                              if (albumBloc.state is LoadedAlbum) {
+                                if ((albumBloc.state as LoadedAlbum)
+                                        .albums
+                                        .length ==
+                                    0) return;
+                              }
                               albumBloc
                                 ..isLoading = true
                                 ..add(LoadAlbums());
@@ -135,9 +118,10 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                       state is LoadedAlbum
                           ? state.albums.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Albums!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Albums!'),
+                                )
                               : Container()
                           : Container(),
                     ],

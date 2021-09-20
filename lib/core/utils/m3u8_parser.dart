@@ -16,7 +16,7 @@ class ParseHls {
           await HlsPlaylistParser.create().parseString(playlistUri, m3u8String);
       return playlist;
     } catch (e) {
-      throw Exception();
+      // throw Exception();
     }
   }
 
@@ -56,7 +56,7 @@ class ParseHls {
 
       return true;
     } on Exception {
-      throw Exception();
+      // throw Exception();
     }
   }
 
@@ -85,7 +85,7 @@ class ParseHls {
     } catch (error, stacktrace) {
       print(error);
       print(stacktrace);
-      throw Exception();
+      // throw Exception();
     }
   }
 

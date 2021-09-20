@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
 import 'package:streaming_mobile/data/models/track.dart';
@@ -52,8 +53,14 @@ class _SongsResultState extends State<SongsResult> {
                     .songs
                     .map((songElement) {
                   return ResultListTile(
-                    onTap: () {
-                      Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: songElement.song);
+                    onTap: () async {
+                      var recentlySearchedBox =
+                          await Hive.openBox<Track>('recently_searched');
+                      recentlySearchedBox.add(songElement.song);
+
+                      Navigator.pushNamed(context,
+                          SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+                          arguments: songElement.song);
                     },
                     subtitle: songElement.song.title,
                     title:

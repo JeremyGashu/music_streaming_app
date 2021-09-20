@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -47,6 +45,7 @@ import 'package:streaming_mobile/data/data_provider/signup_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/analytics.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/data/repository/auth_repository.dart';
@@ -101,7 +100,6 @@ final _featuredAlbumRepo = FeaturedAlbumRepository(
     dataProvider: FeaturedDataProvider(client: http.Client()));
     
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -110,10 +108,8 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AuthDataAdapter());
   Hive.registerAdapter(AnalyticsAdapter());
+  Hive.registerAdapter(TrackAdapter());
   
-
-  // await setupLocator();
-
   await FlutterDownloader.initialize(debug: true);
 
   await Firebase.initializeApp();

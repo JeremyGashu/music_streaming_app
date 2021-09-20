@@ -11,7 +11,7 @@ class GenreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 140,
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0).copyWith(left: 15),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
       child: Stack(children: [
         Container(

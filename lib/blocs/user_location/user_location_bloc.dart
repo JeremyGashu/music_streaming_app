@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/core/services/location_service.dart';
 
@@ -28,6 +29,8 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
         } else {
           // print('here');
           yield UserLocationLoadSuccess(location: _location);
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          sharedPreferences.setString('lat_lang', '${_location.latitude} ${_location.longitude}');
         }
 
         _timer = Timer.periodic(Duration(seconds: 2), (timer) async {
@@ -41,6 +44,7 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
       } else if (event == UserLocationEvent.GetUserLocation) {
         if (_location != null) {
           yield UserLocationLoadSuccess(location: _location);
+          
         } else {
           add(UserLocationEvent.Init);
           yield UserLocationLoadBusy();

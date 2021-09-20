@@ -30,7 +30,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingPlaylistError(message: "Error on loading playlists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is LoadPlaylistsInit) {
       try {
@@ -42,7 +42,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield LoadingPlaylistError(message: "Error on loading playlists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is AddSongsToPrivatePlaylists) {
       yield LoadingState();
@@ -60,7 +60,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
         yield ErrorState(message: "Error on loading playlists");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is CreatePrivatePlaylist) {
       yield LoadingState();
@@ -79,7 +79,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         print("ERROR ON BLOC " + e.toString());
         yield ErrorState(
             message: "Error on creating playlist! Please Try Again!");
-        throw Exception(e);
+        // throw Exception(e);
       }
     } else if (event is GetPrivatePlaylists) {
       try {
@@ -87,17 +87,17 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         var playlistResponse =
             await playlistRepository.getPrivatePlaylists(page: privatePage);
         if (privatePage > playlistResponse.data.metaData.pageCount) {
-          yield LoadedPlaylist(playlists: []);
+          yield LoadedPrivatePlaylist(playlists: []);
         } else {
-          yield LoadedPlaylist(playlists: playlistResponse.data.data);
+          yield LoadedPrivatePlaylist(playlists: playlistResponse.data.data);
           print('page before increment => ${privatePage}');
           privatePage++;
           print('page after increment => ${privatePage}');
         }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingPlaylistError(message: "Error on loading playlists");
-        throw Exception(e);
+        yield ErrorState(message: "Error on loading private playlists");
+        // throw Exception(e);
       }
     }
   }
