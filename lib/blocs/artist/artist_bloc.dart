@@ -46,5 +46,12 @@ class ArtistBloc extends Bloc<ArtistEvent, ArtistState> {
         // throw Exception(e);
       }
     }
+    // else if(event is LikeArtist) {
+    //   try {
+    //     await artistRepository.likeArtist(artistId: event.artistId);
+    //   } catch (e) {
+    //   }
+      
+    // }
   }
 }

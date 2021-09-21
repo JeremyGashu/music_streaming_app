@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
+import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
+import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
@@ -80,10 +82,21 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                 ),
               ),
               //artist username
-              Text(
-                '${widget.artist.firstName}${widget.artist.lastName} ',
-                style: TextStyle(
-                    fontSize: 17, color: Colors.black.withOpacity(0.5)),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${widget.artist.firstName}${widget.artist.lastName} ',
+                    style: TextStyle(
+                        fontSize: 17, color: Colors.black.withOpacity(0.5)),
+                  ),
+
+                  IconButton(icon: Icon(Icons.favorite, color: Colors.grey.withOpacity(0.5),), onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Liked Artist')));
+                    BlocProvider.of<ArtistBloc>(context).add(LikeArtist(artistId: widget.artist.artistId));
+                  }),
+                ],
               ),
               SizedBox(
                 height: 20,
@@ -341,7 +354,7 @@ Widget _likeAndFollowersStat(ArtistModel artist) {
             Text(
               'Followers',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.01,
                 color: Colors.black.withOpacity(
@@ -364,7 +377,7 @@ Widget _likeAndFollowersStat(ArtistModel artist) {
               'Likes',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 16,
                 letterSpacing: 1.01,
                 color: Colors.black.withOpacity(
                   0.5,

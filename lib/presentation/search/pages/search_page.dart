@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
@@ -35,6 +36,7 @@ import 'package:streaming_mobile/presentation/search/widgets/songs_result.dart';
 import '../../../blocs/albums/album_bloc.dart';
 
 class SearchPage extends StatefulWidget {
+  static const String searchPageRouteName = 'search_page_route_name';
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -66,6 +68,8 @@ class _SearchPageState extends State<SearchPage>
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+              leading: null,
+              // leading: Container(),
               bottom: !(state is searchState.InitialState)
                   ? TabBar(
                       unselectedLabelColor: Colors.black54,
@@ -342,8 +346,8 @@ class _SearchPageState extends State<SearchPage>
                               } else if (state is LoadingAlbumError) {
                                 return CustomErrorWidget(
                                     onTap: () {
-                                      BlocProvider.of<NewReleaseBloc>(context)
-                                          .add(LoadNewReleasesInit());
+                                      BlocProvider.of<AlbumBloc>(context)
+                                          .add(LoadInitAlbums());
                                     },
                                     message: 'Error Loading New Albums!');
                               }

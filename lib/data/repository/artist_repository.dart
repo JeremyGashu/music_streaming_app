@@ -77,8 +77,6 @@ class ArtistRepository {
         decodedArtists = jsonDecode(artistCache);
       }
     } else {
-      //TODO change default artist string
-      //TODO: if there is no network and there is no data in the cache show error message in the UI
       String artistsCache =
           artistsBox.get(0, defaultValue: defaultArtistsString);
       decodedArtists = jsonDecode(artistsCache);
@@ -86,4 +84,14 @@ class ArtistRepository {
 
     return ArtistsResponse.fromJson(decodedArtists);
   }
+
+    Future<bool> likeArtist({String artistId}) async {
+      http.Response response = await dataProvider.likeArtist(artistId: artistId);
+      if(response.statusCode == 204) {
+        return false;
+      }
+      else if(response.statusCode == 200) {
+        return true;
+      }
+    }
 }

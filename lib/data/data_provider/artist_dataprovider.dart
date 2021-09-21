@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,19 @@ class ArtistDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
     http.Response response = await client.get(Uri.parse(url), headers: headers);
+    return response;
+  }
+
+  Future<http.Response> likeArtist({String artistId}) async {
+    String url =
+        '$BASE_URL/like/artist';
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
+    http.Response response = await client.post(Uri.parse(url), headers: headers, body: jsonEncode({'artist_id' : artistId}));
+    print('like status => ${response.statusCode}');
     return response;
   }
 

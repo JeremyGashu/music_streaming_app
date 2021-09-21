@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -6,6 +7,7 @@ import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
+import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +22,8 @@ class PrivatePlaylistList extends StatefulWidget {
 }
 
 class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
+  final List<Playlist> _playlists = [];
+  final ScrollController _scrollController = ScrollController();
   final PlaylistBloc playlistBloc = PlaylistBloc(
       playlistRepository: PlaylistRepository(
           dataProvider: PlaylistDataProvider(client: http.Client())));
@@ -36,9 +40,11 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
     return BlocConsumer<PlaylistBloc, PlaylistState>(
         bloc: playlistBloc,
         listener: (context, state) {
-          if (state is ErrorState || state is LoadingPlaylistError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Loading Private playlist Error!')));
+          if (state is ErrorState) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+            Navigator.pop(context);
+            playlistBloc.loadingPrivatePlaylist = false;
           }
           if (state is SuccessState) {
             Navigator.pop(context);
@@ -47,6 +53,24 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
           }
         },
         builder: (context, state) {
+          if (state is LoadedPrivatePlaylist) {
+            _playlists.addAll(state.playlists);
+            playlistBloc.loadingPrivatePlaylist = false;
+          } else if (state is InitialState ||
+              state is LoadingState && _playlists.isEmpty) {
+            return Center(
+              child: SpinKitRipple(
+                color: Colors.grey,
+                size: 40,
+              ),
+            );
+          } else if (state is ErrorState && _playlists.isEmpty) {
+            return CustomErrorWidget(
+                onTap: () {
+                  playlistBloc.add(GetPrivatePlaylists());
+                },
+                message: 'Error Loading Playlists!');
+          }
           return Container(
             height: kHeight(context) * 0.6,
             width: kWidth(context) * 0.8,
@@ -57,7 +81,73 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Expanded(
-                    child: _buildOnState(context, state),
+                    child: _playlists.length == 0
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('No Playlist Found!'),
+                                SizedBox(height: 20,),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context,
+                                              PrivatePlaylistsPage
+                                                  .privatePlaylistRouteName);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.add),
+                                            Text('Create Playlist'),
+                                          ],
+                                        )),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !playlistBloc.loadingPrivatePlaylist) {
+                                  if (playlistBloc.state
+                                      is LoadedPrivatePlaylist) {
+                                    if ((playlistBloc.state
+                                                as LoadedPrivatePlaylist)
+                                            .playlists
+                                            .length ==
+                                        0) return;
+                                  }
+                                  playlistBloc
+                                    ..loadingPrivatePlaylist = true
+                                    ..add(GetPrivatePlaylists());
+                                }
+                              }),
+                            itemCount: _playlists.length,
+                            itemBuilder: (context, index) {
+                              //yield listile and add sending state from here
+                              return ListTile(
+                                onTap: () async {
+                                  var _currentMediaItem =
+                                      await AudioService.currentMediaItem;
+                                  playlistBloc.add(AddSongsToPrivatePlaylists(
+                                      playlistId: _playlists[index].playlistId,
+                                      songId: _currentMediaItem.id));
+                                },
+                                leading: Icon(Icons.music_note),
+                                title: Text(_playlists[index].title),
+                                subtitle: Text(
+                                    '${_playlists[index].songs.length} Musics'),
+                              );
+                            }),
                   ),
                   // SizedBox(height: 30,),
                   Divider(),
@@ -77,65 +167,5 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
             ),
           );
         });
-  }
-
-  Widget _buildOnState(BuildContext context, PlaylistState state) {
-    if (state is LoadingState) {
-      return Container(
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(30)),
-        child: Center(
-            child: SpinKitRipple(
-          size: 40,
-          color: Colors.grey,
-        )),
-      );
-    } else if (state is LoadedPrivatePlaylist) {
-      return state.playlists.length == 0
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('No Playlist Found!'),
-                  SizedBox(height: 10,),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context,
-                            PrivatePlaylistsPage.privatePlaylistRouteName);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add),
-                          Text('Create Playlist'),
-                        ],
-                      ))
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: state.playlists.length,
-              itemBuilder: (context, index) {
-                //yield listile and add sending state from here
-                return ListTile(
-                  onTap: () {
-                    playlistBloc.add(AddSongsToPrivatePlaylists(
-                        playlistId: state.playlists[index].playlistId,
-                        songId: widget.songId));
-                  },
-                  leading: Icon(Icons.music_note),
-                  title: Text(state.playlists[index].title),
-                  subtitle: Text('${state.playlists.length} Musics'),
-                );
-              });
-    } else if (state is ErrorState) {
-      return CustomErrorWidget(
-          onTap: () {
-            playlistBloc.add(GetPrivatePlaylists());
-          },
-          message: 'Error Loading Playlists!');
-    }
-    return Container();
   }
 }

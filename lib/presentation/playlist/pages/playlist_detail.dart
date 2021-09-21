@@ -19,7 +19,6 @@ import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
-import 'package:streaming_mobile/presentation/common_widgets/search_bar.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
@@ -115,7 +114,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               SizedBox(
                 height: 15,
               ),
-              searchBar(),
+              // searchBar(),
               SizedBox(
                 height: 15,
               ),
@@ -123,12 +122,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                 child: StreamBuilder(
                     stream: AudioService.currentMediaItemStream,
                     builder: (context, AsyncSnapshot<MediaItem> snapshot) {
-                      print("Snapshot: ${snapshot.data}");
-                      print(snapshot.hasData &&
-                          (snapshot.data.id ==
-                              widget.playlistInfo.songs[0].songId));
-                      // print(snapshot.hasData &&
-                      //     (snapshot.data.id == tracks[0].data.id));
+                      
                       return StreamBuilder(
                         stream: AudioService.playbackStateStream,
                         builder: (context,
@@ -247,8 +241,8 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                             CircularProgressIndicator(
                                           strokeWidth: 1,
                                         ),
-                                        imageUrl: playlist.songs[0] != null
-                                            ? playlist
+                                        imageUrl: playlist.songs.length > 1 ?
+                                            playlist
                                                 .songs[0].song.coverImageUrl
                                             : '',
                                         errorWidget: (context, url, error) {

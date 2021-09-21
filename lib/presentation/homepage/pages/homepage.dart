@@ -357,7 +357,7 @@ class _HomePageState extends State<HomePage> {
                                       return SinglePlaylist(
                                         playlist: state.playlists[index],
                                       );
-                                    },
+                                    },  
                                   );
                           } else if (state is LoadingPlaylistError) {
                             return CustomErrorWidget(

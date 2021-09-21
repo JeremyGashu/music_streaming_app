@@ -62,6 +62,9 @@ class PlaylistDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
+    // String testId = '326a36ce-d250-40de-b9bc-feadff479f02';
+
+
     String url =
         '$BASE_URL/playlists?page=${page}&per_page=10&search_by=user_id&search_key=${authData.userId}';
         print('private url => $url');
@@ -86,7 +89,7 @@ class PlaylistDataProvider {
       Uri.parse(POST_PLAYLIST_URL),
       headers: headers,
       body: jsonEncode({
-        'playlist_id': testPlaylistId,
+        'playlist_id': playlistId,
         'song_id': songId,
       }),
     );

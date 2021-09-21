@@ -71,14 +71,14 @@ class ArtistProfilePage extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              _listSelectorTiles(
-                title: 'Notification',
-                icon: Icon(
-                  Icons.notification_important,
-                  color: Colors.grey,
-                  size: 25,
-                ),
-              ),
+              // _listSelectorTiles(
+              //   title: 'Notification',
+              //   icon: Icon(
+              //     Icons.notification_important,
+              //     color: Colors.grey,
+              //     size: 25,
+              //   ),
+              // ),
 
               _listSelectorTiles(
                   title: 'Change Password',

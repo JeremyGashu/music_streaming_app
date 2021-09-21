@@ -16,6 +16,7 @@ import 'package:streaming_mobile/presentation/player/single_track_player_page.da
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
+import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
 
@@ -42,6 +43,9 @@ class AppRouter {
       case ArtistDetailPage.artistDetailPageRouteName:
         return MaterialPageRoute(
             builder: (_) => ArtistDetailPage(artist: args));
+            case SearchPage.searchPageRouteName:
+        return MaterialPageRoute(
+            builder: (_) => SearchPage());
 
       case OTP.otpPageRouterName:
         return MaterialPageRoute(builder: (_) => OTP(phoneNumber: args));

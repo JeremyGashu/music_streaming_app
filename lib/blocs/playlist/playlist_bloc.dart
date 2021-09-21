@@ -7,6 +7,7 @@ import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   int page = 1;
   int privatePage = 1;
+  bool loadingPrivatePlaylist = false;
   bool isLoading = false;
   final PlaylistRepository playlistRepository;
   PlaylistBloc({@required this.playlistRepository}) : super(InitialState());
@@ -44,7 +45,21 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         yield LoadingPlaylistError(message: "Error on loading playlists");
         // throw Exception(e);
       }
-    } else if (event is AddSongsToPrivatePlaylists) {
+    }
+     else if (event is LoadPrivatePlaylistsInit) {
+      try {
+        yield LoadingState();
+        var playlists = await playlistRepository.getPrivatePlaylists(page: 1);
+
+        yield LoadedPrivatePlaylist(playlists: playlists.data.data);
+        privatePage = 1;
+      } catch (e) {
+        print("ERROR ON BLOC " + e.toString());
+        yield ErrorState(message: "Error on loading playlists");
+        // throw Exception(e);
+      }
+    }
+     else if (event is AddSongsToPrivatePlaylists) {
       yield LoadingState();
 
       try {

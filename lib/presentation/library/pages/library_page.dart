@@ -16,12 +16,16 @@ import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/new_releases/all_newrelease_tracks.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
+import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
+import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
 
 class LibraryPage extends StatelessWidget {
   @override
@@ -41,14 +45,25 @@ class LibraryPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  _buildPlayListTopOptionsItem('assets/svg/album_new.svg', () {
+                    Navigator.pushNamed(
+                        context, AllAlbumsPage.allAlbumsRouterName);
+                  }, 'Albums', 1.0),
                   _buildPlayListTopOptionsItem(
-                      'assets/svg/album_new.svg', () {}, 'Albums', 1.0),
+                      'assets/svg/songs_new.svg', () {
+                        Navigator.pushNamed(
+                        context, AllTracks.allTracksRouterName);
+                      }, 'Songs', 0.6),
+                  _buildPlayListTopOptionsItem('assets/svg/playlist_new.svg',
+                      () {
+                    Navigator.pushNamed(
+                        context, PrivatePlaylistsPage.privatePlaylistRouteName);
+                  }, 'Playlists', 0.6),
                   _buildPlayListTopOptionsItem(
-                      'assets/svg/songs_new.svg', () {}, 'Songs', 0.6),
-                  _buildPlayListTopOptionsItem(
-                      'assets/svg/playlist_new.svg', () {}, 'Playlists', 0.6),
-                  _buildPlayListTopOptionsItem(
-                      'assets/svg/artists_new.svg', () {}, 'Artists', 1.0),
+                      'assets/svg/artists_new.svg', () {
+                        Navigator.pushNamed(
+                        context, AllArtistsPage.allPArtistsRouterName);
+                      }, 'Artists', 1.0),
                 ],
               ),
             ),
@@ -156,38 +171,43 @@ class LibraryPage extends StatelessWidget {
   }
 
   _buildPlayListTopOptionsItem(svg, onPressed, text, opacity) {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10)),
-            padding: EdgeInsets.all(20),
-            child: Opacity(
-              opacity: opacity,
-              child: SvgPicture.asset(
-                svg,
-                color: Colors.grey[900],
-                height: 38,
-                width: 38,
-                fit: BoxFit.fill,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10)),
+              padding: EdgeInsets.all(20),
+              child: Opacity(
+                opacity: opacity,
+                child: SvgPicture.asset(
+                  svg,
+                  color: Colors.grey[900],
+                  height: 38,
+                  width: 38,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 12,
-          ),
-          Text(
-            text,
-            style: TextStyle(
-                letterSpacing: 1.01, fontSize: 14, fontWeight: FontWeight.w500),
-          )
-        ],
+            SizedBox(
+              height: 12,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                  letterSpacing: 1.01,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500),
+            )
+          ],
+        ),
       ),
     );
   }

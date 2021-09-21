@@ -6,6 +6,7 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
+import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 class ArtistsGrid extends StatelessWidget {
   @override
@@ -146,7 +147,9 @@ Widget _upperSection(BuildContext context) {
           icon: Icon(
             Icons.search,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => SearchPage()));
+          },
         ),
       ),
     ],

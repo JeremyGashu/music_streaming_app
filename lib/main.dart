@@ -75,8 +75,6 @@ final _authRepo =
 final _signUpRepo =
     SignUpRepository(dataProvider: SignUpDataProvider(client: http.Client()));
 
-
-
 final _artistRepo =
     ArtistRepository(dataProvider: ArtistDataProvider(client: http.Client()));
 
@@ -211,7 +209,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Streaming App',
+      title: 'Zema Streaming',
       onGenerateRoute: AppRouter.onGeneratedRoute,
       home: MultiBlocListener(
         listeners: [

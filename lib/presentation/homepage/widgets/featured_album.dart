@@ -55,17 +55,11 @@ Widget FeaturedAlbum(Album album) {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  album != null ? album.title : 'Unknown Artist',
+                  album != null ? '${album.artist.firstName} ${album.artist.lastName}' : 'Unknown Artist',
                   style:
                   TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ),
-              // Text(
-              //   album != null
-              //       ? '${album.artist.firstName} ${album.artist.firstName}'
-              //       : 'Unknown Artist',
-              //   style: TextStyle(fontWeight: FontWeight.bold, color: kYellow),
-              // ),
             ],
           ),
         ),

@@ -23,6 +23,11 @@ class GetPrivatePlaylists extends PlaylistEvent {
   List<Object> get props => [];
 }
 
+class LoadPrivatePlaylistsInit extends PlaylistEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class AddSongsToPrivatePlaylists extends PlaylistEvent {
   final String playlistId;
   final String songId;

@@ -10,6 +10,7 @@ import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
+import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 class AllArtistsPage extends StatefulWidget {
   static const String allPArtistsRouterName = 'all_artists_router_name';
@@ -157,7 +158,9 @@ Widget _upperSection(BuildContext context) {
             Icons.search,
             size: 20,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, SearchPage.searchPageRouteName);
+          },
         ),
       ),
     ],

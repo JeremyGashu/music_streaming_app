@@ -88,7 +88,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                               playbackSnapshot) =>
                                       playbackSnapshot.hasData
                                           ? ListView.builder(
-                                              physics: NeverScrollableScrollPhysics(),
+                                              // physics: NeverScrollableScrollPhysics(),
                                               padding: EdgeInsets.zero,
                                               itemCount: snapshot.data.length,
                                               itemBuilder: (context, index) {

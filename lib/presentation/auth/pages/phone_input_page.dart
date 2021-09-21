@@ -160,11 +160,12 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                 onPressed: () {
 
                                   if (isPhoneNumber(
-                                      _phoneNumberController.value.text) &&  _phoneNumberController.value.text.length == 9) {
+                                      _phoneNumberController.value.text) &&  _phoneNumberController.value.text.length == 10) {
                                     BlocProvider.of<AuthBloc>(context).add(
                                         VerifyPhoneNumberEvent(
                                             phoneNo: _phoneNumberController
                                                 .value.text));
+                                    // print('phone number => ${_countryCode + _phoneNumberController.value.text}');
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(

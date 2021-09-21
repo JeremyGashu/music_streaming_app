@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
@@ -38,30 +39,52 @@ class _CreatePrivatePlaylistWidgetState
                 SnackBar(content: Text('Loading playlist Error!')));
           }
           if (state is SuccessState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Added Music Playlist!')));
-                Navigator.pop(context, true);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Created Playlist!')));
+            Navigator.pop(context, true);
           }
         },
         builder: (context, state) {
           return Container(
-            height: kHeight(context) * 0.6,
-            width: kWidth(context) * 0.8,
+            height: 265,
+            width: kWidth(context),
             child: Padding(
               padding: const EdgeInsets.only(
-                  top: 30, left: 30, right: 30, bottom: 10),
+                  top: 30, left: 10, right: 10, bottom: 10),
               child: Column(
                 children: [
+                  Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                      child: SvgPicture.asset('assets/svg/playlist.svg'),
+                    ),
+                  ),
                   SizedBox(
                     height: 20,
                   ),
                   TextField(
+                    textAlign: TextAlign.center,
                     controller: _controller,
                     decoration: InputDecoration(
-                      labelText: 'Title',
-                    ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        alignLabelWithHint: true,
+                        hintText: 'Create a name for your playlist',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                        )),
                   ),
-                  Spacer(),
+                  SizedBox(
+                    height: 30,
+                  ),
                   state is LoadingState
                       ? Center(
                           child: SpinKitRipple(
@@ -73,28 +96,53 @@ class _CreatePrivatePlaylistWidgetState
                           width: double.infinity,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TextButton(
-                                  onPressed: () {
-                                    String title = _controller.value.text;
-
-                                    if (title != '') {
-                                      playlistBloc.add(
-                                          CreatePrivatePlaylist(title: title));
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  'Playlist title cannot be empty!!')));
-                                    }
-                                  },
-                                  child: Text('Create')),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel'))
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  width: 130,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.grey.withOpacity(0.3),
+                                  ),
+                                  child: Center(
+                                      child: Text(
+                                    'Cancel',
+                                    style: TextStyle(color: Colors.black),
+                                  )),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  String title = _controller.value.text;
+                                  if (title != '') {
+                                    playlistBloc.add(
+                                        CreatePrivatePlaylist(title: title));
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Playlist name cannot be empty!!')));
+                                  }
+                                },
+                                child: Container(
+                                  width: 130,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.orange,
+                                  ),
+                                  child: Center(
+                                      child: Text(
+                                    'Continue',
+                                    style: TextStyle(color: Colors.white),
+                                  )),
+                                ),
+                              ),
                             ],
                           ),
                         )

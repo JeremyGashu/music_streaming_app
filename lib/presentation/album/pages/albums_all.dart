@@ -10,6 +10,7 @@ import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
+import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 class AllAlbumsPage extends StatefulWidget {
   static const String allAlbumsRouterName = 'all_albums_router_name';
@@ -163,7 +164,8 @@ Widget _upperSection(BuildContext context) {
             Icons.search,
             size: 20,
           ),
-          onPressed: () {},
+          onPressed: () {
+          },
         ),
       ),
     ],
