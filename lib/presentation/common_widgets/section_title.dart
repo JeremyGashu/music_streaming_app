@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 
-SectionTitle({title, callback}) {
+SectionTitle({title, callback, hasMore = true}) {
   return Container(
     padding: EdgeInsets.symmetric(
       horizontal: 20.0,
@@ -16,7 +16,7 @@ SectionTitle({title, callback}) {
           style: TextStyle(
               fontWeight: FontWeight.bold, color: kBlack, fontSize: 16),
         ),
-        InkWell(
+        hasMore ? InkWell(
           onTap: () => callback(),
           child: Padding(
             padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
@@ -26,7 +26,7 @@ SectionTitle({title, callback}) {
                   fontWeight: FontWeight.w600, color: Colors.orange[700], fontSize: 12),
             ),
           ),
-        ),
+        ) : Container(),
       ],
     ),
   );

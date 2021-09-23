@@ -1,4 +1,3 @@
-//load playlist
 import 'package:equatable/equatable.dart';
 
 class TrackEvent extends Equatable {
@@ -21,4 +20,11 @@ class LoadSongsByArtistId extends TrackEvent {
   LoadSongsByArtistId({this.artistId});
   @override
   List<Object> get props => [artistId];
+}
+
+class LoadSongsByGenre extends TrackEvent {
+  final String genreId;
+  LoadSongsByGenre({this.genreId});
+  @override
+  List<Object> get props => [genreId];
 }

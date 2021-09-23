@@ -10,13 +10,6 @@ class LoadArtists extends ArtistEvent {
   List<Object> get props => [];
 }
 
-class LikeArtist extends ArtistEvent {
-  final String artistId;
-
-  LikeArtist({this.artistId});
-  @override
-  List<Object> get props => [artistId];
-}
 
 class LoadInitArtists extends ArtistEvent {
   @override

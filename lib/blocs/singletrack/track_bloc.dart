@@ -30,7 +30,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
         }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingTrackError(message: "Error one loading playlists");
+        yield LoadingTrackError(message: "Error on loading songs!");
         // throw Exception(e);
       }
     } else if (event is LoadTracksInit) {
@@ -45,7 +45,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
         page = 1;
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingTrackError(message: "Error one loading playlists");
+        yield LoadingTrackError(message: "Error on loading songs");
         // throw Exception(e);
       }
     } else if (event is LoadSongsByArtistId) {
@@ -60,7 +60,27 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
         yield LoadedTracks(tracks: tracks);
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield LoadingTrackError(message: "Error one loading songs!");
+        yield LoadingTrackError(message: "Error on loading songs!");
+      }
+    }
+
+    if (event is LoadSongsByGenre) {
+      try {
+        yield LoadingTrack();
+        var tracksResponse = await trackRepository.getTracksByGenre(genreId: event.genreId,page: page);
+        if (page > tracksResponse.data.metaData.pageCount) {
+          yield LoadedTracks(tracks: []);
+        } else {
+          List<Track> tracks = tracksResponse.data.data.songs
+              .map((songElement) => songElement.song)
+              .toList();
+
+          yield LoadedTracks(tracks: tracks);
+          page++;
+        }
+      } catch (e) {
+        print("ERROR ON BLOC " + e.toString());
+        yield LoadingTrackError(message: "Error on loading songs");
       }
     }
   }

@@ -156,7 +156,7 @@ class _SearchPageState extends State<SearchPage>
                           height: 30,
                         ),
                         SectionTitle(
-                            title: 'Recently Searched', callback: () {}),
+                            title: 'Recently Searched', callback: () {}, hasMore: false),
 
                         Container(
                           height: 220,
@@ -245,9 +245,12 @@ class _SearchPageState extends State<SearchPage>
                                   itemCount: state.newRelease.songs.length,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (ctx, index) {
-                                    return SingleTrack(
-                                      track:
-                                          state.newRelease.songs[index].song,
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 2, right: 5),
+                                      child: SingleTrack(
+                                        track:
+                                            state.newRelease.songs[index].song,
+                                      ),
                                     );
                                   },
                                 );

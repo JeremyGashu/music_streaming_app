@@ -111,7 +111,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         }
       } catch (e) {
         print("ERROR ON BLOC " + e.toString());
-        yield ErrorState(message: "Error on loading private playlists");
+        yield ErrorState(message: "Error on loading playlists");
         // throw Exception(e);
       }
     }

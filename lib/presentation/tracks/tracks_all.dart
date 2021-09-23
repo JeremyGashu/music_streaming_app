@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
-import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+
+import '../../locator.dart';
 
 class AllTracks extends StatefulWidget {
   static const String allTracksRouterName = 'all_tracks_router_name';
@@ -25,9 +24,7 @@ class _AllTracksState extends State<AllTracks> {
   TrackBloc trackBloc;
   @override
   void initState() {
-    trackBloc = TrackBloc(
-        trackRepository: TrackRepository(
-            dataProvider: TrackDataProvider(client: http.Client())));
+    trackBloc = sl<TrackBloc>();
     trackBloc.add(LoadTracks());
     super.initState();
   }

@@ -26,7 +26,7 @@ class _MainPageState extends State<MainPage> {
     ArtistProfilePage(),
   ];
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext conGtext) {
     return BlocListener<ConfigBloc, ConfigState>(
       listener: (context, state) async {
         if (state is LoadedConfigData) {

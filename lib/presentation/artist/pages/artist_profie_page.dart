@@ -27,20 +27,20 @@ class ArtistProfilePage extends StatelessWidget {
                     width: 130,
                     height: 130,
                     child: Image.asset(
-                      'assets/images/artist_image.jpg',
+                      'assets/images/artist_placeholder.png',
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
               //artist username
-              Text(
-                '@dawitgetachew',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.black.withOpacity(0.5),
-                ),
-              ),
+              // Text(
+              //   '@dawitgetachew',
+              //   style: TextStyle(
+              //     fontSize: 15,
+              //     color: Colors.black.withOpacity(0.5),
+              //   ),
+              // ),
               SizedBox(
                 height: 13,
               ),

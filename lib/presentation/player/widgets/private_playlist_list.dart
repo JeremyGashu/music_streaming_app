@@ -37,44 +37,43 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
   Widget build(BuildContext context) {
     //todo make another bloc for this and load the items from here
 
-    return BlocConsumer<PlaylistBloc, PlaylistState>(
-        bloc: playlistBloc,
-        listener: (context, state) {
-          if (state is ErrorState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-            Navigator.pop(context);
-            playlistBloc.loadingPrivatePlaylist = false;
-          }
-          if (state is SuccessState) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Added To Playlist!')));
-          }
-        },
-        builder: (context, state) {
-          if (state is LoadedPrivatePlaylist) {
-            _playlists.addAll(state.playlists);
-            playlistBloc.loadingPrivatePlaylist = false;
-          } else if (state is InitialState ||
-              state is LoadingState && _playlists.isEmpty) {
-            return Center(
-              child: SpinKitRipple(
-                color: Colors.grey,
-                size: 40,
-              ),
-            );
-          } else if (state is ErrorState && _playlists.isEmpty) {
-            return CustomErrorWidget(
-                onTap: () {
-                  playlistBloc.add(GetPrivatePlaylists());
-                },
-                message: 'Error Loading Playlists!');
-          }
-          return Container(
-            height: kHeight(context) * 0.6,
-            width: kWidth(context) * 0.8,
-            child: Padding(
+    return Container(
+      height: 400,
+      child: BlocConsumer<PlaylistBloc, PlaylistState>(
+          bloc: playlistBloc,
+          listener: (context, state) {
+            if (state is ErrorState) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
+              // Navigator.pop(context);
+              playlistBloc.loadingPrivatePlaylist = false;
+            }
+            if (state is SuccessState) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Added To Playlist!')));
+            }
+          },
+          builder: (context, state) {
+            if (state is LoadedPrivatePlaylist) {
+              _playlists.addAll(state.playlists);
+              playlistBloc.loadingPrivatePlaylist = false;
+            } else if (state is InitialState ||
+                state is LoadingState && _playlists.isEmpty) {
+              return Center(
+                child: SpinKitRipple(
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              );
+            } else if (state is ErrorState && _playlists.isEmpty) {
+              return CustomErrorWidget(
+                  onTap: () {
+                    playlistBloc.add(GetPrivatePlaylists());
+                  },
+                  message: 'Error Loading Playlists!');
+            }
+            return Padding(
               padding: const EdgeInsets.only(
                   top: 30, left: 30, right: 30, bottom: 10),
               child: Column(
@@ -164,8 +163,8 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
                   ),
                 ],
               ),
-            ),
-          );
-        });
+            );
+          }),
+    );
   }
 }

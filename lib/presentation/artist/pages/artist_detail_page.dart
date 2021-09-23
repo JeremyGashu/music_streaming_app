@@ -1,25 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
-import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
-import 'package:streaming_mobile/blocs/artist/artist_event.dart';
+import 'package:streaming_mobile/blocs/like/like_bloc.dart';
+import 'package:streaming_mobile/blocs/like/like_event.dart';
+import 'package:streaming_mobile/blocs/like/like_state.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
-import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
-import 'package:streaming_mobile/data/data_provider/track_dataprovider.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
-import 'package:streaming_mobile/data/repository/album_repository.dart';
-import 'package:streaming_mobile/data/repository/track_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+
+import '../../../locator.dart';
 
 class ArtistDetailPage extends StatefulWidget {
   static const String artistDetailPageRouteName =
@@ -32,15 +31,15 @@ class ArtistDetailPage extends StatefulWidget {
 }
 
 class _ArtistDetailPageState extends State<ArtistDetailPage> {
-  final TrackBloc trackBloc = TrackBloc(
-      trackRepository: TrackRepository(
-          dataProvider: TrackDataProvider(client: http.Client())));
-  final AlbumBloc albumBloc = AlbumBloc(
-      albumRepository: AlbumRepository(
-          dataProvider: AlbumDataProvider(client: http.Client())));
+  final TrackBloc trackBloc = sl<TrackBloc>();
+  final AlbumBloc albumBloc = sl<AlbumBloc>();
+  final LikeBloc _likeBloc = sl<LikeBloc>();
+
+  int likesCount;
 
   @override
   void initState() {
+    likesCount = widget.artist.likeCount ?? 0;
     albumBloc.add(LoadAlbumsByArtistId(artistId: widget.artist.artistId));
     trackBloc.add(LoadSongsByArtistId(artistId: widget.artist.artistId));
     super.initState();
@@ -51,250 +50,245 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              //the name and back navigator icon and vertical more option
-              _upperSection(context, widget.artist),
-              Divider(),
-              //circular artist image
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(90),
-                  child: Container(
-                    width: 140,
-                    height: 140,
-                    child: CachedNetworkImage(
-                      placeholder: (context, url) => CircularProgressIndicator(
-                        strokeWidth: 1,
-                      ),
-                      imageUrl: widget.artist.image,
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                          'assets/images/artist_one.jpg',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              //artist username
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${widget.artist.firstName}${widget.artist.lastName} ',
-                    style: TextStyle(
-                        fontSize: 17, color: Colors.black.withOpacity(0.5)),
-                  ),
-
-                  IconButton(icon: Icon(Icons.favorite, color: Colors.grey.withOpacity(0.5),), onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Liked Artist')));
-                    BlocProvider.of<ArtistBloc>(context).add(LikeArtist(artistId: widget.artist.artistId));
-                  }),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-
-              _likeAndFollowersStat(widget.artist),
-
-              // _followSection(),
-              SizedBox(
-                height: 5,
-              ),
-              Divider(),
-              _descriptionSection(),
-
-              Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                width: double.infinity,
-                child: TextButton(
-                  style: ButtonStyle(
-                    alignment: AlignmentDirectional.centerEnd,
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'More',
-                  ),
-                ),
-              ),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              //ad container
-
-              // SizedBox(
-              //   height: 10,
-              // ),
-
-              Card(
-                elevation: 1,
-                child: Column(
+          child: BlocConsumer<LikeBloc, LikeState>(
+              bloc: _likeBloc,
+              listener: (context, state) {
+                if (state is SuccessState) {
+                  state.status
+                      ? likesCount++
+                      : likesCount > 0
+                          ? likesCount--
+                          : likesCount;
+                }
+                if (state is ErrorState) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+              builder: (context, state) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    //tab selectors
-                    // _tabSelectors(),
-
-                    SizedBox(
-                      height: 10,
+                    //the name and back navigator icon and vertical more option
+                    _upperSection(context, widget.artist),
+                    Divider(),
+                    //circular artist image
+                    Padding(
+                      padding: EdgeInsets.all(15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(90),
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(
+                              strokeWidth: 1,
+                            ),
+                            imageUrl: widget.artist.image,
+                            errorWidget: (context, url, error) {
+                              return Image.asset(
+                                'assets/images/artist_placeholder.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
-                    SectionTitle(title: 'Albums', callback: () {}),
-                    //album section
-                    BlocBuilder<AlbumBloc, AlbumState>(
-                        bloc: albumBloc,
-                        builder: (context, state) {
-                          if (state is LoadedAlbum) {
-                            return state.albums.length == 0
-                                ? Center(
-                                    child: Text(
-                                        'No albums found for this artist.'),
-                                  )
-                                : Container(
-                                    height: 200,
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: state.albums.length,
-                                        itemBuilder: (context, index) {
-                                          return SingleAlbum(
-                                            album: state.albums[index],
-                                          );
-                                        }),
+                    //artist username
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${widget.artist.firstName}${widget.artist.lastName} ',
+                          style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.black.withOpacity(0.5)),
+                        ),
+                        state is LoadingState
+                            ? SpinKitRipple(
+                                color: Colors.grey,
+                                size: 20,
+                              )
+                            : FutureBuilder<bool>(
+                                future: LikeBloc.checkLikedStatus(
+                                    boxName: 'liked_artist',
+                                    id: widget.artist.artistId),
+                                builder: (context, snapshot) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      _likeBloc.add(LikeArtist(
+                                          id: widget.artist.artistId));
+                                    },
+                                    child: Icon(
+                                      Icons.favorite,
+                                      color: state is SuccessState
+                                          ? state.status
+                                              ? Colors.redAccent
+                                              : Colors.grey
+                                          : snapshot.hasData
+                                              ? snapshot.data
+                                                  ? Colors.redAccent
+                                                  : Colors.grey
+                                              : Colors.grey,
+                                    ),
                                   );
-                          } else if (state is LoadingAlbum) {
-                            return Container(
-                              height: 200,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  RectangularShimmer(),
-                                  RectangularShimmer(),
-                                  RectangularShimmer(),
-                                ],
-                              ),
-                            );
-                          } else if (state is LoadingAlbumError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  albumBloc.add(LoadAlbumsByArtistId(
-                                      artistId: widget.artist.artistId));
-                                },
-                                message: 'Error Loading Albums!');
-                          }
-
-                          return Container();
-                        }),
+                                }),
+                      ],
+                    ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
+                    ),
+
+                    _likeAndFollowersStat(widget.artist, likesCount),
+
+                    // _followSection(),
+                    SizedBox(
+                      height: 5,
                     ),
                     Divider(),
-                    SectionTitle(title: 'Songs', callback: () {}),
-                    BlocBuilder<TrackBloc, TrackState>(
-                        bloc: trackBloc,
-                        builder: (context, state) {
-                          if (state is LoadedTracks) {
-                            return state.tracks.length == 0
-                                ? Center(
-                                    child:
-                                        Text('No songs found for this artist.'),
-                                  )
-                                : Container(
-                                    height: 200,
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: state.tracks.length,
-                                        itemBuilder: (context, index) {
-                                          return SingleTrack(
-                                            track: state.tracks[index],
-                                          );
-                                        }),
-                                  );
-                          } else if (state is LoadingTrack) {
-                            return Container(
-                              height: 200,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  RectangularShimmer(),
-                                  RectangularShimmer(),
-                                  RectangularShimmer(),
-                                ],
-                              ),
-                            );
-                          } else if (state is LoadingTrackError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  trackBloc.add(LoadSongsByArtistId(
-                                      artistId: widget.artist.artistId));
-                                },
-                                message: 'Error Loading Tracks!');
-                          }
+                    // _descriptionSection(),
 
-                          return Container();
-                        }),
-                    SizedBox(
-                      height: 10,
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      width: double.infinity,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          alignment: AlignmentDirectional.centerEnd,
+                        ),
+                        onPressed: () {},
+                        child: Text(
+                          'More',
+                        ),
+                      ),
                     ),
-                    Divider(),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Popular Playlists',
-                    //       style: TextStyle(
-                    //         fontSize: 18,
-                    //         color: Colors.black.withOpacity(0.7),
-                    //         letterSpacing: 1.01,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     Padding(
-                    //       padding: EdgeInsets.all(8.0),
-                    //       child: InkWell(
-                    //         onTap: () {},
-                    //         child: Row(
-                    //           children: [
-                    //             Text(
-                    //               'View All',
-                    //               style: TextStyle(
-                    //                 color: Colors.purple,
-                    //                 fontSize: 15,
-                    //               ),
-                    //             ),
-                    //             Icon(
-                    //               Icons.navigate_next,
-                    //               color: Colors.purple,
-                    //               size: 16,
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                     // SizedBox(
-                    //   height: 5,
+                    //   height: 10,
                     // ),
-                    // Container(
-                    //   height: 200,
-                    //   child: ListView.builder(
-                    //       scrollDirection: Axis.horizontal,
-                    //       itemCount: 4,
-                    //       itemBuilder: (context, index) {
-                    //         return SinglePlaylist();
-                    //       }),
+                    //ad container
+
+                    // SizedBox(
+                    //   height: 10,
                     // ),
+
+                    Card(
+                      elevation: 1,
+                      child: Column(
+                        children: [
+                          //tab selectors
+                          // _tabSelectors(),
+
+                          SizedBox(
+                            height: 10,
+                          ),
+                          SectionTitle(title: 'Albums', callback: () {}),
+                          //album section
+                          BlocBuilder<AlbumBloc, AlbumState>(
+                              bloc: albumBloc,
+                              builder: (context, state) {
+                                if (state is LoadedAlbum) {
+                                  return state.albums.length == 0
+                                      ? Center(
+                                          child: Text(
+                                              'No albums found for this artist.'),
+                                        )
+                                      : Container(
+                                          height: 200,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: state.albums.length,
+                                              itemBuilder: (context, index) {
+                                                return SingleAlbum(
+                                                  album: state.albums[index],
+                                                );
+                                              }),
+                                        );
+                                } else if (state is LoadingAlbum) {
+                                  return Container(
+                                    height: 200,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        RectangularShimmer(),
+                                        RectangularShimmer(),
+                                        RectangularShimmer(),
+                                      ],
+                                    ),
+                                  );
+                                } else if (state is LoadingAlbumError) {
+                                  return CustomErrorWidget(
+                                      onTap: () {
+                                        albumBloc.add(LoadAlbumsByArtistId(
+                                            artistId: widget.artist.artistId));
+                                      },
+                                      message: 'Error Loading Albums!');
+                                }
+
+                                return Container();
+                              }),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Divider(),
+                          SectionTitle(title: 'Songs', callback: () {}),
+                          BlocBuilder<TrackBloc, TrackState>(
+                              bloc: trackBloc,
+                              builder: (context, state) {
+                                if (state is LoadedTracks) {
+                                  return state.tracks.length == 0
+                                      ? Center(
+                                          child: Text(
+                                              'No songs found for this artist.'),
+                                        )
+                                      : Container(
+                                          height: 200,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: state.tracks.length,
+                                              itemBuilder: (context, index) {
+                                                return SingleTrack(
+                                                  track: state.tracks[index],
+                                                );
+                                              }),
+                                        );
+                                } else if (state is LoadingTrack) {
+                                  return Container(
+                                    height: 200,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        RectangularShimmer(),
+                                        RectangularShimmer(),
+                                        RectangularShimmer(),
+                                      ],
+                                    ),
+                                  );
+                                } else if (state is LoadingTrackError) {
+                                  return CustomErrorWidget(
+                                      onTap: () {
+                                        trackBloc.add(LoadSongsByArtistId(
+                                            artistId: widget.artist.artistId));
+                                      },
+                                      message: 'Error Loading Tracks!');
+                                }
+
+                                return Container();
+                              }),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Divider(),
+                        ],
+                      ),
+                    ),
                   ],
-                ),
-              ),
-            ],
-          ),
+                );
+              }),
         ),
       ),
     );
@@ -336,7 +330,7 @@ Widget _upperSection(BuildContext context, ArtistModel artist) {
   );
 }
 
-Widget _likeAndFollowersStat(ArtistModel artist) {
+Widget _likeAndFollowersStat(ArtistModel artist, int likesCount) {
   return Padding(
     padding: EdgeInsets.all(10),
     child: Row(
@@ -345,7 +339,7 @@ Widget _likeAndFollowersStat(ArtistModel artist) {
         Column(
           children: [
             Text(
-              '${artist.likeCount ?? 0}',
+              '$likesCount',
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -367,7 +361,7 @@ Widget _likeAndFollowersStat(ArtistModel artist) {
         Column(
           children: [
             Text(
-              '${artist.likeCount ?? 0}',
+              '$likesCount',
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -448,19 +442,19 @@ Widget _likeAndFollowersStat(ArtistModel artist) {
 //   );
 // }
 
-Widget _descriptionSection() {
-  return Container(
-    padding: EdgeInsets.all(10),
-    child: Text(
-      '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
-      style: TextStyle(
-        letterSpacing: 1.05,
-        fontSize: 15,
-        color: Colors.black.withOpacity(0.6),
-      ),
-    ),
-  );
-}
+// Widget _descriptionSection() {
+//   return Container(
+//     padding: EdgeInsets.all(10),
+//     child: Text(
+//       '''Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero...''',
+//       style: TextStyle(
+//         letterSpacing: 1.05,
+//         fontSize: 15,
+//         color: Colors.black.withOpacity(0.6),
+//       ),
+//     ),
+//   );
+// }
 
 
 

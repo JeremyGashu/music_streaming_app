@@ -46,7 +46,7 @@ class AlbumDataProvider {
 
   Future<http.Response> getAllAlbums({int page}) async {
     page ??= 1;
-    String url = '$BASE_ALBUM_URL?page=$page&per_page=10&sort=ASC';
+    String url = '$BASE_ALBUM_URL?page=$page&per_page=20&sort=ASC';
 
     print('album endpoint $url');
 

@@ -6,9 +6,8 @@ import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
-import 'package:streaming_mobile/data/repository/playlist_repository.dart';
-import 'package:http/http.dart' as http;
+
+import '../../../locator.dart';
 
 class CreatePrivatePlaylistWidget extends StatefulWidget {
   @override
@@ -18,9 +17,7 @@ class CreatePrivatePlaylistWidget extends StatefulWidget {
 
 class _CreatePrivatePlaylistWidgetState
     extends State<CreatePrivatePlaylistWidget> {
-  final PlaylistBloc playlistBloc = PlaylistBloc(
-      playlistRepository: PlaylistRepository(
-          dataProvider: PlaylistDataProvider(client: http.Client())));
+  final PlaylistBloc playlistBloc = sl<PlaylistBloc>();
   final TextEditingController _controller = TextEditingController();
   @override
   void initState() {
@@ -36,7 +33,7 @@ class _CreatePrivatePlaylistWidgetState
         listener: (context, state) {
           if (state is ErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Loading playlist Error!')));
+                SnackBar(content: Text('Error Creating Playlist!')));
           }
           if (state is SuccessState) {
             ScaffoldMessenger.of(context)

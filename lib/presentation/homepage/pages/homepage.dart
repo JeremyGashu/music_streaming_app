@@ -388,7 +388,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    SectionTitle(title: "Genres", callback: () {}),
+                    SectionTitle(title: "Genres", callback: () {}, hasMore: false),
                     Container(
                         height: 130,
                         child: BlocBuilder<GenresBloc, GenresState>(

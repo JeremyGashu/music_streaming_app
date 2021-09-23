@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
-import 'package:streaming_mobile/data/models/playlist.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
+import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 
-import '../../../locator.dart';
+import '../../locator.dart';
 
-class AllPlaylistsPage extends StatefulWidget {
-  static const String allPlaylistsRouterName = 'all_playlists_router_name';
+class TracksByGenre extends StatefulWidget {
+  final String genreId;
+  static const String tracksByGenreRouteName = 'tracks_by_genre_router_name';
+
+  const TracksByGenre({this.genreId});
   @override
-  _AllPlaylistsPageState createState() => _AllPlaylistsPageState();
+  _TracksByGenreState createState() => _TracksByGenreState();
 }
 
-class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
-  final List<Playlist> _playlists = [];
+class _TracksByGenreState extends State<TracksByGenre> {
+  final List<Track> _tracks = [];
 
   final ScrollController _scrollController = ScrollController();
 
-  PlaylistBloc playlistBloc;
+  TrackBloc trackBloc;
   @override
   void initState() {
-    playlistBloc = sl<PlaylistBloc>();
-    playlistBloc.add(LoadPlaylists());
+    trackBloc = sl<TrackBloc>();
+    trackBloc.add(LoadSongsByGenre(genreId: widget.genreId));
     super.initState();
   }
 
@@ -38,42 +41,41 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
           //back button and search page
           _upperSection(context),
           // Divider(),
-          BlocConsumer<PlaylistBloc, PlaylistState>(
-              bloc: playlistBloc,
+          BlocConsumer<TrackBloc, TrackState>(
+              bloc: trackBloc,
               listener: (context, state) {
-                if (state is LoadingPlaylist) {
+                if (state is LoadingTrack) {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedPlaylist && state.playlists.isEmpty) {
+                } else if (state is LoadedTracks && state.tracks.isEmpty) {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingPlaylistError) {
+                } else if (state is LoadingTrackError) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
-                  playlistBloc.isLoading = false;
+                  trackBloc.isLoading = false;
                 }
                 return;
               },
               builder: (context, state) {
-                if (state is LoadedPlaylist) {
-                  _playlists.addAll(state.playlists);
-                  playlistBloc.isLoading = false;
+                if (state is LoadedTracks) {
+                  _tracks.addAll(state.tracks);
+                  trackBloc.isLoading = false;
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 } else if (state is InitialState ||
-                    state is LoadingPlaylist && _playlists.isEmpty) {
+                    state is LoadingTrack && _tracks.isEmpty) {
                   return Center(
                     child: SpinKitRipple(
                       color: Colors.grey,
                       size: 40,
                     ),
                   );
-                } else if (state is LoadingPlaylistError &&
-                    _playlists.isEmpty) {
+                } else if (state is LoadingTrackError && _tracks.isEmpty) {
                   return CustomErrorWidget(
                       onTap: () {
-                        playlistBloc.add(LoadPlaylists());
+                        trackBloc.add(LoadSongsByGenre(genreId: widget.genreId));
                       },
-                      message: 'Error Loading Playlists!');
+                      message: 'Error Loading Tracks!');
                 }
                 return Expanded(
                   child: Column(
@@ -86,43 +88,43 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                             if (_scrollController.offset ==
                                     _scrollController
                                         .position.maxScrollExtent &&
-                                !playlistBloc.isLoading) {
-                              if (playlistBloc.state is LoadedPlaylist) {
-                                if ((playlistBloc.state as LoadedPlaylist)
-                                        .playlists
+                                !trackBloc.isLoading) {
+                              if (trackBloc.state is LoadedTracks) {
+                                if ((trackBloc.state as LoadedTracks)
+                                        .tracks
                                         .length ==
                                     0) return;
                               }
-                              playlistBloc
+                              trackBloc
                                 ..isLoading = true
-                                ..add(LoadPlaylists());
+                                ..add(LoadTracks());
                             }
                           }),
                         crossAxisCount: 2,
                         shrinkWrap: true,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
-                        children: _playlists.map((playlist) {
+                        children: _tracks.map((track) {
                           return Center(
-                            child: SinglePlaylist(
-                              playlist: playlist,
+                            child: SingleTrack(
+                              track: track,
                             ),
                           );
                         }).toList(),
                       )),
-                      state is LoadingPlaylist
+                      state is LoadingTrack
                           ? SpinKitRipple(
                               color: Colors.grey,
                               size: 50,
                             )
                           : Container(),
                       // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedPlaylist
-                          ? state.playlists.length == 0
+                      state is LoadedTracks
+                          ? state.tracks.length == 0
                               ? Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Playlists!'),
+                                  child: Text('No More Tracks!'),
                                 )
                               : Container()
                           : Container(),
@@ -152,7 +154,7 @@ Widget _upperSection(BuildContext context) {
             }),
       ),
       Text(
-        'All Playlists',
+        'All Songs',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,

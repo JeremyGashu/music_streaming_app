@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 
 
 class GenreDataProvider extends BaseDataProvider {
-
-  GenreDataProvider({client}):super(client: client);
+  final http.Client client;
+  GenreDataProvider({this.client}):super(client: client);
 
   Future<http.Response> fetchGenres() async {
     var authBox = await Hive.openBox<AuthData>('auth_box');

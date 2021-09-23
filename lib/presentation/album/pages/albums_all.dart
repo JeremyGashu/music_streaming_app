@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
-import 'package:streaming_mobile/data/data_provider/album_dataprovider.dart';
 import 'package:streaming_mobile/data/models/album.dart';
-import 'package:streaming_mobile/data/repository/album_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
-import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
+
+import '../../../locator.dart';
 
 class AllAlbumsPage extends StatefulWidget {
   static const String allAlbumsRouterName = 'all_albums_router_name';
@@ -26,9 +24,7 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
   AlbumBloc albumBloc;
   @override
   void initState() {
-    albumBloc = AlbumBloc(
-        albumRepository: AlbumRepository(
-            dataProvider: AlbumDataProvider(client: http.Client())));
+    albumBloc = sl<AlbumBloc>();
     albumBloc.add(LoadAlbums());
     super.initState();
   }

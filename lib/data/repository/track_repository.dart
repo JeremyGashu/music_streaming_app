@@ -11,11 +11,10 @@ class TrackRepository {
 
   Future<TracksResponse> getTracks({int page}) async {
     page ??= 1;
-    http.Response playlists = await dataProvider.getTracks(page: page);
-    print('tracks loaded = > ${playlists.body}');
-    var decodedPlaylists = jsonDecode(playlists.body);
-    print('decoded track => ${TracksResponse.fromJson(decodedPlaylists)}');
-    return TracksResponse.fromJson(decodedPlaylists);
+    http.Response response = await dataProvider.getTracks(page: page);
+    print('tracks loaded = > ${response.body}');
+    var decodedTracks = jsonDecode(response.body);
+    return TracksResponse.fromJson(decodedTracks);
   }
 
   Future<TracksResponse> getTracksByArtisId({String artistId}) async {
@@ -25,5 +24,14 @@ class TrackRepository {
     var decodedSongs = jsonDecode(songs.body);
     print('decoded songs => ${decodedSongs}');
     return TracksResponse.fromJson(decodedSongs);
+  }
+
+    Future<TracksResponse> getTracksByGenre({String genreId, int page}) async {
+    page ??= 1;
+    
+    http.Response response = await dataProvider.getTracksByGenre(genreId: genreId, page: page);
+    print('tracks loaded = > ${response.body}');
+    var decodedTracks = jsonDecode(response.body);
+    return TracksResponse.fromJson(decodedTracks);
   }
 }

@@ -4,15 +4,20 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/blocs/like/like_bloc.dart';
+import 'package:streaming_mobile/blocs/like/like_event.dart';
+import 'package:streaming_mobile/blocs/like/like_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
 
+import '../../locator.dart';
 
 class SingleTrackPlayerPage extends StatefulWidget {
   static const String singleTrackPlayerPageRouteName =
@@ -32,6 +37,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
 
   StreamSubscription periodicSubscription, playbackStateSubscription;
   Future<SharedPreferences> sharedPreferences;
+  final LikeBloc _likeBloc = sl<LikeBloc>();
+
   @override
   void initState() {
     sharedPreferences = SharedPreferences.getInstance();
@@ -93,40 +100,25 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                             (playBackSnapshot.data.processingState ==
                                 AudioProcessingState.ready))) {
                       if (snapshot.hasData) {
-                        return Stack(
-                          children: [
-                            _nowPlayingWidget(playBackSnapshot.data,
-                                mediaItem: snapshot.data),
-                            _menuSelector(context, songId: snapshot.data.id),
-                          ],
-                        );
+                        return BlocConsumer<LikeBloc, LikeState>(
+                            listener: (context, state) {
+                              if(state is ErrorState) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed To Add to Favourites!')));
+                              }
+                            },
+                            bloc: _likeBloc,
+                            builder: (context, state) {
+                              return Stack(
+                                children: [
+                                  _nowPlayingWidget(playBackSnapshot.data,
+                                      mediaItem: snapshot.data),
+                                  _menuSelector(context, state,
+                                      songId: snapshot.data.id),
+                                ],
+                              );
+                            });
                       }
                     }
-                    // return FutureBuilder<SharedPreferences>(
-                    //   future: sharedPreferences,
-                    //   builder: (ctx, prefSnapshot) {
-                    //     if (prefSnapshot.hasData) {
-                    //       final prefs = prefSnapshot.data;
-                    //       if (prefs.containsKey('id')) {
-                    //         final mediaItem = MediaItem(
-                    //           id: prefs.getString('id'),
-                    //           album: prefs.getString('album'),
-                    //           title: prefs.getString('title'),
-                    //           artist: prefs.getString('artist'),
-                    //           duration: Duration(seconds: prefs.getInt('duration')),
-                    //           genre: prefs.getString('genre'),
-                    //           artUri: Uri.parse(prefs.getString('artUri')),
-                    //           extras: {'source': prefs.getString('source')},
-                    //         );
-                    //         return _nowPlayingWidget(
-                    //             mediaItem: mediaItem, loadFromPrefs: prefs);
-                    //       }
-                    //     }
-                    //     return Center(
-                    //       child: CircularProgressIndicator(),
-                    //     );
-                    //   },
-                    // );
                     return Container(
                       color: Colors.white,
                       width: kWidth(context),
@@ -181,17 +173,17 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Widget _menuSelector(BuildContext context, {String songId}) {
+  Widget _menuSelector(BuildContext context, LikeState state, {String songId}) {
     //todo get the song id from here
     // BlocProvider.of<PlaylistBloc>(context).add(GetPrivatePlaylists());
     return AnimatedPositioned(
       duration: Duration(milliseconds: 240),
-      top: !_isCollapsed ? kHeight(context) - 250 : kHeight(context),
+      top: !_isCollapsed ? kHeight(context) - 210 : kHeight(context),
       left: 0,
       right: 0,
       child: Container(
         width: kWidth(context),
-        height: 250,
+        height: 210,
         child: Column(
           children: [
             GestureDetector(
@@ -212,18 +204,20 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               ),
             ),
             Divider(),
-            
+
             ListTile(
               onTap: () {
                 showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: PrivatePlaylistList(songId: widget.track.songId,),
-                            // child: Text('Private Playlists'),
-                          );
-                        });
-                
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        child: PrivatePlaylistList(
+                          songId: widget.track.songId,
+                        ),
+                        // child: Text('Private Playlists'),
+                      );
+                    });
+
                 // BlocProvider.of<PlaylistBloc>(context).add(AddSongsToPrivatePlaylists(songId: widget.track.songId,));
               },
               leading: Icon(
@@ -231,15 +225,51 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               ),
               title: Text('Add to playlist'),
             ),
+            FutureBuilder<bool>(
+                future: LikeBloc.checkLikedStatus(
+                    boxName: 'liked_songs', id: songId),
+                builder: (context, snapshot) {
+                  return ListTile(
+                    onTap: () {
+                      _likeBloc.add(LikeSong(id: songId));
+                    },
+                    leading: state is LoadingState
+                        ? SpinKitRipple(
+                            color: Colors.redAccent,
+                            size: 20,
+                          )
+                        : Icon(
+                            Icons.favorite,
+                            color: state is SuccessState
+                                ? state.status
+                                    ? Colors.redAccent
+                                    : Colors.grey
+                                : snapshot.hasData
+                                    ? snapshot.data
+                                        ? Colors.redAccent
+                                        : Colors.grey
+                                    : Colors.grey,
+                          ),
+                    title: state is SuccessState
+                        ? state.status
+                            ? Text('Remove from Favourite')
+                            : Text('Add to Favorites')
+                        : snapshot.hasData
+                            ? snapshot.data
+                                ? Text('Remove From Favorites')
+                                : Text('Add to Favorites')
+                            : Text('Add to Favorites'),
+                  );
+                }),
             Divider(),
 
-            ListTile(
-              onTap: () {},
-              leading: Icon(
-                Icons.queue_play_next_rounded,
-              ),
-              title: Text('Play Next'),
-            ),
+            // ListTile(
+            //   onTap: () {},
+            //   leading: Icon(
+            //     Icons.queue_play_next_rounded,
+            //   ),
+            //   title: Text('Play Next'),
+            // ),
           ],
         ),
         decoration: BoxDecoration(
@@ -534,4 +564,3 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       await AudioService.play();
   }
 }
-

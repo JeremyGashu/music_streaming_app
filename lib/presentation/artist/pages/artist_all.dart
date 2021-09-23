@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
-import 'package:streaming_mobile/data/data_provider/artist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
-import 'package:streaming_mobile/data/repository/artist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
+
+import '../../../locator.dart';
 
 class AllArtistsPage extends StatefulWidget {
   static const String allPArtistsRouterName = 'all_artists_router_name';
@@ -26,9 +25,7 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
   ArtistBloc artistBloc;
   @override
   void initState() {
-    artistBloc = ArtistBloc(
-        artistRepository: ArtistRepository(
-            dataProvider: ArtistDataProvider(client: http.Client())));
+    artistBloc = sl<ArtistBloc>();
     artistBloc.add(LoadArtists());
     super.initState();
   }

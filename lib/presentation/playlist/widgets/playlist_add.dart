@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
-import 'package:streaming_mobile/data/repository/playlist_repository.dart';
-import 'package:http/http.dart' as http;
+
+import '../../../locator.dart';
 
 class AddPlaylistPage extends StatefulWidget {
   @override
@@ -13,9 +12,7 @@ class AddPlaylistPage extends StatefulWidget {
 }
 
 class _AddPlaylistPageState extends State<AddPlaylistPage> {
-  final PlaylistBloc playlistBloc = PlaylistBloc(
-      playlistRepository: PlaylistRepository(
-          dataProvider: PlaylistDataProvider(client: http.Client())));
+  final PlaylistBloc playlistBloc = sl<PlaylistBloc>();
   @override
   void initState() {
     super.initState();

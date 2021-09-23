@@ -19,6 +19,7 @@ import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_p
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
+import 'package:streaming_mobile/presentation/tracks/tracks_by_genre.dart';
 
 class AppRouter {
   static Route onGeneratedRoute(RouteSettings routeSettings) {
@@ -43,9 +44,8 @@ class AppRouter {
       case ArtistDetailPage.artistDetailPageRouteName:
         return MaterialPageRoute(
             builder: (_) => ArtistDetailPage(artist: args));
-            case SearchPage.searchPageRouteName:
-        return MaterialPageRoute(
-            builder: (_) => SearchPage());
+      case SearchPage.searchPageRouteName:
+        return MaterialPageRoute(builder: (_) => SearchPage());
 
       case OTP.otpPageRouterName:
         return MaterialPageRoute(builder: (_) => OTP(phoneNumber: args));
@@ -91,7 +91,13 @@ class AppRouter {
       case WelcomePage.welcomePageRouteName:
         return MaterialPageRoute(builder: (_) => WelcomePage());
       case PrivatePlaylistsPage.privatePlaylistRouteName:
-      return MaterialPageRoute(builder: (_) => PrivatePlaylistsPage());
+        return MaterialPageRoute(builder: (_) => PrivatePlaylistsPage());
+
+      case TracksByGenre.tracksByGenreRouteName:
+        return MaterialPageRoute(
+            builder: (_) => TracksByGenre(
+                  genreId: args,
+                ));
 
       default:
         return null;

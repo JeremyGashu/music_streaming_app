@@ -84,14 +84,4 @@ class ArtistRepository {
 
     return ArtistsResponse.fromJson(decodedArtists);
   }
-
-    Future<bool> likeArtist({String artistId}) async {
-      http.Response response = await dataProvider.likeArtist(artistId: artistId);
-      if(response.statusCode == 204) {
-        return false;
-      }
-      else if(response.statusCode == 200) {
-        return true;
-      }
-    }
 }

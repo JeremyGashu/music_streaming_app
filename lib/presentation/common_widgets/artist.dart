@@ -39,7 +39,7 @@ class Artist extends StatelessWidget {
                             child: CachedNetworkImage(
                               errorWidget: (context, url, error) {
                                 return Image.asset(
-                                  'assets/images/artist_one.jpg',
+                                  'assets/images/artist_placeholder.png',
                                   fit: BoxFit.cover,
                                 );
                               },
@@ -66,16 +66,16 @@ class Artist extends StatelessWidget {
                                   fontWeight: FontWeight.w600, fontSize: 14.0),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: Text(
-                              '3 Albums, 42 Tracks',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: kYellow,
-                                  fontSize: 12.0),
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: 2.0),
+                          //   child: Text(
+                          //     '3 Albums, 42 Tracks',
+                          //     style: TextStyle(
+                          //         fontWeight: FontWeight.w600,
+                          //         color: kYellow,
+                          //         fontSize: 12.0),
+                          //   ),
+                          // ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -146,16 +146,16 @@ class Artist extends StatelessWidget {
                                   fontWeight: FontWeight.w600, fontSize: 14.0),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: Text(
-                              '3 Albums, 42 Tracks',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: kYellow,
-                                  fontSize: 12.0),
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: 2.0),
+                          //   child: Text(
+                          //     '3 Albums, 42 Tracks',
+                          //     style: TextStyle(
+                          //         fontWeight: FontWeight.w600,
+                          //         color: kYellow,
+                          //         fontSize: 12.0),
+                          //   ),
+                          // ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [

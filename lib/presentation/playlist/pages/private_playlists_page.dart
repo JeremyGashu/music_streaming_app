@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
-import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
-import 'package:streaming_mobile/data/repository/playlist_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/create_playlist_page.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
+
+import '../../../locator.dart';
 
 class PrivatePlaylistsPage extends StatefulWidget {
   static const privatePlaylistRouteName = 'private_playlist_route_name';
@@ -22,9 +21,7 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
   final List<Playlist> _playlists = [];
   final ScrollController _scrollController = ScrollController();
 
-  final PlaylistBloc playlistBloc = PlaylistBloc(
-      playlistRepository: PlaylistRepository(
-          dataProvider: PlaylistDataProvider(client: http.Client())));
+  final PlaylistBloc playlistBloc = sl<PlaylistBloc>();
 
   @override
   void initState() {
