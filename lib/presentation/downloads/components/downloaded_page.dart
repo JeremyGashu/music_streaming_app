@@ -20,7 +20,7 @@ class DownloadedPage extends StatefulWidget {
 class _DownloadedPageState extends State<DownloadedPage> {
   @override
   Widget build(BuildContext context) {
-    var tasks = getIt<UserDownloadManager>().downloadedTasks();
+    // var tasks = getIt<UserDownloadManager>().downloadedTasks();
 
     return Center(
       child: BlocConsumer<UserDownloadBloc, UserDownloadState>(

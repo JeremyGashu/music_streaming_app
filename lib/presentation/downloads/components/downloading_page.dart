@@ -19,8 +19,8 @@ class DownloadingPage extends StatefulWidget {
 class _DownloadingPageState extends State<DownloadingPage> {
   @override
   Widget build(BuildContext context) {
-    Future<List<LocalDownloadTask>> tasks =
-        getIt<UserDownloadManager>().downloadTaskStream();
+    // Future<List<LocalDownloadTask>> tasks =
+    //     getIt<UserDownloadManager>().downloadTaskStream();
 
     return Center(
         child: BlocConsumer<MediaDownloaderBloc, MediaDownloaderState>(

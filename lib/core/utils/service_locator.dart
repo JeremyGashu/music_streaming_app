@@ -11,7 +11,7 @@ setupLocator() async {
   var userDownloadBox = await Hive.openBox<LocalDownloadTask>('user_downloads');
   var segmentBox = await Hive.openBox('download_segments');
   var downloadedMediaBox = await Hive.openBox('downloadedMedias');
-  var downloadQueue = await Hive.openBox("downloadQueue");
+  // var downloadQueue = await Hive.openBox("downloadQueue");
   getIt.registerSingleton(UserDownloadManager(
       userDownloadBox: userDownloadBox,
       segmentsBox: segmentBox,
