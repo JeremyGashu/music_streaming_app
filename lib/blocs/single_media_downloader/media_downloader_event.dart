@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 
-abstract class MediaDownloaderEvent extends Equatable{}
+abstract class MediaDownloaderEvent extends Equatable{@override
+  // TODO: implement props
+  List<Object> get props => [];}
 
 class AddDownload extends MediaDownloaderEvent{
   final List<DownloadTask> downloadTasks;
@@ -13,8 +15,6 @@ class AddDownload extends MediaDownloaderEvent{
 }
 
 class RetryDownload extends MediaDownloaderEvent{
-  @override
-  List<Object> get props => [];
 }
 
 class UpdateDownloadState extends MediaDownloaderEvent{
@@ -25,13 +25,14 @@ class UpdateDownloadState extends MediaDownloaderEvent{
 }
 
 class InitializeDownloader extends MediaDownloaderEvent{
-  @override
-  // TODO: implement props
-  List<Object> get props => [];
 }
 
 class ClearDownload extends MediaDownloaderEvent{
+}
+
+class BeginDownload extends MediaDownloaderEvent{
+  final List<DownloadTask> downloadTasks;
+  BeginDownload({@required this.downloadTasks}):assert(downloadTasks!=null);
   @override
-  // TODO: implement props
-  List<Object> get props => [];
+  List<Object> get props => [downloadTasks];
 }

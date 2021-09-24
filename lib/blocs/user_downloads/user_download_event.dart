@@ -12,7 +12,6 @@ class StartDownload extends UserDownloadEvent {
   StartDownload({@required this.track});
 
   @override
-  // TODO: implement props
   List<Object> get props => [track];
 }
 

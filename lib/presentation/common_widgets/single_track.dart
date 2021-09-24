@@ -238,7 +238,6 @@ class _SingleTrackState extends State<SingleTrack> {
     } else {
       var m3u8FilePath = '$dir/${widget.track.songId}/main.m3u8';
 
-      /// TODO: uncomment for encryption key download
       await parseHLS.updateLocalM3u8(m3u8FilePath);
       print("mediaItems: ${mediaItems}");
       print("the file is downloaded playing from local: ${mediaItems}");

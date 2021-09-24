@@ -127,9 +127,9 @@ void main() async {
       UserLocationBloc(locationService: LocationService());
 
   /// initialize [MediaDownloaderBLoc]
-  MediaDownloaderBloc _mediaDownloaderBloc = MediaDownloaderBloc();
+  // MediaDownloaderBloc _mediaDownloaderBloc = getIt<MediaDownloaderBloc>();
   LocalDatabaseBloc _localDatabaseBloc =
-      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)
+      getIt<LocalDatabaseBloc>()
         ..add(InitLocalDB());
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
@@ -144,7 +144,7 @@ void main() async {
           AuthBloc(authRepository: _authRepo)..add(CheckAuthOnStartUp()),
     ),
     BlocProvider(
-        create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
+        create: (context) => getIt<MediaDownloaderBloc>()..add(InitializeDownloader())),
     BlocProvider(create: (context) => _localDatabaseBloc),
     BlocProvider(
         create: (context) => _userLocationBloc..add(UserLocationEvent.Init)),

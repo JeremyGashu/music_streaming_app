@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
@@ -28,29 +31,35 @@ class _DownloadPageState extends State<DownloadsPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: kBackgroundLight,
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            title: Text("Downloads", style: TextStyle(color: kBlack),),
+            title: Text(
+              "Downloads",
+              style: TextStyle(color: kBlack),
+            ),
             backgroundColor: Colors.white,
             bottom: TabBar(
               labelColor: kBlack,
               indicatorColor: kYellow,
               tabs: [
-                Tab(text: "Downloaded",),
-                Tab(text: "In progress",)
+                Tab(
+                  text: "Downloaded",
+                ),
+                Tab(
+                  text: "In progress",
+                )
               ],
-
             ),
           ),
           body: SafeArea(
-        child: TabBarView(
-          children: [
-            DownloadedPage(tasks: downloadedTasks),
-            DownloadingPage(tasks: tasks)
-          ]
-        ),
-      )),
+            child: BlocListener<MediaDownloaderBloc, MediaDownloaderState>(
+              listener: (context, state) {},
+              child: TabBarView(children: [
+                DownloadedPage(tasks: downloadedTasks),
+                DownloadingPage(tasks: tasks)
+              ]),
+            ),
+          )),
     );
   }
-
 }

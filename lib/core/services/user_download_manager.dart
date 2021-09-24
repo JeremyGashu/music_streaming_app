@@ -17,7 +17,9 @@ class UserDownloadManager {
     List<LocalDownloadTask> downloadTasks = [];
     userDownloadBox.values.forEach((element) async {
       LocalDownloadTask task = await processLocalDownloadTask(element);
+      if(task.progress != 100.0){
       downloadTasks.add(task);
+      }
     });
     return downloadTasks;
   }
@@ -49,7 +51,6 @@ class UserDownloadManager {
         }
       });
     }
-
     downloadTask.progress = progress;
 
     return downloadTask;
