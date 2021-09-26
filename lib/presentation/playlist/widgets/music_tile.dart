@@ -1,12 +1,15 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
-Widget musicTile(Track music, Function onPressed,
-    [isPlaying = false, MediaItem mediaItem]) {
+Widget musicTile(Track music, Function onPressed,BuildContext context,
+    [isPlaying = false, MediaItem mediaItem,]) {
   return GestureDetector(
     onTap: () {
       onPressed();
@@ -86,11 +89,17 @@ Widget musicTile(Track music, Function onPressed,
                 : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),
           ),
-          // Icon(
-          //   Icons.more_vert,
-          //   color: Colors.grey,
-          //   size: 25,
-          // )
+          SizedBox(width: 10,),
+          IconButton(
+            onPressed: (){
+              BlocProvider.of<UserDownloadBloc>(context).add(StartDownload(track: music));
+            },
+            icon: Icon(
+              Icons.file_download,
+              color: Colors.grey,
+              size: 20,
+            ),
+          )
         ],
       ),
     ),

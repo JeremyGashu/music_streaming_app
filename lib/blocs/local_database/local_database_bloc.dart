@@ -49,7 +49,7 @@ class LocalDatabaseBloc extends Bloc<LocalDatabaseEvent, LocalDatabaseState> {
         print("Initializing localDb");
         Hive.registerAdapter(DownloadTaskAdapter());
         await Hive.openLazyBox<DownloadTask>('downloadTasks');
-        await Hive.openLazyBox('downloadedMedias');
+        await Hive.openBox('downloadedMedias');
       }else if(event is ReadLocalDB){
          box = await Hive.box(event.boxName);
          yield LocalDBSuccess(data: await box.get(event.key));

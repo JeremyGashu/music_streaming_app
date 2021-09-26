@@ -114,7 +114,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
                                             widget.album.tracks[index], () {
                                           print("play playlist");
                                           playAudio(index, sharedPreferences);
-                                        },
+                                        },context,
                                             snapshot.hasData &&
                                                 (snapshot.data.id ==
                                                     widget.album.tracks[index]

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -26,6 +27,8 @@ import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
 import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
@@ -36,6 +39,7 @@ import 'package:streaming_mobile/data/models/analytics.dart';
 import 'package:streaming_mobile/data/models/auth_data.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/locator.dart';
+import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
 import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
 import 'package:streaming_mobile/presentation/splashpage/splashpage.dart';
@@ -48,6 +52,8 @@ import 'blocs/local_database/local_database_event.dart';
 import 'blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'blocs/single_media_downloader/media_downloader_event.dart';
 import 'core/services/location_service.dart';
+import 'core/utils/service_locator.dart';
+import 'data/models/auth_data.dart';
 
 
 void main() async {
@@ -62,9 +68,16 @@ void main() async {
 
   setupLocator();
 
+  Hive.registerAdapter(LocalDownloadTaskAdapter());
   await FlutterDownloader.initialize(debug: true);
 
+  /// Initialized DIO
+  final Dio dio = Dio();
+  /// setup getit
+
   await Firebase.initializeApp();
+
+  await initLocator();
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.log(details.toString());
@@ -75,9 +88,9 @@ void main() async {
       UserLocationBloc(locationService: LocationService());
 
   /// initialize [MediaDownloaderBLoc]
-  MediaDownloaderBloc _mediaDownloaderBloc = MediaDownloaderBloc();
+  // MediaDownloaderBloc _mediaDownloaderBloc = getIt<MediaDownloaderBloc>();
   LocalDatabaseBloc _localDatabaseBloc =
-      LocalDatabaseBloc(mediaDownloaderBloc: _mediaDownloaderBloc)
+      getIt<LocalDatabaseBloc>()
         ..add(InitLocalDB());
 
   runApp(MultiBlocProvider(providers: [
@@ -90,12 +103,11 @@ void main() async {
     BlocProvider<AuthBloc>(
       create: (_) => sl<AuthBloc>()..add(CheckAuthOnStartUp()),
     ),
-    BlocProvider(
-        create: (_) => _mediaDownloaderBloc..add(InitializeDownloader())),
+
     BlocProvider<LikeBloc>(create: (_) => sl<LikeBloc>()),
 
     BlocProvider(
-        create: (context) => _mediaDownloaderBloc..add(InitializeDownloader())),
+        create: (context) => getIt<MediaDownloaderBloc>()..add(InitializeDownloader())),
     BlocProvider(create: (context) => _localDatabaseBloc),
 
     BlocProvider<UserLocationBloc>(
@@ -116,7 +128,10 @@ void main() async {
       create: (_) => sl<FeaturedAlbumBloc>()..add(LoadFeaturedAlbumsInit()),
     ),
     BlocProvider<GenresBloc>(
-      create: (_) => sl<GenresBloc>()..add(FetchGenres()),
+      create: (_) => sl<GenresBloc>()..add(FetchGenres())),
+    BlocProvider(create: (context) => UserDownloadBloc(dio: dio)..add(Init()), lazy: false,),
+    BlocProvider(
+      create: (context) => SearchBloc(searchRepository: sl()),
     ),
     BlocProvider<SearchBloc>(
       create: (_) => sl<SearchBloc>(),

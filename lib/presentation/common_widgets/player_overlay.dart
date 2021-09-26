@@ -99,7 +99,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                                     // playAudio(index, sharedPreferences);
                                                     AudioService.playMediaItem(
                                                         snapshot.data[index]);
-                                                  },
+                                                  },context,
                                                   snapshot.hasData &&
                                                       (currentMediaSnapshot
                                                               .data.id ==

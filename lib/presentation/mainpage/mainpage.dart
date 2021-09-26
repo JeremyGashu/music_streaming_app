@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:streaming_mobile/blocs/config/config_bloc.dart';
 import 'package:streaming_mobile/blocs/config/config_state.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_profie_page.dart';
+import 'package:streaming_mobile/presentation/downloads/downloads_page.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/info/force_update_page.dart';
 import 'package:streaming_mobile/presentation/library/pages/library_page.dart';
@@ -23,6 +24,7 @@ class _MainPageState extends State<MainPage> {
     AudioServiceWidget(child: HomePage()),
     SearchPage(),
     LibraryPage(),
+    DownloadsPage(),
     ArtistProfilePage(),
   ];
   @override
@@ -77,17 +79,26 @@ class _MainPageState extends State<MainPage> {
                 Icons.library_books_outlined,
                 color: _currentIndex == 2 ? Colors.black : Colors.grey,
               ),
+            ), BottomNavigationBarItem(
+            label: '',
+            icon: Icon(
+              Icons.download_rounded,
+              color: _currentIndex == 3
+                  ? Colors.black
+                  : Colors.grey,
             ),
-            BottomNavigationBarItem(
-              label: '',
-              icon: Icon(
-                Icons.person,
-                color: _currentIndex == 3 ? Colors.black : Colors.grey,
-              ),
+          ),
+          BottomNavigationBarItem(
+            label: '',
+            icon: Icon(
+              Icons.person,
+              color: _currentIndex == 4
+                  ? Colors.black
+                  : Colors.grey,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    ));
   }
 }

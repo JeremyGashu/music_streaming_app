@@ -1,47 +1,47 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_data.dart';
+part of 'local_download_task.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AuthDataAdapter extends TypeAdapter<AuthData> {
+class LocalDownloadTaskAdapter extends TypeAdapter<LocalDownloadTask> {
   @override
-  final int typeId = 2;
+  final int typeId = 4;
 
   @override
-  AuthData read(BinaryReader reader) {
+  LocalDownloadTask read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AuthData(
-      isAuthenticated: fields[0] as bool,
-      phone: fields[1] as String,
-      token: fields[2] as String,
-      message: fields[3] as String,
-      refreshToken: fields[4] as String,
-      userId: fields[5] as String,
+    return LocalDownloadTask(
+      songId: fields[0] as String,
+      title: fields[1] as String,
+      coverImageUrl: fields[2] as String,
+      songUrl: fields[3] as String,
+      duration: fields[4] as int,
+      progress: fields[5] as double,
     );
   }
 
   @override
-  void write(BinaryWriter writer, AuthData obj) {
+  void write(BinaryWriter writer, LocalDownloadTask obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.isAuthenticated)
+      ..write(obj.songId)
       ..writeByte(1)
-      ..write(obj.phone)
+      ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.token)
+      ..write(obj.coverImageUrl)
       ..writeByte(3)
-      ..write(obj.message)
+      ..write(obj.songUrl)
       ..writeByte(4)
-      ..write(obj.refreshToken)
+      ..write(obj.duration)
       ..writeByte(5)
-      ..write(obj.userId);
+      ..write(obj.progress);
   }
 
   @override
@@ -50,7 +50,7 @@ class AuthDataAdapter extends TypeAdapter<AuthData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AuthDataAdapter &&
+      other is LocalDownloadTaskAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

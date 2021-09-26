@@ -131,7 +131,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                                 .song, () {
                                           print("play playlist");
                                           playAudio(index, sharedPreferences);
-                                        },
+                                        },context,
                                             snapshot.hasData &&
                                                 (snapshot.data.id ==
                                                     widget.playlistInfo

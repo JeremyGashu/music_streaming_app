@@ -1,9 +1,11 @@
+import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:hive/hive.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
 import 'media_downloader_event.dart';
 import 'media_downloader_state.dart';
@@ -11,7 +13,6 @@ import 'media_downloader_state.dart';
 class Task {
   smd.DownloadTask downloadTask;
   String taskId;
-
   Task({this.downloadTask, this.taskId});
 }
 
@@ -21,7 +22,12 @@ class MediaDownloaderBloc
   List<Task> _tasks = [];
   // MediaDownloaderEvent _previousEvent;
   // Attach InitializeDownloader event when Instantiating the MediaDownloaderBloc;
-  MediaDownloaderBloc() : super(DownloadOnProgressState());
+  Queue<List<smd.DownloadTask>> _downloadQueue = Queue();
+  var queueBox = Hive.box<List<smd.DownloadTask>>("downloadQueue");
+
+  MediaDownloaderBloc() : super(DownloadOnProgressState()) {
+    _bindBackgroundIsolate();
+  }
 
   // Handles download callback
   static void downloadCallback(
@@ -39,10 +45,10 @@ class MediaDownloaderBloc
 
   /// flutter downloader works in the background, this will subscribe to the
   /// background isolate and listens for the call back
-  void _bindBackgroundIsolate(){
+  void _bindBackgroundIsolate() {
     bool isSuccess = IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
-    if(!isSuccess){
+    if (!isSuccess) {
       _unbindBackgroundIsolate();
       _bindBackgroundIsolate();
       return;
@@ -53,8 +59,7 @@ class MediaDownloaderBloc
       String taskId = data[0];
       DownloadTaskStatus status = data[1];
       print(status);
-      var _taskIndex =
-      _tasks.indexWhere((element) => element.taskId == taskId);
+      var _taskIndex = _tasks.indexWhere((element) => element.taskId == taskId);
       print('////////////////////////////////////////////////////');
       print('taskindex $_taskIndex');
       if (_taskIndex != -1) {
@@ -74,16 +79,14 @@ class MediaDownloaderBloc
           _tasks.removeAt(_taskIndex);
           if (_tasks.isNotEmpty) {
             // FlutterDownloader.cancelAll();
-            print('here adfadfadfadfadfdf');
             addDownload(_tasks[0].downloadTask)
                 .then((value) => _tasks[0].taskId = value);
-            print('here 55555555555555555');
           } else {
             print('/////////////////////////////////////////');
             print('download done');
-            add(UpdateDownloadState(state: DownloadDone(
-              downloadedTask: _downloadTask
-            )));
+            add(UpdateDownloadState(
+                state: DownloadDone(downloadedTask: _downloadTask)));
+            _checkQueueAndContinueDownload();
           }
         } else {
           // considering other states other than complete as failed
@@ -102,6 +105,7 @@ class MediaDownloaderBloc
   Future<void> close() {
     /// remove the background isolate when bloc closes
     _unbindBackgroundIsolate();
+    queueBox.addAll(_downloadQueue);
     return super.close();
   }
 
@@ -112,40 +116,55 @@ class MediaDownloaderBloc
       // _previousEvent = event;
       yield DownloadOnProgressState();
       if (event is InitializeDownloader) {
-        _bindBackgroundIsolate();
-      } else if (event is AddDownload) {
-        print('add download event');
-        _handleClearDownload();
+        // _bindBackgroundIsolate();
+        if (queueBox.isNotEmpty) {
+          _downloadQueue.addAll(queueBox.values);
+        }
+      } else if (event is BeginDownload) {
         List<smd.DownloadTask> dt = [];
+
         if (_tasks.length == 0) {
           var length = event.downloadTasks.length;
-          for(int i=0; i<length; i++){
+          for (int i = 0; i < length; i++) {
             var element = event.downloadTasks[i];
-            File file = File(element.download_path + 'main${element.segment_number}.ts');
+            File file = File(
+                element.download_path + 'main${element.segment_number}.ts');
             print(file.path);
-            if(!(file.existsSync())){
+            if (!(file.existsSync())) {
               dt.add(element);
               print("file doesn't exist");
             }
           }
-          if(dt.isEmpty){
-            print("MediaDownloaderBloc: download tasks empty or downloaded before");
+          if (dt.isEmpty) {
+            print(
+                "MediaDownloaderBloc: download tasks empty or downloaded before");
             yield DownloadDone(downloadedTask: event.downloadTasks[0]);
-          }else{
+            _checkQueueAndContinueDownload();
+          } else {
             String taskId = await addDownload(dt.first);
-            _tasks.addAll(
-                dt.map((smd.DownloadTask task) {
-                  if(task.url == dt.first.url)
-                    return Task(taskId: taskId, downloadTask: task);
-                  else
-                    return Task(taskId: '', downloadTask: task);
-                }
-                ).toList()
-            );
+            _tasks.addAll(dt.map((smd.DownloadTask task) {
+              if (task.url == dt.first.url)
+                return Task(taskId: taskId, downloadTask: task);
+              else
+                return Task(taskId: '', downloadTask: task);
+            }).toList());
           }
           // map [DownloadTask to Task]
 
           // _tasks.add(Task(downloadTask: event.downloadTask, taskId: taskId));
+        }
+      } else if (event is AddDownload) {
+        print('add download event');
+        // clear the download for stream download
+        // _handleClearDownload();
+        _addToQueue(event.downloadTasks);
+
+        var query =
+            "SELECT * FROM task WHERE status=${DownloadTaskStatus.running.value}";
+        var tasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+        if (tasks.isEmpty) {
+          add(BeginDownload(downloadTasks: event.downloadTasks));
+          _downloadQueue.removeFirst();
         }
       } else if (event is RetryDownload) {
         if (_tasks.isNotEmpty) {
@@ -157,6 +176,7 @@ class MediaDownloaderBloc
         //   yield DownloadDone(downloadedTask: null);
         // }
       } else if (event is UpdateDownloadState) {
+        print("UPDATING DOWNLOAD STATE");
         yield event.state;
       } else if (event is ClearDownload) {
         // stops download and clear tasks
@@ -188,5 +208,17 @@ class MediaDownloaderBloc
           taskId: _tasks[0].taskId, shouldDeleteContent: true);
       _tasks.clear();
     }
+  }
+
+  void _checkQueueAndContinueDownload() {
+    if (_downloadQueue.isNotEmpty) {
+      add(BeginDownload(downloadTasks: _downloadQueue.first));
+      _downloadQueue.removeFirst();
+    }
+  }
+
+  void _addToQueue(List<smd.DownloadTask> downloadTasks) {
+    // queueBox.add(downloadTasks);
+    _downloadQueue.add(downloadTasks);
   }
 }

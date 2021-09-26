@@ -115,7 +115,7 @@ class LibraryPage extends StatelessWidget {
                                         state.newRelease.songs[index].song;
                                     return musicTile(track, () {
                                       playAudio(context, track);
-                                    },
+                                    },context,
                                         snapshot.hasData &&
                                             (snapshot.data.id ==
                                                 track.songId) &&

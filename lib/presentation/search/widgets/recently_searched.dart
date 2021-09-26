@@ -48,7 +48,7 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
                       return musicTile(
                           track, () {
                         playAudio(track);
-                      });
+                      },context);
                     });
           }
 
