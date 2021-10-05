@@ -65,7 +65,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                        fontSize: 18.0,
+                                        fontSize: 15.0,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   _expandList
@@ -287,6 +287,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                               child: Text(
                                 "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
                                 style: TextStyle(
+                                  fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white70),
                                 overflow: TextOverflow.visible,

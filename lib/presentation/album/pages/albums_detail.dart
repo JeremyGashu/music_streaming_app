@@ -16,6 +16,7 @@ import 'package:streaming_mobile/blocs/like/like_event.dart';
 import 'package:streaming_mobile/blocs/like/like_state.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
+import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
@@ -114,7 +115,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
                                             widget.album.tracks[index], () {
                                           print("play playlist");
                                           playAudio(index, sharedPreferences);
-                                        },context,
+                                        },
+                                            context,
                                             snapshot.hasData &&
                                                 (snapshot.data.id ==
                                                     widget.album.tracks[index]
@@ -378,7 +380,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
                               boxName: 'liked_albums', id: album.albumId),
                           builder: (context, snapshot) {
                             print('snapshot data album => ${snapshot.data}');
-                            
+
                             return GestureDetector(
                               onTap: () {
                                 _likeBloc.add(LikeAlbum(id: album.albumId));
@@ -456,9 +458,10 @@ class _AlbumDetailState extends State<AlbumDetail> {
 
     for (Track track in widget.album.tracks) {
       print("trackId: ${track.songId}");
-      String source = 'https://138.68.163.236:8787/track/${track.songId}';
+      String source = '$M3U8_URL/${track.songId}';
       if (await LocalHelper.isFileDownloaded(track.songId)) {
         print("${track.songId}: downloaded");
+        //check for all segments downloaded
         source = '$dir/${track.songId}/main.m3u8';
       }
 
@@ -502,10 +505,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
     if (!(await LocalHelper.isFileDownloaded(_trackToPlay.songId))) {
       // var m3u8FilePath = '$dir/${_trackToPlay.data.id}/main.m3u8';
       HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-              await parseHLS.downloadFile(
-                  'https://138.68.163.236:8787/track/${_trackToPlay.songId}',
-                  '$dir/${_trackToPlay.songId}',
-                  "main.m3u8"))
+              await parseHLS.downloadFile('$M3U8_URL/${_trackToPlay.songId}',
+                  '$dir/${_trackToPlay.songId}', "main.m3u8"))
           .readAsStringSync());
       // TODO: update this after correct m3u8 is generated
       // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
@@ -527,11 +528,39 @@ class _AlbumDetailState extends State<AlbumDetail> {
     } else {
       var m3u8FilePath = '$dir/${_trackToPlay.songId}/main.m3u8';
 
-      /// TODO: uncomment for encryption key download
-      await parseHLS.updateLocalM3u8(m3u8FilePath);
-      print("mediaItems: ${mediaItems}");
-      print("the file is downloaded playing from local: ${mediaItems[index]}");
-      await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      File file = File(m3u8FilePath);
+
+      if (file.existsSync()) {
+        /// TODO: uncomment for encryption key download
+        await parseHLS.updateLocalM3u8(m3u8FilePath);
+        print("mediaItems: ${mediaItems}");
+        print(
+            "the file is downloaded playing from local: ${mediaItems[index]}");
+        await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      } else {
+        // var m3u8FilePath = '$dir/${_trackToPlay.data.id}/main.m3u8';
+        HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
+                await parseHLS.downloadFile('$M3U8_URL/${_trackToPlay.songId}',
+                    '$dir/${_trackToPlay.songId}', "main.m3u8"))
+            .readAsStringSync());
+        // TODO: update this after correct m3u8 is generated
+        // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
+        List<DownloadTask> downloadTasks = [];
+        // print(hlsPlayList.segments);
+        hlsPlayList.segments.forEach((segment) {
+          var segmentIndex = hlsPlayList.segments.indexOf(segment);
+          downloadTasks.add(DownloadTask(
+              track_id: _trackToPlay.songId,
+              segment_number: segmentIndex,
+              downloadType: DownloadType.media,
+              downloaded: false,
+              download_path: '$dir/${_trackToPlay.songId}/',
+              url: segment.url));
+        });
+        print(downloadTasks);
+        BlocProvider.of<MediaDownloaderBloc>(context)
+            .add(AddDownload(downloadTasks: downloadTasks));
+      }
     }
 
     await _startPlaying(mediaItems, index);

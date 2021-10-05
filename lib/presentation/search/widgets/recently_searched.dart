@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
+import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
@@ -44,11 +45,13 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
                     itemCount:
                         snapshot.data.length > 3 ? 3 : snapshot.data.length,
                     itemBuilder: (context, index) {
-                      Track track = snapshot.data.values.toList().reversed.toList()[index];
-                      return musicTile(
-                          track, () {
+                      Track track = snapshot.data.values
+                          .toList()
+                          .reversed
+                          .toList()[index];
+                      return musicTile(track, () {
                         playAudio(track);
-                      },context);
+                      }, context);
                     });
           }
 
@@ -97,9 +100,9 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
     // print("trackId: ${widget.tracks[0].songId}");
     // print("songId: ${widget.tracks[0].songId}");
 
-    String source = 'https://138.68.163.236:8787/track/${track.songId}';
+    String source = '$M3U8_URL/${track.songId}';
 
-    if (await LocalHelper.isFileDownloaded(track.songId)) {
+    if (await LocalHelper.isFileDownloaded(track.songId) && await LocalHelper.allSegmentsDownloaded(id : track.songId)) {
       source = '$dir/${track.songId}/main.m3u8';
     }
 
@@ -107,20 +110,20 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
         id: track.songId,
         album: '',
         title: track.title,
-        genre: '${track.genre.name}',
-        artist: '${track.artist.firstName} ${track.artist.lastName}',
+        genre: track.genre != null ? '${track.genre.name}' : 'Unknown',
+        artist: track.artist != null
+            ? '${track.artist.firstName} ${track.artist.lastName}'
+            : 'Unknown Artist',
         duration: Duration(seconds: track.duration),
         artUri: Uri.parse(track.coverImageUrl),
         extras: {'source': source}));
 
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
-    if (!(await LocalHelper.isFileDownloaded(track.songId))) {
+    if (!(await LocalHelper.isFileDownloaded(track.songId)) || !(await LocalHelper.allSegmentsDownloaded(id : track.songId))) {
       HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-              await parseHLS.downloadFile(
-                  'https://138.68.163.236:8787/track/${track.songId}',
-                  '$dir/${track.songId}',
-                  "main.m3u8"))
+              await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
+                  '$dir/${track.songId}', "main.m3u8"))
           .readAsStringSync());
       // TODO: update this after correct m3u8 is generated
       // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
@@ -142,11 +145,39 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
     } else {
       var m3u8FilePath = '$dir/${track.songId}/main.m3u8';
 
-      /// TODO: uncomment for encryption key download
+      File file = File(m3u8FilePath);
+      if (file.existsSync()) {
+        /// TODO: uncomment for encryption key download
       await parseHLS.updateLocalM3u8(m3u8FilePath);
       print("mediaItems: ${mediaItems}");
       print("the file is downloaded playing from local: ${mediaItems}");
       await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      }
+      else{
+        HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
+              await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
+                  '$dir/${track.songId}', "main.m3u8"))
+          .readAsStringSync());
+      // TODO: update this after correct m3u8 is generated
+      // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
+      List<DownloadTask> downloadTasks = [];
+      // print(hlsPlayList.segments);
+      hlsPlayList.segments.forEach((segment) {
+        var segmentIndex = hlsPlayList.segments.indexOf(segment);
+        downloadTasks.add(DownloadTask(
+            track_id: track.songId,
+            segment_number: segmentIndex,
+            downloadType: DownloadType.media,
+            downloaded: false,
+            download_path: '$dir/${track.songId}/',
+            url: segment.url));
+      });
+      print(downloadTasks);
+      BlocProvider.of<MediaDownloaderBloc>(context)
+          .add(AddDownload(downloadTasks: downloadTasks));
+      }
+
+      
     }
 
     await _startPlaying(mediaItems);

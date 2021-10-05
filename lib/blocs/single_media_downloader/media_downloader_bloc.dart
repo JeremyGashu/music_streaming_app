@@ -84,6 +84,7 @@ class MediaDownloaderBloc
           } else {
             print('/////////////////////////////////////////');
             print('download done');
+            print('//////// TODO now download the key as all the files are downloads'); 
             add(UpdateDownloadState(
                 state: DownloadDone(downloadedTask: _downloadTask)));
             _checkQueueAndContinueDownload();

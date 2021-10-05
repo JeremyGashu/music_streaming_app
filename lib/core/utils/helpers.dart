@@ -33,6 +33,31 @@ class LocalHelper {
         .path;
   }
 
+  static Future<bool> allSegmentsDownloaded({String id}) async {
+    String dir = await LocalHelper.getLocalFilePath();
+    String path = '${await getLocalFilePath()}/$id/main.m3u8';
+    ParseHls parseHLS = ParseHls();
+
+    File m3u8File = File(path);
+    HlsMediaPlaylist hlsPlayList;
+    if (m3u8File.existsSync()) {
+      hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
+      int segmenetLength = hlsPlayList.segments.length;
+      int fileCounter = 0;
+      Directory directory = Directory('$dir/$id');
+      List<FileSystemEntity> files = directory.listSync(recursive: true);
+
+     files.forEach((file) => {
+       if(file.path.split('.').last.endsWith('ts')) {
+         fileCounter++
+       }
+     });
+     return segmenetLength == fileCounter;
+    } else {
+      return false;
+    }
+  }
+
   static Future<bool> isFileDownloaded(String fileId) async {
     var box = await Hive.openBox("downloadedMedias");
     var trackDownloaded = await box.get(fileId);
@@ -246,6 +271,7 @@ class LocalHelper {
       /// encrypt file
       await crypt.encryptFile(filePath);
       File file = new File(filePath);
+
       await file.delete();
       return true;
     } catch (error, stacktrace) {

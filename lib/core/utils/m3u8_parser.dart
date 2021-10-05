@@ -14,6 +14,7 @@ class ParseHls {
       var playlist;
       playlist =
           await HlsPlaylistParser.create().parseString(playlistUri, m3u8String);
+          
       return playlist;
     } catch (e) {
       // throw Exception();
@@ -115,6 +116,7 @@ class ParseHls {
         await encryptFile("${keyPath}/enc.key");
       } else {
         await downloadFile(keyUrl, keyPath, 'enc.key');
+
         print('////////////////////////// Downloading key file finished');
 
         /// encrypt key

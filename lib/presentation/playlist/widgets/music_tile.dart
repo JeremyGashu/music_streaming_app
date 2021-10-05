@@ -2,14 +2,20 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
-Widget musicTile(Track music, Function onPressed,BuildContext context,
-    [isPlaying = false, MediaItem mediaItem,]) {
+Widget musicTile(
+  Track music,
+  Function onPressed,
+  BuildContext context, [
+  isPlaying = false,
+  MediaItem mediaItem,
+]) {
   return GestureDetector(
     onTap: () {
       onPressed();
@@ -89,10 +95,29 @@ Widget musicTile(Track music, Function onPressed,BuildContext context,
                 : Duration(seconds: 0)),
             style: TextStyle(color: Colors.grey),
           ),
-          SizedBox(width: 10,),
+          SizedBox(
+            width: 10,
+          ),
           IconButton(
-            onPressed: (){
-              BlocProvider.of<UserDownloadBloc>(context).add(StartDownload(track: music));
+            onPressed: () async {
+              var status = await Permission.storage.status;
+              if (status.isGranted) {
+                BlocProvider.of<UserDownloadBloc>(context)
+                  .add(StartDownload(track: music));
+                  return;
+              }
+              else{
+                PermissionStatus stat = await Permission.storage.request();
+                if(stat == PermissionStatus.granted) {
+                  BlocProvider.of<UserDownloadBloc>(context)
+                  .add(StartDownload(track: music));
+                }
+                else{
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please grant permission before download!')));
+                }
+              }
+
+              
             },
             icon: Icon(
               Icons.file_download,

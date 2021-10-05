@@ -12,7 +12,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/like/like_bloc.dart';
 import 'package:streaming_mobile/blocs/like/like_event.dart';
 import 'package:streaming_mobile/blocs/like/like_state.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
@@ -102,8 +105,11 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                       if (snapshot.hasData) {
                         return BlocConsumer<LikeBloc, LikeState>(
                             listener: (context, state) {
-                              if(state is ErrorState) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed To Add to Favourites!')));
+                              if (state is ErrorState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed To Add to Favourites!')));
                               }
                             },
                             bloc: _likeBloc,
@@ -178,12 +184,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     // BlocProvider.of<PlaylistBloc>(context).add(GetPrivatePlaylists());
     return AnimatedPositioned(
       duration: Duration(milliseconds: 240),
-      top: !_isCollapsed ? kHeight(context) - 210 : kHeight(context),
+      top: !_isCollapsed ? kHeight(context) - 240 : kHeight(context),
       left: 0,
       right: 0,
       child: Container(
         width: kWidth(context),
-        height: 210,
+        height: 240,
         child: Column(
           children: [
             GestureDetector(
@@ -225,6 +231,22 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
               ),
               title: Text('Add to playlist'),
             ),
+
+            // ListTile(
+            //   onTap: () async {
+            //       BlocProvider.of<UserDownloadBloc>(context)
+            //           .add(StartDownload(track: widget.track));
+            //           // print('current track => ${widget.track.son}');
+                
+            //   },
+            //   leading: Icon(
+            //           Icons.file_download,
+            //           color: Colors.grey,
+            //           size: 20,
+            //         ),
+            //   title: Text('Download'),
+            // ),
+
             FutureBuilder<bool>(
                 future: LikeBloc.checkLikedStatus(
                     boxName: 'liked_songs', id: songId),

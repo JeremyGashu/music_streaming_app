@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -188,7 +189,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     );
 
     if (_mediaItem.extras['source'].toString().startsWith('/')) {
-      /// To play from local path
+      /// To play from local pathz
       await playFromLocal(_mediaItem.extras['source']);
     } else {
       print("download started from skip method");
@@ -303,7 +304,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
     var filePathDec = "$dir/${_mediaItem.id}/enc.key";
     await LocalHelper.decryptFile(filePathEnc);
     await _audioPlayer.setFilePath(source);
-    await LocalHelper.encryptFile(filePathDec);
+    File decryptedFile = File(filePathDec);
+    await Future.delayed(Duration(milliseconds: 50));
+    await decryptedFile.delete();
+    // await LocalHelper.encryptFile(filePathDec);
   }
 
   @override

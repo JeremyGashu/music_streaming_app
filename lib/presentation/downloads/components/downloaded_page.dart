@@ -39,10 +39,12 @@ class _DownloadedPageState extends State<DownloadedPage> {
             future: getIt<UserDownloadManager>().downloadedTasks(),
             builder:
                 (context, AsyncSnapshot<List<LocalDownloadTask>> snapshot) {
-              if (snapshot.data.isEmpty) {
+              
+              if (snapshot.hasData) {
+                if (snapshot.data.isEmpty) {
                 return Text("You don't have any downloaded tasks");
               }
-              if (snapshot.hasData) {
+              
                 print("Download data :${snapshot.data}");
                 return Container(
                   color: Colors.white,

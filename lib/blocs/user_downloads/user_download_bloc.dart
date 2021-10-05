@@ -9,6 +9,7 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
+import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
@@ -32,7 +33,7 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
         var dir = await LocalHelper.getLocalFilePath();
         HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
                 await parseHLS.downloadFile(
-                    'https://138.68.163.236:8787/track/${event.track.songId}',
+                    '$M3U8_URL/${event.track.songId}',
                     '$dir/${event.track.songId}',
                     "main.m3u8"))
             .readAsStringSync());

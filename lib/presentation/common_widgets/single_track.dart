@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
+import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
@@ -32,12 +33,13 @@ class _SingleTrackState extends State<SingleTrack> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 15,),
+      margin: EdgeInsets.only(
+        left: 15,
+      ),
       child: GestureDetector(
         onTap: () {
           /// Start playing the audio
           playAudio();
-
         },
         child: Container(
           width: 140,
@@ -46,7 +48,6 @@ class _SingleTrackState extends State<SingleTrack> {
             Container(
               width: 140,
               height: 120,
-
               child: Card(
                 margin: EdgeInsets.zero,
                 elevation: 1.0,
@@ -77,7 +78,9 @@ class _SingleTrackState extends State<SingleTrack> {
                 ),
               ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(
+              height: 5,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +134,9 @@ class _SingleTrackState extends State<SingleTrack> {
       if (widget.track.songId == AudioService.currentMediaItem.id) {
         print(
             "PlayListPage[playlist_detail]: already running with the same media id");
-        Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: widget.track);
+        Navigator.pushNamed(
+            context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+            arguments: widget.track);
         return;
       }
     }
@@ -149,7 +154,9 @@ class _SingleTrackState extends State<SingleTrack> {
   }
 
   Future<void> playSong(context, Duration position) async {
-    Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: widget.track);
+    Navigator.pushNamed(
+        context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+        arguments: widget.track);
     var dir = await LocalHelper.getFilePath(context);
     // create mediaItem list
     List<MediaItem> mediaItems = [];
@@ -159,9 +166,9 @@ class _SingleTrackState extends State<SingleTrack> {
     // print("trackId: ${widget.tracks[0].songId}");
     // print("songId: ${widget.tracks[0].songId}");
 
-    String source = 'https://138.68.163.236:8787/track/${widget.track.songId}';
+    String source = '$M3U8_URL/${widget.track.songId}';
 
-    if (await LocalHelper.isFileDownloaded(widget.track.songId)) {
+    if (await LocalHelper.isFileDownloaded(widget.track.songId) && await LocalHelper.allSegmentsDownloaded(id : widget.track.songId)) {
       print("${widget.track.songId}: downloaded");
       source = '$dir/${widget.track.songId}/main.m3u8';
     }
@@ -179,15 +186,19 @@ class _SingleTrackState extends State<SingleTrack> {
 
     ParseHls parseHLS = ParseHls();
     print("mediaItems: ${mediaItems}");
-    if (!(await LocalHelper.isFileDownloaded(widget.track.songId))) {
-      HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-              await parseHLS.downloadFile(
-                  'https://138.68.163.236:8787/track/${widget.track.songId}',
-                  '$dir/${widget.track.songId}',
-                  "main.m3u8"))
+    if (!(await LocalHelper.isFileDownloaded(widget.track.songId)) || !(await LocalHelper.allSegmentsDownloaded(id : widget.track.songId))) {
+      File m3u8File = File('$dir/${widget.track.songId}/main.m3u8');
+      HlsMediaPlaylist hlsPlayList ;
+      if(m3u8File.existsSync()) {
+        hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
+      }
+      else{
+        hlsPlayList = await parseHLS.parseHLS(File(
+              await parseHLS.downloadFile('$M3U8_URL/${widget.track.songId}',
+                  '$dir/${widget.track.songId}', "main.m3u8"))
           .readAsStringSync());
-      // TODO: update this after correct m3u8 is generated
-      // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
+      }
+
       List<DownloadTask> downloadTasks = [];
       // print(hlsPlayList.segments);
       hlsPlayList.segments.forEach((segment) {
@@ -206,10 +217,40 @@ class _SingleTrackState extends State<SingleTrack> {
     } else {
       var m3u8FilePath = '$dir/${widget.track.songId}/main.m3u8';
 
-      await parseHLS.updateLocalM3u8(m3u8FilePath);
-      print("mediaItems: ${mediaItems}");
-      print("the file is downloaded playing from local: ${mediaItems}");
-      await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      File file = File(m3u8FilePath);
+      if (file.existsSync()) {
+        
+        await parseHLS.updateLocalM3u8(m3u8FilePath);
+        print("mediaItems: ${mediaItems}");
+        print("the file is downloaded playing from local: ${mediaItems}");
+        await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      } else {
+        HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
+                await parseHLS.downloadFile('$M3U8_URL/${widget.track.songId}',
+                    '$dir/${widget.track.songId}', "main.m3u8"))
+            .readAsStringSync());
+
+        List<DownloadTask> downloadTasks = [];
+        // print(hlsPlayList.segments);
+        hlsPlayList.segments.forEach((segment) {
+          var segmentIndex = hlsPlayList.segments.indexOf(segment);
+          downloadTasks.add(DownloadTask(
+              track_id: widget.track.songId,
+              segment_number: segmentIndex,
+              downloadType: DownloadType.media,
+              downloaded: false,
+              download_path: '$dir/${widget.track.songId}/',
+              url: segment.url));
+        });
+        print(downloadTasks);
+        BlocProvider.of<MediaDownloaderBloc>(context)
+            .add(AddDownload(downloadTasks: downloadTasks));
+      }
+
+      // await parseHLS.updateLocalM3u8(m3u8FilePath);
+      // print("mediaItems: ${mediaItems}");
+      // print("the file is downloaded playing from local: ${mediaItems}");
+      // await parseHLS.writeLocalM3u8File(m3u8FilePath);
     }
 
     await _startPlaying(mediaItems);
