@@ -8,8 +8,23 @@ class SignUpEvent extends Equatable {
 
 class SendSignUpData extends SignUpEvent {
   final String phone;
-  final password;
+  final String password;
   SendSignUpData({@required this.password, @required this.phone});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [phone, password];
+}
+
+class VerifyPhoneNumber extends SignUpEvent {
+  final String phone;
+  VerifyPhoneNumber({@required this.phone});
+  @override
+  List<Object> get props => [phone];
+}
+
+class VerifyOTP extends SignUpEvent {
+  final String phone;
+  final String otp;
+  VerifyOTP({@required this.phone,@required this.otp});
+  @override
+  List<Object> get props => [phone, required];
 }

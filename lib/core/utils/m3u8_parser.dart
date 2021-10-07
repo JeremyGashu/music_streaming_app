@@ -145,7 +145,6 @@ class ParseHls {
   }
 
   Future<bool> encryptFile(String filePath) async {
-    // TODO: generate password on main and save it hive and read from hive
     var crypt = AesCrypt('my cool password');
     crypt.setOverwriteMode(AesCryptOwMode.on);
 

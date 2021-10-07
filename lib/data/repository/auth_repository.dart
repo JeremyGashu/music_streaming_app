@@ -12,19 +12,23 @@ class AuthRepository {
   Future<String> verifyPhoneNumber({String phoneNo}) async {
     http.Response authData =
         await dataProvider.verifyPhoneNumber(phoneNo: phoneNo);
-        print('status code ${authData.statusCode}');
+    print('status code ${authData.statusCode}');
     if (authData.statusCode != 200) {
       return null;
     }
-    var otp = jsonDecode(authData.body)['data'];
-    return otp;
+    String message = jsonDecode(authData.body)['data'];
+    return message;
   }
 
   Future<String> verifyOTP({String phoneNo, String otp}) async {
-    http.Response verificationData =
+    http.Response authData =
         await dataProvider.verifyOTP(phoneNo: phoneNo, otp: otp);
-    var authToken = jsonDecode(verificationData.body)['data'];
-    return authToken;
+    print('status code ${authData.statusCode}');
+    if (authData.statusCode != 200) {
+      return null;
+    }
+    String message = jsonDecode(authData.body)['data'];
+    return message;
   }
 
   Future<bool> resetPassword({String phoneNo}) async {

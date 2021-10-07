@@ -17,4 +17,22 @@ class SignUpDataProvider {
     );
     return response;
   }
+
+  Future<http.Response> verifyPhoneNumber({String phoneNo}) async {
+    http.Response response = await http.post(
+      Uri.parse(REQUEST_OTP),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({'phone': phoneNo}),
+    );
+    return response;
+  }
+
+  Future<http.Response> verifyOTP({String phoneNo, String otp}) async {
+    http.Response response = await http.post(
+      Uri.parse(VERIFY_OTP),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({'phone': phoneNo, 'otp' : otp}),
+    );
+    return response;
+  }
 }

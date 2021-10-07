@@ -21,6 +21,9 @@ class LocalDownloadTaskAdapter extends TypeAdapter<LocalDownloadTask> {
       title: fields[1] as String,
       coverImageUrl: fields[2] as String,
       songUrl: fields[3] as String,
+      artistFirstName: fields[6] as String,
+      artistLastName: fields[7] as String,
+      genre: fields[8] as String,
       duration: fields[4] as int,
       progress: fields[5] as double,
     );
@@ -29,7 +32,7 @@ class LocalDownloadTaskAdapter extends TypeAdapter<LocalDownloadTask> {
   @override
   void write(BinaryWriter writer, LocalDownloadTask obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.songId)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class LocalDownloadTaskAdapter extends TypeAdapter<LocalDownloadTask> {
       ..writeByte(4)
       ..write(obj.duration)
       ..writeByte(5)
-      ..write(obj.progress);
+      ..write(obj.progress)
+      ..writeByte(6)
+      ..write(obj.artistFirstName)
+      ..writeByte(7)
+      ..write(obj.artistLastName)
+      ..writeByte(8)
+      ..write(obj.genre);
   }
 
   @override

@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
 import 'package:streaming_mobile/blocs/auth/auth_event.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
+import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 
@@ -90,6 +95,37 @@ class ArtistProfilePage extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(
                         context, ResetPasswordPage.resetPasswordPageRouterName);
+                  }),
+              _listSelectorTiles(
+                  title: 'Clear Cache',
+                  icon: Icon(
+                    Icons.cached,
+                    color: Colors.grey,
+                    size: 25,
+                  ),
+                  onTap: () async {
+                    //LocalHelper clearCached(context)
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Text('Are you sure you want to cahce?'),
+                            title: Text('Clear Cache'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () async {
+                                    await clearCache(context);
+                                  },
+                                  child: Text('Yes')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No')),
+                            ],
+                          );
+                        });
+
                   }),
               // _listSelectorTiles(
               //   title: 'Setting',
@@ -190,6 +226,40 @@ Widget _listSelectorTiles({String title, Icon icon, Function onTap}) {
   // );
 }
 
+Future<void> clearCache(BuildContext context) async {
+  Box<LocalDownloadTask> userDownloads =
+      await Hive.openBox<LocalDownloadTask>('user_downloads');
+  List<String> ids = userDownloads.values.map((e) => e.songId).toList();
+  String dir = await LocalHelper.getLocalFilePath();
+  Directory localDownloadDir = Directory(dir);
+  if (localDownloadDir.listSync().length == 0) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Your cache is clear!')));
+    Navigator.pop(context);
+    return;
+  }
+  int counter = 0;
+  localDownloadDir.listSync().forEach((folder) {
+    String id = folder.path.split('/').last;
+    
+    if (!ids.contains(id)) {
+      try {
+        folder.deleteSync(recursive: true);
+        counter++;
+      } catch (e) {
+        // throw Exception(e);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error deleting $id')));
+      }
+    } else {
+      print('dont delete=>');
+    }
+  });
+  ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text('$counter Items Cleared!')));
+  Navigator.pop(context);
+}
+
 //back nav, name and more vertical iconBuilder
 Widget _upperSection() {
   return Padding(
@@ -224,18 +294,3 @@ Widget _upperSection() {
     ),
   );
 }
-
-//the add image under the upper section
-// Widget _adContainer(String path) {
-//   return Container(
-//     margin: EdgeInsets.symmetric(
-//       vertical: 10,
-//     ),
-//     width: double.infinity,
-//     height: 120,
-//     child: Image.asset(
-//       'assets/images/$path',
-//       fit: BoxFit.cover,
-//     ),
-//   );
-// }

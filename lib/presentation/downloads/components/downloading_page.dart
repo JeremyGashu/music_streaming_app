@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
@@ -25,6 +26,13 @@ class _DownloadingPageState extends State<DownloadingPage> {
     return Center(
         child: BlocConsumer<MediaDownloaderBloc, MediaDownloaderState>(
       listener: (context, state) {
+        if (state is DownloadDeleted) {
+
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              ScaffoldMessengerState()
+                  .showSnackBar(SnackBar(content: Text("Download deleted")));
+            });
+          }
         print("DOWNLOADING_PAGE: LISTENER ${state.toString()}");
       },
       builder: (context, state) {

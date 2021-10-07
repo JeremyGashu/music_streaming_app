@@ -63,10 +63,14 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
             event.track.songId,
             LocalDownloadTask(
                 songId: event.track.songId,
-                title: event.track.title,
+                title: event.track.title ?? 'Unknown',
                 coverImageUrl: event.track.coverImageUrl,
                 songUrl: event.track.songUrl,
-                duration: event.track.duration));
+                duration: event.track.duration,
+                artistFirstName: event.track.artist != null? event.track.artist.firstName :'',
+                artistLastName :event.track.artist != null? event.track.artist.lastName :'Unknown Artist',
+                genre: event.track.genre != null ? event.track.genre.name : '',
+                ));
         LocalDatabaseBloc(mediaDownloaderBloc: getIt<MediaDownloaderBloc>());
       }
       if (event is DeleteDownload) {

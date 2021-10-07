@@ -7,15 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
-import 'package:streaming_mobile/blocs/auth/auth_event.dart';
-import 'package:streaming_mobile/blocs/auth/auth_state.dart';
+import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
+import 'package:streaming_mobile/blocs/sign_up/sign_up_event.dart';
+import 'package:streaming_mobile/blocs/sign_up/sign_up_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/data/models/country_codes.dart';
 
-import 'otp_page.dart';
+import '../../auth/pages/otp_page.dart';
 
 class PhoneInputPage extends StatefulWidget {
   static const String phoneInputStorageRouterName =
@@ -42,18 +42,19 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         return true;
       },
       child: Scaffold(
-        body: BlocConsumer<AuthBloc, AuthState>(
+        body: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state is OTPReceived) {
-              Navigator.pushNamed(context, OTP.otpPageRouterName,
-                  arguments: _phoneNumberController.value.text);
+            Navigator.pushNamed(context, OTP.otpPageRouterName,
+                arguments: _phoneNumberController.value.text);
             }
 
-            if(state is AuthenticationError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            if (state is SignUpError) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
-          builder:(context, state) => Stack(
+          builder: (context, state) => Stack(
             children: [
               Positioned(
                 top: -50,
@@ -151,43 +152,56 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                             SizedBox(
                               height: 20,
                             ),
-                            state is SendingPhoneVerification ? Center(child: SpinKitRipple(color: Colors.grey[800],size: 40,),) : Container(
-                              width: kWidth(context),
-                              height: 50,
-                              margin: EdgeInsets.only(top: 20),
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: OutlinedButton(
-                                onPressed: () {
+                            state is LoadingState
+                                ? Center(
+                                    child: SpinKitRipple(
+                                      color: Colors.grey[800],
+                                      size: 40,
+                                    ),
+                                  )
+                                : Container(
+                                    width: kWidth(context),
+                                    height: 50,
+                                    margin: EdgeInsets.only(top: 20),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        if (isPhoneNumber(_phoneNumberController
+                                                .value.text) &&
+                                            _phoneNumberController
+                                                    .value.text.length ==
+                                                10) {
 
-                                  if (isPhoneNumber(
-                                      _phoneNumberController.value.text) &&  _phoneNumberController.value.text.length == 10) {
-                                    BlocProvider.of<AuthBloc>(context).add(
-                                        VerifyPhoneNumberEvent(
-                                            phoneNo: _phoneNumberController
-                                                .value.text));
-                                    // print('phone number => ${_countryCode + _phoneNumberController.value.text}');
-                                  } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
-                                          'Please Enter a valid phone number!'),
-                                    ));
-                                  }
-                                },
-                                child: Text('Continue',
-                                    style: TextStyle(color: Colors.white)),
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            kBlack),
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(25)),
-                                    ))),
-                              ),
-                            ),
+                                          BlocProvider.of<SignUpBloc>(context)
+                                              .add(VerifyPhoneNumber(
+                                                  phone: _phoneNumberController
+                                                      .value.text));
+                                          print(
+                                              'phone number => ${_countryCode + _phoneNumberController.value.text}');
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                'Please Enter a valid phone number!'),
+                                          ));
+                                        }
+                                      },
+                                      child: Text('Continue',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  kBlack),
+                                          shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25)),
+                                          ))),
+                                    ),
+                                  ),
                             SizedBox(
                               height: 10,
                             ),

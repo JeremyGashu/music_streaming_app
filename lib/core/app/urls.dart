@@ -30,9 +30,9 @@ final REQUEST_OTP = 'http://138.68.163.236:8866/v1/request_otp';
 final POST_PLAYLIST_URL = '$BASE_URL/playlist/song';
 
 final M3U8_URL = 'https://138.68.163.236:8787/track';
+final VERIFY_OTP = 'http://138.68.163.236:8866/v1/verify/phone';
 
 //todo: genre
 //todo: analytics
 //todo: getOtp
 //todo: verify otp
-//todo: add custom playlist endpoint

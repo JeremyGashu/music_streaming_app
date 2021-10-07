@@ -24,9 +24,18 @@ class DownloadOnProgressState extends MediaDownloaderState{
 }
 
 class DownloadFailed extends MediaDownloaderState{
+  final String id;
+
+  DownloadFailed(this.id);
+  @override
+  List<Object> get props => [id];
+}
+
+class UndefinedState extends MediaDownloaderState{
   @override
   List<Object> get props => [];
 }
+
 
 class DownloadDone extends MediaDownloaderState{
   final DownloadTask downloadedTask;

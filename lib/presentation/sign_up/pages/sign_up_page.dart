@@ -171,7 +171,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 width: kWidth(context),
                                 height: 50,
                                 margin: EdgeInsets.only(top: 30),
-                                child: state is SendingSignUpData
+                                child: state is LoadingState
                                     ? Container(
                                         height: 50,
                                         width: 50,

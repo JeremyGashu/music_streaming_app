@@ -47,15 +47,19 @@ class LocalHelper {
       Directory directory = Directory('$dir/$id');
       List<FileSystemEntity> files = directory.listSync(recursive: true);
 
-     files.forEach((file) => {
-       if(file.path.split('.').last.endsWith('ts')) {
-         fileCounter++
-       }
-     });
-     return segmenetLength == fileCounter;
+      files.forEach((file) => {
+            if (file.path.split('.').last.endsWith('ts')) {fileCounter++}
+          });
+      return segmenetLength == fileCounter;
     } else {
       return false;
     }
+  }
+
+  static Future<bool> keyExists({String id}) async {
+    String keyPath = '${await LocalHelper.getLocalFilePath()}/$id/enc.key.aes';
+    File keyFile = File(keyPath);
+    return keyFile.existsSync();
   }
 
   static Future<bool> isFileDownloaded(String fileId) async {
@@ -223,6 +227,44 @@ class LocalHelper {
     print(m3u8Text);
     await File(filePath).writeAsString(m3u8Text);
     return true;
+  }
+
+  static Future<bool> downloadKeyFile(String filePath) async {
+    try {
+      String m3u8Text = await m3u8StringLoader(filePath);
+      if (m3u8Text.indexOf("EXT-X-KEY") == -1) {
+        print("unencrypted m3u8");
+        return true;
+      }
+      int start = m3u8Text.indexOf('URI');
+      int end = m3u8Text.indexOf('IV');
+      String keyUrl = m3u8Text.substring(start + 5, end - 2);
+      print('keyurl => $keyUrl');
+
+      var keyPath = filePath.substring(0, filePath.indexOf("/main.m3u8"));
+
+      File fileEnc = new File("${keyPath}/enc.key.aes");
+      File fileOrig = new File("${keyPath}/enc.key");
+      if (fileEnc.existsSync() && fileOrig.existsSync()) {
+        fileOrig.deleteSync();
+        return true;
+      } else if (!fileEnc.existsSync() && fileOrig.existsSync()) {
+        await encryptFile("${keyPath}/enc.key");
+        return true;
+      } else {
+        await downloadFile(keyUrl, keyPath, 'enc.key');
+        print('////////////////////////// Downloading key file finished');
+        // return true;
+
+        /// encrypt key
+        await encryptFile("${keyPath}/enc.key");
+        return true;
+      }
+    } catch (e) {
+      print('=====> Error downloading key');
+      print(e);
+      return false;
+    }
   }
 
   static Future<String> downloadFile(

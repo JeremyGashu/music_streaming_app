@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:streaming_mobile/data/models/auth_data.dart';
 
 class SignUpState extends Equatable {
   @override
@@ -17,11 +16,29 @@ class SendingSignUpData extends SignUpState {
   List<Object> get props => [];
 }
 
-class SignedUpSuccessfully extends SignUpState {
-  final AuthData authData;
-  SignedUpSuccessfully({@required this.authData});
+class LoadingState extends SignUpState {
   @override
-  List<Object> get props => [authData];
+  List<Object> get props => [];
+}
+
+class OTPReceived extends SignUpState {
+  final String phoneNo;
+  OTPReceived({@required this.phoneNo});
+  @override
+  List<Object> get props => [phoneNo];
+}
+
+class OTPVerified extends SignUpState {
+  final String phoneNo;
+  OTPVerified({@required this.phoneNo});
+  @override
+  List<Object> get props => [phoneNo];
+}
+
+class SignedUpSuccessfully extends SignUpState {
+  SignedUpSuccessfully();
+  @override
+  List<Object> get props => [];
 }
 
 class SignUpError extends SignUpState {

@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
 import 'media_downloader_event.dart';
 import 'media_downloader_state.dart';
@@ -53,7 +54,7 @@ class MediaDownloaderBloc
       _bindBackgroundIsolate();
       return;
     }
-    _port.listen((dynamic data) {
+    _port.listen((dynamic data) async {
       print('////////////////////////////////////////////////////');
       print(data);
       String taskId = data[0];
@@ -84,17 +85,40 @@ class MediaDownloaderBloc
           } else {
             print('/////////////////////////////////////////');
             print('download done');
-            print('//////// TODO now download the key as all the files are downloads'); 
+            print(
+                '//////// TODO now download the key as all the files are downloads');
             add(UpdateDownloadState(
                 state: DownloadDone(downloadedTask: _downloadTask)));
+             String m3u8Path = '${await LocalHelper.getLocalFilePath()}/${_downloadTask.track_id}/main.m3u8';
+             LocalHelper.downloadKeyFile(m3u8Path).then((val) {
+               if(val) {
+                 print('key file is downloaded');
+               }
+               else{
+                 print('key file is not downloaded');
+               }
+             });
             _checkQueueAndContinueDownload();
           }
+        } else if (status == DownloadTaskStatus.running) {
+          print('current status => ${status}');
+           print(status);
+          add(UpdateDownloadState(state: DownloadOnProgressState()));
+
+        } else if (status == DownloadTaskStatus.failed) {
+          smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
+          print('current status => ${status}');
+           print(status);
+           
+          add(UpdateDownloadState(state: DownloadFailed(_downloadTask.track_id)));
+
         } else {
-          // considering other states other than complete as failed
-          // since no implementation is done for other states
+          //   DownloadTaskStatus.failed
+          // DownloadTaskStatus.paused
+
           print('.//////////////////////// else');
           print(status);
-          add(UpdateDownloadState(state: DownloadFailed()));
+          // add(UpdateDownloadState(state: DownloadFailed()));
         }
       }
     });

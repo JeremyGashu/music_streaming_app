@@ -6,12 +6,6 @@ class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class SignUpEvent extends AuthEvent {
-  final String phoneNo;
-  SignUpEvent({@required this.phoneNo}) : assert(phoneNo != null);
-  @override
-  List<Object> get props => [phoneNo];
-}
 
 class CheckAuthOnStartUp extends AuthEvent {
   @override

@@ -4,7 +4,7 @@ import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
-import 'package:streaming_mobile/presentation/auth/pages/phone_input_page.dart';
+import 'package:streaming_mobile/presentation/sign_up/pages/phone_input_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
