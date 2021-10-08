@@ -295,6 +295,7 @@ class LocalHelper {
       print(stacktrace);
       // throw Exception();
     }
+    return null;
   }
 
   static void downloadCallback(
@@ -321,6 +322,7 @@ class LocalHelper {
       print(stacktrace);
       // throw Exception("encryption failed");
     }
+    return null;
   }
 
   static Future<bool> decryptFile(String filePath) async {
@@ -357,5 +359,6 @@ class LocalHelper {
       }
       // throw Exception("decryption failed");
     }
+    return null;
   }
 }

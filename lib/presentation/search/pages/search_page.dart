@@ -292,7 +292,7 @@ class _SearchPageState extends State<SearchPage>
                                   ],
                                 );
                               } else if (state is LoadedPlaylist) {
-                                return ListView.builder(
+                                return state.playlists.length == 0 ? Center(child: Text('No Playlist Found!'),) : ListView.builder(
                                   itemCount: state.playlists.length,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (ctx, index) {

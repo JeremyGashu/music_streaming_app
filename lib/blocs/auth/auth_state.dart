@@ -71,7 +71,6 @@ class SendingLoginData extends AuthState {
   List<Object> get props => [];
 }
 
-//TODO add the refresh token states here
 class SendingRefreshToken extends AuthState {
   @override
   List<Object> get props => [];
@@ -93,7 +92,6 @@ class SendingRefreshTokenFailed extends AuthState {
   List<Object> get props => [];
 }
 
-//TODO add the states for request_reset_password
 class SendingResetPasswordRequest extends AuthState {}
 
 class SentPasswordResetRequest extends AuthState {
@@ -113,7 +111,6 @@ class SendingPasswordResetFailed extends AuthState {
 }
 
 ///
-//TODO add the states for request_reset_password
 class SendingVerifyPasswordReset extends AuthState {}
 
 class VerifiedPasswordReset extends AuthState {

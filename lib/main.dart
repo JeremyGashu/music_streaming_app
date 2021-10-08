@@ -1,60 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:streaming_mobile/blocs/albums/album_event.dart';
-import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
-import 'package:streaming_mobile/blocs/auth/auth_bloc.dart';
-import 'package:streaming_mobile/blocs/auth/auth_event.dart';
-import 'package:streaming_mobile/blocs/config/config_bloc.dart';
-import 'package:streaming_mobile/blocs/config/config_event.dart';
-import 'package:streaming_mobile/blocs/featured/featured_bloc.dart';
-import 'package:streaming_mobile/blocs/featured/featured_event.dart';
-import 'package:streaming_mobile/blocs/genres/genres_bloc.dart';
-import 'package:streaming_mobile/blocs/genres/genres_event.dart';
-import 'package:streaming_mobile/blocs/like/like_bloc.dart';
-import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
-import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
-import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
-import 'package:streaming_mobile/blocs/search/search_bloc.dart';
-import 'package:streaming_mobile/blocs/sign_up/sign_up_bloc.dart';
-import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
-import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
-import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
-import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
-import 'package:streaming_mobile/blocs/user_location/user_location_bloc.dart';
-import 'package:streaming_mobile/blocs/user_location/user_location_state.dart';
-import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
-import 'package:streaming_mobile/blocs/vpn/vpn_events.dart';
-import 'package:streaming_mobile/blocs/vpn/vpn_state.dart';
-import 'package:streaming_mobile/core/app/app_router.dart';
-import 'package:streaming_mobile/data/models/analytics.dart';
-import 'package:streaming_mobile/data/models/auth_data.dart';
-import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/locator.dart';
-import 'package:streaming_mobile/data/models/local_download_task.dart';
-import 'package:streaming_mobile/presentation/info/location_disabled_page.dart';
-import 'package:streaming_mobile/presentation/info/no_vpn_page.dart';
-import 'package:streaming_mobile/presentation/splashpage/splashpage.dart';
-import 'package:streaming_mobile/simple_bloc_observer.dart';
-
-import 'blocs/albums/album_bloc.dart';
-import 'blocs/artist/artist_event.dart';
-import 'blocs/local_database/local_database_bloc.dart';
-import 'blocs/local_database/local_database_event.dart';
-import 'blocs/single_media_downloader/media_downloader_bloc.dart';
-import 'blocs/single_media_downloader/media_downloader_event.dart';
-import 'core/services/location_service.dart';
-import 'core/utils/service_locator.dart';
-import 'data/models/auth_data.dart';
-
+import 'imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -140,15 +85,15 @@ void main() async {
       create: (_) => sl<NewReleaseBloc>()..add(LoadNewReleasesInit()),
     ),
     BlocProvider<ConfigBloc>(create: (_) => sl<ConfigBloc>()..add(LoadConfigData())),
-  ], child: MyApp()));
+  ], child: StreamingApp()));
 }
 
-class MyApp extends StatefulWidget {
+class StreamingApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _StreamingAppState createState() => _StreamingAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _StreamingAppState extends State<StreamingApp> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 

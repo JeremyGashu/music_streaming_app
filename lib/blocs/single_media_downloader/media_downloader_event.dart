@@ -4,7 +4,6 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/data/models/download_task.dart';
 
 abstract class MediaDownloaderEvent extends Equatable{@override
-  // TODO: implement props
   List<Object> get props => [];}
 
 class AddDownload extends MediaDownloaderEvent{

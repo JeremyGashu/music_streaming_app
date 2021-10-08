@@ -379,7 +379,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
           _audioPlayer.setLoopMode(LoopMode.one);
           break;
         case AudioServiceRepeatMode.group:
-          // TODO: Handle this case.
           break;
       }
       _audioPlayer.setLoopMode(LoopMode.one);

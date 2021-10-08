@@ -22,56 +22,59 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
 
   @override
   Stream<UserDownloadState> mapEventToState(UserDownloadEvent event) async* {
-    // TODO: implement mapEventToState
     print("HERER");
     try {
       if (event is Init) {
         // var box = await Hive.openBox<LocalDownloadTask>('user_downloads');
       }
       if (event is StartDownload) {
-        ParseHls parseHLS = ParseHls();
-        var dir = await LocalHelper.getLocalFilePath();
-        HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-                await parseHLS.downloadFile(
-                    '$M3U8_URL/${event.track.songId}',
-                    '$dir/${event.track.songId}',
-                    "main.m3u8"))
-            .readAsStringSync());
-        // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
-        List<DownloadTask> downloadTasks = [];
-        List<String> segmentUrls = [];
-
-        // print(hlsPlayList.segments);
-        hlsPlayList.segments.forEach((segment) {
-          var segmentIndex = hlsPlayList.segments.indexOf(segment);
-          downloadTasks.add(DownloadTask(
-              track_id: event.track.songId,
-              segment_number: segmentIndex,
-              downloadType: DownloadType.media,
-              downloaded: false,
-              download_path: '$dir/${event.track.songId}/',
-              url: segment.url));
-          segmentUrls.add(segment.url);
-        });
-        print(downloadTasks);
-        var segmentBox = await Hive.openBox("download_segments");
-        segmentBox.put(event.track.songId, segmentUrls);
-        var box = await Hive.openBox<LocalDownloadTask>("user_downloads");
-        // MediaDownloaderBloc mediaDownloaderBloc = getIt();
-        getIt<MediaDownloaderBloc>().add(AddDownload(downloadTasks: downloadTasks));
-        box.put(
-            event.track.songId,
-            LocalDownloadTask(
-                songId: event.track.songId,
-                title: event.track.title ?? 'Unknown',
-                coverImageUrl: event.track.coverImageUrl,
-                songUrl: event.track.songUrl,
-                duration: event.track.duration,
-                artistFirstName: event.track.artist != null? event.track.artist.firstName :'',
-                artistLastName :event.track.artist != null? event.track.artist.lastName :'Unknown Artist',
-                genre: event.track.genre != null ? event.track.genre.name : '',
-                ));
-        LocalDatabaseBloc(mediaDownloaderBloc: getIt<MediaDownloaderBloc>());
+        try {
+          ParseHls parseHLS = ParseHls();
+          var dir = await LocalHelper.getLocalFilePath();
+          HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
+                  await parseHLS.downloadFile(
+                      '$M3U8_URL/${event.track.songId}',
+                      '$dir/${event.track.songId}',
+                      "main.m3u8"))
+              .readAsStringSync());
+          // HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(m3u8FilePath).readAsStringSync());
+          List<DownloadTask> downloadTasks = [];
+          List<String> segmentUrls = [];
+          
+          // print(hlsPlayList.segments);
+          hlsPlayList.segments.forEach((segment) {
+            var segmentIndex = hlsPlayList.segments.indexOf(segment);
+            downloadTasks.add(DownloadTask(
+                track_id: event.track.songId,
+                segment_number: segmentIndex,
+                downloadType: DownloadType.media,
+                downloaded: false,
+                download_path: '$dir/${event.track.songId}/',
+                url: segment.url));
+            segmentUrls.add(segment.url);
+          });
+          print(downloadTasks);
+          var segmentBox = await Hive.openBox("download_segments");
+          segmentBox.put(event.track.songId, segmentUrls);
+          var box = await Hive.openBox<LocalDownloadTask>("user_downloads");
+          // MediaDownloaderBloc mediaDownloaderBloc = getIt();
+          getIt<MediaDownloaderBloc>().add(AddDownload(downloadTasks: downloadTasks));
+          box.put(
+              event.track.songId,
+              LocalDownloadTask(
+                  songId: event.track.songId,
+                  title: event.track.title ?? 'Unknown',
+                  coverImageUrl: event.track.coverImageUrl,
+                  songUrl: event.track.songUrl,
+                  duration: event.track.duration,
+                  artistFirstName: event.track.artist != null? event.track.artist.firstName :'',
+                  artistLastName :event.track.artist != null? event.track.artist.lastName :'Unknown Artist',
+                  genre: event.track.genre != null ? event.track.genre.name : '',
+                  ));
+          LocalDatabaseBloc(mediaDownloaderBloc: getIt<MediaDownloaderBloc>());
+        } catch (e) {
+          yield DownloadFailed('Can\'t Download this File!');
+        }
       }
       if (event is DeleteDownload) {
         var userDownloadBox =
@@ -90,7 +93,7 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
       print("ERROR DOWNLOADING FILE");
       print(error);
       print(stacktrace);
-      yield DownloadFailed();
+      yield DownloadFailed('Can\t Download File!');
     }
   }
 }

@@ -19,6 +19,7 @@ class ParseHls {
     } catch (e) {
       // throw Exception();
     }
+    return null;
   }
 
   /// Download .m3u8 file from given url and reads it
@@ -59,6 +60,7 @@ class ParseHls {
     } on Exception {
       // throw Exception();
     }
+    return null;
   }
 
   Future<String> downloadFile(String url, String dir, String filename) async {
@@ -88,6 +90,7 @@ class ParseHls {
       print(stacktrace);
       // throw Exception();
     }
+    return null;
   }
 
   Future<bool> updateLocalM3u8(String filePath) async {

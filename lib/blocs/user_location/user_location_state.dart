@@ -14,7 +14,6 @@ class UserLocationLoadSuccess extends UserLocationState{
   UserLocationLoadSuccess({@required this.location}):assert(location!=null);
 
   @override
-  // TODO: implement props
   List<Object> get props => [location];
 }
 

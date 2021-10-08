@@ -8,6 +8,11 @@ abstract class UserDownloadState extends Equatable {
 class UserDownloadInitial extends UserDownloadState{}
 
 class DownloadFailed extends UserDownloadState{
+  final String message;
+
+  DownloadFailed(this.message);
+    @override
+  List<Object> get props => [message];
 }
 
 class DownloadDeleted extends UserDownloadState{
