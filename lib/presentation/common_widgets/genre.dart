@@ -12,7 +12,7 @@ class GenreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, TracksByGenre.tracksByGenreRouteName, arguments: genre.id);
+        Navigator.pushNamed(context, TracksByGenre.tracksByGenreRouteName, arguments: genre);
       },
       child: Container(
         width: 140,

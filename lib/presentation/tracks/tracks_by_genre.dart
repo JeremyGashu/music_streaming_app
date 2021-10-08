@@ -7,14 +7,15 @@ import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+import 'package:streaming_mobile/data/models/genre.dart';
 
 import '../../locator.dart';
 
 class TracksByGenre extends StatefulWidget {
-  final String genreId;
+  final Genre genre;
   static const String tracksByGenreRouteName = 'tracks_by_genre_router_name';
 
-  const TracksByGenre({this.genreId});
+  const TracksByGenre({this.genre});
   @override
   _TracksByGenreState createState() => _TracksByGenreState();
 }
@@ -28,7 +29,7 @@ class _TracksByGenreState extends State<TracksByGenre> {
   @override
   void initState() {
     trackBloc = sl<TrackBloc>();
-    trackBloc.add(LoadSongsByGenre(genreId: widget.genreId));
+    trackBloc.add(LoadSongsByGenre(genreId: widget.genre.genreId));
     super.initState();
   }
 
@@ -39,7 +40,7 @@ class _TracksByGenreState extends State<TracksByGenre> {
       child: Column(
         children: [
           //back button and search page
-          _upperSection(context),
+          _upperSection(context, widget.genre.name),
           // Divider(),
           BlocConsumer<TrackBloc, TrackState>(
               bloc: trackBloc,
@@ -73,7 +74,7 @@ class _TracksByGenreState extends State<TracksByGenre> {
                 } else if (state is LoadingTrackError && _tracks.isEmpty) {
                   return CustomErrorWidget(
                       onTap: () {
-                        trackBloc.add(LoadSongsByGenre(genreId: widget.genreId));
+                        trackBloc.add(LoadSongsByGenre(genreId: widget.genre.genreId));
                       },
                       message: 'Error Loading Tracks!');
                 }
@@ -138,7 +139,7 @@ class _TracksByGenreState extends State<TracksByGenre> {
   }
 }
 
-Widget _upperSection(BuildContext context) {
+Widget _upperSection(BuildContext context, String genreName) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -154,7 +155,7 @@ Widget _upperSection(BuildContext context) {
             }),
       ),
       Text(
-        'All Songs',
+        '${genreName} Songs',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,

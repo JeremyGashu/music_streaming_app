@@ -96,7 +96,7 @@ class AppRouter {
       case TracksByGenre.tracksByGenreRouteName:
         return MaterialPageRoute(
             builder: (_) => TracksByGenre(
-                  genreId: args,
+                  genre: args,
                 ));
 
       default:

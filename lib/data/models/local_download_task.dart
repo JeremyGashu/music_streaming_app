@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
+import 'package:streaming_mobile/data/models/genre.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
 part 'local_download_task.g.dart';

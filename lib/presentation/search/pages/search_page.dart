@@ -337,7 +337,7 @@ class _SearchPageState extends State<SearchPage>
                                   ],
                                 );
                               } else if (state is LoadedAlbum) {
-                                return ListView.builder(
+                                return state.albums.length == 0 ? Center(child: Text('No Albums Found!'),) : ListView.builder(
                                   itemCount: state.albums.length,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (ctx, index) {

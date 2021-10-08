@@ -259,6 +259,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               padding: EdgeInsets.all(8.0),
               child: ListView.builder(
+                itemCount: snapshot.data.length,
                   itemBuilder: (context, index) => ListTile(
                         tileColor: snapshot.data[index].dialCode == _countryCode
                             ? kYellow
