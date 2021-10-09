@@ -26,9 +26,11 @@ class LocalDownloadTask{
   final String artistLastName;
   @HiveField(8)
   String genre = '';
+  @HiveField(9)
+  bool failed = false;
 
   LocalDownloadTask({@required this.songId,@required this.title,@required this.coverImageUrl,@required this.songUrl,@required this.artistFirstName,@required this.artistLastName,this.genre
-  ,this.duration,this.progress = 0});
+  ,this.duration,this.progress = 0, this.failed});
 
   Track toTrack() {
     return Track(

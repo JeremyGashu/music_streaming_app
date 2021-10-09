@@ -15,9 +15,20 @@ import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as mdm;
+import 'package:streaming_mobile/data/models/local_download_task.dart';
+import 'package:streaming_mobile/data/models/track.dart';
 
 class LocalHelper {
   static final httpClient = new HttpClient();
+
+
+static Future<bool> allDownloaded(Track track) async {
+  bool fileDownloaded = await LocalHelper.isFileDownloaded(track.songId);
+  bool allSegmentsDownloaded =
+      await LocalHelper.allSegmentsDownloaded(id: track.songId);
+      print(fileDownloaded);
+  return fileDownloaded && allSegmentsDownloaded;
+}
 
   static Future<String> getFilePath(context) async {
     return (Theme.of(context).platform == TargetPlatform.android
@@ -25,6 +36,11 @@ class LocalHelper {
             : await getApplicationDocumentsDirectory())
         .path;
   }
+
+  static Future<bool> downloadAlreadyAdded(String id) async {
+  var userDownloadBox = await Hive.openBox<LocalDownloadTask>('user_downloads');
+  return userDownloadBox.get(id) != null;
+}
 
   static Future<String> getLocalFilePath() async {
     return (Platform.isAndroid

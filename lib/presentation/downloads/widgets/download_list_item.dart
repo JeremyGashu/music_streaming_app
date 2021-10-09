@@ -88,37 +88,40 @@ class _DownloadListItemState extends State<DownloadListItem> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("Delete file"),
-                    content: Text("Do you want to delete this file"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("no")),
-                      TextButton(
-                          onPressed: () {
-                            BlocProvider.of<UserDownloadBloc>(context).add(
-                                DeleteDownload(
-                                    trackId: widget.downloadTask.songId));
-                            Navigator.pop(context);
-                          },
-                          child: Text("yes")),
-                    ],
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.delete,
-                size: 20,
-              ),
-            ),
-            state is mds.DownloadFailed
+            widget.downloadTask.progress == 100
+                ? IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Delete file"),
+                          content: Text("Do you want to delete this file"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("no")),
+                            TextButton(
+                                onPressed: () {
+                                  BlocProvider.of<UserDownloadBloc>(context)
+                                      .add(DeleteDownload(
+                                          trackId: widget.downloadTask.songId));
+                                  Navigator.pop(context);
+                                },
+                                child: Text("yes")),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      size: 20,
+                    ),
+                  )
+                : Container(),
+            state is mds.DownloadFailed &&
+                    state.id == widget.downloadTask.songId
                 ? IconButton(
                     onPressed: () async {
                       // BlocProvider.of<UserDownloadBloc>(context).add(
@@ -148,9 +151,11 @@ class _DownloadListItemState extends State<DownloadListItem> {
                       //     ],
                       //   ),
                       // );
-
-                      // BlocProvider.of<UserDownloadBloc>(context)
-                      //     .add(StartDownload(track: music));
+                      if (state.id != null || state.id != '') {
+                        BlocProvider.of<UserDownloadBloc>(context).add(
+                            UserRetryDownload(
+                                track: widget.downloadTask.toTrack()));
+                      }
                     },
                     icon: Icon(
                       Icons.update,

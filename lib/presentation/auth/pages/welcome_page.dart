@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
-import 'package:streaming_mobile/presentation/sign_up/pages/phone_input_page.dart';
+import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
 
 class WelcomePage extends StatelessWidget {
   static const String welcomePageRouteName = 'welcome_page_router_name';
@@ -68,7 +68,7 @@ class WelcomePage extends StatelessWidget {
                     child: TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context,
-                            PhoneInputPage.phoneInputStorageRouterName);
+                            SignUpPage.signUpPageRouterName);
                       },
                       child: Text('SIGN UP', style: TextStyle(color: kBlack)),
                       style: ButtonStyle(

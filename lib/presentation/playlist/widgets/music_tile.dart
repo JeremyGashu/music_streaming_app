@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
+import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 
@@ -22,6 +23,11 @@ Widget musicTile(
       if (state is DownloadFailed) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(state.message)));
+            // Future.delayed(Duration(seconds: 2));
+        // if (state.id != null || state.id != '') {
+        //   BlocProvider.of<UserDownloadBloc>(context)
+        //       .add(UserRetryDownload(track: music));
+        // }
       }
     },
     child: GestureDetector(
@@ -106,31 +112,63 @@ Widget musicTile(
             SizedBox(
               width: 10,
             ),
-            IconButton(
-              onPressed: () async {
-                var status = await Permission.storage.status;
-                if (status.isGranted) {
-                  BlocProvider.of<UserDownloadBloc>(context)
-                      .add(StartDownload(track: music));
-                  return;
-                } else {
-                  PermissionStatus stat = await Permission.storage.request();
-                  if (stat == PermissionStatus.granted) {
-                    BlocProvider.of<UserDownloadBloc>(context)
-                        .add(StartDownload(track: music));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content:
-                            Text('Please grant permission to download files!')));
+            FutureBuilder<bool>(
+                future: LocalHelper.allDownloaded(music),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print('current data ${snapshot.data}');
                   }
-                }
-              },
-              icon: Icon(
-                Icons.file_download,
-                color: Colors.grey,
-                size: 20,
-              ),
-            )
+                  return IconButton(
+                    onPressed: () async {
+                      var status = await Permission.storage.status;
+                      if (status.isGranted) {
+                        if (snapshot.hasData && snapshot.data) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Already Downloaded!')));
+                          return;
+                        }
+
+                        if (await LocalHelper.downloadAlreadyAdded(music.songId)) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Download Already Added!')));
+                          return;
+                        }
+                        // if()
+                        BlocProvider.of<UserDownloadBloc>(context)
+                            .add(StartDownload(track: music));
+                        return;
+                      } else {
+                        PermissionStatus stat =
+                            await Permission.storage.request();
+                        if (stat == PermissionStatus.granted) {
+                          if (snapshot.hasData && snapshot.data) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Already Downloaded!')));
+                            return;
+                          }
+                          if (await LocalHelper.downloadAlreadyAdded(music.songId)) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text('Download Already Added!')));
+                            return;
+                          }
+                          BlocProvider.of<UserDownloadBloc>(context)
+                              .add(StartDownload(track: music));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Please grant permission to download files!')));
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.file_download,
+                      color: snapshot.hasData && snapshot.data
+                          ? Colors.orange
+                          : Colors.grey,
+                      size: 20,
+                    ),
+                  );
+                })
           ],
         ),
       ),

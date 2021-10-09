@@ -10,7 +10,7 @@ import 'package:streaming_mobile/blocs/sign_up/sign_up_event.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
+import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class OTP extends StatefulWidget {
   static const String otpPageRouterName = 'otp_page_router_name';
@@ -51,8 +51,10 @@ class _OTPState extends State<OTP> {
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (ctx, state) async {
             if (state is OTPVerified) {
-              Navigator.pushNamed(context, SignUpPage.signUpPageRouterName,
-                  arguments: state.phoneNo);
+              Navigator.pushNamed(
+                context,
+                LoginPage.loginPageRouteName,
+              );
             }
           },
           builder: (ctx, state) {

@@ -9,10 +9,10 @@ class UserDownloadInitial extends UserDownloadState{}
 
 class DownloadFailed extends UserDownloadState{
   final String message;
-
-  DownloadFailed(this.message);
+  final String id;
+  DownloadFailed(this.message, this.id);
     @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, id];
 }
 
 class DownloadDeleted extends UserDownloadState{

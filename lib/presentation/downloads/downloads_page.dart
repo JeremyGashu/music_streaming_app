@@ -53,7 +53,11 @@ class _DownloadPageState extends State<DownloadsPage> {
           ),
           body: SafeArea(
             child: BlocListener<MediaDownloaderBloc, MediaDownloaderState>(
-              listener: (context, state) {},
+              listener: (context, state) {
+                if(state is DownloadDone) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Download finished!')));
+                }
+              },
               child: TabBarView(children: [
                 DownloadedPage(tasks: downloadedTasks),
                 DownloadingPage(tasks: tasks)

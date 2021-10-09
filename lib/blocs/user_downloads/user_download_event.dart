@@ -15,6 +15,14 @@ class StartDownload extends UserDownloadEvent {
   List<Object> get props => [track];
 }
 
+class UserRetryDownload extends UserDownloadEvent {
+  final Track track;
+  UserRetryDownload({@required this.track});
+
+  @override
+  List<Object> get props => [track];
+}
+
 class Init extends UserDownloadEvent {}
 
 class DeleteDownload extends UserDownloadEvent {

@@ -84,7 +84,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AllPlaylistsPage());
 
       case SignUpPage.signUpPageRouterName:
-        return MaterialPageRoute(builder: (_) => SignUpPage(phone: args));
+        return MaterialPageRoute(builder: (_) => SignUpPage());
 
       case AllTracks.allTracksRouterName:
         return MaterialPageRoute(builder: (_) => AllTracks());
