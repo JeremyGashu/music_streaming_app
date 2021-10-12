@@ -10,6 +10,7 @@ import 'package:streaming_mobile/blocs/sign_up/sign_up_event.dart';
 import 'package:streaming_mobile/blocs/sign_up/sign_up_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class OTP extends StatefulWidget {
@@ -152,10 +153,18 @@ class _OTPState extends State<OTP> {
                               child: OutlinedButton(
                                 onPressed: () {
                                   if (_otp.length < 4) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Please enter valid OTP')));
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            backgroundColor: Colors.transparent,
+                                            child: CustomAlertDialog(
+                                              type: AlertType.WARNING,
+                                              message:
+                                                  'Please enter valid OTP!',
+                                            ),
+                                          );
+                                        });
                                   } else {
                                     print('current otp ${_otp}');
                                     BlocProvider.of<SignUpBloc>(context).add(

@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/downloads/widgets/download_list_item.dart';
 
 class DownloadingPage extends StatefulWidget {
@@ -27,12 +28,20 @@ class _DownloadingPageState extends State<DownloadingPage> {
         child: BlocConsumer<MediaDownloaderBloc, MediaDownloaderState>(
       listener: (context, state) {
         if (state is DownloadDeleted) {
-
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessengerState()
-                  .showSnackBar(SnackBar(content: Text("Download deleted")));
-            });
-          }
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    backgroundColor: Colors.transparent,
+                    child: CustomAlertDialog(
+                      type: AlertType.SUCCESS,
+                      message: 'Download Deleted!',
+                    ),
+                  );
+                });
+          });
+        }
         print("DOWNLOADING_PAGE: LISTENER ${state.toString()}");
       },
       builder: (context, state) {

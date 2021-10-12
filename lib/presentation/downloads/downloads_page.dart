@@ -7,6 +7,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/downloads/components/downloaded_page.dart';
 import 'package:streaming_mobile/presentation/downloads/components/downloading_page.dart';
 
@@ -54,8 +55,18 @@ class _DownloadPageState extends State<DownloadsPage> {
           body: SafeArea(
             child: BlocListener<MediaDownloaderBloc, MediaDownloaderState>(
               listener: (context, state) {
-                if(state is DownloadDone) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Download finished!')));
+                if (state is DownloadDone) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: CustomAlertDialog(
+                            type: AlertType.SUCCESS,
+                            message: 'Download Finished!',
+                          ),
+                        );
+                      });
                 }
               },
               child: TabBarView(children: [

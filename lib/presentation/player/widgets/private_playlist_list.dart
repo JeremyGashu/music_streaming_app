@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
@@ -42,15 +43,33 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
           bloc: playlistBloc,
           listener: (context, state) {
             if (state is ErrorState) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: CustomAlertDialog(
+                        type: AlertType.ERROR,
+                        message: '${state.message}',
+                      ),
+                    );
+                  });
               // Navigator.pop(context);
               playlistBloc.loadingPrivatePlaylist = false;
             }
             if (state is SuccessState) {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Added To Playlist!')));
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: CustomAlertDialog(
+                        type: AlertType.SUCCESS,
+                        message: 'Added to playlist!',
+                      ),
+                    );
+                  });
             }
           },
           builder: (context, state) {
@@ -86,7 +105,9 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text('No Playlist Found!'),
-                                SizedBox(height: 20,),
+                                SizedBox(
+                                  height: 20,
+                                ),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,

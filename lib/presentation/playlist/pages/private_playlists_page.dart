@@ -6,6 +6,8 @@ import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
+// import 'package:streaming_mobile/presentation/playlist/pages/create_playlist_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/create_playlist_page.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 
@@ -42,6 +44,7 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                 context: context,
                 builder: (context) {
                   return Dialog(
+                    backgroundColor: Colors.transparent,
                     child: CreatePrivatePlaylistWidget(),
                   );
                 });
@@ -57,11 +60,19 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
         ),
         appBar: AppBar(
           backgroundColor: Colors.white24,
-          leading: IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.black54,), onPressed: () {
-            Navigator.pop(context);
-          }),
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black54,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
           elevation: 0,
-          title: Text('My Playlists', style: TextStyle(color: Colors.black54, fontSize: 17),),
+          title: Text(
+            'My Playlists',
+            style: TextStyle(color: Colors.black54, fontSize: 17),
+          ),
           centerTitle: true,
         ),
         body: SafeArea(
@@ -124,31 +135,48 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                         return Dismissible(
                           key: Key(_playlists[index].playlistId),
                           confirmDismiss: (_) async {
-                             bool dismiss = await showDialog(context: context, builder: (context) =>
-                            AlertDialog(
-                              title: Text('Delete'),
-                              content: Text('Do you want to delete ${_playlists[index].title}?'),
-                              actions: [
-                                TextButton(onPressed: () {
-                                  Navigator.pop(context, false);
-                                  }, child: Text('Cancel')),
-                                TextButton(onPressed: () {
-                                  Navigator.pop(context, false);
-                                  }, child: Text('Yes')),
-                              ],
-
-                            ),);
+                            bool dismiss = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Delete'),
+                                content: Text(
+                                    'Do you want to delete ${_playlists[index].title}?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text('Cancel')),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text('Yes')),
+                                ],
+                              ),
+                            );
                             return dismiss;
                           },
                           onDismissed: (_) async {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deleted Playlist!')));
-                            print('delete playlist ${_playlists[index].playlistId}');
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: CustomAlertDialog(
+                                      type: AlertType.SUCCESS,
+                                      message: 'Deleted Playlist!',
+                                    ),
+                                  );
+                                });
+                            print(
+                                'delete playlist ${_playlists[index].playlistId}');
                           },
-                          background: Container(color: Colors.redAccent.withOpacity(0.1),),
+                          background: Container(
+                            color: Colors.redAccent.withOpacity(0.1),
+                          ),
                           direction: DismissDirection.horizontal,
-
                           child: ListTile(
-                            
                             onTap: () {
                               Navigator.pushNamed(context,
                                   PlaylistDetail.playlistDetailRouterName,
@@ -156,10 +184,13 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                             },
                             leading: Icon(Icons.music_note),
                             title: Text(_playlists[index].title),
-                            subtitle:
-                                Text('${_playlists[index].songs.length} Musics'),
+                            subtitle: Text(
+                                '${_playlists[index].songs.length} Musics'),
                             // trailing: Icon(Icons.arrow_right),
-                            trailing: Icon(Icons.delete_forever_outlined , size: 17,),
+                            trailing: Icon(
+                              Icons.delete_forever_outlined,
+                              size: 17,
+                            ),
                           ),
                         );
                       });

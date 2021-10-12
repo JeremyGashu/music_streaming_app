@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,14 +30,14 @@ class _LoginPageState extends State<LoginPage> {
             Positioned(
               top: -50,
               child: Container(
-                    width: kWidth(context),
-                    height: kHeight(context) * 0.25,
-                    margin: EdgeInsets.only(top: 40),
-                    child: SvgPicture.asset('assets/svg/melody.svg'),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                  ),
+                width: kWidth(context),
+                height: kHeight(context) * 0.25,
+                margin: EdgeInsets.only(top: 40),
+                child: SvgPicture.asset('assets/svg/melody.svg'),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+              ),
             ),
             Center(
               child: Container(
@@ -45,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    
                     Container(
                       width: 120,
                       height: 120,
@@ -57,11 +57,20 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
                       if (state is AuthenticationError) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(state.message)));
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: CustomAlertDialog(
+                                  type: AlertType.ERROR,
+                                  message: '${state.message}',
+                                ),
+                              );
+                            });
                       } else if (state is Authenticated) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, MainPage.mainPageRouterName, (route) => false);
+                        Navigator.pushNamedAndRemoveUntil(context,
+                            MainPage.mainPageRouterName, (route) => false);
                       }
                     }, builder: (context, state) {
                       return Column(
@@ -69,7 +78,8 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30.0),
                             child: Form(
                               key: _formKey,
                               child: Column(
@@ -94,7 +104,8 @@ class _LoginPageState extends State<LoginPage> {
                                             color: Colors.grey[800],
                                             borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(30),
-                                                bottomLeft: Radius.circular(30)),
+                                                bottomLeft:
+                                                    Radius.circular(30)),
                                           ),
                                         ),
                                         Expanded(
@@ -108,14 +119,18 @@ class _LoginPageState extends State<LoginPage> {
                                             //   return null;
                                             // },
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.only(left: 20),
+                                              contentPadding:
+                                                  EdgeInsets.only(left: 20),
                                               hintText: 'Phone number',
-                                              enabledBorder: _inputBorderStyle(),
+                                              enabledBorder:
+                                                  _inputBorderStyle(),
                                               border: _inputBorderStyle(),
-                                              focusedBorder: _inputBorderStyle(),
+                                              focusedBorder:
+                                                  _inputBorderStyle(),
                                               fillColor: Colors.white,
                                               filled: true,
-                                              hintStyle: TextStyle(fontSize: 14.0),
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14.0),
                                             ),
                                           ),
                                         ),
@@ -139,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                                             color: Colors.grey[800],
                                             borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(30),
-                                                bottomLeft: Radius.circular(30)),
+                                                bottomLeft:
+                                                    Radius.circular(30)),
                                           ),
                                         ),
                                         Expanded(
@@ -153,14 +169,18 @@ class _LoginPageState extends State<LoginPage> {
                                             // },
                                             obscureText: true,
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.only(left: 20),
+                                              contentPadding:
+                                                  EdgeInsets.only(left: 20),
                                               hintText: 'Password',
-                                              enabledBorder: _inputBorderStyle(),
+                                              enabledBorder:
+                                                  _inputBorderStyle(),
                                               border: _inputBorderStyle(),
-                                              focusedBorder: _inputBorderStyle(),
+                                              focusedBorder:
+                                                  _inputBorderStyle(),
                                               fillColor: Colors.white,
                                               filled: true,
-                                              hintStyle: TextStyle(fontSize: 14.0),
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14.0),
                                             ),
                                           ),
                                         ),
@@ -178,7 +198,8 @@ class _LoginPageState extends State<LoginPage> {
                                           child: Text(
                                             'Incorrect username or password!',
                                             style: TextStyle(
-                                              decoration: TextDecoration.underline,
+                                              decoration:
+                                                  TextDecoration.underline,
                                               color: Colors.red[700],
                                             ),
                                           ),
@@ -189,7 +210,8 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   Container(
                                     width: double.infinity,
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
                                     child: Align(
                                       alignment: AlignmentDirectional.centerEnd,
                                       child: GestureDetector(
@@ -202,7 +224,8 @@ class _LoginPageState extends State<LoginPage> {
                                         child: Text(
                                           'Forgot Password',
                                           style: TextStyle(
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                             color: Colors.grey[800],
                                           ),
                                         ),
@@ -229,24 +252,67 @@ class _LoginPageState extends State<LoginPage> {
                                             : Container(
                                                 width: kWidth(context),
                                                 height: 50,
-                                                margin: EdgeInsets.only(top: 20),
+                                                margin:
+                                                    EdgeInsets.only(top: 20),
                                                 child: OutlinedButton(
                                                   onPressed: () {
                                                     if (_formKey.currentState
                                                         .validate()) {
-                                                          if(_phoneNumberController.value.text == null || _phoneNumberController.value.text == '') {
-                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Phone number cannot be empyt!')));
-                                                            return;
-                                                          }
+                                                      if (_phoneNumberController
+                                                                  .value.text ==
+                                                              null ||
+                                                          _phoneNumberController
+                                                                  .value.text ==
+                                                              '') {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return Dialog(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                child:
+                                                                    CustomAlertDialog(
+                                                                  type: AlertType
+                                                                      .ERROR,
+                                                                  message:
+                                                                      'Phone number cannot be empty!',
+                                                                ),
+                                                              );
+                                                            });
+                                                        return;
+                                                      }
 
-                                                          if(_passwordTextController.value.text == null || _passwordTextController.value.text == '') {
-                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password cannot be empyt!')));
-                                                            return;
-                                                          }
-                                                      BlocProvider.of<AuthBloc>(context)
+                                                      if (_passwordTextController
+                                                                  .value.text ==
+                                                              null ||
+                                                          _passwordTextController
+                                                                  .value.text ==
+                                                              '') {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return Dialog(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                child:
+                                                                    CustomAlertDialog(
+                                                                  type: AlertType
+                                                                      .ERROR,
+                                                                  message:
+                                                                      'Password cannot be empty!',
+                                                                ),
+                                                              );
+                                                            });
+                                                        return;
+                                                      }
+                                                      BlocProvider.of<AuthBloc>(
+                                                              context)
                                                           .add(LoginEvent(
-                                                        phone: _phoneNumberController
-                                                            .value.text,
+                                                        phone:
+                                                            _phoneNumberController
+                                                                .value.text,
                                                         password:
                                                             _passwordTextController
                                                                 .value.text,
@@ -258,13 +324,16 @@ class _LoginPageState extends State<LoginPage> {
                                                           color: Colors.white)),
                                                   style: ButtonStyle(
                                                       backgroundColor:
-                                                          MaterialStateProperty.all<
-                                                              Color>(kBlack),
+                                                          MaterialStateProperty
+                                                              .all<Color>(
+                                                                  kBlack),
                                                       shape: MaterialStateProperty.all<
                                                               RoundedRectangleBorder>(
                                                           RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(25)),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    25)),
                                                       ))),
                                                 ),
                                               ),

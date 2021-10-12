@@ -12,6 +12,7 @@ import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
@@ -61,8 +62,17 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                           : likesCount;
                 }
                 if (state is ErrorState) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: CustomAlertDialog(
+                            type: AlertType.ERROR,
+                            message: '${state.message}',
+                          ),
+                        );
+                      });
                 }
               },
               builder: (context, state) {

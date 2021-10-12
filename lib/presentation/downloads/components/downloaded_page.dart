@@ -7,6 +7,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/service_locator.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/downloads/widgets/download_list_item.dart';
 
 class DownloadedPage extends StatefulWidget {
@@ -29,8 +30,17 @@ class _DownloadedPageState extends State<DownloadedPage> {
           print("HEREHERERERER");
           if (state is DownloadDeleted) {
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessengerState()
-                  .showSnackBar(SnackBar(content: Text("Download deleted")));
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: CustomAlertDialog(
+                        type: AlertType.SUCCESS,
+                        message: 'Download Deleted!',
+                      ),
+                    );
+                  });
             });
           }
         },
@@ -39,12 +49,11 @@ class _DownloadedPageState extends State<DownloadedPage> {
             future: getIt<UserDownloadManager>().downloadedTasks(),
             builder:
                 (context, AsyncSnapshot<List<LocalDownloadTask>> snapshot) {
-              
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
-                return Text("You don't have any downloaded tasks");
-              }
-              
+                  return Text("You don't have any downloaded tasks");
+                }
+
                 print("Download data :${snapshot.data}");
                 return Container(
                   color: Colors.white,

@@ -10,6 +10,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 Widget musicTile(
   Track music,
@@ -23,7 +24,7 @@ Widget musicTile(
       if (state is DownloadFailed) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(state.message)));
-            // Future.delayed(Duration(seconds: 2));
+        // Future.delayed(Duration(seconds: 2));
         // if (state.id != null || state.id != '') {
         //   BlocProvider.of<UserDownloadBloc>(context)
         //       .add(UserRetryDownload(track: music));
@@ -123,14 +124,33 @@ Widget musicTile(
                       var status = await Permission.storage.status;
                       if (status.isGranted) {
                         if (snapshot.hasData && snapshot.data) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Already Downloaded!')));
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: CustomAlertDialog(
+                                    type: AlertType.SUCCESS,
+                                    message: 'Already Downloaded!',
+                                  ),
+                                );
+                              });
                           return;
                         }
 
-                        if (await LocalHelper.downloadAlreadyAdded(music.songId)) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Download Already Added!')));
+                        if (await LocalHelper.downloadAlreadyAdded(
+                            music.songId)) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: CustomAlertDialog(
+                                    type: AlertType.SUCCESS,
+                                    message: 'Download task exists!',
+                                  ),
+                                );
+                              });
                           return;
                         }
                         // if()
@@ -142,21 +162,48 @@ Widget musicTile(
                             await Permission.storage.request();
                         if (stat == PermissionStatus.granted) {
                           if (snapshot.hasData && snapshot.data) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Already Downloaded!')));
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: CustomAlertDialog(
+                                      type: AlertType.SUCCESS,
+                                      message: 'Already Downloaded!',
+                                    ),
+                                  );
+                                });
                             return;
                           }
-                          if (await LocalHelper.downloadAlreadyAdded(music.songId)) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text('Download Already Added!')));
+                          if (await LocalHelper.downloadAlreadyAdded(
+                              music.songId)) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: CustomAlertDialog(
+                                      type: AlertType.SUCCESS,
+                                      message: 'Download task exists!',
+                                    ),
+                                  );
+                                });
                             return;
                           }
                           BlocProvider.of<UserDownloadBloc>(context)
                               .add(StartDownload(track: music));
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  'Please grant permission to download files!')));
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: CustomAlertDialog(
+                                    type: AlertType.ERROR,
+                                    message: 'Please Grant Permission to download files!',
+                                  ),
+                                );
+                              });
                         }
                       }
                     },

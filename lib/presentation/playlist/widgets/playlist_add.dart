@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 import '../../../locator.dart';
 
@@ -26,8 +27,17 @@ class _AddPlaylistPageState extends State<AddPlaylistPage> {
         bloc: playlistBloc,
         listener: (context, state) {
           if (state is LoadingPlaylistError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Loading Private playlist Error!')));
+            showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: CustomAlertDialog(
+                type: AlertType.ERROR,
+                message: 'Error loading playlists!',
+              ),
+            );
+          });
           }
         },
         builder: (context, state) {

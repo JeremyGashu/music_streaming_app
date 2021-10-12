@@ -14,6 +14,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/data/models/country_codes.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 import '../../auth/pages/otp_page.dart';
 
@@ -45,13 +46,22 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         body: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state is OTPReceived) {
-            Navigator.pushNamed(context, OTP.otpPageRouterName,
-                arguments: _phoneNumberController.value.text);
+              Navigator.pushNamed(context, OTP.otpPageRouterName,
+                  arguments: _phoneNumberController.value.text);
             }
 
             if (state is SignUpError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: CustomAlertDialog(
+                        type: AlertType.ERROR,
+                        message: '${state.message}',
+                      ),
+                    );
+                  });
             }
           },
           builder: (context, state) => Stack(
@@ -172,7 +182,6 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                             _phoneNumberController
                                                     .value.text.length ==
                                                 10) {
-
                                           BlocProvider.of<SignUpBloc>(context)
                                               .add(VerifyPhoneNumber(
                                                   phone: _phoneNumberController
@@ -180,11 +189,19 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                           print(
                                               'phone number => ${_countryCode + _phoneNumberController.value.text}');
                                         } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: Text(
-                                                'Please Enter a valid phone number!'),
-                                          ));
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  child: CustomAlertDialog(
+                                                    type: AlertType.ERROR,
+                                                    message:
+                                                        'Please enter valid phone number!',
+                                                  ),
+                                                );
+                                              });
                                         }
                                       },
                                       child: Text('Continue',
@@ -259,7 +276,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               padding: EdgeInsets.all(8.0),
               child: ListView.builder(
-                itemCount: snapshot.data.length,
+                  itemCount: snapshot.data.length,
                   itemBuilder: (context, index) => ListTile(
                         tileColor: snapshot.data[index].dialCode == _countryCode
                             ? kYellow

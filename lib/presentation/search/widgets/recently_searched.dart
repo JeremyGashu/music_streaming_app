@@ -14,6 +14,7 @@ import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
@@ -179,8 +180,17 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error playing song!')));
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: CustomAlertDialog(
+                type: AlertType.ERROR,
+                message: 'Error playing song!',
+              ),
+            );
+          });
       Navigator.pop(context);
     }
   }

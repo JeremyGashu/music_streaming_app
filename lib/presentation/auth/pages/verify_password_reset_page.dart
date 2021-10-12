@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class VerifyPasswordResetPage extends StatefulWidget {
@@ -51,8 +52,17 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                   await Future.delayed(Duration(seconds: 2));
                   Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                 } else if (state is VerifyingPasswordResetError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Please check your reset code')));
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: CustomAlertDialog(
+                            type: AlertType.ERROR,
+                            message: 'Pelase check your reset code!',
+                          ),
+                        );
+                      });
                 }
               }, builder: (context, state) {
                 return Column(
@@ -205,8 +215,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                     child: TextFormField(
                                       controller: _resetCodeTextController,
                                       validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty) {
+                                        if (value == null || value.isEmpty) {
                                           return 'Can\'t be empty or different from 4 digits!';
                                         }
                                         return null;
@@ -231,7 +240,11 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                               height: 50,
                               margin: EdgeInsets.only(top: 30),
                               child: state is SendingVerifyPasswordReset
-                                  ? Center(child: SpinKitRipple(color: Colors.grey,size: 30,))
+                                  ? Center(
+                                      child: SpinKitRipple(
+                                      color: Colors.grey,
+                                      size: 30,
+                                    ))
                                   : state is VerifiedPasswordReset
                                       ? Center(
                                           child: Row(

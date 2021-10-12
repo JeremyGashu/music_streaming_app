@@ -19,6 +19,7 @@ import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
@@ -440,8 +441,17 @@ class LibraryPage extends StatelessWidget {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error playing song!')));
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: CustomAlertDialog(
+                type: AlertType.ERROR,
+                message: 'Error playing song!',
+              ),
+            );
+          });
       Navigator.pop(context);
     }
   }

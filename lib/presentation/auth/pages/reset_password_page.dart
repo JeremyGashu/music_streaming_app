@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   static const String resetPasswordPageRouterName =
@@ -31,8 +32,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 arguments: state.phoneNo);
           }
 
-          if(state is SendingPasswordResetFailed) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error Resetting password. Please try Again!')));
+          if (state is SendingPasswordResetFailed) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    backgroundColor: Colors.transparent,
+                    child: CustomAlertDialog(
+                      type: AlertType.ERROR,
+                      message: 'Error reseting password. Please try Again!',
+                    ),
+                  );
+                });
           }
         }, builder: (context, state) {
           return Stack(
@@ -105,9 +116,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                         }
                                         return null;
                                       },
-
                                       decoration: InputDecoration(
-
                                           contentPadding:
                                               EdgeInsets.only(left: 20),
                                           hintText: 'Phone Number',
@@ -120,44 +129,48 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               ),
                             ),
 
-
                             SizedBox(
                               height: 15,
                             ),
 
                             Container(
-                              width: kWidth(context),
-                              height: 50,
-                              margin: EdgeInsets.only(top: 30),
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: state is SendingResetPasswordRequest
-                                  ? Center(child: Center(child: SpinKitRipple(color: Colors.grey,size: 30,),))
-                                  : OutlinedButton(
-                                          onPressed: () {
-                                            if (_formKey.currentState
-                                                .validate()) {
-                                              BlocProvider.of<AuthBloc>(context)
-                                                  .add(ResetPassword(
-                                                      phoneNo:
-                                                          _phoneNumberController
-                                                              .value.text));
-                                            }
-                                          },
-                                          child: Text('Confirm',
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(kBlack),
-                                              shape: MaterialStateProperty.all<
-                                                      RoundedRectangleBorder>(
-                                                  RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(25)),
-                                              ))),
-                                        )
-                            ),
+                                width: kWidth(context),
+                                height: 50,
+                                margin: EdgeInsets.only(top: 30),
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                child: state is SendingResetPasswordRequest
+                                    ? Center(
+                                        child: Center(
+                                        child: SpinKitRipple(
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
+                                      ))
+                                    : OutlinedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState
+                                              .validate()) {
+                                            BlocProvider.of<AuthBloc>(context)
+                                                .add(ResetPassword(
+                                                    phoneNo:
+                                                        _phoneNumberController
+                                                            .value.text));
+                                          }
+                                        },
+                                        child: Text('Confirm',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(kBlack),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(25)),
+                                            ))),
+                                      )),
                             SizedBox(
                               height: 10,
                             ),
@@ -178,7 +191,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 }
-
 
 _inputBorderStyle() {
   return OutlineInputBorder(

@@ -34,6 +34,7 @@ import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/genre.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
@@ -181,10 +182,19 @@ class _HomePageState extends State<HomePage> {
                                       .map((e) => GestureDetector(
                                           onTap: () {
                                             if (e == null) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: Text(
-                                                          'Incomplete album info!')));
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return Dialog(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      child: CustomAlertDialog(
+                                                        type: AlertType.ERROR,
+                                                        message:
+                                                            'Incomplete album info!',
+                                                      ),
+                                                    );
+                                                  });
                                               return;
                                             }
                                             Navigator.pushNamed(
@@ -357,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                                       return SinglePlaylist(
                                         playlist: state.playlists[index],
                                       );
-                                    },  
+                                    },
                                   );
                           } else if (state is LoadingPlaylistError) {
                             return CustomErrorWidget(
@@ -388,7 +398,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    SectionTitle(title: "Genres", callback: () {}, hasMore: false),
+                    SectionTitle(
+                        title: "Genres", callback: () {}, hasMore: false),
                     Container(
                         height: 130,
                         child: BlocBuilder<GenresBloc, GenresState>(

@@ -10,6 +10,7 @@ import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class ArtistProfilePage extends StatelessWidget {
   @override
@@ -18,12 +19,15 @@ class ArtistProfilePage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //the name and back navigator icon and vertical more option
-              _upperSection(),
-              Divider(),
+              // _upperSection(),
+              // Divider(),
               //circular artist image
+              SizedBox(height: 40,),
               Padding(
                 padding: EdgeInsets.all(15),
                 child: ClipRRect(
@@ -114,7 +118,13 @@ class ArtistProfilePage extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () async {
-                                    await clearCache(context);
+                                    try {
+                                      Navigator.pop(context);
+                                      await clearCache(context);
+                                      
+                                    } catch (e) {
+                                      Navigator.pop(context);
+                                    }
                                   },
                                   child: Text('Yes')),
                               TextButton(
@@ -125,7 +135,6 @@ class ArtistProfilePage extends StatelessWidget {
                             ],
                           );
                         });
-
                   }),
               // _listSelectorTiles(
               //   title: 'Setting',
@@ -233,30 +242,58 @@ Future<void> clearCache(BuildContext context) async {
   String dir = await LocalHelper.getLocalFilePath();
   Directory localDownloadDir = Directory(dir);
   if (localDownloadDir.listSync().length == 0) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('Your cache is clear!')));
-    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (context) {
+          // Navigator.pop(context);
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: CustomAlertDialog(
+              type: AlertType.SUCCESS,
+              message: 'Your cache is already clean!!',
+            ),
+          );
+          // Navigator.pop(context);
+        });
     return;
   }
   int counter = 0;
   localDownloadDir.listSync().forEach((folder) {
     String id = folder.path.split('/').last;
-    
+
     if (!ids.contains(id)) {
       try {
         folder.deleteSync(recursive: true);
         counter++;
       } catch (e) {
         // throw Exception(e);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error deleting $id')));
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Error deleting $id!',
+                ),
+              );
+            });
       }
     } else {
       print('dont delete=>');
     }
   });
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text('$counter Items Cleared!')));
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: CustomAlertDialog(
+            type: AlertType.SUCCESS,
+            message: '$counter Items Cleared!',
+          ),
+        );
+      });
   Navigator.pop(context);
 }
 
