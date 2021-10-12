@@ -1,10 +1,19 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/like/like_bloc.dart';
+import 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
+import 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
+import 'package:streaming_mobile/blocs/liked_songs/liked_songs_bloc.dart';
 import 'package:streaming_mobile/blocs/vpn/vpn_bloc.dart';
 import 'package:streaming_mobile/data/data_provider/auth_dataprovider.dart';
 import 'package:streaming_mobile/data/data_provider/like_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/liked_albums_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/liked_artists_dataprovider.dart';
+import 'package:streaming_mobile/data/data_provider/liked_songs_dataprovider.dart';
 import 'package:streaming_mobile/data/repository/like_repository.dart';
+import 'package:streaming_mobile/data/repository/liked_albums_repository.dart';
+import 'package:streaming_mobile/data/repository/liked_artists_repository.dart';
+import 'package:streaming_mobile/data/repository/liked_songs_repository.dart';
 
 import 'blocs/albums/album_bloc.dart';
 import 'blocs/artist/artist_bloc.dart';
@@ -59,6 +68,9 @@ void setupLocator() {
   sl.registerFactory(() => GenreRepository(genreDataProvider: sl()));
   sl.registerFactory(() => ConfigRepository(configDataProvider: sl()));
   sl.registerFactory(() => FeaturedAlbumRepository(dataProvider: sl()));
+  sl.registerFactory(() => LikedAlbumsRepository(dataProvider: sl()));
+  sl.registerFactory(() => LikedSongsRepository(dataProvider: sl()));
+  sl.registerFactory(() => LikedArtistsRepository(dataProvider: sl()));
 
   //data-providers
   sl.registerFactory(() => LikeDataProvider(client: sl()));
@@ -73,6 +85,9 @@ void setupLocator() {
   sl.registerFactory(() => GenreDataProvider(client: sl()));
   sl.registerFactory(() => ConfigDataProvider(client: sl()));
   sl.registerFactory(() => FeaturedDataProvider(client: sl()));
+  sl.registerFactory(() => LikedAlbumsDataprovider(client: sl()));
+  sl.registerFactory(() => LikedSongsDataProvider(client: sl()));
+  sl.registerFactory(() => LikedArtistsDataProvider(client: sl()));
 
   //blocs
   sl.registerFactory(() => LikeBloc(likeRepository: sl()));
@@ -87,8 +102,11 @@ void setupLocator() {
   sl.registerFactory(() => GenresBloc(genreRepository: sl()));
   sl.registerFactory(() => ConfigBloc(configRepository: sl()));
   sl.registerFactory(() => FeaturedAlbumBloc(featuredAlbumRepo: sl()));
+  sl.registerFactory(() => LikedAlbumBloc(albumRepo: sl()));
+  sl.registerFactory(() => LikedSongsBloc(trackRepository: sl()));
+  sl.registerFactory(() => LikedArtistsBloc(artistsRepository: sl()));
   sl.registerFactory(() => VPNBloc());
-  
+
   //others
   sl.registerFactory(() => LocationService());
 }

@@ -19,7 +19,6 @@ class ArtistProfilePage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -27,7 +26,9 @@ class ArtistProfilePage extends StatelessWidget {
               // _upperSection(),
               // Divider(),
               //circular artist image
-              SizedBox(height: 40,),
+              SizedBox(
+                height: 40,
+              ),
               Padding(
                 padding: EdgeInsets.all(15),
                 child: ClipRRect(
@@ -121,7 +122,6 @@ class ArtistProfilePage extends StatelessWidget {
                                     try {
                                       Navigator.pop(context);
                                       await clearCache(context);
-                                      
                                     } catch (e) {
                                       Navigator.pop(context);
                                     }
@@ -242,19 +242,13 @@ Future<void> clearCache(BuildContext context) async {
   String dir = await LocalHelper.getLocalFilePath();
   Directory localDownloadDir = Directory(dir);
   if (localDownloadDir.listSync().length == 0) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          // Navigator.pop(context);
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            child: CustomAlertDialog(
-              type: AlertType.SUCCESS,
-              message: 'Your cache is already clean!!',
-            ),
-          );
-          // Navigator.pop(context);
-        });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: CustomAlertDialog(
+          type: AlertType.SUCCESS,
+          message: 'Your cache is already clean!',
+        )));
     return;
   }
   int counter = 0;
@@ -283,51 +277,12 @@ Future<void> clearCache(BuildContext context) async {
       print('dont delete=>');
     }
   });
-  showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: CustomAlertDialog(
-            type: AlertType.SUCCESS,
-            message: '$counter Items Cleared!',
-          ),
-        );
-      });
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      content: CustomAlertDialog(
+        type: AlertType.SUCCESS,
+        message: '$counter Items cleared!',
+      )));
   Navigator.pop(context);
-}
-
-//back nav, name and more vertical iconBuilder
-Widget _upperSection() {
-  return Padding(
-    padding: EdgeInsets.all(5),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black.withOpacity(0.5),
-          ),
-          onPressed: () {},
-        ),
-        Spacer(),
-        // Text(
-        //   'Dawit Getachew',
-        //   style: TextStyle(
-        //     fontSize: 20,
-        //     color: Colors.black.withOpacity(0.6),
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
-        IconButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: Colors.black.withOpacity(0.5),
-          ),
-          onPressed: () {},
-        ),
-      ],
-    ),
-  );
 }

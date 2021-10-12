@@ -70,17 +70,13 @@ class _AlbumDetailState extends State<AlbumDetail> {
                           : likesCount;
                 }
                 if (state is ErrorState) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          backgroundColor: Colors.transparent,
-                          child: CustomAlertDialog(
-                            type: AlertType.ERROR,
-                            message: '${state.message}',
-                          ),
-                        );
-                      });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      content: CustomAlertDialog(
+                        type: AlertType.ERROR,
+                        message: '${state.message}',
+                      )));
                 }
               },
               builder: (context, state) {
@@ -305,18 +301,13 @@ class _AlbumDetailState extends State<AlbumDetail> {
                             return;
                           }
                           if (album.tracks.length == 0) {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: CustomAlertDialog(
-                                      type: AlertType.ERROR,
-                                      message:
-                                          'There are no tracks in this Album!',
-                                    ),
-                                  );
-                                });
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                content: CustomAlertDialog(
+                                  type: AlertType.ERROR,
+                                  message: 'There are no tracks in this album!',
+                                )));
                           } else {
                             if (!AudioService.running) {
                               await AudioService.start(
@@ -584,17 +575,13 @@ class _AlbumDetailState extends State<AlbumDetail> {
 
       await _startPlaying(mediaItems, index);
     } catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: CustomAlertDialog(
-                type: AlertType.ERROR,
-                message: 'Error playing song!',
-              ),
-            );
-          });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          content: CustomAlertDialog(
+            type: AlertType.ERROR,
+            message: 'Error playing song!',
+          )));
       Navigator.pop(context);
     }
   }

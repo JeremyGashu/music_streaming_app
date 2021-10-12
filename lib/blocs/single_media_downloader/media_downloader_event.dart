@@ -14,6 +14,11 @@ class AddDownload extends MediaDownloaderEvent{
 }
 
 class RetryDownload extends MediaDownloaderEvent{
+  final String songId;
+
+  RetryDownload({this.songId});
+    @override
+  List<Object> get props => [songId];
 }
 
 class UpdateDownloadState extends MediaDownloaderEvent{
@@ -27,6 +32,14 @@ class InitializeDownloader extends MediaDownloaderEvent{
 }
 
 class ClearDownload extends MediaDownloaderEvent{
+}
+
+class CancelDownload extends MediaDownloaderEvent{
+  final String trackId;
+
+  CancelDownload({this.trackId});
+    @override
+  List<Object> get props => [trackId];
 }
 
 class BeginDownload extends MediaDownloaderEvent{

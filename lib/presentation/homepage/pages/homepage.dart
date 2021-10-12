@@ -150,467 +150,459 @@ class _HomePageState extends State<HomePage> {
           BlocProvider.of<FeaturedAlbumBloc>(context)
               .add(LoadFeaturedAlbumsInit());
         },
-        child: SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(color: Colors.white),
-                      height: 300,
-                      child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
-                          builder: (context, state) {
-                        if (state is LoadedFeaturedAlbum) {
-                          return state.albums.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No Featured Album!',
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                    ),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(color: Colors.white),
+                    height: 300,
+                    child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
+                        builder: (context, state) {
+                      if (state is LoadedFeaturedAlbum) {
+                        return state.albums.length == 0
+                            ? Center(
+                                child: Text(
+                                  'No Featured Album!',
+                                  style: TextStyle(
+                                    fontSize: 30,
                                   ),
-                                )
-                              : CarouselSlider(
-                                  options: CarouselOptions(
-                                      height: 310,
-                                      viewportFraction: 1.05,
-                                      initialPage: 0,
-                                      enableInfiniteScroll: false),
-                                  items: state.albums
-                                      .map((e) => GestureDetector(
-                                          onTap: () {
-                                            if (e == null) {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return Dialog(
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                      child: CustomAlertDialog(
-                                                        type: AlertType.ERROR,
-                                                        message:
-                                                            'Incomplete album info!',
-                                                      ),
-                                                    );
-                                                  });
-                                              return;
-                                            }
-                                            Navigator.pushNamed(
-                                                context,
-                                                AlbumDetail
-                                                    .albumDetailRouterName,
-                                                arguments: e);
-                                          },
-                                          child: FeaturedAlbum(e)))
-                                      .toList(),
-                                );
-                        } else if (state is LoadingFeaturedAlbum) {
-                          return Center(
-                            child: SpinKitRipple(
-                              color: Colors.grey,
-                              size: 60,
-                            ),
+                                ),
+                              )
+                            : CarouselSlider(
+                                options: CarouselOptions(
+                                    height: 310,
+                                    viewportFraction: 1.05,
+                                    initialPage: 0,
+                                    enableInfiniteScroll: false),
+                                items: state.albums
+                                    .map((e) => GestureDetector(
+                                        onTap: () {
+                                          if (e == null) {
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Incomplete album info!',
+                )));
+                                            return;
+                                          }
+                                          Navigator.pushNamed(
+                                              context,
+                                              AlbumDetail
+                                                  .albumDetailRouterName,
+                                              arguments: e);
+                                        },
+                                        child: FeaturedAlbum(e)))
+                                    .toList(),
+                              );
+                      } else if (state is LoadingFeaturedAlbum) {
+                        return Center(
+                          child: SpinKitRipple(
+                            color: Colors.grey,
+                            size: 60,
+                          ),
+                        );
+                      } else if (state is LoadingFeaturedAlbumError) {
+                        return CustomErrorWidget(
+                            onTap: () {
+                              BlocProvider.of<FeaturedAlbumBloc>(context)
+                                  .add(LoadFeaturedAlbumsInit());
+                            },
+                            message: 'Error Loading Featured Albums!');
+                      }
+                      return Container();
+                    }),
+                  ),
+
+                  SizedBox(
+                    height: 25,
+                  ),
+                  // adContainer('ad.png'),
+                  SectionTitle(
+                      title: "Newly Released Songs",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context,
+                            AllNewReleaseTracks
+                                .allNewReleaseTracksRouterName);
+                      }),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    height: 200,
+                    child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingNewReleases) {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                            ],
                           );
-                        } else if (state is LoadingFeaturedAlbumError) {
+                        } else if (state is LoadedNewReleases) {
+                          return ListView.builder(
+                            itemCount: state.newRelease.songs.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (ctx, index) {
+                              return index ==
+                                      state.newRelease.songs.length - 1
+                                  ? Container(
+                                      margin: EdgeInsets.only(right: 15),
+                                      child: SingleTrack(
+                                        track: state
+                                            .newRelease.songs[index].song,
+                                      ),
+                                    )
+                                  : SingleTrack(
+                                      track:
+                                          state.newRelease.songs[index].song,
+                                    );
+                            },
+                          );
+                        } else if (state is LoadingNewReleasesError) {
                           return CustomErrorWidget(
                               onTap: () {
-                                BlocProvider.of<FeaturedAlbumBloc>(context)
-                                    .add(LoadFeaturedAlbumsInit());
+                                BlocProvider.of<NewReleaseBloc>(context)
+                                    .add(LoadNewReleasesInit());
                               },
-                              message: 'Error Loading Featured Albums!');
+                              message: 'Error Loading New Songs!');
                         }
+
                         return Container();
+                      },
+                    ),
+                  ),
+
+                  SectionTitle(
+                      title: "Newly Released Albums",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context,
+                            AllNewReleasedAlbumsPage
+                                .allNewReleaseAlbumsRouterName);
                       }),
-                    ),
-
-                    SizedBox(
-                      height: 25,
-                    ),
-                    // adContainer('ad.png'),
-                    SectionTitle(
-                        title: "Newly Released Songs",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context,
-                              AllNewReleaseTracks
-                                  .allNewReleaseTracksRouterName);
-                        }),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      height: 200,
-                      child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
-                        builder: (ctx, state) {
-                          if (state is LoadingNewReleases) {
-                            return ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                              ],
-                            );
-                          } else if (state is LoadedNewReleases) {
-                            return ListView.builder(
-                              itemCount: state.newRelease.songs.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (ctx, index) {
-                                return index ==
-                                        state.newRelease.songs.length - 1
-                                    ? Container(
-                                        margin: EdgeInsets.only(right: 15),
-                                        child: SingleTrack(
-                                          track: state
-                                              .newRelease.songs[index].song,
-                                        ),
-                                      )
-                                    : SingleTrack(
-                                        track:
-                                            state.newRelease.songs[index].song,
-                                      );
-                              },
-                            );
-                          } else if (state is LoadingNewReleasesError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<NewReleaseBloc>(context)
-                                      .add(LoadNewReleasesInit());
-                                },
-                                message: 'Error Loading New Songs!');
-                          }
-
-                          return Container();
-                        },
-                      ),
-                    ),
-
-                    SectionTitle(
-                        title: "Newly Released Albums",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context,
-                              AllNewReleasedAlbumsPage
-                                  .allNewReleaseAlbumsRouterName);
-                        }),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      height: 200,
-                      child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
-                        builder: (ctx, state) {
-                          if (state is LoadingNewReleases) {
-                            return ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                              ],
-                            );
-                          } else if (state is LoadedNewReleases) {
-                            return ListView.builder(
-                              itemCount: state.newRelease.albums.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (ctx, index) {
-                                return SingleAlbum(
-                                  album: state.newRelease.albums[index],
-                                );
-                              },
-                            );
-                          } else if (state is LoadingNewReleasesError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<NewReleaseBloc>(context)
-                                      .add(LoadNewReleasesInit());
-                                },
-                                message: 'Error Loading New Albums!');
-                          }
-
-                          return Container();
-                        },
-                      ),
-                    ),
-
-                    SectionTitle(
-                        title: "Popular Playlists",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context, AllPlaylistsPage.allPlaylistsRouterName);
-                        }),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      height: 170,
-                      child: BlocBuilder<PlaylistBloc, PlaylistState>(
-                        builder: (ctx, state) {
-                          if (state is LoadingPlaylist) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                CircularShimmer(),
-                                CircularShimmer(),
-                                CircularShimmer(),
-                              ],
-                            );
-                          } else if (state is LoadedPlaylist) {
-                            return state.playlists.length == 0
-                                ? Center(child: Text('No Playlist Found!'))
-                                : ListView.builder(
-                                    itemCount: state.playlists.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      return SinglePlaylist(
-                                        playlist: state.playlists[index],
-                                      );
-                                    },
-                                  );
-                          } else if (state is LoadingPlaylistError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<PlaylistBloc>(context)
-                                      .add(LoadPlaylistsInit());
-                                },
-                                message: 'Error Loading Playlists!');
-                          }
-
-                          return Container();
-                        },
-                      ),
-                    ),
-                    SectionTitle(title: "Most Played Tracks", callback: () {}),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          TrackListItem(),
-                          TrackListItem(),
-                          TrackListItem(),
-                        ],
-                      ),
-                    ),
-                    SectionTitle(
-                        title: "Genres", callback: () {}, hasMore: false),
-                    Container(
-                        height: 130,
-                        child: BlocBuilder<GenresBloc, GenresState>(
-                          builder: (ctx, state) {
-                            if (state is GenresLoadInProgress) {
-                              return ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  LoadingGenreShimmer(),
-                                  LoadingGenreShimmer(),
-                                  LoadingGenreShimmer(),
-                                ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 200,
+                    child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingNewReleases) {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                            ],
+                          );
+                        } else if (state is LoadedNewReleases) {
+                          return ListView.builder(
+                            itemCount: state.newRelease.albums.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (ctx, index) {
+                              return SingleAlbum(
+                                album: state.newRelease.albums[index],
                               );
-                            } else if (state is GenresLoadSuccess) {
-                              return ListView.builder(
-                                itemCount: state.genres.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, index) {
-                                  return GenreWidget(
-                                      genre: state.genres[index]);
-                                },
-                              );
-                            } else if (state is GenresLoadFailed) {
-                              return CustomErrorWidget(
-                                  onTap: () {
-                                    BlocProvider.of<GenresBloc>(context)
-                                        .add(FetchGenres());
+                            },
+                          );
+                        } else if (state is LoadingNewReleasesError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<NewReleaseBloc>(context)
+                                    .add(LoadNewReleasesInit());
+                              },
+                              message: 'Error Loading New Albums!');
+                        }
+
+                        return Container();
+                      },
+                    ),
+                  ),
+
+                  SectionTitle(
+                      title: "Popular Playlists",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context, AllPlaylistsPage.allPlaylistsRouterName);
+                      }),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    height: 170,
+                    child: BlocBuilder<PlaylistBloc, PlaylistState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingPlaylist) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              CircularShimmer(),
+                              CircularShimmer(),
+                              CircularShimmer(),
+                            ],
+                          );
+                        } else if (state is LoadedPlaylist) {
+                          return state.playlists.length == 0
+                              ? Center(child: Text('No Playlist Found!'))
+                              : ListView.builder(
+                                  itemCount: state.playlists.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return SinglePlaylist(
+                                      playlist: state.playlists[index],
+                                    );
                                   },
-                                  message: 'Error Loading Genres!');
-                            }
-                            return Container();
-                          },
-                        )),
+                                );
+                        } else if (state is LoadingPlaylistError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<PlaylistBloc>(context)
+                                    .add(LoadPlaylistsInit());
+                              },
+                              message: 'Error Loading Playlists!');
+                        }
 
-                    SectionTitle(
-                        title: "Artists",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context, AllArtistsPage.allPArtistsRouterName);
-                        }),
-                    Container(
-                      height: 180,
-                      child: BlocBuilder<ArtistBloc, ArtistState>(
+                        return Container();
+                      },
+                    ),
+                  ),
+                  SectionTitle(title: "Most Played Tracks", callback: () {}),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: ListView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        TrackListItem(),
+                        TrackListItem(),
+                        TrackListItem(),
+                      ],
+                    ),
+                  ),
+                  SectionTitle(
+                      title: "Genres", callback: () {}, hasMore: false),
+                  Container(
+                      height: 130,
+                      child: BlocBuilder<GenresBloc, GenresState>(
                         builder: (ctx, state) {
-                          if (state is LoadingArtist) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          if (state is GenresLoadInProgress) {
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
                               children: [
-                                CircularShimmer(),
-                                CircularShimmer(),
-                                CircularShimmer(),
+                                LoadingGenreShimmer(),
+                                LoadingGenreShimmer(),
+                                LoadingGenreShimmer(),
                               ],
                             );
-                          } else if (state is LoadedArtist) {
+                          } else if (state is GenresLoadSuccess) {
                             return ListView.builder(
-                              itemCount: state.artists.length,
+                              itemCount: state.genres.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (ctx, index) {
-                                return Artist(
-                                  artist: state.artists[index],
-                                );
+                                return GenreWidget(
+                                    genre: state.genres[index]);
                               },
                             );
-                          } else if (state is LoadingArtistError) {
+                          } else if (state is GenresLoadFailed) {
                             return CustomErrorWidget(
                                 onTap: () {
-                                  BlocProvider.of<ArtistBloc>(context)
-                                      .add(LoadInitArtists());
+                                  BlocProvider.of<GenresBloc>(context)
+                                      .add(FetchGenres());
                                 },
-                                message: 'Error Loading Artist!');
+                                message: 'Error Loading Genres!');
                           }
-
                           return Container();
                         },
-                      ),
-                    ),
-                    // adContainer('ad.png'),
-                    SectionTitle(
-                        title: "Albums",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context, AllAlbumsPage.allAlbumsRouterName);
-                        }),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      height: 200,
-                      child: BlocBuilder<AlbumBloc, AlbumState>(
-                        builder: (ctx, state) {
-                          if (state is LoadingAlbum) {
-                            return ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                              ],
-                            );
-                          } else if (state is LoadedAlbum) {
-                            return state.albums.length == 0
-                                ? Center(
-                                    child: Text('No Album Found!'),
-                                  )
-                                : ListView.builder(
-                                    itemCount: state.albums.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      return SingleAlbum(
-                                        album: state.albums[index],
-                                      );
-                                    },
-                                  );
-                          } else if (state is LoadingAlbumError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<AlbumBloc>(context)
-                                      .add(LoadInitAlbums());
-                                },
-                                message: 'Error Loading Album!');
-                          }
+                      )),
 
-                          return Container();
-                        },
-                      ),
-                    ),
-                    SectionTitle(
-                        title: "Single Tracks",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context, AllTracks.allTracksRouterName);
-                        }),
-                    Container(
-                      height: 200,
-                      child: BlocBuilder<TrackBloc, TrackState>(
-                        builder: (ctx, state) {
-                          if (state is LoadingTrack) {
-                            return ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                                RectangularShimmer(),
-                              ],
-                            );
-                          } else if (state is LoadedTracks) {
-                            return state.tracks.length > 0
-                                ? ListView.builder(
-                                    itemCount: state.tracks.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      return state.tracks.length - 1 == index
-                                          ? Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 15),
-                                              child: SingleTrack(
-                                                  track: state.tracks[index]),
-                                            )
-                                          : SingleTrack(
-                                              track: state.tracks[index]);
-                                    },
-                                  )
-                                : Center(
-                                    child: Text('No Songs are Available!'),
-                                  );
-                          } else if (state is LoadingTrackError) {
-                            return CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<TrackBloc>(context)
-                                      .add(LoadTracksInit());
-                                },
-                                message: 'Error Loading Songs!');
-                          }
+                  SectionTitle(
+                      title: "Artists",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context, AllArtistsPage.allPArtistsRouterName);
+                      }),
+                  Container(
+                    height: 180,
+                    child: BlocBuilder<ArtistBloc, ArtistState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingArtist) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              CircularShimmer(),
+                              CircularShimmer(),
+                              CircularShimmer(),
+                            ],
+                          );
+                        } else if (state is LoadedArtist) {
+                          return ListView.builder(
+                            itemCount: state.artists.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (ctx, index) {
+                              return Artist(
+                                artist: state.artists[index],
+                              );
+                            },
+                          );
+                        } else if (state is LoadingArtistError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<ArtistBloc>(context)
+                                    .add(LoadInitArtists());
+                              },
+                              message: 'Error Loading Artist!');
+                        }
 
-                          return Container();
-                        },
-                      ),
+                        return Container();
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                  // adContainer('ad.png'),
+                  SectionTitle(
+                      title: "Albums",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context, AllAlbumsPage.allAlbumsRouterName);
+                      }),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 200,
+                    child: BlocBuilder<AlbumBloc, AlbumState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingAlbum) {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                            ],
+                          );
+                        } else if (state is LoadedAlbum) {
+                          return state.albums.length == 0
+                              ? Center(
+                                  child: Text('No Album Found!'),
+                                )
+                              : ListView.builder(
+                                  itemCount: state.albums.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return SingleAlbum(
+                                      album: state.albums[index],
+                                    );
+                                  },
+                                );
+                        } else if (state is LoadingAlbumError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<AlbumBloc>(context)
+                                    .add(LoadInitAlbums());
+                              },
+                              message: 'Error Loading Album!');
+                        }
+
+                        return Container();
+                      },
+                    ),
+                  ),
+                  SectionTitle(
+                      title: "Single Tracks",
+                      callback: () {
+                        Navigator.pushNamed(
+                            context, AllTracks.allTracksRouterName);
+                      }),
+                  Container(
+                    height: 200,
+                    child: BlocBuilder<TrackBloc, TrackState>(
+                      builder: (ctx, state) {
+                        if (state is LoadingTrack) {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                              RectangularShimmer(),
+                            ],
+                          );
+                        } else if (state is LoadedTracks) {
+                          return state.tracks.length > 0
+                              ? ListView.builder(
+                                  itemCount: state.tracks.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return state.tracks.length - 1 == index
+                                        ? Container(
+                                            margin:
+                                                EdgeInsets.only(right: 15),
+                                            child: SingleTrack(
+                                                track: state.tracks[index]),
+                                          )
+                                        : SingleTrack(
+                                            track: state.tracks[index]);
+                                  },
+                                )
+                              : Center(
+                                  child: Text('No Songs are Available!'),
+                                );
+                        } else if (state is LoadingTrackError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<TrackBloc>(context)
+                                    .add(LoadTracksInit());
+                              },
+                              message: 'Error Loading Songs!');
+                        }
+
+                        return Container();
+                      },
+                    ),
+                  ),
+                ],
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: StreamBuilder(
-                  stream: AudioService.playbackStateStream,
-                  builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
-                    if (snapshot.hasData) {
-                      print("SnapshotData: ${snapshot.data.processingState}");
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: StreamBuilder(
+                stream: AudioService.playbackStateStream,
+                builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
+                  if (snapshot.hasData) {
+                    print("SnapshotData: ${snapshot.data.processingState}");
+                  }
+                  if (snapshot.hasData) {
+                    var snapShotData = snapshot.data.processingState;
+                    if (snapShotData != AudioProcessingState.stopped) {
+                      return StreamBuilder(
+                          stream: AudioService.currentMediaItemStream,
+                          builder: (context,
+                              AsyncSnapshot<MediaItem>
+                                  currentMediaItemSnapshot) {
+                            return currentMediaItemSnapshot.hasData &&
+                                    currentMediaItemSnapshot.data != null
+                                ? PlayerOverlay(
+                                    playing: snapshot.data.playing)
+                                : SizedBox();
+                          });
                     }
-                    if (snapshot.hasData) {
-                      var snapShotData = snapshot.data.processingState;
-                      if (snapShotData != AudioProcessingState.stopped) {
-                        return StreamBuilder(
-                            stream: AudioService.currentMediaItemStream,
-                            builder: (context,
-                                AsyncSnapshot<MediaItem>
-                                    currentMediaItemSnapshot) {
-                              return currentMediaItemSnapshot.hasData &&
-                                      currentMediaItemSnapshot.data != null
-                                  ? PlayerOverlay(
-                                      playing: snapshot.data.playing)
-                                  : SizedBox();
-                            });
-                      }
-                    }
-                    return SizedBox();
-                  },
-                ),
+                  }
+                  return SizedBox();
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

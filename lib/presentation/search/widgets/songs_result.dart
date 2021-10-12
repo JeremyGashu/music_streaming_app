@@ -204,17 +204,13 @@ class _SongsResultState extends State<SongsResult> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: CustomAlertDialog(
-                type: AlertType.ERROR,
-                message: 'Error playing song!',
-              ),
-            );
-          });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Error playing song!',
+                )));
       Navigator.pop(context);
     }
   }

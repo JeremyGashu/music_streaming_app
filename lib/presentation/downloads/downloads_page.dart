@@ -56,17 +56,13 @@ class _DownloadPageState extends State<DownloadsPage> {
             child: BlocListener<MediaDownloaderBloc, MediaDownloaderState>(
               listener: (context, state) {
                 if (state is DownloadDone) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          backgroundColor: Colors.transparent,
-                          child: CustomAlertDialog(
-                            type: AlertType.SUCCESS,
-                            message: 'Download Finished!',
-                          ),
-                        );
-                      });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.SUCCESS,
+                  message: 'Download Finished!',
+                )));
                 }
               },
               child: TabBarView(children: [

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
+import 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
+import 'package:streaming_mobile/blocs/liked_songs/liked_songs_bloc.dart';
 import 'imports.dart';
 
 void main() async {
@@ -42,6 +45,19 @@ void main() async {
     BlocProvider<SignUpBloc>(
       create: (_) => sl<SignUpBloc>(),
     ),
+
+    BlocProvider<LikedAlbumBloc>(
+      create: (_) => sl<LikedAlbumBloc>(),
+    ),
+
+    BlocProvider<LikedArtistsBloc>(
+      create: (_) => sl<LikedArtistsBloc>(),
+    ),
+
+    BlocProvider<LikedSongsBloc>(
+      create: (_) => sl<LikedSongsBloc>(),
+    ),
+
     BlocProvider<AlbumBloc>(
       create: (_) => sl<AlbumBloc>()..add(LoadInitAlbums()),
     ),

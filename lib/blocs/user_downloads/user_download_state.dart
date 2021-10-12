@@ -15,5 +15,8 @@ class DownloadFailed extends UserDownloadState{
   List<Object> get props => [message, id];
 }
 
+class LoadingState extends UserDownloadState{
+}
+
 class DownloadDeleted extends UserDownloadState{
 }

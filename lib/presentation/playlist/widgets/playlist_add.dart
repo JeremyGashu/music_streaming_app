@@ -27,17 +27,13 @@ class _AddPlaylistPageState extends State<AddPlaylistPage> {
         bloc: playlistBloc,
         listener: (context, state) {
           if (state is LoadingPlaylistError) {
-            showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: CustomAlertDialog(
-                type: AlertType.ERROR,
-                message: 'Error loading playlists!',
-              ),
-            );
-          });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Error loading playlist!',
+                )));
           }
         },
         builder: (context, state) {

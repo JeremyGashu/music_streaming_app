@@ -111,6 +111,7 @@ class MediaDownloaderBloc
            print(status);
            
           add(UpdateDownloadState(state: DownloadFailed(_downloadTask.track_id)));
+          //todo clear the downloader here
 
         } else {
           //   DownloadTaskStatus.failed
@@ -187,20 +188,20 @@ class MediaDownloaderBloc
         var query =
             "SELECT * FROM task WHERE status=${DownloadTaskStatus.running.value}";
         var tasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+        
         if (tasks.isEmpty) {
           add(BeginDownload(downloadTasks: event.downloadTasks));
           _downloadQueue.removeFirst();
         }
       } else if (event is RetryDownload) {
-        if (_tasks.isNotEmpty) {
-          await FlutterDownloader.cancelAll();
-          addDownload(_tasks[0].downloadTask)
-              .then((value) => _tasks[0].taskId = value);
-        }
-        // else {
-        //   yield DownloadDone(downloadedTask: null);
-        // }
-      } else if (event is UpdateDownloadState) {
+        await _deleteFromQueue(event.songId);
+        _checkQueueAndContinueDownload();
+      } 
+       else if (event is CancelDownload) {
+        await _deleteFromQueue(event.trackId);
+        _checkQueueAndContinueDownload();
+      } 
+      else if (event is UpdateDownloadState) {
         print("UPDATING DOWNLOAD STATE");
         yield event.state;
       } else if (event is ClearDownload) {
@@ -240,6 +241,22 @@ class MediaDownloaderBloc
       add(BeginDownload(downloadTasks: _downloadQueue.first));
       _downloadQueue.removeFirst();
     }
+  }
+
+  Future<void> _deleteFromQueue(String songId) async {
+     print('before deletion ${_downloadQueue.length}');
+     print('before deletion ${queueBox.values.length}');
+    if (_downloadQueue.isNotEmpty) {
+      print('before deletion ${_downloadQueue.length}');
+      _downloadQueue.removeFirst();
+      print('after deletion ${_downloadQueue.length}');
+    }
+    else{
+      return;
+    }
+    print('before deletion ${queueBox.values.length}');
+    await queueBox.delete(songId);
+      print('after deletion ${queueBox.values.length}');
   }
 
   void _addToQueue(List<smd.DownloadTask> downloadTasks) {

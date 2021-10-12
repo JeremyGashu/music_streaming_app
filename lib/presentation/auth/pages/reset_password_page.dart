@@ -33,17 +33,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           }
 
           if (state is SendingPasswordResetFailed) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    backgroundColor: Colors.transparent,
-                    child: CustomAlertDialog(
-                      type: AlertType.ERROR,
-                      message: 'Error reseting password. Please try Again!',
-                    ),
-                  );
-                });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Error reseting password please try again!',
+                )));
           }
         }, builder: (context, state) {
           return Stack(

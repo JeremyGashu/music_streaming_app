@@ -18,7 +18,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         if (signedUp.success) {
           yield SignedUpSuccessfully();
         }
-        yield SignUpError(message: signedUp.error);
+        else{
+          yield SignUpError(message: signedUp.error);
+        }
       } catch (e) {
         yield SignUpError(message: 'Please check your internet connections!');
         print(e);

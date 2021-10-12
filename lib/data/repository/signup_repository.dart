@@ -16,7 +16,7 @@ class SignUpRepository {
     if (decodedResponse['success']) {
       return SignupDataResponse(success: true);
     }
-    return SignupDataResponse(success: true, error: decodedResponse['errors']['title']);
+    return SignupDataResponse(success: false, error: decodedResponse['errors']['title']);
   }
 
   Future<SignupDataResponse> verifyPhoneNumber({String phoneNo}) async {

@@ -51,17 +51,13 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
             }
 
             if (state is SignUpError) {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      backgroundColor: Colors.transparent,
-                      child: CustomAlertDialog(
-                        type: AlertType.ERROR,
-                        message: '${state.message}',
-                      ),
-                    );
-                  });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: '${state.message}',
+                )));
             }
           },
           builder: (context, state) => Stack(
@@ -189,19 +185,13 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                           print(
                                               'phone number => ${_countryCode + _phoneNumberController.value.text}');
                                         } else {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return Dialog(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  child: CustomAlertDialog(
-                                                    type: AlertType.ERROR,
-                                                    message:
-                                                        'Please enter valid phone number!',
-                                                  ),
-                                                );
-                                              });
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Please enter valif phone number!',
+                )));
                                         }
                                       },
                                       child: Text('Continue',

@@ -158,17 +158,13 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                             return dismiss;
                           },
                           onDismissed: (_) async {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    child: CustomAlertDialog(
-                                      type: AlertType.SUCCESS,
-                                      message: 'Deleted Playlist!',
-                                    ),
-                                  );
-                                });
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                content: CustomAlertDialog(
+                                  type: AlertType.SUCCESS,
+                                  message: 'Deleted playlist!',
+                                )));
                             print(
                                 'delete playlist ${_playlists[index].playlistId}');
                           },

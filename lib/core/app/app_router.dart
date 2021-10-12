@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
+import 'package:streaming_mobile/presentation/album/pages/liked_albums.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
+import 'package:streaming_mobile/presentation/artist/pages/liked_artists.dart';
 import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/phone_input_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
@@ -18,6 +20,7 @@ import 'package:streaming_mobile/presentation/playlist/pages/playlists_all.dart'
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/sign_up_page.dart';
+import 'package:streaming_mobile/presentation/tracks/liked_songs.dart';
 import 'package:streaming_mobile/presentation/tracks/tracks_all.dart';
 import 'package:streaming_mobile/presentation/tracks/tracks_by_genre.dart';
 
@@ -85,6 +88,13 @@ class AppRouter {
 
       case SignUpPage.signUpPageRouterName:
         return MaterialPageRoute(builder: (_) => SignUpPage());
+      case LikedArtistsPage.likedArtistsRouteName:
+        return MaterialPageRoute(builder: (_) => LikedArtistsPage());
+
+      case LikedAlbumsPage.likedAlbumsRouteName:
+        return MaterialPageRoute(builder: (_) => LikedAlbumsPage());
+      case LikedSongsPage.likedSongsPage:
+        return MaterialPageRoute(builder: (_) => LikedSongsPage());
 
       case AllTracks.allTracksRouterName:
         return MaterialPageRoute(builder: (_) => AllTracks());

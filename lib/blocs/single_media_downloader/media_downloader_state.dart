@@ -36,10 +36,10 @@ class UndefinedState extends MediaDownloaderState{
   List<Object> get props => [];
 }
 
-
 class DownloadDone extends MediaDownloaderState{
   final DownloadTask downloadedTask;
-  DownloadDone({@required this.downloadedTask}):assert(downloadedTask != null);
+  final String title;
+  DownloadDone({@required this.downloadedTask,this.title}):assert(downloadedTask != null);
   @override
-  List<Object> get props => [downloadedTask];
+  List<Object> get props => [downloadedTask, title];
 }

@@ -29,17 +29,13 @@ class _DownloadingPageState extends State<DownloadingPage> {
       listener: (context, state) {
         if (state is DownloadDeleted) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    backgroundColor: Colors.transparent,
-                    child: CustomAlertDialog(
-                      type: AlertType.SUCCESS,
-                      message: 'Download Deleted!',
-                    ),
-                  );
-                });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.SUCCESS,
+                  message: 'Download Deleted!!',
+                )));
           });
         }
         print("DOWNLOADING_PAGE: LISTENER ${state.toString()}");

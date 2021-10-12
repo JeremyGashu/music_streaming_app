@@ -218,7 +218,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               listener: (ctx, state) async {
                             if (state is SignUpError) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(state.message)));
+                                  SnackBar(content: Text(state.message ?? '')));
                             } else if (state is SignedUpSuccessfully) {
                               await Future.delayed(Duration(seconds: 2));
                               BlocProvider.of<SignUpBloc>(context).add(
@@ -227,12 +227,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                           _phoneNumberController.value.text));
                             } else if (state is OTPReceived) {
                               Navigator.pushNamed(
-                                  context, OTP.otpPageRouterName);
+                                  context, OTP.otpPageRouterName,arguments: _phoneNumberController.value.text);
                             }
                           }, builder: (ctx, state) {
                             return Container(
                               width: kWidth(context),
-                              height: 50,
+                              height: 55,
                               margin: EdgeInsets.only(top: 30),
                               child: state is LoadingState
                                   ? Container(
@@ -265,6 +265,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                     'Verifying your phone...')
                                               ],
                                             ),
+                                            SizedBox(height: 5,),
                                             SpinKitRing(
                                               color: Colors.grey,
                                               size: 30,

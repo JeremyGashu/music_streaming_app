@@ -102,15 +102,16 @@ class _DownloadListItemState extends State<DownloadListItem> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text("no")),
+                                child: Text("No")),
                             TextButton(
                                 onPressed: () {
+                                  Navigator.pop(context);
                                   BlocProvider.of<UserDownloadBloc>(context)
                                       .add(DeleteDownload(
                                           trackId: widget.downloadTask.songId));
-                                  Navigator.pop(context);
+                                  
                                 },
-                                child: Text("yes")),
+                                child: Text("Yes")),
                           ],
                         ),
                       );
@@ -154,12 +155,12 @@ class _DownloadListItemState extends State<DownloadListItem> {
                       // );
                       if (state.id != null || state.id != '') {
                         BlocProvider.of<UserDownloadBloc>(context).add(
-                            UserRetryDownload(
+                            DeleteFailedDownload(
                                 track: widget.downloadTask.toTrack()));
                       }
                     },
                     icon: Icon(
-                      Icons.update,
+                      Icons.remove,
                       size: 20,
                     ),
                   )
@@ -299,17 +300,13 @@ class _DownloadListItemState extends State<DownloadListItem> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: CustomAlertDialog(
-                type: AlertType.ERROR,
-                message: 'Error playing song!!',
-              ),
-            );
-          });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Error playing song!',
+                )));
       Navigator.pop(context);
     }
   }

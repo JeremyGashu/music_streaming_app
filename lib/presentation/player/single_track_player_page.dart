@@ -104,17 +104,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         return BlocConsumer<LikeBloc, LikeState>(
                             listener: (context, state) {
                               if (state is ErrorState) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        backgroundColor: Colors.transparent,
-                                        child: CustomAlertDialog(
-                                          type: AlertType.ERROR,
-                                          message: 'Failed to add to favorites',
-                                        ),
-                                      );
-                                    });
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Failed to add to favorites!',
+                )));
                               }
                             },
                             bloc: _likeBloc,

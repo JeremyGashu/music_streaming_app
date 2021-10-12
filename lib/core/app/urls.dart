@@ -31,6 +31,7 @@ final POST_PLAYLIST_URL = '$BASE_URL/playlist/song';
 
 final M3U8_URL = 'https://138.68.163.236:8787/track';
 final VERIFY_OTP = 'http://138.68.163.236:8866/v1/verify/phone';
+final LIKES_URL = 'http://138.68.163.236:8889/v1/likes';
 
 //todo: genre
 //todo: analytics

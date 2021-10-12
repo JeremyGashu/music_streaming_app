@@ -57,17 +57,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
                       if (state is AuthenticationError) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: CustomAlertDialog(
-                                  type: AlertType.ERROR,
-                                  message: '${state.message}',
-                                ),
-                              );
-                            });
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            content: CustomAlertDialog(
+                              type: AlertType.ERROR,
+                              message: '${state.message}',
+                            )));
                       } else if (state is Authenticated) {
                         Navigator.pushNamedAndRemoveUntil(context,
                             MainPage.mainPageRouterName, (route) => false);
@@ -264,22 +260,22 @@ class _LoginPageState extends State<LoginPage> {
                                                           _phoneNumberController
                                                                   .value.text ==
                                                               '') {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return Dialog(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                child:
-                                                                    CustomAlertDialog(
-                                                                  type: AlertType
-                                                                      .ERROR,
-                                                                  message:
-                                                                      'Phone number cannot be empty!',
-                                                                ),
-                                                              );
-                                                            });
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    elevation:
+                                                                        0,
+                                                                    content:
+                                                                        CustomAlertDialog(
+                                                                      type: AlertType
+                                                                          .ERROR,
+                                                                      message:
+                                                                          'Phone number cannot be empty!',
+                                                                    )));
                                                         return;
                                                       }
 
@@ -289,22 +285,13 @@ class _LoginPageState extends State<LoginPage> {
                                                           _passwordTextController
                                                                   .value.text ==
                                                               '') {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return Dialog(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                child:
-                                                                    CustomAlertDialog(
-                                                                  type: AlertType
-                                                                      .ERROR,
-                                                                  message:
-                                                                      'Password cannot be empty!',
-                                                                ),
-                                                              );
-                                                            });
+                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Phone number cannot be empty!',
+                )));
                                                         return;
                                                       }
                                                       BlocProvider.of<AuthBloc>(

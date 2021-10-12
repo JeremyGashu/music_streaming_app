@@ -52,17 +52,13 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                   await Future.delayed(Duration(seconds: 2));
                   Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                 } else if (state is VerifyingPasswordResetError) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          backgroundColor: Colors.transparent,
-                          child: CustomAlertDialog(
-                            type: AlertType.ERROR,
-                            message: 'Pelase check your reset code!',
-                          ),
-                        );
-                      });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                    content: CustomAlertDialog(
+                  type: AlertType.ERROR,
+                  message: 'Please check your reset code!',
+                )));
                 }
               }, builder: (context, state) {
                 return Column(
