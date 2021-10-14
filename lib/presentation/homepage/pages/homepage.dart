@@ -207,14 +207,12 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                       } else if (state is LoadingFeaturedAlbumError) {
-                        return Expanded(
-                          child: CustomErrorWidget(
-                              onTap: () {
-                                BlocProvider.of<FeaturedAlbumBloc>(context)
-                                    .add(LoadFeaturedAlbumsInit());
-                              },
-                              message: 'Error Loading Featured Albums!'),
-                        );
+                        return CustomErrorWidget(
+                            onTap: () {
+                              BlocProvider.of<FeaturedAlbumBloc>(context)
+                                  .add(LoadFeaturedAlbumsInit());
+                            },
+                            message: 'Error Loading Featured Albums!');
                       }
                       return Container();
                     }),
@@ -317,14 +315,12 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         } else if (state is LoadingNewReleasesError) {
-                          return Expanded(
-                            child: CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<NewReleaseBloc>(context)
-                                      .add(LoadNewReleasesInit());
-                                },
-                                message: 'Error Loading New Albums!'),
-                          );
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<NewReleaseBloc>(context)
+                                    .add(LoadNewReleasesInit());
+                              },
+                              message: 'Error Loading New Albums!');
                         }
 
                         return Container();
@@ -367,14 +363,12 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 );
                         } else if (state is LoadingPlaylistError) {
-                          return Expanded(
-                            child: CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<PlaylistBloc>(context)
-                                      .add(LoadPlaylistsInit());
-                                },
-                                message: 'Error Loading Playlists!'),
-                          );
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<PlaylistBloc>(context)
+                                    .add(LoadPlaylistsInit());
+                              },
+                              message: 'Error Loading Playlists!');
                         }
 
                         return Container();
@@ -422,14 +416,12 @@ class _HomePageState extends State<HomePage> {
                               },
                             );
                           } else if (state is GenresLoadFailed) {
-                            return Expanded(
-                              child: CustomErrorWidget(
-                                  onTap: () {
-                                    BlocProvider.of<GenresBloc>(context)
-                                        .add(FetchGenres());
-                                  },
-                                  message: 'Error Loading Genres!'),
-                            );
+                            return CustomErrorWidget(
+                                onTap: () {
+                                  BlocProvider.of<GenresBloc>(context)
+                                      .add(FetchGenres());
+                                },
+                                message: 'Error Loading Genres!');
                           }
                           return Container();
                         },
@@ -465,14 +457,12 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         } else if (state is LoadingArtistError) {
-                          return Expanded(
-                            child: CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<ArtistBloc>(context)
-                                      .add(LoadInitArtists());
-                                },
-                                message: 'Error Loading Artist!'),
-                          );
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<ArtistBloc>(context)
+                                    .add(LoadInitArtists());
+                              },
+                              message: 'Error Loading Artist!');
                         }
 
                         return Container();
@@ -517,14 +507,12 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 );
                         } else if (state is LoadingAlbumError) {
-                          return Expanded(
-                            child: CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<AlbumBloc>(context)
-                                      .add(LoadInitAlbums());
-                                },
-                                message: 'Error Loading Album!'),
-                          );
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<AlbumBloc>(context)
+                                    .add(LoadInitAlbums());
+                              },
+                              message: 'Error Loading Album!');
                         }
 
                         return Container();
@@ -571,14 +559,12 @@ class _HomePageState extends State<HomePage> {
                                   child: Text('No Songs are Available!'),
                                 );
                         } else if (state is LoadingTrackError) {
-                          return Expanded(
-                            child: CustomErrorWidget(
-                                onTap: () {
-                                  BlocProvider.of<TrackBloc>(context)
-                                      .add(LoadTracksInit());
-                                },
-                                message: 'Error Loading Songs!'),
-                          );
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<TrackBloc>(context)
+                                    .add(LoadTracksInit());
+                              },
+                              message: 'Error Loading Songs!');
                         }
 
                         return Container();

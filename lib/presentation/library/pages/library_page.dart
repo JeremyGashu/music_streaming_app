@@ -143,14 +143,12 @@ class LibraryPage extends StatelessWidget {
                               );
                             });
                       } else if (state is LoadingNewReleasesError) {
-                        return Expanded(
-                          child: CustomErrorWidget(
-                              onTap: () {
-                                BlocProvider.of<NewReleaseBloc>(context)
-                                    .add(LoadNewReleasesInit());
-                              },
-                              message: 'Error Loading New Songs!'),
-                        );
+                        return CustomErrorWidget(
+                            onTap: () {
+                              BlocProvider.of<NewReleaseBloc>(context)
+                                  .add(LoadNewReleasesInit());
+                            },
+                            message: 'Error Loading New Songs!');
                       } else if (state is LoadingNewReleases) {
                         return Center(
                           child: SpinKitRipple(

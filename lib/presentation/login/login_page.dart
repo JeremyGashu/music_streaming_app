@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                                       children: [
                                         Container(
                                           width: 75,
-                                          height: 50,
+                                          height: 48,
                                           child: Center(
                                               child: Icon(
                                             Icons.phone,
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                                       children: [
                                         Container(
                                           width: 75,
-                                          height: 50,
+                                          height: 48,
                                           child: Center(
                                               child: Icon(
                                             Icons.lock,

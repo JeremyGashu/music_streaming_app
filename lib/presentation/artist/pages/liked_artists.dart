@@ -70,11 +70,9 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _artists.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(onTap: () {
-                                _likedArtistsBloc.add(LoadLikedArtists());
-                              }, message: 'Error Loading Artists!'),
-                  );
+                  return CustomErrorWidget(onTap: () {
+                              _likedArtistsBloc.add(LoadLikedArtists());
+                            }, message: 'Error Loading Artists!');
                 }
                 return Expanded(
                   child: Column(

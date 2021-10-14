@@ -73,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               children: [
                                 Container(
                                   width: 75,
-                                  height: 50,
+                                  height: 48,
                                   child: Center(
                                       child: Icon(
                                     Icons.phone,
@@ -111,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               children: [
                                 Container(
                                   width: 75,
-                                  height: 50,
+                                  height: 48,
                                   child: Center(
                                       child: Icon(
                                     Icons.lock,
@@ -151,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               children: [
                                 Container(
                                   width: 75,
-                                  height: 50,
+                                  height: 48,
                                   child: Center(
                                       child: Icon(
                                     Icons.lock,

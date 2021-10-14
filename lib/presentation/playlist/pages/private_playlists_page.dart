@@ -91,13 +91,11 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                   ),
                 );
               } else if (state is ErrorState && _playlists.isEmpty) {
-                return Expanded(
-                  child: CustomErrorWidget(
-                      onTap: () {
-                        playlistBloc.add(GetPrivatePlaylists());
-                      },
-                      message: 'Error Loading Playlists!'),
-                );
+                return CustomErrorWidget(
+                    onTap: () {
+                      playlistBloc.add(GetPrivatePlaylists());
+                    },
+                    message: 'Error Loading Playlists!');
               }
 
               return _playlists.length == 0

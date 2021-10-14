@@ -100,7 +100,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                 children: [
                                   Container(
                                     width: 75,
-                                    height: 50,
+                                    height: 48,
                                     child: Center(
                                         child: Icon(
                                       Icons.lock,
@@ -138,7 +138,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                 children: [
                                   Container(
                                     width: 75,
-                                    height: 50,
+                                    height: 48,
                                     child: Center(
                                         child: Icon(
                                       Icons.lock,
@@ -177,7 +177,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                 children: [
                                   Container(
                                     width: 75,
-                                    height: 50,
+                                    height: 48,
                                     child: Center(
                                         child: Icon(
                                       Icons.sms,

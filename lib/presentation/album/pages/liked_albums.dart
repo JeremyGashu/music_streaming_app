@@ -68,13 +68,11 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _albums.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(
-                        onTap: () {
-                          likedAlbumBloc.add(LoadLikedAlbums());
-                        },
-                        message: 'Error Loading Album!'),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        likedAlbumBloc.add(LoadLikedAlbums());
+                      },
+                      message: 'Error Loading Album!');
                 }
                 return Expanded(
                   child: Column(

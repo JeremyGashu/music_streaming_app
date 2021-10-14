@@ -68,13 +68,11 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                     ),
                   );
                 } else if (state is LoadingAlbumError && _albums.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(
-                        onTap: () {
-                          albumBloc.add(LoadAlbums());
-                        },
-                        message: 'Error Loading Album!'),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        albumBloc.add(LoadAlbums());
+                      },
+                      message: 'Error Loading Album!');
                 }
                 return Expanded(
                   child: Column(

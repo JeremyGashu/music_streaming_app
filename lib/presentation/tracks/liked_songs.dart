@@ -68,13 +68,11 @@ class _LikedSongsPageState extends State<LikedSongsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _tracks.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(
-                        onTap: () {
-                          likedSongsBloc.add(LoadLikedSongs());
-                        },
-                        message: 'Error Loading Tracks!'),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        likedSongsBloc.add(LoadLikedSongs());
+                      },
+                      message: 'Error Loading Tracks!');
                 }
                 return Expanded(
                   child: Column(

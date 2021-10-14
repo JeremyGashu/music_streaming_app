@@ -90,7 +90,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 children: [
                                   Container(
                                     width: 75,
-                                    height: 50,
+                                    height: 48,
                                     child: Center(
                                         child: Icon(
                                       Icons.phone,

@@ -75,13 +75,11 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                   );
                 } else if (state is LoadingNewReleasesError &&
                     _albums.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(
-                        onTap: () {
-                          newReleaseBloc.add(LoadNewReleases());
-                        },
-                        message: 'Error Loading New Albums!'),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        newReleaseBloc.add(LoadNewReleases());
+                      },
+                      message: 'Error Loading New Albums!');
                 }
                 return Expanded(
                   child: Column(

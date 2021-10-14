@@ -104,13 +104,15 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         return BlocConsumer<LikeBloc, LikeState>(
                             listener: (context, state) {
                               if (state is ErrorState) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Failed to add to favorites!',
-                )));
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                        content: CustomAlertDialog(
+                                          type: AlertType.ERROR,
+                                          message:
+                                              'Failed to add to favorites!',
+                                        )));
                               }
                             },
                             bloc: _likeBloc,
@@ -474,8 +476,10 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           IconButton(
             onPressed: () async {
               playbackState.repeatMode == AudioServiceRepeatMode.one
-                  ? await AudioService.setRepeatMode(AudioServiceRepeatMode.none)
-                  : await AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+                  ? await AudioService.setRepeatMode(
+                      AudioServiceRepeatMode.none)
+                  : await AudioService.setRepeatMode(
+                      AudioServiceRepeatMode.one);
             },
             icon: Icon(
               playbackState.repeatMode == AudioServiceRepeatMode.one
@@ -494,10 +498,24 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(
-          Icons.add,
-          size: 30,
-          color: Colors.white,
+        IconButton(
+          onPressed: () async {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: PrivatePlaylistList(
+                      songId: widget.track.songId,
+                    ),
+                    // child: Text('Private Playlists'),
+                  );
+                });
+          },
+          icon: Icon(
+            Icons.add,
+            size: 30,
+            color: Colors.white,
+          ),
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,

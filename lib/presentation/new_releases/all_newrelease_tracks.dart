@@ -76,13 +76,11 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                   );
                 } else if (state is LoadingNewReleasesError &&
                     _tracks.isEmpty) {
-                  return Expanded(
-                    child: CustomErrorWidget(
-                        onTap: () {
-                          newReleaseBloc.add(LoadNewReleases());
-                        },
-                        message: 'Error Loading New Songs!'),
-                  );
+                  return CustomErrorWidget(
+                      onTap: () {
+                        newReleaseBloc.add(LoadNewReleases());
+                      },
+                      message: 'Error Loading New Songs!');
                 }
                 return Expanded(
                   child: Column(
