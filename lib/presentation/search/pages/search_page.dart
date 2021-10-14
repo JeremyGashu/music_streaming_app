@@ -203,12 +203,14 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingNewReleasesError) {
-                                return CustomErrorWidget(
-                                    onTap: () {
-                                      BlocProvider.of<NewReleaseBloc>(context)
-                                          .add(LoadNewReleasesInit());
-                                    },
-                                    message: 'Error Loading New Albums!');
+                                return Expanded(
+                                  child: CustomErrorWidget(
+                                      onTap: () {
+                                        BlocProvider.of<NewReleaseBloc>(context)
+                                            .add(LoadNewReleasesInit());
+                                      },
+                                      message: 'Error Loading New Albums!'),
+                                );
                               }
 
                               return Container();
@@ -255,12 +257,14 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingNewReleasesError) {
-                                return CustomErrorWidget(
-                                    onTap: () {
-                                      BlocProvider.of<NewReleaseBloc>(context)
-                                          .add(LoadNewReleasesInit());
-                                    },
-                                    message: 'Error Loading New Songs!');
+                                return Expanded(
+                                  child: CustomErrorWidget(
+                                      onTap: () {
+                                        BlocProvider.of<NewReleaseBloc>(context)
+                                            .add(LoadNewReleasesInit());
+                                      },
+                                      message: 'Error Loading New Songs!'),
+                                );
                               }
 
                               return Container();
@@ -302,12 +306,14 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingPlaylistError) {
-                                return CustomErrorWidget(
-                                    onTap: () {
-                                      BlocProvider.of<PlaylistBloc>(context)
-                                          .add(LoadPlaylistsInit());
-                                    },
-                                    message: 'Error Loading Playlists!');
+                                return Expanded(
+                                  child: CustomErrorWidget(
+                                      onTap: () {
+                                        BlocProvider.of<PlaylistBloc>(context)
+                                            .add(LoadPlaylistsInit());
+                                      },
+                                      message: 'Error Loading Playlists!'),
+                                );
                               }
 
                               return Container();
@@ -347,12 +353,14 @@ class _SearchPageState extends State<SearchPage>
                                   },
                                 );
                               } else if (state is LoadingAlbumError) {
-                                return CustomErrorWidget(
-                                    onTap: () {
-                                      BlocProvider.of<AlbumBloc>(context)
-                                          .add(LoadInitAlbums());
-                                    },
-                                    message: 'Error Loading New Albums!');
+                                return Expanded(
+                                  child: CustomErrorWidget(
+                                      onTap: () {
+                                        BlocProvider.of<AlbumBloc>(context)
+                                            .add(LoadInitAlbums());
+                                      },
+                                      message: 'Error Loading New Albums!'),
+                                );
                               }
 
                               return Container();

@@ -50,8 +50,8 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
                 } else if (state is ErrorState) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
+                  // ScaffoldMessenger.of(context)
+                  //     .showSnackBar(SnackBar(content: Text(state.message)));
                   _likedArtistsBloc.isLoading = false;
                 }
                 return;
@@ -70,9 +70,11 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _artists.isEmpty) {
-                  return CustomErrorWidget(onTap: () {
-                              _likedArtistsBloc.add(LoadLikedArtists());
-                            }, message: 'Error Loading Artists!');
+                  return Expanded(
+                    child: CustomErrorWidget(onTap: () {
+                                _likedArtistsBloc.add(LoadLikedArtists());
+                              }, message: 'Error Loading Artists!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

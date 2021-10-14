@@ -72,11 +72,13 @@ class _TracksByGenreState extends State<TracksByGenre> {
                     ),
                   );
                 } else if (state is LoadingTrackError && _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        trackBloc.add(LoadSongsByGenre(genreId: widget.genre.genreId));
-                      },
-                      message: 'Error Loading Tracks!');
+                  return Expanded(
+                    child: CustomErrorWidget(
+                        onTap: () {
+                          trackBloc.add(LoadSongsByGenre(genreId: widget.genre.genreId));
+                        },
+                        message: 'Error Loading Tracks!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

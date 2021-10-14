@@ -48,8 +48,8 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
                 } else if (state is ErrorState) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
+                  // ScaffoldMessenger.of(context)
+                  //     .showSnackBar(SnackBar(content: Text(state.message)));
                   likedAlbumBloc.isLoading = false;
                 }
                 return;
@@ -68,11 +68,13 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _albums.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        likedAlbumBloc.add(LoadLikedAlbums());
-                      },
-                      message: 'Error Loading Album!');
+                  return Expanded(
+                    child: CustomErrorWidget(
+                        onTap: () {
+                          likedAlbumBloc.add(LoadLikedAlbums());
+                        },
+                        message: 'Error Loading Album!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

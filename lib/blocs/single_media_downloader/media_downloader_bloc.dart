@@ -8,6 +8,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
+import 'package:streaming_mobile/imports.dart';
 import 'media_downloader_event.dart';
 import 'media_downloader_state.dart';
 
@@ -89,28 +90,32 @@ class MediaDownloaderBloc
                 '//////// TODO now download the key as all the files are downloads');
             add(UpdateDownloadState(
                 state: DownloadDone(downloadedTask: _downloadTask)));
-             String m3u8Path = '${await LocalHelper.getLocalFilePath()}/${_downloadTask.track_id}/main.m3u8';
-             LocalHelper.downloadKeyFile(m3u8Path).then((val) {
-               if(val) {
-                 print('key file is downloaded');
-               }
-               else{
-                 print('key file is not downloaded');
-               }
-             });
+            String m3u8Path =
+                '${await LocalHelper.getLocalFilePath()}/${_downloadTask.track_id}/main.m3u8';
+            LocalHelper.downloadKeyFile(m3u8Path).then((val) {
+              if (val) {
+                print('key file is downloaded');
+              } else {
+                print('key file is not downloaded');
+              }
+            });
             _checkQueueAndContinueDownload();
           }
-        } else if (status == DownloadTaskStatus.running) {
+        } else if (status == DownloadTaskStatus.canceled) {
+        //  _tasks.removeAt(_taskIndex);
+          // print('onCancel being called => ${_tasks.length}');
+          // _checkQueueAndContinueDownload();
+          print('onCancel being called');
           print('current status => ${status}');
-           print(status);
+          print(status);
           add(UpdateDownloadState(state: DownloadOnProgressState()));
-
         } else if (status == DownloadTaskStatus.failed) {
           smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
           print('current status => ${status}');
-           print(status);
-           
-          add(UpdateDownloadState(state: DownloadFailed(_downloadTask.track_id)));
+          print(status);
+
+          add(UpdateDownloadState(
+              state: DownloadFailed(_downloadTask.track_id)));
           //todo clear the downloader here
 
         } else {
@@ -143,13 +148,17 @@ class MediaDownloaderBloc
       yield DownloadOnProgressState();
       if (event is InitializeDownloader) {
         // _bindBackgroundIsolate();
+        print('init queue box => ${queueBox.length}');
         if (queueBox.isNotEmpty) {
+          print('init queue box => ${queueBox.length}');
           _downloadQueue.addAll(queueBox.values);
         }
       } else if (event is BeginDownload) {
         List<smd.DownloadTask> dt = [];
 
+        print('_task length => ${_tasks.length}');
         if (_tasks.length == 0) {
+          print('here 1');
           var length = event.downloadTasks.length;
           for (int i = 0; i < length; i++) {
             var element = event.downloadTasks[i];
@@ -165,6 +174,7 @@ class MediaDownloaderBloc
             print(
                 "MediaDownloaderBloc: download tasks empty or downloaded before");
             yield DownloadDone(downloadedTask: event.downloadTasks[0]);
+            
             _checkQueueAndContinueDownload();
           } else {
             String taskId = await addDownload(dt.first);
@@ -188,20 +198,112 @@ class MediaDownloaderBloc
         var query =
             "SELECT * FROM task WHERE status=${DownloadTaskStatus.running.value}";
         var tasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
-        
+
+        print('tasks in add download => ${tasks.length}');
+
         if (tasks.isEmpty) {
           add(BeginDownload(downloadTasks: event.downloadTasks));
           _downloadQueue.removeFirst();
         }
-      } else if (event is RetryDownload) {
-        await _deleteFromQueue(event.songId);
+      }
+       else if (event is RetryDownload) {
+        print('current tasks => ${_tasks.length}');
+            if(_tasks.isNotEmpty) {
+              if(_tasks[0].downloadTask.track_id == event.songId) {
+                _tasks.clear();
+              }
+            }
+            print('current tasks => ${_tasks.length}');
+            // a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+            // print('after cancel => ${a.length}');
+
+        // var a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+        // print(a.length);
+
         _checkQueueAndContinueDownload();
-      } 
-       else if (event is CancelDownload) {
-        await _deleteFromQueue(event.trackId);
+      }
+      else if (event is CancelDownload) {
+        // yield LoadingState();
+        try {
+          // var a = await getIt<UserDownloadManager>().getTaskById(event.trackId);
+          // print('current task in hive => ${a}');
+
+          // // await getIt<UserDownloadManager>().deleteTask(event.trackId);
+
+          // a = await getIt<UserDownloadManager>().getTaskById(event.trackId);
+          // print('current task in hive => ${a}');
+
+          // var currentTasks = await FlutterDownloader.loadTasksWithRawQuery(query: 'SELECT * from task');
+          // currentTasks.forEach((task) async { 
+          //   print('before cancel');
+          //   await FlutterDownloader.cancel(taskId: task.taskId);
+          //   print('cencelled');
+          // });
+          // var query =
+          //   "SELECT * FROM task WHERE status=${DownloadTaskStatus.failed.value}";
+        // var currentTasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+
+        // var query =
+        //     "SELECT * FROM task WHERE status=${DownloadTaskStatus.canceled.value}";
+
+        //     var a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+        //     print('before cancel => ${a.length}');
+
+            print('current tasks => ${_tasks.length}');
+            if(_tasks.isNotEmpty) {
+              if(_tasks[0].downloadTask.track_id == event.trackId) {
+                _tasks.clear();
+              }
+            }
+            print('current tasks => ${_tasks.length}');
+            // a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+            // print('after cancel => ${a.length}');
+
+        // var a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+        // print(a.length);
+
         _checkQueueAndContinueDownload();
-      } 
-      else if (event is UpdateDownloadState) {
+
+        // print('after check queue and continue');
+
+        // print('current tasks in queue=> ${currentTasks.length}');
+
+        // currentTasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+
+        // print('current tasks in queue=> ${currentTasks.length}');
+
+        // print(_downloadQueue.length);
+
+          // await FlutterDownloader.cancelAll();
+
+          // if (_downloadQueue.isNotEmpty) {
+          //   add(BeginDownload(downloadTasks: _downloadQueue.first));
+          //   _downloadQueue.removeFirst();
+          // }
+
+          // yield SuccessState();
+
+          // var query = "SELECT * FROM task";
+          // var b = await FlutterDownloader.loadTasksWithRawQuery(query: query);
+          // print('current task in flutter downloader queue => ${b}');
+
+          // print('current queue length => ${_downloadQueue.length}');
+
+
+
+          // await FlutterDownloader.cancelAll();
+          // await _deleteFromQueue(event.trackId);
+
+
+          // if (_downloadQueue.isNotEmpty) {
+          //   add(BeginDownload(downloadTasks: _downloadQueue.first));
+          //   _downloadQueue.removeFirst();
+          // }
+          // yield SuccessState();
+        } catch (e) {
+          throw Exception(e);
+        }
+      } else if (event is UpdateDownloadState) {
         print("UPDATING DOWNLOAD STATE");
         yield event.state;
       } else if (event is ClearDownload) {
@@ -243,21 +345,6 @@ class MediaDownloaderBloc
     }
   }
 
-  Future<void> _deleteFromQueue(String songId) async {
-     print('before deletion ${_downloadQueue.length}');
-     print('before deletion ${queueBox.values.length}');
-    if (_downloadQueue.isNotEmpty) {
-      print('before deletion ${_downloadQueue.length}');
-      _downloadQueue.removeFirst();
-      print('after deletion ${_downloadQueue.length}');
-    }
-    else{
-      return;
-    }
-    print('before deletion ${queueBox.values.length}');
-    await queueBox.delete(songId);
-      print('after deletion ${queueBox.values.length}');
-  }
 
   void _addToQueue(List<smd.DownloadTask> downloadTasks) {
     // queueBox.add(downloadTasks);

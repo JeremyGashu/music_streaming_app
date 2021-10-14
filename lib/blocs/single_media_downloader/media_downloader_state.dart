@@ -36,6 +36,15 @@ class UndefinedState extends MediaDownloaderState{
   List<Object> get props => [];
 }
 
+class SuccessState extends MediaDownloaderState{
+  @override
+  List<Object> get props => [];
+}
+class LoadingState extends MediaDownloaderState{
+  @override
+  List<Object> get props => [];
+}
+
 class DownloadDone extends MediaDownloaderState{
   final DownloadTask downloadedTask;
   final String title;

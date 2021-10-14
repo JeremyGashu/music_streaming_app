@@ -22,8 +22,13 @@ Widget musicTile(
   return BlocListener<UserDownloadBloc, UserDownloadState>(
     listener: (c, state) {
       if (state is DownloadFailed) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(state.message)));
+        ScaffoldMessenger.of(c)
+            .showSnackBar(SnackBar(backgroundColor: Colors.white,elevation: 0,content:
+            CustomAlertDialog(
+              type: AlertType.ERROR,
+              message: state.message,
+            ),
+            ));
         // Future.delayed(Duration(seconds: 2));
         // if (state.id != null || state.id != '') {
         //   BlocProvider.of<UserDownloadBloc>(context)

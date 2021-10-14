@@ -69,11 +69,13 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                   );
                 } else if (state is LoadingPlaylistError &&
                     _playlists.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        playlistBloc.add(LoadPlaylists());
-                      },
-                      message: 'Error Loading Playlists!');
+                  return Expanded(
+                    child: CustomErrorWidget(
+                        onTap: () {
+                          playlistBloc.add(LoadPlaylists());
+                        },
+                        message: 'Error Loading Playlists!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

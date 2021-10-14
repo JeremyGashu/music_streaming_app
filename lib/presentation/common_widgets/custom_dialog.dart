@@ -13,15 +13,16 @@ class CustomAlertDialog extends StatelessWidget {
         ? Colors.red
         : type == AlertType.SUCCESS
             ? Colors.green
-            : Colors.yellow;
+            : Colors.yellow[900];
     return Container(
       // height: 100,
 
       // height: 320,
-      height: 65,
+      height: 55,
       width: kWidth(context),
       decoration: BoxDecoration(
         color: color,
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,7 +35,7 @@ class CustomAlertDialog extends StatelessWidget {
             child: Center(
               child: Icon(
                 type == AlertType.SUCCESS ? Icons.check : Icons.error,
-                size: 40,
+                size: 35,
                 color: Colors.white,
               ),
             ),
@@ -45,11 +46,12 @@ class CustomAlertDialog extends StatelessWidget {
                 child: Center(
                   child: Text(
                     message,
-                    style: TextStyle(fontSize: 20, color: Colors.white),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15, color: Colors.white),
                   ),
                 )),
           ),
-              SizedBox(width: 10,),
+              // SizedBox(width: 10,),
         ],
       ),
     );

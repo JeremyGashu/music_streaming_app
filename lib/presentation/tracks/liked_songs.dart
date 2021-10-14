@@ -48,8 +48,8 @@ class _LikedSongsPageState extends State<LikedSongsPage> {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
                 } else if (state is ErrorState) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
+                  // ScaffoldMessenger.of(context)
+                  //     .showSnackBar(SnackBar(content: Text(state.message)));
                   likedSongsBloc.isLoading = false;
                 }
                 return;
@@ -68,11 +68,13 @@ class _LikedSongsPageState extends State<LikedSongsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        likedSongsBloc.add(LoadLikedSongs());
-                      },
-                      message: 'Error Loading Tracks!');
+                  return Expanded(
+                    child: CustomErrorWidget(
+                        onTap: () {
+                          likedSongsBloc.add(LoadLikedSongs());
+                        },
+                        message: 'Error Loading Tracks!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

@@ -69,9 +69,11 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                     ),
                   );
                 } else if (state is LoadingArtistError && _artists.isEmpty) {
-                  return CustomErrorWidget(onTap: () {
-                              artistBloc.add(LoadArtists());
-                            }, message: 'Error Loading Artists!');
+                  return Expanded(
+                    child: CustomErrorWidget(onTap: () {
+                                artistBloc.add(LoadArtists());
+                              }, message: 'Error Loading Artists!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

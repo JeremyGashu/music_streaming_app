@@ -227,12 +227,14 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                                     ),
                                   );
                                 } else if (state is LoadingAlbumError) {
-                                  return CustomErrorWidget(
-                                      onTap: () {
-                                        albumBloc.add(LoadAlbumsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      },
-                                      message: 'Error Loading Albums!');
+                                  return Expanded(
+                                    child: CustomErrorWidget(
+                                        onTap: () {
+                                          albumBloc.add(LoadAlbumsByArtistId(
+                                              artistId: widget.artist.artistId));
+                                        },
+                                        message: 'Error Loading Albums!'),
+                                  );
                                 }
 
                                 return Container();
@@ -275,12 +277,14 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                                     ),
                                   );
                                 } else if (state is LoadingTrackError) {
-                                  return CustomErrorWidget(
-                                      onTap: () {
-                                        trackBloc.add(LoadSongsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      },
-                                      message: 'Error Loading Tracks!');
+                                  return Expanded(
+                                    child: CustomErrorWidget(
+                                        onTap: () {
+                                          trackBloc.add(LoadSongsByArtistId(
+                                              artistId: widget.artist.artistId));
+                                        },
+                                        message: 'Error Loading Tracks!'),
+                                  );
                                 }
 
                                 return Container();

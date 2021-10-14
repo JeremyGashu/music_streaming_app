@@ -120,10 +120,10 @@ class ArtistProfilePage extends StatelessWidget {
                               TextButton(
                                   onPressed: () async {
                                     try {
-                                      Navigator.pop(context);
                                       await clearCache(context);
+                                      // Navigator.pop(context);
                                     } catch (e) {
-                                      Navigator.pop(context);
+                                      // Navigator.pop(context);
                                     }
                                   },
                                   child: Text('Yes')),

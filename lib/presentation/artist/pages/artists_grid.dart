@@ -47,11 +47,13 @@ class ArtistsGrid extends StatelessWidget {
                 ),
               );
             } else if (state is LoadingArtistError) {
-              return CustomErrorWidget(
-                  onTap: () {
-                    BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-                  },
-                  message: 'Error Loading Artists!');
+              return Expanded(
+                child: CustomErrorWidget(
+                    onTap: () {
+                      BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+                    },
+                    message: 'Error Loading Artists!'),
+              );
             }
             return Container();
           }),

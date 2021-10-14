@@ -68,11 +68,13 @@ class _AllTracksState extends State<AllTracks> {
                     ),
                   );
                 } else if (state is LoadingTrackError && _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        trackBloc.add(LoadTracks());
-                      },
-                      message: 'Error Loading Tracks!');
+                  return Expanded(
+                    child: CustomErrorWidget(
+                        onTap: () {
+                          trackBloc.add(LoadTracks());
+                        },
+                        message: 'Error Loading Tracks!'),
+                  );
                 }
                 return Expanded(
                   child: Column(

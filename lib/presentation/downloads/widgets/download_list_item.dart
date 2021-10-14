@@ -17,6 +17,7 @@ import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
+import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
@@ -72,7 +73,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
             ),
             widget.completed
                 ? SizedBox()
-                : state is mds.DownloadFailed
+                : state is mds.DownloadFailed && state.id == widget.downloadTask.songId
                     ? Text(
                         'Failed',
                         style: TextStyle(
@@ -89,6 +90,9 @@ class _DownloadListItemState extends State<DownloadListItem> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            widget.downloadTask.progress == 100
+                ? Text(prettyDuration(Duration(seconds : widget.downloadTask.duration ?? 0)))
+                : Container(),
             widget.downloadTask.progress == 100
                 ? IconButton(
                     onPressed: () {
@@ -109,7 +113,6 @@ class _DownloadListItemState extends State<DownloadListItem> {
                                   BlocProvider.of<UserDownloadBloc>(context)
                                       .add(DeleteDownload(
                                           trackId: widget.downloadTask.songId));
-                                  
                                 },
                                 child: Text("Yes")),
                           ],
@@ -119,11 +122,11 @@ class _DownloadListItemState extends State<DownloadListItem> {
                     icon: Icon(
                       Icons.delete,
                       size: 20,
+                      color: Colors.redAccent,
                     ),
                   )
                 : Container(),
-            state is mds.DownloadFailed &&
-                    state.id == widget.downloadTask.songId
+            widget.downloadTask.progress != 100
                 ? IconButton(
                     onPressed: () async {
                       // BlocProvider.of<UserDownloadBloc>(context).add(
@@ -153,18 +156,41 @@ class _DownloadListItemState extends State<DownloadListItem> {
                       //     ],
                       //   ),
                       // );
-                      if (state.id != null || state.id != '') {
-                        BlocProvider.of<UserDownloadBloc>(context).add(
-                            DeleteFailedDownload(
-                                track: widget.downloadTask.toTrack()));
-                      }
+                      // if (state is DownloadFailed state.id != null || state.id != '') {
+
+                      // }
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Cance Download"),
+                          content: Text("Do you want to cancel this download?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("No")),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  BlocProvider.of<UserDownloadBloc>(context)
+                                      .add(DeleteFailedDownload(
+                                          track:
+                                              widget.downloadTask.toTrack()));
+                                },
+                                child: Text("Yes")),
+                          ],
+                        ),
+                      );
                     },
                     icon: Icon(
-                      Icons.remove,
+                      Icons.close,
                       size: 20,
+                      color: Colors.redAccent,
                     ),
                   )
                 : Container(),
+                // state is mds.DownloadFailed && state.id == widget.downloadTask.songId ? Icon(Icons.update) : Container(),
             // : Container(),
           ],
         ),
@@ -301,12 +327,12 @@ class _DownloadListItemState extends State<DownloadListItem> {
       await _startPlaying(mediaItems);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error playing song!',
-                )));
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          content: CustomAlertDialog(
+            type: AlertType.ERROR,
+            message: 'Error playing song!',
+          )));
       Navigator.pop(context);
     }
   }

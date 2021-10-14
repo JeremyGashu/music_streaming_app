@@ -81,7 +81,7 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
       }
       if (event is DeleteDownload) {
         yield LoadingState();
-        
+
         try {
           var userDownloadBox =
               await Hive.openBox<LocalDownloadTask>('user_downloads');
@@ -111,13 +111,11 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
 
           yield DownloadDeleted();
 
-          getIt<MediaDownloaderBloc>()
-              .add(RetryDownload(songId : event.track.songId));
+          add(StartDownload(track: event.track));
 
           // add(StartDownload(track: event.track));
         } catch (e) {}
-      }
-      else if (event is DeleteFailedDownload) {
+      } else if (event is DeleteFailedDownload) {
         yield LoadingState();
         try {
           var userDownloadBox =
@@ -127,16 +125,17 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
           await segmentBox.delete(event.track.songId);
           await downloadedMediaBox.delete(event.track.songId);
           await userDownloadBox.delete(event.track.songId);
+          print('reached here');
           String dir = await LocalHelper.getLocalFilePath();
           final directory = Directory("$dir/${event.track.songId}");
-          if(directory.existsSync()) {
+          if (directory.existsSync()) {
             directory.deleteSync(recursive: true);
           }
 
           yield DownloadDeleted();
 
           getIt<MediaDownloaderBloc>()
-              .add(CancelDownload(trackId : event.track.songId));
+              .add(CancelDownload(trackId: event.track.songId));
 
           // add(StartDownload(track: event.track));
         } catch (e) {}

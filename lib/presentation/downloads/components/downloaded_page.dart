@@ -40,7 +40,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
                   elevation: 0,
                     content: CustomAlertDialog(
                   type: AlertType.SUCCESS,
-                  message: 'Deleted Download!',
+                  message: 'Deleted!',
                 )));
               });
             }

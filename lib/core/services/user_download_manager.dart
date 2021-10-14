@@ -28,6 +28,10 @@ class UserDownloadManager {
     return userDownloadBox.get(id);
   }
 
+  Future<void> deleteTask(String id) async {
+    userDownloadBox.delete(id);
+  }
+
   Future<List<LocalDownloadTask>> downloadedTasks() async {
     List<LocalDownloadTask> downloadTasks = [];
     userDownloadBox.values.forEach((element) async {
