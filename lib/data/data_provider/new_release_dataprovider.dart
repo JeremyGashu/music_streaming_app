@@ -16,7 +16,7 @@ class NewReleaseDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url = '$BASE_URL/new_releases?page=${page}&per_page=20';
+    String url = '$BASE_URL/new_releases?page=${page}&per_page=10';
 
     http.Response response = await client.get(
       Uri.parse(url),

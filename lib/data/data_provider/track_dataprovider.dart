@@ -16,7 +16,7 @@ class TrackDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url = '$BASE_URL/songs?page=${page}&per_page=20&single=true';
+    String url = '$BASE_URL/songs?page=${page}&per_page=10&single=true';
 
     http.Response response = await client.get(
       Uri.parse(url),
@@ -47,7 +47,7 @@ class TrackDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    final String url = '$BASE_URL/songs?page=$page&per_page=20&search_by=genre_id&search_key=$genreId';
+    final String url = '$BASE_URL/songs?page=$page&per_page=10&search_by=genre_id&search_key=$genreId';
     print('load tracks by genre url => $url');
     http.Response response = await client.get(
       Uri.parse(url,),

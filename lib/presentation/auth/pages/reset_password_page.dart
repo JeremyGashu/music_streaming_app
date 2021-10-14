@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
+import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
 import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
@@ -34,9 +35,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
           if (state is SendingPasswordResetFailed) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                content: CustomAlertDialog(
                   type: AlertType.ERROR,
                   message: 'Error reseting password please try again!',
                 )));
@@ -106,12 +107,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     child: TextFormField(
                                       keyboardType: TextInputType.phone,
                                       controller: _phoneNumberController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter phone number!';
-                                        }
-                                        return null;
-                                      },
                                       decoration: InputDecoration(
                                           contentPadding:
                                               EdgeInsets.only(left: 20),
@@ -144,13 +139,43 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       ))
                                     : OutlinedButton(
                                         onPressed: () {
-                                          if (_formKey.currentState
-                                              .validate()) {
-                                            BlocProvider.of<AuthBloc>(context)
-                                                .add(ResetPassword(
-                                                    phoneNo:
-                                                        _phoneNumberController
-                                                            .value.text));
+                                          if (_phoneNumberController
+                                                  .value.text.isNotEmpty &&
+                                              (_phoneNumberController
+                                                      .value.text !=
+                                                  null)) {
+                                            if (isPhoneNumber(
+                                                _phoneNumberController
+                                                    .value.text) && _phoneNumberController.value.text.length == 10) {
+                                              BlocProvider.of<AuthBloc>(context)
+                                                  .add(ResetPassword(
+                                                      phoneNo:
+                                                          _phoneNumberController
+                                                              .value.text));
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      elevation: 0,
+                                                      content:
+                                                          CustomAlertDialog(
+                                                        type: AlertType.ERROR,
+                                                        message:
+                                                            'Please enter valid phone number!',
+                                                      )));
+                                            }
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    elevation: 0,
+                                                    content: CustomAlertDialog(
+                                                      type: AlertType.ERROR,
+                                                      message:
+                                                          'Please enter valid phone number!',
+                                                    )));
                                           }
                                         },
                                         child: Text('Confirm',

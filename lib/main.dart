@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
-import 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
-import 'package:streaming_mobile/blocs/liked_songs/liked_songs_bloc.dart';
 import 'imports.dart';
 
 void main() async {

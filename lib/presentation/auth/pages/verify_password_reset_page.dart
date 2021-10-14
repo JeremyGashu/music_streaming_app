@@ -116,12 +116,6 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _passwordTextController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter password!';
-                                        }
-                                        return null;
-                                      },
                                       obscureText: true,
                                       decoration: InputDecoration(
                                           contentPadding:
@@ -161,17 +155,6 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                     child: TextFormField(
                                       controller:
                                           _confirmPasswordTextController,
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty ||
-                                            _confirmPasswordTextController
-                                                    .value.text !=
-                                                _passwordTextController
-                                                    .value.text) {
-                                          return 'Can\'t be empty or different from password!';
-                                        }
-                                        return null;
-                                      },
                                       obscureText: true,
                                       decoration: InputDecoration(
                                           contentPadding:
@@ -210,12 +193,6 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _resetCodeTextController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Can\'t be empty or different from 4 digits!';
-                                        }
-                                        return null;
-                                      },
                                       decoration: InputDecoration(
                                           contentPadding:
                                               EdgeInsets.only(left: 20),
@@ -269,6 +246,57 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                           onPressed: () {
                                             if (_formKey.currentState
                                                 .validate()) {
+
+                                                  if (_passwordTextController
+                                                          .value.text ==
+                                                      null ||
+                                                  _passwordTextController
+                                                      .value.text.isEmpty ||
+                                                  _passwordTextController
+                                                          .value.text.length <
+                                                      6) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        content:
+                                                            CustomAlertDialog(
+                                                          type: AlertType.ERROR,
+                                                          message:
+                                                              'Password cannot less than 6 characters!',
+                                                        )));
+                                                return;
+                                              }
+
+                                              if (_confirmPasswordTextController
+                                                          .value.text ==
+                                                      null ||
+                                                  _confirmPasswordTextController
+                                                      .value.text.isEmpty ||
+                                                  _confirmPasswordTextController
+                                                          .value.text !=
+                                                      _passwordTextController
+                                                          .value.text) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        content:
+                                                            CustomAlertDialog(
+                                                          type: AlertType.ERROR,
+                                                          message:
+                                                              'Confirmation password cannot be different from password!',
+                                                        )));
+                                                return;
+                                              }
+
+                                                  if(_resetCodeTextController.value.text == null || _resetCodeTextController.value.text.isEmpty) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.transparent,elevation: 0,content: CustomAlertDialog(type: AlertType.ERROR, message: 'Reset Code cannot be less than 4 characters!',)));
+                                                    return;
+                                                  }
+
                                               BlocProvider.of<AuthBloc>(context)
                                                   .add(VerifyPasswordReset(
                                                       password:

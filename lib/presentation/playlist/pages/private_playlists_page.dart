@@ -51,9 +51,8 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
 
             if (value == true) {
               print('here is the value => $value');
-              setState(() {
                 _playlists.clear();
-              });
+                print('playlist length ${_playlists.length}');
               playlistBloc.add(LoadPrivatePlaylistsInit());
             }
           },

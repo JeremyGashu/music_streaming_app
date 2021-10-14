@@ -56,7 +56,7 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                                     color: Colors.grey,
                                   ),
                                 ),
-                                imageUrl: widget.album.coverImageUrl,
+                                imageUrl: widget.album.coverImageUrl ?? '',
                                 errorWidget: (context, url, error) {
                                   return Image.asset(
                                     'assets/images/album_one.jpg',
@@ -75,7 +75,7 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        '${widget.album.title}',
+                        '${widget.album.title ?? "Unknown Title"}',
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 14.0),
                       ),
@@ -83,7 +83,8 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0),
                       child: Text(
-                        '${widget.album.artist.firstName} ${widget.album.artist.lastName} ',
+                        widget.album.artist != null ? 
+                        '${widget.album.artist.firstName} ${widget.album.artist.lastName} ' : 'Unknown Artist',
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: kGray,
@@ -93,7 +94,7 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0),
                       child: Text(
-                        '${widget.album.title} - ${widget.album.tracks.length} Tracks',
+                        '${widget.album.title ?? "Unkown Title"} - ${widget.album.tracks.length} Tracks',
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: kYellow,

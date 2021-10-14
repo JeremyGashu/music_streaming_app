@@ -33,7 +33,7 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         metaData: MetaData.fromJson(json["meta_data"]),
-        data: List<Album>.from(json["data"].map((x) => Album.fromJson(x))),
+        data: List<Album>.from(json["data"].map((x) => x['album'] == null ?  Album.fromJson(x) : Album.fromJson(x['album']))),
       );
 
   Map<String, dynamic> toJson() => {

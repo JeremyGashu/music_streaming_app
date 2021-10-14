@@ -120,8 +120,9 @@ class ArtistProfilePage extends StatelessWidget {
                               TextButton(
                                   onPressed: () async {
                                     try {
+                                      Navigator.pop(context);
                                       await clearCache(context);
-                                      // Navigator.pop(context);
+                                      
                                     } catch (e) {
                                       // Navigator.pop(context);
                                     }
@@ -249,7 +250,7 @@ Future<void> clearCache(BuildContext context) async {
           type: AlertType.SUCCESS,
           message: 'Your cache is already clean!',
         )));
-    return;
+        // return Navigator.pop(context);
   }
   int counter = 0;
   localDownloadDir.listSync().forEach((folder) {
@@ -261,28 +262,37 @@ Future<void> clearCache(BuildContext context) async {
         counter++;
       } catch (e) {
         // throw Exception(e);
-        showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                backgroundColor: Colors.transparent,
-                child: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error deleting $id!',
-                ),
-              );
-            });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          content: CustomAlertDialog(
+            type: AlertType.ERROR,
+            message: 'Error deleting $id!',
+          ),
+        ));
+        // return Navigator.pop(context);
       }
     } else {
-      print('dont delete=>');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: CustomAlertDialog(
+          type: AlertType.SUCCESS,
+          message: 'No cache to delete!',
+        ),
+      ));
+      // return Navigator.pop(context);
     }
   });
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      content: CustomAlertDialog(
-        type: AlertType.SUCCESS,
-        message: '$counter Items cleared!',
-      )));
-  Navigator.pop(context);
+  if (counter > 0) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: CustomAlertDialog(
+          type: AlertType.SUCCESS,
+          message: '$counter Items cleared!',
+        )));
+        // return Navigator.pop(context);
+  }
+
 }

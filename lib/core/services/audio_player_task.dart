@@ -99,7 +99,31 @@ class AudioPlayerTask extends BackgroundAudioTask {
         'AUDIO SERVICE BACKGROUND CURRENT STATE : ${AudioServiceBackground.state.playing}');
   }
 
-  void _handlePlaybackCompleted() => hasNext ? onSkipToNext() : onStop();
+  void _handlePlaybackCompleted() {
+    //  => hasNext ? onSkipToNext() : onStop()
+    if (AudioServiceBackground.state.repeatMode == AudioServiceRepeatMode.all) {
+      if (hasNext) {
+        onSkipToNext();
+      } else {
+        _queueIndex = 0;
+        onPlay();
+      }
+    } else if (AudioServiceBackground.state.repeatMode ==
+        AudioServiceRepeatMode.one) {
+      onPlay();
+    } else if (AudioServiceBackground.state.repeatMode ==
+        AudioServiceRepeatMode.none) {
+      hasNext ? onSkipToNext() : onStop();
+    }
+    else if (AudioServiceBackground.state.repeatMode == AudioServiceRepeatMode.all) {
+      if (hasNext) {
+        onSkipToNext();
+      } else {
+        _queueIndex = 0;
+        onPlay();
+      }
+    }
+  }
 
   void playPause() => _audioPlayer.playing ? onPause() : onPlay();
 
@@ -113,12 +137,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
     if ((_currentMediaItemId != null) &&
         (_currentMediaItemId != _mediaItem.id)) {
       Analytics _analytics = Analytics(
-        duration: _timeCounter,
-        songId: _mediaItem.id,
-        userId: userId,
-        location: latLang != null
-            ? latLang
-            : '');
+          duration: _timeCounter,
+          songId: _mediaItem.id,
+          userId: userId,
+          location: latLang != null ? latLang : '');
       print('analytics => to save ${_analytics.toJson()}');
       _analyticsData['data'].add(_analytics.toJson());
       prefs.setString('analytics_data', jsonEncode(_analyticsData));
@@ -319,9 +341,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
         duration: _timeCounter,
         songId: _mediaItem.id,
         userId: userId,
-        location: latLang != null
-            ? latLang
-            : '');
+        location: latLang != null ? latLang : '');
     print('analytics => to send $_analytics');
     _analyticsData['data'].add(_analytics.toJson());
 
@@ -367,24 +387,25 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) {
-    if (repeatMode != AudioServiceRepeatMode.none) {
-      switch (repeatMode) {
-        case AudioServiceRepeatMode.all:
-          _audioPlayer.setLoopMode(LoopMode.all);
-          break;
-        case AudioServiceRepeatMode.none:
-          _audioPlayer.setLoopMode(LoopMode.off);
-          break;
-        case AudioServiceRepeatMode.one:
-          _audioPlayer.setLoopMode(LoopMode.one);
-          break;
-        case AudioServiceRepeatMode.group:
-          break;
-      }
-      _audioPlayer.setLoopMode(LoopMode.one);
-    }
-    AudioServiceBackground.setState(repeatMode: repeatMode);
-    return super.onSetRepeatMode(repeatMode);
+    // print('repeat mode ${repeatMode}');
+    // if (repeatMode != AudioServiceRepeatMode.none) {
+    //   switch (repeatMode) {
+    //     case AudioServiceRepeatMode.all:
+    //       _audioPlayer.setLoopMode(LoopMode.all);
+    //       break;
+    //     case AudioServiceRepeatMode.none:
+    //       _audioPlayer.setLoopMode(LoopMode.off);
+    //       break;
+    //     case AudioServiceRepeatMode.one:
+    //       _audioPlayer.setLoopMode(LoopMode.one);
+    //       break;
+    //     case AudioServiceRepeatMode.group:
+    //       break;
+    //   }
+    //   _audioPlayer.setLoopMode(LoopMode.one);
+    // }
+    // AudioServiceBackground.setState(repeatMode: repeatMode);
+    // return super.onSetRepeatMode(repeatMode);
   }
 
   @override

@@ -472,10 +472,10 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             ),
           ),
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               playbackState.repeatMode == AudioServiceRepeatMode.one
-                  ? AudioService.setRepeatMode(AudioServiceRepeatMode.none)
-                  : AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+                  ? await AudioService.setRepeatMode(AudioServiceRepeatMode.none)
+                  : await AudioService.setRepeatMode(AudioServiceRepeatMode.one);
             },
             icon: Icon(
               playbackState.repeatMode == AudioServiceRepeatMode.one

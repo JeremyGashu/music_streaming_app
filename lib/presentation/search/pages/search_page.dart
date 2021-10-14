@@ -14,7 +14,9 @@ import 'package:streaming_mobile/blocs/search/search_event.dart';
 // import 'package:streaming_mobile/blocs/search/search_state.dart' as searchState;
 import 'package:streaming_mobile/blocs/search/search_state.dart' as searchState;
 import 'package:streaming_mobile/blocs/search/search_state.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/app/size_configs.dart';
+import 'package:streaming_mobile/imports.dart';
 import 'package:streaming_mobile/presentation/album/pages/albums_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
@@ -161,7 +163,11 @@ class _SearchPageState extends State<SearchPage>
                         Container(
                           height: 220,
                           padding: EdgeInsets.only(right: 4, left: 4),
-                          child: RecentlyeSearched(),
+                          child: BlocBuilder<UserDownloadBloc, UserDownloadState>(
+                            builder: (context, snapshot) {
+                              return RecentlyeSearched();
+                            }
+                          ),
                         ),
 
                         SizedBox(

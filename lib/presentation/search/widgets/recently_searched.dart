@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
@@ -32,36 +33,40 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Box<Track>>(
-        future: Hive.openBox<Track>('recently_searched'),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data.values.length == 0
-                ? Center(
-                    child: Text('No recently searched song found!'),
-                  )
-                : ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(4),
-                    itemCount:
-                        snapshot.data.length > 3 ? 3 : snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      Track track = snapshot.data.values
-                          .toList()
-                          .reversed
-                          .toList()[index];
-                      return musicTile(track, () {
-                        playAudio(track);
-                      }, context);
-                    });
-          }
+    return BlocBuilder<MediaDownloaderBloc, MediaDownloaderState>(
+      builder: (context, snapshot) {
+        return FutureBuilder<Box<Track>>(
+            future: Hive.openBox<Track>('recently_searched'),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data.values.length == 0
+                    ? Center(
+                        child: Text('No recently searched song found!'),
+                      )
+                    : ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(4),
+                        itemCount:
+                            snapshot.data.length > 3 ? 3 : snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          Track track = snapshot.data.values
+                              .toList()
+                              .reversed
+                              .toList()[index];
+                          return musicTile(track, () {
+                            playAudio(track);
+                          }, context);
+                        });
+              }
 
-          return Center(
-              child: SpinKitRipple(
-            color: Colors.grey,
-            size: 40,
-          ));
-        });
+              return Center(
+                  child: SpinKitRipple(
+                color: Colors.grey,
+                size: 40,
+              ));
+            });
+      }
+    );
   }
 
   void playAudio(Track track) async {

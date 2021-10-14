@@ -42,6 +42,7 @@ class _CreatePrivatePlaylistWidgetState
                 )));
           }
           if (state is SuccessState) {
+
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   backgroundColor: Colors.transparent,
                   elevation: 0,

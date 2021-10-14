@@ -22,7 +22,7 @@ class PlaylistDataProvider {
     };
 
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=20';
+        '$BASE_URL/playlists?type=public&page=${page}&per_page=10';
     http.Response response = await client.get(
       Uri.parse(url),
       headers: headers,
@@ -74,7 +74,7 @@ class PlaylistDataProvider {
 
 
     String url =
-        '$BASE_URL/playlists?page=${page}&per_page=20&search_by=user_id&search_key=${userId}';
+        '$BASE_URL/playlists?type=private&page=${page}&per_page=10&search_by=user_id&search_key=${userId}';
         print('private url => $url');
         print('private playlist url => ${userId}');
     http.Response response = await client.get(

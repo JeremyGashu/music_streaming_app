@@ -15,7 +15,7 @@ class ConfigDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url = '$BASE_URL/appconfigs?page=0&per_page=20';
+    String url = '$BASE_URL/appconfigs?page=0&per_page=10';
 
     http.Response response = await client.get(
       Uri.parse(url),

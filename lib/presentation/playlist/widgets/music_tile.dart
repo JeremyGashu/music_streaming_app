@@ -22,13 +22,14 @@ Widget musicTile(
   return BlocListener<UserDownloadBloc, UserDownloadState>(
     listener: (c, state) {
       if (state is DownloadFailed) {
-        ScaffoldMessenger.of(c)
-            .showSnackBar(SnackBar(backgroundColor: Colors.white,elevation: 0,content:
-            CustomAlertDialog(
-              type: AlertType.ERROR,
-              message: state.message,
-            ),
-            ));
+        ScaffoldMessenger.of(c).showSnackBar(SnackBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          content: CustomAlertDialog(
+            type: AlertType.ERROR,
+            message: state.message,
+          ),
+        ));
         // Future.delayed(Duration(seconds: 2));
         // if (state.id != null || state.id != '') {
         //   BlocProvider.of<UserDownloadBloc>(context)
@@ -130,24 +131,24 @@ Widget musicTile(
                       if (status.isGranted) {
                         if (snapshot.hasData && snapshot.data) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Already Downloaded!',
-                )));
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              content: CustomAlertDialog(
+                                type: AlertType.SUCCESS,
+                                message: 'Already Downloaded!',
+                              )));
                           return;
                         }
 
                         if (await LocalHelper.downloadAlreadyAdded(
                             music.songId)) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.WARNING,
-                  message: 'Download task exists!!',
-                )));
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              content: CustomAlertDialog(
+                                type: AlertType.WARNING,
+                                message: 'Download task exists!!',
+                              )));
                           return;
                         }
                         // if()
@@ -160,35 +161,36 @@ Widget musicTile(
                         if (stat == PermissionStatus.granted) {
                           if (snapshot.hasData && snapshot.data) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Already Downloaded!',
-                )));
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                content: CustomAlertDialog(
+                                  type: AlertType.SUCCESS,
+                                  message: 'Already Downloaded!',
+                                )));
                             return;
                           }
                           if (await LocalHelper.downloadAlreadyAdded(
                               music.songId)) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.WARNING,
-                  message: 'Download task exists!',
-                )));
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                content: CustomAlertDialog(
+                                  type: AlertType.WARNING,
+                                  message: 'Download task exists!',
+                                )));
                             return;
                           }
                           BlocProvider.of<UserDownloadBloc>(context)
                               .add(StartDownload(track: music));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Please grant permission to download files!',
-                )));
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              content: CustomAlertDialog(
+                                type: AlertType.ERROR,
+                                message:
+                                    'Please grant permission to download files!',
+                              )));
                         }
                       }
                     },

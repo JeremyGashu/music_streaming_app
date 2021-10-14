@@ -9,6 +9,7 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
+import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String signUpPageRouterName = 'signup_page_router_name';
@@ -88,17 +89,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                 Expanded(
                                   child: TextFormField(
                                     keyboardType: TextInputType.phone,
-                                    validator: (value) {
-                                      if (isPhoneNumber(_phoneNumberController
-                                              .value.text) &&
-                                          _phoneNumberController
-                                                  .value.text.length ==
-                                              10) {
-                                        return null;
-                                      } else {
-                                        return 'Please enter valid phone number';
-                                      }
-                                    },
                                     controller: _phoneNumberController,
                                     decoration: InputDecoration(
                                         contentPadding:
@@ -137,14 +127,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                 Expanded(
                                   child: TextFormField(
                                     controller: _passwordTextController,
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.isEmpty ||
-                                          value.length < 6) {
-                                        return 'Password must be at least 6 Characters!';
-                                      }
-                                      return null;
-                                    },
                                     obscureText: true,
                                     decoration: InputDecoration(
                                         contentPadding:
@@ -184,18 +166,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                                 Expanded(
                                   child: TextFormField(
-                                    controller:
-                                        _confirmPasswordTextController,
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.isEmpty ||
-                                          (value !=
-                                              _passwordTextController
-                                                  .value.text)) {
-                                        return 'Password did not Match!';
-                                      }
-                                      return null;
-                                    },
+                                    controller: _confirmPasswordTextController,
                                     obscureText: true,
                                     decoration: InputDecoration(
                                         contentPadding:
@@ -227,7 +198,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                           _phoneNumberController.value.text));
                             } else if (state is OTPReceived) {
                               Navigator.pushNamed(
-                                  context, OTP.otpPageRouterName,arguments: _phoneNumberController.value.text);
+                                  context, OTP.otpPageRouterName,
+                                  arguments: _phoneNumberController.value.text);
                             }
                           }, builder: (ctx, state) {
                             return Container(
@@ -261,11 +233,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                                   color: Colors.orange,
                                                   size: 20,
                                                 ),
-                                                Text(
-                                                    'Verifying your phone...')
+                                                Text('Verifying your phone...')
                                               ],
                                             ),
-                                            SizedBox(height: 5,),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
                                             SpinKitRing(
                                               color: Colors.grey,
                                               size: 30,
@@ -276,6 +249,75 @@ class _SignUpPageState extends State<SignUpPage> {
                                           onPressed: () {
                                             if (_formKey.currentState
                                                 .validate()) {
+                                              //phone number and 10 chars
+                                              //password greater than 6 chars
+                                              //confirm password similar
+
+                                              if (isPhoneNumber(
+                                                      _phoneNumberController
+                                                          .value.text) &&
+                                                  _phoneNumberController
+                                                          .value.text.length ==
+                                                      10) {
+                                                        ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        content:
+                                                            CustomAlertDialog(
+                                                          type: AlertType.ERROR,
+                                                          message:
+                                                              'Please enter valid phone number!',
+                                                        )));
+                                                        return;
+                                              }
+
+                                              if (_passwordTextController
+                                                          .value.text ==
+                                                      null ||
+                                                  _passwordTextController
+                                                      .value.text.isEmpty ||
+                                                  _passwordTextController
+                                                          .value.text.length <
+                                                      6) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        content:
+                                                            CustomAlertDialog(
+                                                          type: AlertType.ERROR,
+                                                          message:
+                                                              'Password cannot less than 6 characters!',
+                                                        )));
+                                                return;
+                                              }
+
+                                              if (_confirmPasswordTextController
+                                                          .value.text ==
+                                                      null ||
+                                                  _confirmPasswordTextController
+                                                      .value.text.isEmpty ||
+                                                  _confirmPasswordTextController
+                                                          .value.text !=
+                                                      _passwordTextController
+                                                          .value.text) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        elevation: 0,
+                                                        content:
+                                                            CustomAlertDialog(
+                                                          type: AlertType.ERROR,
+                                                          message:
+                                                              'Confirmation password cannot be different from password!',
+                                                        )));
+                                                return;
+                                              }
+
                                               BlocProvider.of<SignUpBloc>(
                                                       context)
                                                   .add(SendSignUpData(
@@ -297,9 +339,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                               shape: MaterialStateProperty.all<
                                                       RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(25)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(25)),
                                               ))),
                                         ),
                             );

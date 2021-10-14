@@ -53,3 +53,6 @@ export 'blocs/single_media_downloader/media_downloader_event.dart';
 export 'core/services/location_service.dart';
 export 'core/utils/service_locator.dart';
 export 'data/models/auth_data.dart';
+export 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
+export 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
+export 'package:streaming_mobile/blocs/liked_songs/liked_songs_bloc.dart';
