@@ -7,6 +7,7 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/playlist_tile_new.dart';
 
 import '../../../locator.dart';
 
@@ -80,7 +81,7 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
@@ -98,15 +99,10 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
                                 ..add(LoadPlaylists());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _playlists.map((playlist) {
-                          return Center(
-                            child: SinglePlaylist(
-                              playlist: playlist,
-                            ),
+                          return PlaylistTile(
+                            playlist: playlist,
                           );
                         }).toList(),
                       )),

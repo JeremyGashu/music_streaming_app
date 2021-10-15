@@ -43,25 +43,15 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
           bloc: playlistBloc,
           listener: (context, state) {
             if (state is ErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: '${state.message}',
-                )));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
               // Navigator.pop(context);
               playlistBloc.loadingPrivatePlaylist = false;
             }
             if (state is SuccessState) {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Added to playlist!',
-                )));
+                      content: Text("added to playlist!")));
             }
           },
           builder: (context, state) {

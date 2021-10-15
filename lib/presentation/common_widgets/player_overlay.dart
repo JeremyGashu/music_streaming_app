@@ -33,7 +33,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                     children: [
                       GestureDetector(
                         onVerticalDragEnd: (details) {
-                          if(details.velocity.pixelsPerSecond.dy > 100) {
+                          if (details.velocity.pixelsPerSecond.dy > 100) {
                             setState(() {
                               _expandList = false;
                             });
@@ -43,17 +43,16 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                             duration: Duration(milliseconds: 200),
                             height: _expandList ? 300 : 0,
                             width: kWidth(context),
-                            decoration: BoxDecoration(
-                              color: kPlaylistBg,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3), // changes position of shadow
-                                ),
-                              ]
-                            ),
+                            decoration:
+                                BoxDecoration(color: kPlaylistBg, boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              ),
+                            ]),
                             padding: EdgeInsets.all(16.0),
                             child: Column(children: [
                               Row(
@@ -81,39 +80,16 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                 ],
                               ),
                               Expanded(
-                                child: StreamBuilder(
-                                  stream: AudioService.playbackStateStream,
-                                  builder: (context,
-                                          AsyncSnapshot<PlaybackState>
-                                              playbackSnapshot) =>
-                                      playbackSnapshot.hasData
-                                          ? ListView.builder(
-                                              // physics: NeverScrollableScrollPhysics(),
-                                              padding: EdgeInsets.zero,
-                                              itemCount: snapshot.data.length,
-                                              itemBuilder: (context, index) {
-                                                return musicTile(
-                                                  null,
-                                                  () {
-                                                    print("play playlist");
-                                                    // playAudio(index, sharedPreferences);
-                                                    AudioService.playMediaItem(
-                                                        snapshot.data[index]);
-                                                  },context,
-                                                  snapshot.hasData &&
-                                                      (currentMediaSnapshot
-                                                              .data.id ==
-                                                          snapshot.data[index]
-                                                              .id) &&
-                                                      playbackSnapshot
-                                                          .hasData &&
-                                                      playbackSnapshot
-                                                          .data.playing,
-                                                  snapshot.data[index],
-                                                );
-                                              })
-                                          : SizedBox(),
-                                ),
+                                child: ListView.builder(
+                                    // physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.zero,
+                                    itemCount: snapshot.data.length,
+                                    itemBuilder: (context, index) {
+                                      return musicTile(
+                                        null,
+                                        context,
+                                      );
+                                    }),
                               ),
                             ])),
                       ),
@@ -186,14 +162,19 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                       // Divider(
                                       //   color: Colors.white54,
                                       // ),
-                                      GestureDetector(onPanEnd: (detail) {
-                                        print('details => $detail');
-                                        if(detail.velocity.pixelsPerSecond.dy < -100) {
-                                          setState(() {
-                                            _expandList = true;
-                                          });
-                                        }
-                                      },child: _controlButtonsRow(widget.playing)),
+                                      GestureDetector(
+                                          onPanEnd: (detail) {
+                                            print('details => $detail');
+                                            if (detail.velocity.pixelsPerSecond
+                                                    .dy <
+                                                -100) {
+                                              setState(() {
+                                                _expandList = true;
+                                              });
+                                            }
+                                          },
+                                          child: _controlButtonsRow(
+                                              widget.playing)),
                                       // Divider(
                                       //   color: Colors.white54,
                                       // ),
@@ -255,7 +236,9 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
       height: 30,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName, arguments: Track());
+          Navigator.pushNamed(
+              context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+              arguments: Track());
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -265,7 +248,9 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
             //   "assets/svg/album_disk_new.svg",
             //   height: 40,
             // ),
-            SpinningImage(imageUrl: "assets/png/album_disk_new.png",),
+            SpinningImage(
+              imageUrl: "assets/png/album_disk_new.png",
+            ),
             Expanded(
               child: StreamBuilder(
                 stream: AudioService.currentMediaItemStream,
@@ -287,7 +272,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                               child: Text(
                                 "${currentMediaSnapshot.data.artist}:${currentMediaSnapshot.data.title}",
                                 style: TextStyle(
-                                  fontSize: 15,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white70),
                                 overflow: TextOverflow.visible,

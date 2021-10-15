@@ -52,13 +52,8 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                   await Future.delayed(Duration(seconds: 2));
                   Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                 } else if (state is VerifyingPasswordResetError) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Please check your reset code!',
-                )));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please check your reset code')));
                 }
               }, builder: (context, state) {
                 return Column(
@@ -249,8 +244,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                           onPressed: () {
                                             if (_formKey.currentState
                                                 .validate()) {
-
-                                                  if (_passwordTextController
+                                              if (_passwordTextController
                                                           .value.text ==
                                                       null ||
                                                   _passwordTextController
@@ -260,15 +254,8 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                                       6) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content:
-                                                            CustomAlertDialog(
-                                                          type: AlertType.ERROR,
-                                                          message:
-                                                              'Password cannot less than 6 characters!',
-                                                        )));
+                                                        content: Text(
+                                                            'Password cannot be lass than 6 characters!')));
                                                 return;
                                               }
 
@@ -283,22 +270,20 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                                           .value.text) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content:
-                                                            CustomAlertDialog(
-                                                          type: AlertType.ERROR,
-                                                          message:
-                                                              'Confirmation password cannot be different from password!',
-                                                        )));
+                                                        content: Text(
+                                                            'Password did not match!')));
                                                 return;
                                               }
 
-                                                  if(_resetCodeTextController.value.text == null || _resetCodeTextController.value.text.isEmpty) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.transparent,elevation: 0,content: CustomAlertDialog(type: AlertType.ERROR, message: 'Reset Code cannot be less than 4 characters!',)));
-                                                    return;
-                                                  }
+                                              if (_resetCodeTextController
+                                                          .value.text ==
+                                                      null ||
+                                                  _resetCodeTextController
+                                                      .value.text.isEmpty) {
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Wrong reset code!')));
+                                                return;
+                                              }
 
                                               BlocProvider.of<AuthBloc>(context)
                                                   .add(VerifyPasswordReset(

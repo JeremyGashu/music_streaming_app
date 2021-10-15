@@ -35,12 +35,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
           if (state is SendingPasswordResetFailed) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error reseting password please try again!',
-                )));
+                content: Text('Error resetting password please try again!')));
           }
         }, builder: (context, state) {
           return Stack(
@@ -148,8 +143,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                                       .value.text !=
                                                   null)) {
                                             if (isPhoneNumber(
+                                                    _phoneNumberController
+                                                        .value.text) &&
                                                 _phoneNumberController
-                                                    .value.text) && _phoneNumberController.value.text.length == 10) {
+                                                        .value.text.length ==
+                                                    10) {
                                               BlocProvider.of<AuthBloc>(context)
                                                   .add(ResetPassword(
                                                       phoneNo:
@@ -158,27 +156,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                             } else {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                      elevation: 0,
-                                                      content:
-                                                          CustomAlertDialog(
-                                                        type: AlertType.ERROR,
-                                                        message:
-                                                            'Please enter valid phone number!',
-                                                      )));
+                                                      content: Text(
+                                                          'Please enter valid phone number')));
                                             }
                                           } else {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    elevation: 0,
-                                                    content: CustomAlertDialog(
-                                                      type: AlertType.ERROR,
-                                                      message:
-                                                          'Please enter valid phone number!',
-                                                    )));
+                                                    content: Text(
+                                                        'Please enter valid phone number!')));
                                           }
                                         },
                                         child: Text('Confirm',

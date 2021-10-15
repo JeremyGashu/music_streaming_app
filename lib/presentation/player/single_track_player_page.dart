@@ -104,15 +104,8 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         return BlocConsumer<LikeBloc, LikeState>(
                             listener: (context, state) {
                               if (state is ErrorState) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                        backgroundColor: Colors.transparent,
-                                        elevation: 0,
-                                        content: CustomAlertDialog(
-                                          type: AlertType.ERROR,
-                                          message:
-                                              'Failed to add to favorites!',
-                                        )));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Failed to add to favourites!')));
                               }
                             },
                             bloc: _likeBloc,
@@ -582,12 +575,9 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     bottom: 50, left: 30, right: 30, top: 0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20.0),
-                  child: Hero(
-                    tag: widget.track!= null ?widget.track.coverImageUrl : '${Random()}',
-                    child: CachedNetworkImage(
-                      imageUrl: mediaItem.artUri.toString(),
-                      fit: BoxFit.cover,
-                    ),
+                  child: CachedNetworkImage(
+                    imageUrl: mediaItem.artUri.toString(),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

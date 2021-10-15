@@ -62,13 +62,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                           : likesCount;
                 }
                 if (state is ErrorState) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: '${state.message}',
-                )));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               builder: (context, state) {

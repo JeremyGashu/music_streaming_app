@@ -70,13 +70,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
                           : likesCount;
                 }
                 if (state is ErrorState) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      content: CustomAlertDialog(
-                        type: AlertType.ERROR,
-                        message: '${state.message}',
-                      )));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               builder: (context, state) {
@@ -99,44 +94,23 @@ class _AlbumDetailState extends State<AlbumDetail> {
                       height: 15,
                     ),
                     Container(
-                      child: StreamBuilder(
-                          stream: AudioService.currentMediaItemStream,
-                          builder:
-                              (context, AsyncSnapshot<MediaItem> snapshot) {
-                            // print(snapshot.hasData &&
-                            //     (snapshot.data.id == tracks[0].data.id));
-                            return StreamBuilder(
-                              stream: AudioService.playbackStateStream,
-                              builder: (context,
-                                      AsyncSnapshot<PlaybackState>
-                                          playbackSnapshot) =>
-                                  Column(
-                                children: [
-                                  ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: widget.album.tracks.length,
-                                      itemBuilder: (context, index) {
-                                        return musicTile(
-                                            widget.album.tracks[index], () {
-                                          print("play playlist");
-                                          playAudio(index, sharedPreferences);
-                                        },
-                                            context,
-                                            snapshot.hasData &&
-                                                (snapshot.data.id ==
-                                                    widget.album.tracks[index]
-                                                        .songId) &&
-                                                playbackSnapshot.hasData &&
-                                                playbackSnapshot.data.playing);
-                                      }),
-                                  SizedBox(
-                                    height: 100,
-                                  )
-                                ],
-                              ),
-                            );
-                          }),
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: widget.album.tracks.length,
+                              itemBuilder: (context, index) {
+                                return musicTile(
+                                  widget.album.tracks[index],
+                                  context,
+                                );
+                              }),
+                          SizedBox(
+                            height: 100,
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 );
@@ -305,12 +279,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
                           }
                           if (album.tracks.length == 0) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                content: CustomAlertDialog(
-                                  type: AlertType.ERROR,
-                                  message: 'There are no tracks in this album!',
-                                )));
+                                content: Text(
+                                    'There are no tracks in this album.')));
                           } else {
                             if (!AudioService.running) {
                               await AudioService.start(
@@ -333,8 +303,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
                           width: 140,
                           height: 40,
                           decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.purple.shade500, width: 2.5),
+                            border:
+                                Border.all(color: Colors.orange, width: 2.5),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Row(
@@ -342,7 +312,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
                             children: [
                               Icon(
                                 Icons.shuffle,
-                                color: Colors.purple.shade500,
+                                color: Colors.orange,
                               ),
                               SizedBox(
                                 width: 4,
@@ -350,7 +320,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
                               Text('Shuffle Play',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.purple.shade500,
+                                    color: Colors.orange,
                                   )),
                             ],
                           ),
@@ -579,12 +549,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
       await _startPlaying(mediaItems, index);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          content: CustomAlertDialog(
-            type: AlertType.ERROR,
-            message: 'Error playing song!',
-          )));
+                      content: Text('Error playing song...')));
       Navigator.pop(context);
     }
   }

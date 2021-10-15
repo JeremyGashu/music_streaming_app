@@ -51,13 +51,8 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
             }
 
             if (state is SignUpError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: '${state.message}',
-                )));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) => Stack(
@@ -188,13 +183,10 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                           print(
                                               'phone number => ${_countryCode + _phoneNumberController.value.text}');
                                         } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Please enter valif phone number!',
-                )));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Please enter valid phone number!')));
                                         }
                                       },
                                       child: Text('Continue',

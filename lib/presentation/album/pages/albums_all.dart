@@ -5,8 +5,8 @@ import 'package:streaming_mobile/blocs/albums/album_bloc.dart';
 import 'package:streaming_mobile/blocs/albums/album_event.dart';
 import 'package:streaming_mobile/blocs/albums/album_state.dart';
 import 'package:streaming_mobile/data/models/album.dart';
+import 'package:streaming_mobile/presentation/album/widgets/album_tile_new.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 import '../../../locator.dart';
 
@@ -78,7 +78,7 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                   child: Column(
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         primary: false,
                         controller: _scrollController
                           ..addListener(() {
@@ -97,12 +97,9 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
                                 ..add(LoadAlbums());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _albums.map((album) {
-                          return Center(child: SingleAlbumSmall(album: album));
+                          return AlbumTile(album: album);
                         }).toList(),
                       )),
                       state is LoadingAlbum

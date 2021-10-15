@@ -24,6 +24,16 @@ class UserDownloadManager {
     return downloadTasks;
   }
 
+  Future<void>  addToDownload({
+    String id,
+    LocalDownloadTask localDownloadTask
+  }) async {
+    var task = getTaskById(id);
+    if(task == null) {
+      userDownloadBox.add(localDownloadTask);
+    }
+  }
+
   Future<LocalDownloadTask> getTaskById(String id) async {
     return userDownloadBox.get(id);
   }

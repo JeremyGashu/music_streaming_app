@@ -35,7 +35,7 @@ class CustomAlertDialog extends StatelessWidget {
             child: Center(
               child: Icon(
                 type == AlertType.SUCCESS ? Icons.check : Icons.error,
-                size: 35,
+                size: 30,
                 color: Colors.white,
               ),
             ),

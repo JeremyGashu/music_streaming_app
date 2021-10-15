@@ -5,6 +5,7 @@ import 'package:streaming_mobile/blocs/artist/artist_bloc.dart';
 import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_tile.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
@@ -69,36 +70,38 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                     ),
                   );
                 } else if (state is LoadingArtistError && _artists.isEmpty) {
-                  return CustomErrorWidget(onTap: () {
-                              artistBloc.add(LoadArtists());
-                            }, message: 'Error Loading Artists!');
+                  return CustomErrorWidget(
+                      onTap: () {
+                        artistBloc.add(LoadArtists());
+                      },
+                      message: 'Error Loading Artists!');
                 }
                 return Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !artistBloc.isLoading) {
-                                  if(artistBloc.state is LoadedArtist) {
-                                    if((artistBloc.state as LoadedArtist).artists.length == 0) return;
-                                  }
+                              if (artistBloc.state is LoadedArtist) {
+                                if ((artistBloc.state as LoadedArtist)
+                                        .artists
+                                        .length ==
+                                    0) return;
+                              }
                               artistBloc
                                 ..isLoading = true
                                 ..add(LoadArtists());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _artists.map((artist) {
-                          return Center(child: Artist(artist: artist));
+                          return ArtistTile(artist: artist);
                         }).toList(),
                       )),
                       state is LoadingArtist
@@ -111,9 +114,10 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
                       state is LoadedArtist
                           ? state.artists.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Artists!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Artists!'),
+                                )
                               : Container()
                           : Container(),
                     ],

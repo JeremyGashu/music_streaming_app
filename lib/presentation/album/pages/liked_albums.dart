@@ -5,6 +5,7 @@ import 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
 import 'package:streaming_mobile/blocs/liked_albums/liked_albums_event.dart';
 import 'package:streaming_mobile/blocs/liked_albums/liked_albums_state.dart';
 import 'package:streaming_mobile/data/models/album.dart';
+import 'package:streaming_mobile/presentation/album/widgets/album_tile_new.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
@@ -78,7 +79,7 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
                   child: Column(
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         primary: false,
                         controller: _scrollController
                           ..addListener(() {
@@ -97,12 +98,9 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
                                 ..add(LoadLikedAlbums());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _albums.map((album) {
-                          return Center(child: SingleAlbumSmall(album: album));
+                          return AlbumTile(album: album);
                         }).toList(),
                       )),
                       state is LoadingState
@@ -160,8 +158,7 @@ Widget _upperSection(BuildContext context) {
             Icons.search,
             size: 20,
           ),
-          onPressed: () {
-          },
+          onPressed: () {},
         ),
       ),
     ],

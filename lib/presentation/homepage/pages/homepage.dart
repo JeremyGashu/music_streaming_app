@@ -56,11 +56,13 @@ backgroundTaskEntryPoint() {
 }
 
 class HomePage extends StatefulWidget {
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  int page = 0;
   StreamSubscription playbackStateStream;
 
   bool isStopped(PlaybackState state) =>
@@ -80,12 +82,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final List<String> carouselImages = [
-    'assets/images/carousel_image.jpg',
-    'assets/images/carousel_image.jpg',
-    'assets/images/carousel_image.jpg',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -100,45 +96,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
-      // listeners: [
-      //   BlocListener<TrackBloc, TrackState>(
-      //     listener: (ctx, state) {
-      //       if (state is LoadingTrackError) {
-      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-      //     },
-      //   ),
-      //   BlocListener<AlbumBloc, AlbumState>(
-      //     listener: (ctx, state) {
-      //       if (state is LoadingAlbumError) {
-      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-      //       }
-      //     },
-      //   ),
-      //   BlocListener<PlaylistBloc, PlaylistState>(
-      //     listener: (ctx, state) {
-      //       if (state is LoadingPlaylistError) {
-      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-      //       }
-      //     },
-      //   ),
-      //   BlocListener<ArtistBloc, ArtistState>(
-      //     listener: (ctx, state) {
-      //       if (state is LoadingArtistError) {
-      //         BlocProvider.of<AuthBloc>(context).add(RefreshToken());
-      //       }
-      //     },
-      //   ),
-      //   BlocListener<AuthBloc, AuthState>(
-      //     listener: (ctx, state) {
-      //       if (state is TokenRefreshSuccessful) {
-      //         BlocProvider.of<TrackBloc>(context).add(LoadTracks());
-      //         BlocProvider.of<AlbumBloc>(context).add(LoadAlbums());
-      //         BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylists());
-      //         BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-      //       }
-      //     },
-      //   ),
-      // ],
+
       child: RefreshIndicator(
         onRefresh: () async {
           BlocProvider.of<TrackBloc>(context).add(LoadTracksInit());
@@ -173,6 +131,11 @@ class _HomePageState extends State<HomePage> {
                               )
                             : CarouselSlider(
                                 options: CarouselOptions(
+                                    onPageChanged: (p, _) {
+                                      setState(() {
+                                        page = p;
+                                      });
+                                    },
                                     height: 310,
                                     viewportFraction: 1.05,
                                     initialPage: 0,
@@ -181,16 +144,8 @@ class _HomePageState extends State<HomePage> {
                                     .map((e) => GestureDetector(
                                         onTap: () {
                                           if (e == null) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    elevation: 0,
-                                                    content: CustomAlertDialog(
-                                                      type: AlertType.ERROR,
-                                                      message:
-                                                          'Incomplete album info!',
-                                                    )));
+                                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Incomplete album info')));
                                             return;
                                           }
                                           Navigator.pushNamed(context,
@@ -217,6 +172,23 @@ class _HomePageState extends State<HomePage> {
                       }
                       return Container();
                     }),
+                  ),
+                  SizedBox(height:5,),
+
+                  Container(
+                    decoration: BoxDecoration(color: Colors.white),
+                    height: 15,
+                    child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
+
+                        builder: (context, state) {
+                          if(state is LoadedFeaturedAlbum) {
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: state.albums.map((a) => Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),margin: EdgeInsets.symmetric(horizontal: 5,),width: 8,height: 8,color: page == state.albums.indexOf(a) ? Colors.black87 : Colors.grey.withOpacity(0.4)),).toList(),
+                            );
+                          }
+                          return Container();
+                        }),
                   ),
 
                   SizedBox(

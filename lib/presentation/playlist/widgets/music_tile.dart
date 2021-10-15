@@ -1,211 +1,347 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
+import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
+import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
+import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
+import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
+import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 Widget musicTile(
   Track music,
-  Function onPressed,
-  BuildContext context, [
-  isPlaying = false,
-  MediaItem mediaItem,
-]) {
+  BuildContext context,
+) {
   return BlocListener<UserDownloadBloc, UserDownloadState>(
-    listener: (c, state) {
-      if (state is DownloadFailed) {
-        ScaffoldMessenger.of(c).showSnackBar(SnackBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          content: CustomAlertDialog(
-            type: AlertType.ERROR,
-            message: state.message,
-          ),
-        ));
-        // Future.delayed(Duration(seconds: 2));
-        // if (state.id != null || state.id != '') {
-        //   BlocProvider.of<UserDownloadBloc>(context)
-        //       .add(UserRetryDownload(track: music));
-        // }
-      }
-    },
+    listener: (_, __) {},
     child: GestureDetector(
       onTap: () {
-        onPressed();
+        playAudio(music, context);
       },
-      child: ListTile(
-        leading: Card(
-          elevation: 3,
-          child: Container(
-            width: 50,
-            height: 50,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: CachedNetworkImage(
-                errorWidget: (context, url, error) {
-                  return Image.asset(
-                    'assets/images/album_one.jpg',
-                    fit: BoxFit.contain,
-                  );
-                },
-                imageUrl: music != null
-                    ? music.coverImageUrl
-                    : mediaItem.artUri.toString(),
-                placeholder: (context, url) => CircularProgressIndicator(),
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
-        title: Text(
-          music != null
-              ? music.title != null
-                  ? music.title
-                  : "-------"
-              : mediaItem.title != null
-                  ? mediaItem.title
-                  : "-------",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.black.withOpacity(0.8),
-            fontSize: 18,
-            letterSpacing: 1.01,
-          ),
-        ),
-        subtitle: Text(
-          music != null
-              ? music.title
-              : mediaItem.artist != null
-                  ? mediaItem.artist
-                  : "-----",
-          style: TextStyle(
-            color: Colors.black.withOpacity(0.5),
-            fontSize: 14,
-            letterSpacing: 1.01,
-          ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            isPlaying
-                ? Row(
-                    children: [
-                      Image.asset(
-                        "assets/images/playing_wave.gif",
-                        height: 20,
-                        color: kRed,
+      child: StreamBuilder(
+          stream: AudioService.currentMediaItemStream,
+          builder: (context, AsyncSnapshot<MediaItem> mediaItemStream) {
+            return StreamBuilder(
+                stream: AudioService.playbackStateStream,
+                builder:
+                    (context, AsyncSnapshot<PlaybackState> playbackSnapshot) {
+                  return ListTile(
+                    leading: Card(
+                      elevation: 3,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            errorWidget: (context, url, error) {
+                              return Image.asset(
+                                'assets/images/album_one.jpg',
+                                fit: BoxFit.contain,
+                              );
+                            },
+                            imageUrl: music != null
+                                ? music.coverImageUrl
+                                : mediaItemStream.data.artUri.toString(),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
-                      SizedBox(width: 10),
-                    ],
-                  )
-                : SizedBox(),
-            Text(
-              prettyDuration(music != null
-                  ? (music.duration != null
-                      ? Duration(seconds: music.duration)
-                      : mediaItem.duration)
-                  : Duration(seconds: 0)),
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            FutureBuilder<bool>(
-                future: LocalHelper.allDownloaded(music),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    print('current data ${snapshot.data}');
-                  }
-                  return IconButton(
-                    onPressed: () async {
-                      var status = await Permission.storage.status;
-                      if (status.isGranted) {
-                        if (snapshot.hasData && snapshot.data) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              content: CustomAlertDialog(
-                                type: AlertType.SUCCESS,
-                                message: 'Already Downloaded!',
-                              )));
-                          return;
-                        }
+                    ),
+                    title: Text(
+                      music != null
+                          ? music.title != null
+                              ? music.title
+                              : "-------"
+                          : mediaItemStream.data.title != null
+                              ? mediaItemStream.data.title
+                              : "-------",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: 18,
+                        letterSpacing: 1.01,
+                      ),
+                    ),
+                    subtitle: Text(
+                      music != null
+                          ? music.title
+                          : mediaItemStream.data.artist != null
+                              ? mediaItemStream.data.artist
+                              : "-----",
+                      style: TextStyle(
+                        color: Colors.black.withOpacity(0.5),
+                        fontSize: 14,
+                        letterSpacing: 1.01,
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        (playbackSnapshot.hasData &&
+                                playbackSnapshot.data.playing &&
+                                mediaItemStream.data.id == music.songId)
+                            ? Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/images/playing_wave.gif",
+                                    height: 20,
+                                    color: kRed,
+                                  ),
+                                  SizedBox(width: 10),
+                                ],
+                              )
+                            : SizedBox(),
+                        Text(
+                          prettyDuration(music != null
+                              ? (music.duration != null
+                                  ? Duration(seconds: music.duration)
+                                  : mediaItemStream.data.duration)
+                              : Duration(seconds: 0)),
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        FutureBuilder<bool>(
+                            future: LocalHelper.allDownloaded(music),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                print('current data ${snapshot.data}');
+                              }
+                              return IconButton(
+                                  onPressed: () async {
+                                    var status =
+                                        await Permission.storage.status;
+                                    if (status.isGranted) {
+                                      if (snapshot.hasData && snapshot.data) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Already downloaded...')));
+                                        return;
+                                      }
 
-                        if (await LocalHelper.downloadAlreadyAdded(
-                            music.songId)) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              content: CustomAlertDialog(
-                                type: AlertType.WARNING,
-                                message: 'Download task exists!!',
-                              )));
-                          return;
-                        }
-                        // if()
-                        BlocProvider.of<UserDownloadBloc>(context)
-                            .add(StartDownload(track: music));
-                        return;
-                      } else {
-                        PermissionStatus stat =
-                            await Permission.storage.request();
-                        if (stat == PermissionStatus.granted) {
-                          if (snapshot.hasData && snapshot.data) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                content: CustomAlertDialog(
-                                  type: AlertType.SUCCESS,
-                                  message: 'Already Downloaded!',
-                                )));
-                            return;
-                          }
-                          if (await LocalHelper.downloadAlreadyAdded(
-                              music.songId)) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                content: CustomAlertDialog(
-                                  type: AlertType.WARNING,
-                                  message: 'Download task exists!',
-                                )));
-                            return;
-                          }
-                          BlocProvider.of<UserDownloadBloc>(context)
-                              .add(StartDownload(track: music));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              content: CustomAlertDialog(
-                                type: AlertType.ERROR,
-                                message:
-                                    'Please grant permission to download files!',
-                              )));
-                        }
-                      }
-                    },
-                    icon: Icon(
-                      Icons.file_download,
-                      color: snapshot.hasData && snapshot.data
-                          ? Colors.orange
-                          : Colors.grey,
-                      size: 20,
+                                      if (await LocalHelper
+                                          .downloadAlreadyAdded(music.songId)) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Download task exists...')));
+                                        return;
+                                      }
+                                      // if()
+                                      BlocProvider.of<UserDownloadBloc>(context)
+                                          .add(StartDownload(track: music));
+                                      return;
+                                    } else {
+                                      PermissionStatus stat =
+                                          await Permission.storage.request();
+                                      if (stat == PermissionStatus.granted) {
+                                        if (snapshot.hasData && snapshot.data) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Already downloaded...')));
+                                          return;
+                                        }
+                                        if (await LocalHelper
+                                            .downloadAlreadyAdded(
+                                                music.songId)) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Download task exists!')));
+                                          return;
+                                        }
+                                        BlocProvider.of<UserDownloadBloc>(
+                                                context)
+                                            .add(StartDownload(track: music));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Please grant permission to download files!')));
+                                      }
+                                    }
+                                  },
+                                  icon: snapshot.hasData && snapshot.data
+                                      ? Icon(
+                                          Icons.file_download_done,
+                                          color: Colors.orange,
+                                          size: 20,
+                                        )
+                                      : Icon(
+                                          Icons.file_download,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ));
+                            })
+                      ],
                     ),
                   );
-                })
-          ],
-        ),
-      ),
+                });
+          }),
     ),
   );
+}
+
+void playAudio(Track track, BuildContext context) async {
+  if (AudioService.playbackState.playing) {
+    if (track.songId == AudioService.currentMediaItem.id) {
+      print(
+          "PlayListPage[playlist_detail]: already running with the same media id");
+      Navigator.pushNamed(
+          context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+          arguments: track);
+      return;
+    }
+  }
+
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  if (sharedPreferences != null) {
+    print("audio service not running");
+    int pos = sharedPreferences.getInt('position');
+    Duration position = Duration(seconds: 0);
+    if (pos != null) {
+      position = Duration(seconds: pos);
+    }
+    playSong(context, position, track);
+  }
+}
+
+Future<void> playSong(context, Duration position, Track track) async {
+  try {
+    Navigator.pushNamed(
+        context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName,
+        arguments: track);
+    var dir = await LocalHelper.getFilePath(context);
+
+    List<MediaItem> mediaItems = [];
+
+    String source = '$M3U8_URL/${track.songId}';
+
+    if (await LocalHelper.isFileDownloaded(track.songId) &&
+        await LocalHelper.allSegmentsDownloaded(id: track.songId)) {
+      print("${track.songId}: downloaded");
+      source = '$dir/${track.songId}/main.m3u8';
+    }
+
+    mediaItems.add(MediaItem(
+        id: track.songId,
+        album: '',
+        title: track.title,
+        genre: '${track.genre.name}',
+        artist: '${track.artist.firstName} ${track.artist.lastName}',
+        duration: Duration(seconds: track.duration),
+        artUri: Uri.parse(track.coverImageUrl),
+        extras: {'source': source}));
+
+    ParseHls parseHLS = ParseHls();
+    print("mediaItems: ${mediaItems}");
+    if (!(await LocalHelper.isFileDownloaded(track.songId)) ||
+        !(await LocalHelper.allSegmentsDownloaded(id: track.songId))) {
+      File m3u8File = File('$dir/${track.songId}/main.m3u8');
+      HlsMediaPlaylist hlsPlayList;
+      if (m3u8File.existsSync()) {
+        hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
+      } else {
+        hlsPlayList = await parseHLS.parseHLS(File(await parseHLS.downloadFile(
+                '$M3U8_URL/${track.songId}',
+                '$dir/${track.songId}',
+                "main.m3u8"))
+            .readAsStringSync());
+      }
+
+      List<DownloadTask> downloadTasks = [];
+      // print(hlsPlayList.segments);
+      hlsPlayList.segments.forEach((segment) {
+        var segmentIndex = hlsPlayList.segments.indexOf(segment);
+        downloadTasks.add(DownloadTask(
+            track_id: track.songId,
+            segment_number: segmentIndex,
+            downloadType: DownloadType.media,
+            downloaded: false,
+            download_path: '$dir/${track.songId}/',
+            url: segment.url));
+      });
+      print(downloadTasks);
+      BlocProvider.of<MediaDownloaderBloc>(context)
+          .add(AddDownload(downloadTasks: downloadTasks));
+    } else {
+      var m3u8FilePath = '$dir/${track.songId}/main.m3u8';
+
+      File file = File(m3u8FilePath);
+      if (file.existsSync()) {
+        await parseHLS.updateLocalM3u8(m3u8FilePath);
+        print("mediaItems: ${mediaItems}");
+        print("the file is downloaded playing from local: ${mediaItems}");
+        await parseHLS.writeLocalM3u8File(m3u8FilePath);
+      } else {
+        HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
+                await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
+                    '$dir/${track.songId}', "main.m3u8"))
+            .readAsStringSync());
+
+        List<DownloadTask> downloadTasks = [];
+        // print(hlsPlayList.segments);
+        hlsPlayList.segments.forEach((segment) {
+          var segmentIndex = hlsPlayList.segments.indexOf(segment);
+          downloadTasks.add(DownloadTask(
+              track_id: track.songId,
+              segment_number: segmentIndex,
+              downloadType: DownloadType.media,
+              downloaded: false,
+              download_path: '$dir/${track.songId}/',
+              url: segment.url));
+        });
+        print(downloadTasks);
+        BlocProvider.of<MediaDownloaderBloc>(context)
+            .add(AddDownload(downloadTasks: downloadTasks));
+      }
+    }
+
+    await _startPlaying(mediaItems);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Error playing song')));
+    Navigator.pop(context);
+  }
+}
+
+_startPlaying(mediaItems) async {
+  if (AudioService.running) {
+    print("running");
+    await AudioService.updateQueue(mediaItems);
+    await AudioService.playMediaItem(mediaItems[0]);
+  } else {
+    if (await AudioService.start(
+      backgroundTaskEntrypoint: backgroundTaskEntryPoint,
+      androidNotificationChannelName: 'Playback',
+      androidNotificationColor: 0xFF2196f3,
+      androidStopForegroundOnPause: true,
+      androidEnableQueue: true,
+    )) {
+      await AudioService.updateQueue(mediaItems);
+      await AudioService.playMediaItem(mediaItems[0]);
+    }
+  }
 }

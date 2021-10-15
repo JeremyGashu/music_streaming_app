@@ -67,12 +67,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
           }
           if (state is ErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: '${state.message}',
-                )));
+                      content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -116,44 +111,23 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                       height: 15,
                     ),
                     Container(
-                      child: StreamBuilder(
-                          stream: AudioService.currentMediaItemStream,
-                          builder:
-                              (context, AsyncSnapshot<MediaItem> snapshot) {
-                            return StreamBuilder(
-                              stream: AudioService.playbackStateStream,
-                              builder: (context,
-                                      AsyncSnapshot<PlaybackState>
-                                          playbackSnapshot) =>
-                                  Column(
-                                children: [
-                                  ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount:
-                                          widget.playlistInfo.songs.length,
-                                      itemBuilder: (context, index) {
-                                        return musicTile(
-                                            widget.playlistInfo.songs[index]
-                                                .song, () {
-                                          print("play playlist");
-                                          playAudio(index, sharedPreferences);
-                                        },
-                                            context,
-                                            snapshot.hasData &&
-                                                (snapshot.data.id ==
-                                                    widget.playlistInfo
-                                                        .songs[index].songId) &&
-                                                playbackSnapshot.hasData &&
-                                                playbackSnapshot.data.playing);
-                                      }),
-                                  SizedBox(
-                                    height: 100,
-                                  )
-                                ],
-                              ),
-                            );
-                          }),
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: widget.playlistInfo.songs.length,
+                              itemBuilder: (context, index) {
+                                return musicTile(
+                                  widget.playlistInfo.songs[index].song,
+                                  context,
+                                );
+                              }),
+                          SizedBox(
+                            height: 100,
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -325,12 +299,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                           }
                           if (playlist.songs.length == 0) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'There are no tracks in this playlist!',
-                )));
+                      content: Text('There are no tracks in this playlist!')));
                           } else {
                             if (!AudioService.running) {
                               await AudioService.start(
@@ -353,7 +322,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                           height: 40,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Colors.purple.shade500, width: 2.5),
+                                color: Colors.orange, width: 2.5),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Row(
@@ -361,7 +330,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                             children: [
                               Icon(
                                 Icons.shuffle,
-                                color: Colors.purple.shade500,
+                                color: Colors.orange,
                               ),
                               SizedBox(
                                 width: 4,
@@ -369,7 +338,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                               Text('Shuffle Play',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.purple.shade500,
+                                    color: Colors.orange,
                                   )),
                             ],
                           ),
@@ -600,13 +569,8 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
       await _startPlaying(mediaItems, index);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error playing song!',
-                )));
+     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

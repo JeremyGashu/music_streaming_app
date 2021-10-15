@@ -43,7 +43,7 @@ class AlbumPage extends StatelessWidget {
                         'View All >',
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: kPurple,
+                            color:  Colors.orange,
                             fontSize: 12),
                       ),
                     ),
@@ -70,7 +70,7 @@ class AlbumPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(25),
                   child: Container(
-                    color: Colors.purple[900],
+                    color: Colors.orange,
                     width: 160,
                     height: 40,
                     child: Center(

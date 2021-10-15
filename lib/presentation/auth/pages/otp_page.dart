@@ -153,14 +153,8 @@ class _OTPState extends State<OTP> {
                               child: OutlinedButton(
                                 onPressed: () {
                                   if (_otp.length < 4) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                            backgroundColor: Colors.transparent,
-                                            elevation: 0,
-                                            content: CustomAlertDialog(
-                                              type: AlertType.WARNING,
-                                              message: 'Please entervalid OTP!',
-                                            )));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Please enter valid OTP')));
                                   } else {
                                     print('current otp ${_otp}');
                                     BlocProvider.of<SignUpBloc>(context).add(

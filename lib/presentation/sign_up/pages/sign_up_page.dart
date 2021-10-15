@@ -265,18 +265,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                                   _phoneNumberController
                                                           .value.text.length ==
                                                       10) {
-                                                        ScaffoldMessenger.of(context)
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content:
-                                                            CustomAlertDialog(
-                                                          type: AlertType.ERROR,
-                                                          message:
-                                                              'Please enter valid phone number!',
-                                                        )));
-                                                        return;
+                                                        content: Text(
+                                                            'Please enter valid phone number!')));
+                                                return;
                                               }
 
                                               if (_passwordTextController
@@ -289,15 +282,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                                       6) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content:
-                                                            CustomAlertDialog(
-                                                          type: AlertType.ERROR,
-                                                          message:
-                                                              'Password cannot less than 6 characters!',
-                                                        )));
+                                                        content: Text(
+                                                            'Password cannot be less than 6 characters!')));
                                                 return;
                                               }
 
@@ -312,15 +298,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                                           .value.text) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content:
-                                                            CustomAlertDialog(
-                                                          type: AlertType.ERROR,
-                                                          message:
-                                                              'Confirmation password cannot be different from password!',
-                                                        )));
+                                                        content: Text(
+                                                            'Password did not match!')));
                                                 return;
                                               }
 

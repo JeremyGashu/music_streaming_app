@@ -9,7 +9,7 @@ import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dar
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
 class AllNewReleaseTracks extends StatefulWidget {
   static const String allNewReleaseTracksRouterName =
@@ -87,7 +87,7 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
@@ -106,16 +106,9 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
                                 ..add(LoadNewReleases());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _tracks.map((track) {
-                          return Center(
-                            child: SingleTrack(
-                              track: track,
-                            ),
-                          );
+                          return musicTile(track, context);
                         }).toList(),
                       )),
                       state is LoadingNewReleases

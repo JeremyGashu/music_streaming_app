@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
+import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
 import 'package:streaming_mobile/imports.dart';
@@ -34,7 +35,6 @@ class MediaDownloaderBloc
   // Handles download callback
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
-    print('download callback');
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port');
     send.send([id, status, progress]);
@@ -56,14 +56,12 @@ class MediaDownloaderBloc
       return;
     }
     _port.listen((dynamic data) async {
-      print('////////////////////////////////////////////////////');
-      print(data);
+
       String taskId = data[0];
       DownloadTaskStatus status = data[1];
-      print(status);
+
       var _taskIndex = _tasks.indexWhere((element) => element.taskId == taskId);
-      print('////////////////////////////////////////////////////');
-      print('taskindex $_taskIndex');
+
       if (_taskIndex != -1) {
         if (status == DownloadTaskStatus.complete) {
           smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
@@ -75,7 +73,7 @@ class MediaDownloaderBloc
           //   add(UpdateDownloadState(
           //       state: DownloadCompleted(downloadedTask: _downloadTask)));
           // }
-          print('here');
+
           add(UpdateDownloadState(
               state: DownloadCompleted(downloadedTask: _downloadTask)));
           _tasks.removeAt(_taskIndex);
@@ -84,12 +82,13 @@ class MediaDownloaderBloc
             addDownload(_tasks[0].downloadTask)
                 .then((value) => _tasks[0].taskId = value);
           } else {
-            print('/////////////////////////////////////////');
-            print('download done');
-            print(
-                '//////// TODO now download the key as all the files are downloads');
+
             add(UpdateDownloadState(
                 state: DownloadDone(downloadedTask: _downloadTask)));
+
+
+            // getIt<UserDownloadManager>().addToDownload(id: _downloadTask.track_id, localDownloadTask: null);
+
             String m3u8Path =
                 '${await LocalHelper.getLocalFilePath()}/${_downloadTask.track_id}/main.m3u8';
             LocalHelper.downloadKeyFile(m3u8Path).then((val) {
@@ -105,14 +104,12 @@ class MediaDownloaderBloc
         //  _tasks.removeAt(_taskIndex);
           // print('onCancel being called => ${_tasks.length}');
           // _checkQueueAndContinueDownload();
-          print('onCancel being called');
-          print('current status => ${status}');
-          print(status);
+
+
           add(UpdateDownloadState(state: DownloadOnProgressState()));
         } else if (status == DownloadTaskStatus.failed) {
           smd.DownloadTask _downloadTask = _tasks[_taskIndex].downloadTask;
-          print('current status => ${status}');
-          print(status);
+
 
           add(UpdateDownloadState(
               state: DownloadFailed(_downloadTask.track_id)));
@@ -122,13 +119,11 @@ class MediaDownloaderBloc
           //   DownloadTaskStatus.failed
           // DownloadTaskStatus.paused
 
-          print('.//////////////////////// else');
-          print(status);
+
           // add(UpdateDownloadState(state: DownloadFailed()));
         }
       }
     });
-    print('registering callback');
     FlutterDownloader.registerCallback(downloadCallback);
   }
 
@@ -148,18 +143,14 @@ class MediaDownloaderBloc
       yield DownloadOnProgressState();
       if (event is InitializeDownloader) {
         // _bindBackgroundIsolate();
-        print('init queue box => ${queueBox.length}');
         if (queueBox.isNotEmpty) {
-          print('init queue box => ${queueBox.length}');
           _downloadQueue.addAll(queueBox.values);
         }
       } else if (event is BeginDownload) {
         List<smd.DownloadTask> dt = [];
         yield DownloadStarted();
 
-        print('_task length => ${_tasks.length}');
         if (_tasks.length == 0) {
-          print('here 1');
           var length = event.downloadTasks.length;
           for (int i = 0; i < length; i++) {
             var element = event.downloadTasks[i];
@@ -191,7 +182,6 @@ class MediaDownloaderBloc
           // _tasks.add(Task(downloadTask: event.downloadTask, taskId: taskId));
         }
       } else if (event is AddDownload) {
-        print('add download event');
         // clear the download for stream download
         // _handleClearDownload();
         _addToQueue(event.downloadTasks);
@@ -200,7 +190,6 @@ class MediaDownloaderBloc
             "SELECT * FROM task WHERE status=${DownloadTaskStatus.running.value}";
         var tasks = await FlutterDownloader.loadTasksWithRawQuery(query: query);
 
-        print('tasks in add download => ${tasks.length}');
 
         if (tasks.isEmpty) {
           add(BeginDownload(downloadTasks: event.downloadTasks));
@@ -208,13 +197,11 @@ class MediaDownloaderBloc
         }
       }
        else if (event is RetryDownload) {
-        print('current tasks => ${_tasks.length}');
             if(_tasks.isNotEmpty) {
               if(_tasks[0].downloadTask.track_id == event.songId) {
                 _tasks.clear();
               }
             }
-            print('current tasks => ${_tasks.length}');
             // a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
             // print('after cancel => ${a.length}');
 
@@ -250,13 +237,11 @@ class MediaDownloaderBloc
         //     var a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
         //     print('before cancel => ${a.length}');
 
-            print('current tasks => ${_tasks.length}');
             if(_tasks.isNotEmpty) {
               if(_tasks[0].downloadTask.track_id == event.trackId) {
                 _tasks.clear();
               }
             }
-            print('current tasks => ${_tasks.length}');
             // a = await FlutterDownloader.loadTasksWithRawQuery(query: query);
             // print('after cancel => ${a.length}');
 
@@ -305,7 +290,6 @@ class MediaDownloaderBloc
           throw Exception(e);
         }
       } else if (event is UpdateDownloadState) {
-        print("UPDATING DOWNLOAD STATE");
         yield event.state;
       } else if (event is ClearDownload) {
         // stops download and clear tasks

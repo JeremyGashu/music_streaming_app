@@ -64,12 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                     BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
                       if (state is AuthenticationError) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            content: CustomAlertDialog(
-                              type: AlertType.ERROR,
-                              message: '${state.message}',
-                            )));
+                      content: Text(state.message)));
                       } else if (state is Authenticated) {
                         Navigator.pushNamedAndRemoveUntil(context,
                             MainPage.mainPageRouterName, (route) => false);
@@ -266,22 +261,8 @@ class _LoginPageState extends State<LoginPage> {
                                                           _phoneNumberController
                                                                   .value.text ==
                                                               '') {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                SnackBar(
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    elevation:
-                                                                        0,
-                                                                    content:
-                                                                        CustomAlertDialog(
-                                                                      type: AlertType
-                                                                          .ERROR,
-                                                                      message:
-                                                                          'Phone number cannot be empty!',
-                                                                    )));
+                                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Password cannot be empty!')));
                                                         return;
                                                       }
 
@@ -292,12 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                                                                   .value.text ==
                                                               '') {
                                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Phone number cannot be empty!',
-                )));
+                      content: Text('Phone number cannot be empty!')));
                                                         return;
                                                       }
                                                       BlocProvider.of<AuthBloc>(

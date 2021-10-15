@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -21,9 +22,7 @@ import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/local_download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
-// import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 class DownloadListItem extends StatefulWidget {
@@ -37,164 +36,179 @@ class DownloadListItem extends StatefulWidget {
 }
 
 class _DownloadListItemState extends State<DownloadListItem> {
+  bool isBeingDeleted = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MediaDownloaderBloc, MediaDownloaderState>(
         builder: (context, state) {
-      return ListTile(
-        onTap: () {
-          if (widget.downloadTask.progress == 100.0) {
-            playAudio();
-            // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (context) => SingleTrackPlayerPage(track: null),
-            // ));
-          }
-        },
-        title: Text("${widget.downloadTask.title}"),
-        leading: Container(
-          width: 40,
-          height: 40,
-          child: widget.downloadTask.coverImageUrl != null
-              ? Image.network(
-                  widget.downloadTask.coverImageUrl,
-                )
-              : Container(),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.completed
-                  ? "completed"
-                  : "${widget.downloadTask.progress.toStringAsFixed(1)} %",
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            widget.completed
-                ? SizedBox()
-                : state is mds.DownloadFailed && state.id == widget.downloadTask.songId
-                    ? Text(
-                        'Failed',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
+      return !isBeingDeleted
+          ? ListTile(
+              onTap: () {
+                if (widget.downloadTask.progress == 100.0) {
+                  playAudio();
+                }
+              },
+              title: Text("${widget.downloadTask.title}"),
+              leading: Container(
+                width: 40,
+                height: 40,
+                child: widget.downloadTask.coverImageUrl != null
+                    ? Image.network(
+                        widget.downloadTask.coverImageUrl,
                       )
-                    : LinearProgressIndicator(
-                        value: widget.downloadTask.progress / 100,
-                        valueColor: AlwaysStoppedAnimation<Color>(kYellow),
-                        backgroundColor: kYellow.withOpacity(0.2),
-                      )
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.downloadTask.progress == 100
-                ? Text(prettyDuration(Duration(seconds : widget.downloadTask.duration ?? 0)))
-                : Container(),
-            widget.downloadTask.progress == 100
-                ? IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Delete file"),
-                          content: Text("Do you want to delete this file"),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("No")),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  BlocProvider.of<UserDownloadBloc>(context)
-                                      .add(DeleteDownload(
-                                          trackId: widget.downloadTask.songId));
-                                },
-                                child: Text("Yes")),
-                          ],
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.delete,
-                      size: 20,
-                      color: Colors.redAccent,
-                    ),
-                  )
-                : Container(),
-            widget.downloadTask.progress != 100
-                ? IconButton(
-                    onPressed: () async {
-                      // BlocProvider.of<UserDownloadBloc>(context).add(
-                      //         DeleteDownload(trackId: downloadTask.songId));
-                      // UserDownloadManager manager = getIt<UserDownloadManager>();
-                      // print(await manager.getTaskById(widget.downloadTask.songId));
-                      // BlocProvider.of<UserDownloadBloc>(context).add(
-                      //     StartDownload(
-                      //         track: widget.downloadTask.toTrack())); // showDialog(
-                      //   context: context,
-                      //   builder: (context) => AlertDialog(
-                      //     title: Text("Delete file"),
-                      //     content: Text("Do you want to delete this file"),
-                      //     actions: [
-                      //       TextButton(
-                      //           onPressed: () {
-                      //             Navigator.pop(context);
-                      //           },
-                      //           child: Text("no")),
-                      //       TextButton(
-                      //           onPressed: () {
-                      //             BlocProvider.of<UserDownloadBloc>(context)
-                      //                 .add(DeleteDownload(trackId: downloadTask.songId));
-                      //             Navigator.pop(context);
-                      //           },
-                      //           child: Text("yes")),
-                      //     ],
-                      //   ),
-                      // );
-                      // if (state is DownloadFailed state.id != null || state.id != '') {
+                    : Container(),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.completed
+                        ? "completed"
+                        : "${widget.downloadTask.progress.toStringAsFixed(1)} %",
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  widget.completed
+                      ? SizedBox()
+                      : state is mds.DownloadFailed &&
+                              state.id == widget.downloadTask.songId
+                          ? Text(
+                              'Failed',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            )
+                          : LinearProgressIndicator(
+                              value: widget.downloadTask.progress / 100,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(kYellow),
+                              backgroundColor: kYellow.withOpacity(0.2),
+                            )
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  widget.downloadTask.progress == 100
+                      ? Text(prettyDuration(
+                          Duration(seconds: widget.downloadTask.duration ?? 0)))
+                      : Container(),
+                  widget.downloadTask.progress == 100
+                      ? IconButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
 
-                      // }
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Cance Download"),
-                          content: Text("Do you want to cancel this download?"),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("No")),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  BlocProvider.of<UserDownloadBloc>(context)
-                                      .add(DeleteFailedDownload(
-                                          track:
-                                              widget.downloadTask.toTrack()));
-                                },
-                                child: Text("Yes")),
-                          ],
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      size: 20,
-                      color: Colors.redAccent,
-                    ),
-                  )
-                : Container(),
-                // state is mds.DownloadFailed && state.id == widget.downloadTask.songId ? Icon(Icons.update) : Container(),
-            // : Container(),
-          ],
-        ),
-      );
+                              SnackBar(duration: Duration(seconds: 3),content: Text(
+                                'Deleting',
+                              ), action: SnackBarAction(label: 'Undo',onPressed: () {
+                                setState(() {
+                                  isBeingDeleted = !isBeingDeleted;
+                                });
+                              },),),
+                            );
+                            setState(() {
+                              isBeingDeleted = !isBeingDeleted;
+                              var a = Timer(Duration(seconds: 4), () {
+                                if(isBeingDeleted) {
+                                              BlocProvider.of<UserDownloadBloc>(
+                                                      context)
+                                                  .add(DeleteDownload(
+                                                      trackId: widget
+                                                          .downloadTask.songId));
+                                }
+                              });
+
+                              // print(isBeingDeleted);
+                            });
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (context) => AlertDialog(
+                            //     title: Text("Delete file"),
+                            //     content:
+                            //         Text("Do you want to delete this file"),
+                            //     actions: [
+                            //       TextButton(
+                            //           onPressed: () {
+                            //             Navigator.pop(context);
+                            //           },
+                            //           child: Text("No")),
+                            //       TextButton(
+                            //           onPressed: () {
+                            //             Navigator.pop(context);
+                            //             BlocProvider.of<UserDownloadBloc>(
+                            //                     context)
+                            //                 .add(DeleteDownload(
+                            //                     trackId: widget
+                            //                         .downloadTask.songId));
+                            //           },
+                            //           child: Text("Yes")),
+                            //     ],
+                            //   ),
+                            // );
+
+
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //   content: Text('File Deleted!'),
+                            //   action: SnackBarAction(
+                            //       label: 'Undo',
+                            //       onPressed: () {
+                            //         setState(() {
+                            //           isBeingDeleted = !isBeingDeleted;
+                            //         });
+                            //       }),
+                            // ));
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            size: 20,
+                            color: Colors.orange,
+                          ),
+                        )
+                      : Container(),
+                  widget.downloadTask.progress != 100
+                      ? IconButton(
+                          onPressed: () async {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Cance Download"),
+                                content: Text(
+                                    "Do you want to cancel this download?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("No")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        BlocProvider.of<UserDownloadBloc>(
+                                                context)
+                                            .add(DeleteFailedDownload(
+                                                track: widget.downloadTask
+                                                    .toTrack()));
+                                      },
+                                      child: Text("Yes")),
+                                ],
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.redAccent,
+                          ),
+                        )
+                      : Container(),
+                  // state is mds.DownloadFailed && state.id == widget.downloadTask.songId ? Icon(Icons.update) : Container(),
+                  // : Container(),
+                ],
+              ),
+            )
+          : Container();
     });
   }
 
@@ -326,13 +340,8 @@ class _DownloadListItemState extends State<DownloadListItem> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          content: CustomAlertDialog(
-            type: AlertType.ERROR,
-            message: 'Error playing song!',
-          )));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

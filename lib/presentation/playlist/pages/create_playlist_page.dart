@@ -34,22 +34,12 @@ class _CreatePrivatePlaylistWidgetState
         listener: (context, state) {
           if (state is ErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error creating playlist',
-                )));
+                      content: Text('Error creating playlist!')));
           }
           if (state is SuccessState) {
 
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Playlist created!',
-                )));
+                      content: Text('Playlist created!')));
             Navigator.pop(context, true);
           }
         },

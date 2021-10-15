@@ -8,6 +8,7 @@ import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
+import 'package:streaming_mobile/presentation/album/widgets/album_tile_new.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
@@ -86,7 +87,7 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
@@ -105,15 +106,10 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
                                 ..add(LoadNewReleases());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _albums.map((album) {
-                          return Center(
-                            child: SingleAlbumSmall(
-                              album: album,
-                            ),
+                          return AlbumTile(
+                            album: album,
                           );
                         }).toList(),
                       )),

@@ -33,20 +33,11 @@ class _DownloadPageState extends State<DownloadsPage> {
             listener: (c, mds) {
           if (mds is DownloadDone) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Download Finished!',
-                )));
+                      content: Text('Download finished!')));
           } else if (mds is DownloadStarted) {
+
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                content: CustomAlertDialog(
-                  type: AlertType.SUCCESS,
-                  message: 'Download Started!',
-                )));
+                      content: Text('Downloading...')));
           }
         }, builder: (context, userDownloaderState) {
           return BlocConsumer<UserDownloadBloc, UserDownloadState>(
@@ -54,22 +45,17 @@ class _DownloadPageState extends State<DownloadsPage> {
             if (userDownloaderState is DownloadDeleted) {
               WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    content: CustomAlertDialog(
-                      type: AlertType.SUCCESS,
-                      message: 'Download Deleted!!',
-                    )));
+                      content: Text('Download deleted!')));
               });
             }
           }, builder: (context, snapshot) {
             return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: DownloadingPage()),
-                SliverToBoxAdapter(child: Divider()),
-                SliverToBoxAdapter(child: DownloadedPage()),
-              ],
-            );
+                    slivers: [
+                      SliverToBoxAdapter(child: DownloadingPage()),
+                      SliverToBoxAdapter(child: Divider()),
+                      SliverToBoxAdapter(child: DownloadedPage()),
+                    ],
+                  );
           });
         }),
       ),

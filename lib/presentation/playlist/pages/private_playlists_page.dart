@@ -158,12 +158,7 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                           },
                           onDismissed: (_) async {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                content: CustomAlertDialog(
-                                  type: AlertType.SUCCESS,
-                                  message: 'Deleted playlist!',
-                                )));
+                      content: Text('Deleted playlist!')));
                             print(
                                 'delete playlist ${_playlists[index].playlistId}');
                           },

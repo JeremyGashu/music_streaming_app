@@ -8,6 +8,7 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/data/models/genre.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
 import '../../locator.dart';
 
@@ -74,7 +75,8 @@ class _TracksByGenreState extends State<TracksByGenre> {
                 } else if (state is LoadingTrackError && _tracks.isEmpty) {
                   return CustomErrorWidget(
                       onTap: () {
-                        trackBloc.add(LoadSongsByGenre(genreId: widget.genre.genreId));
+                        trackBloc.add(
+                            LoadSongsByGenre(genreId: widget.genre.genreId));
                       },
                       message: 'Error Loading Tracks!');
                 }
@@ -83,7 +85,7 @@ class _TracksByGenreState extends State<TracksByGenre> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
@@ -101,16 +103,9 @@ class _TracksByGenreState extends State<TracksByGenre> {
                                 ..add(LoadTracks());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _tracks.map((track) {
-                          return Center(
-                            child: SingleTrack(
-                              track: track,
-                            ),
-                          );
+                          return musicTile(track, context);
                         }).toList(),
                       )),
                       state is LoadingTrack

@@ -258,12 +258,7 @@ class _SingleTrackState extends State<SingleTrack> {
       await _startPlaying(mediaItems);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error playing song!',
-                )));
+                      content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

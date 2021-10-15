@@ -53,9 +53,7 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
                               .toList()
                               .reversed
                               .toList()[index];
-                          return musicTile(track, () {
-                            playAudio(track);
-                          }, context);
+                          return musicTile(track, context);
                         });
               }
 
@@ -186,12 +184,7 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
       await _startPlaying(mediaItems);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error playing song!',
-                )));
+                      content: Text('Error playing song')));
       Navigator.pop(context);
     }
   }

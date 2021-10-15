@@ -28,12 +28,7 @@ class _AddPlaylistPageState extends State<AddPlaylistPage> {
         listener: (context, state) {
           if (state is LoadingPlaylistError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Error loading playlist!',
-                )));
+                      content: Text('Error loading playlist!')));
           }
         },
         builder: (context, state) {

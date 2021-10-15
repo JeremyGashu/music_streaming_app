@@ -19,34 +19,14 @@ class ArtistProfilePage extends StatelessWidget {
           child: BlocConsumer<CacheBloc, cs.CacheState>(
               listener: (context, state) {
             if (state is cs.ErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  content: CustomAlertDialog(
-                    type: AlertType.ERROR,
-                    message: '${state.message}',
-                  )));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is cs.SuccessfulState) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  content: CustomAlertDialog(
-                    type: AlertType.SUCCESS,
-                    message: '${state.message}',
-                  )));
+                      content: Text(state.message)));
             } else if (state is cs.LoadingState) {
-              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //     backgroundColor: Colors.transparent,
-              //     elevation: 0,
-              //     content: CustomAlertDialog(
-              //       type: AlertType.WARNING,
-              //       message: 'Clearing cache...',
-              //     )));
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  // backgroundColor: Colors.transparent,
-                  // elevation: 0,
-                  content: Text('Cache cleared')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Clearing cache...')));
             }
           }, builder: (context, state) {
             return Column(
@@ -190,4 +170,3 @@ Widget _listSelectorTiles({String title, Icon icon, Function onTap}) {
     ),
   );
 }
-

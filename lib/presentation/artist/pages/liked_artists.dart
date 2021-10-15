@@ -6,6 +6,7 @@ import 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
 import 'package:streaming_mobile/blocs/liked_artists/liked_artists_event.dart';
 import 'package:streaming_mobile/blocs/liked_artists/liked_artists_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
+import 'package:streaming_mobile/presentation/artist/pages/artist_tile.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
@@ -46,7 +47,8 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                 if (state is LoadingState) {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedLikedArtists && state.artists.isEmpty) {
+                } else if (state is LoadedLikedArtists &&
+                    state.artists.isEmpty) {
                   // ScaffoldMessenger.of(context)
                   //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
                 } else if (state is ErrorState) {
@@ -70,36 +72,40 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                     ),
                   );
                 } else if (state is ErrorState && _artists.isEmpty) {
-                  return CustomErrorWidget(onTap: () {
-                              _likedArtistsBloc.add(LoadLikedArtists());
-                            }, message: 'Error Loading Artists!');
+                  return CustomErrorWidget(
+                      onTap: () {
+                        _likedArtistsBloc.add(LoadLikedArtists());
+                      },
+                      message: 'Error Loading Artists!');
                 }
                 return Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: GridView.count(
+                          child: ListView(
                         controller: _scrollController
                           ..addListener(() {
                             if (_scrollController.offset ==
                                     _scrollController
                                         .position.maxScrollExtent &&
                                 !_likedArtistsBloc.isLoading) {
-                                  if(_likedArtistsBloc.state is LoadedLikedArtists) {
-                                    if((_likedArtistsBloc.state as LoadedLikedArtists).artists.length == 0) return;
-                                  }
+                              if (_likedArtistsBloc.state
+                                  is LoadedLikedArtists) {
+                                if ((_likedArtistsBloc.state
+                                            as LoadedLikedArtists)
+                                        .artists
+                                        .length ==
+                                    0) return;
+                              }
                               _likedArtistsBloc
                                 ..isLoading = true
                                 ..add(LoadLikedArtists());
                             }
                           }),
-                        crossAxisCount: 2,
                         shrinkWrap: true,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
                         children: _artists.map((artist) {
-                          return Center(child: Artist(artist: artist));
+                          return ArtistTile(artist: artist);
                         }).toList(),
                       )),
                       state is LoadingState
@@ -112,9 +118,10 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
                       state is LoadedLikedArtists
                           ? state.artists.length == 0
                               ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 25),
-                                child: Text('No More Artists!'),
-                              )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 25),
+                                  child: Text('No More Artists!'),
+                                )
                               : Container()
                           : Container(),
                     ],
