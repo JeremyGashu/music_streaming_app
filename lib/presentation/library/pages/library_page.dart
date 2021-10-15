@@ -47,36 +47,40 @@ class LibraryPage extends StatelessWidget {
               return CustomScrollView(
                 // mainAxisSize: MainAxisSize.min,
                 slivers: [
+                  // SliverToBoxAdapter(
+                  //   child: SizedBox(
+                  //     height: 15,
+                  //   ),
+                  // ),
                   SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 15,
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildPlayListTopOptionsItem('assets/svg/album_new.svg',
-                            () {
-                          Navigator.pushNamed(
-                              context, LikedAlbumsPage.likedAlbumsRouteName);
-                        }, 'Albums', 1.0),
-                        _buildPlayListTopOptionsItem('assets/svg/songs_new.svg',
-                            () {
-                          Navigator.pushNamed(
-                              context, LikedSongsPage.likedSongsPage);
-                        }, 'Songs', 0.6),
-                        _buildPlayListTopOptionsItem('assets/svg/playlist_new.svg',
-                            () {
-                          Navigator.pushNamed(context,
-                              PrivatePlaylistsPage.privatePlaylistRouteName);
-                        }, 'Playlists', 0.6),
-                        _buildPlayListTopOptionsItem('assets/svg/artists_new.svg',
-                            () {
-                          Navigator.pushNamed(
-                              context, LikedArtistsPage.likedArtistsRouteName);
-                        }, 'Artists', 1.0),
-                      ],
+                    child: Container(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildPlayListTopOptionsItem('assets/svg/album_new.svg',
+                              () {
+                            Navigator.pushNamed(
+                                context, LikedAlbumsPage.likedAlbumsRouteName);
+                          }, 'Albums', 1.0),
+                          _buildPlayListTopOptionsItem('assets/svg/songs_new.svg',
+                              () {
+                            Navigator.pushNamed(
+                                context, LikedSongsPage.likedSongsPage);
+                          }, 'Songs', 0.6),
+                          _buildPlayListTopOptionsItem('assets/svg/playlist_new.svg',
+                              () {
+                            Navigator.pushNamed(context,
+                                PrivatePlaylistsPage.privatePlaylistRouteName);
+                          }, 'Playlists', 0.6),
+                          _buildPlayListTopOptionsItem('assets/svg/artists_new.svg',
+                              () {
+                            Navigator.pushNamed(
+                                context, LikedArtistsPage.likedArtistsRouteName);
+                          }, 'Artists', 1.0),
+                        ],
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -99,66 +103,69 @@ class LibraryPage extends StatelessWidget {
                     height: 20,
                   )),
                   SliverToBoxAdapter(
-                    child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
-                        builder: (context, state) {
-                      if (state is LoadedNewReleases) {
-                        return StreamBuilder(
-                            stream: AudioService.currentMediaItemStream,
-                            builder: (context, AsyncSnapshot<MediaItem> snapshot) {
-                              // print("Snapshot: ${snapshot.data}");
-                              // print(snapshot.hasData &&
-                              //     (snapshot.data.id ==
-                              //         track.songId));
-                              // print(snapshot.hasData &&
-                              //     (snapshot.data.id == tracks[0].data.id));
-                              return StreamBuilder(
-                                stream: AudioService.playbackStateStream,
-                                builder: (context,
-                                        AsyncSnapshot<PlaybackState>
-                                            playbackSnapshot) =>
-                                    Column(
-                                  children: [
-                                    ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: state.newRelease.songs.length,
-                                        itemBuilder: (context, index) {
-                                          var track =
-                                              state.newRelease.songs[index].song;
-                                          return musicTile(track, () {
-                                            playAudio(context, track);
-                                          },
-                                              context,
-                                              snapshot.hasData &&
-                                                  (snapshot.data.id ==
-                                                      track.songId) &&
-                                                  playbackSnapshot.hasData &&
-                                                  playbackSnapshot.data.playing);
-                                        }),
-                                    SizedBox(
-                                      height: 100,
-                                    )
-                                  ],
-                                ),
-                              );
-                            });
-                      } else if (state is LoadingNewReleasesError) {
-                        return CustomErrorWidget(
-                            onTap: () {
-                              BlocProvider.of<NewReleaseBloc>(context)
-                                  .add(LoadNewReleasesInit());
-                            },
-                            message: 'Error Loading New Songs!');
-                      } else if (state is LoadingNewReleases) {
-                        return Center(
-                          child: SpinKitRipple(
-                            color: Colors.grey,
-                            size: 70,
-                          ),
-                        );
-                      }
-                      return Container();
-                    }),
+                    child: Container(
+                      // color: Colors.grey.withOpacity(0.1),
+                      child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
+                          builder: (context, state) {
+                        if (state is LoadedNewReleases) {
+                          return StreamBuilder(
+                              stream: AudioService.currentMediaItemStream,
+                              builder: (context, AsyncSnapshot<MediaItem> snapshot) {
+                                // print("Snapshot: ${snapshot.data}");
+                                // print(snapshot.hasData &&
+                                //     (snapshot.data.id ==
+                                //         track.songId));
+                                // print(snapshot.hasData &&
+                                //     (snapshot.data.id == tracks[0].data.id));
+                                return StreamBuilder(
+                                  stream: AudioService.playbackStateStream,
+                                  builder: (context,
+                                          AsyncSnapshot<PlaybackState>
+                                              playbackSnapshot) =>
+                                      Column(
+                                    children: [
+                                      ListView.builder(
+                                          physics: NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: state.newRelease.songs.length,
+                                          itemBuilder: (context, index) {
+                                            var track =
+                                                state.newRelease.songs[index].song;
+                                            return musicTile(track, () {
+                                              playAudio(context, track);
+                                            },
+                                                context,
+                                                snapshot.hasData &&
+                                                    (snapshot.data.id ==
+                                                        track.songId) &&
+                                                    playbackSnapshot.hasData &&
+                                                    playbackSnapshot.data.playing);
+                                          }),
+                                      SizedBox(
+                                        height: 100,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              });
+                        } else if (state is LoadingNewReleasesError) {
+                          return CustomErrorWidget(
+                              onTap: () {
+                                BlocProvider.of<NewReleaseBloc>(context)
+                                    .add(LoadNewReleasesInit());
+                              },
+                              message: 'Error Loading New Songs!');
+                        } else if (state is LoadingNewReleases) {
+                          return Center(
+                            child: SpinKitRipple(
+                              color: Colors.grey,
+                              size: 70,
+                            ),
+                          );
+                        }
+                        return Container();
+                      }),
+                    ),
                   ),
                   // SizedBox(
                   //   height: 20.0,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -60,23 +61,26 @@ class _SingleTrackState extends State<SingleTrack> {
                     borderRadius: BorderRadius.circular(10.0)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: CachedNetworkImage(
-                    placeholder: (context, url) => Center(
-                      child: SpinKitRipple(
-                        size: 50,
-                        color: Colors.grey,
+                  child: Hero(
+                    tag: widget.track!= null ?widget.track.songId : '${Random()}',
+                    child: CachedNetworkImage(
+                      placeholder: (context, url) => Center(
+                        child: SpinKitRipple(
+                          size: 50,
+                          color: Colors.grey,
+                        ),
                       ),
+                      imageUrl: widget.track.coverImageUrl,
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          'assets/images/singletrack_one.jpg',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                      width: 140.0,
+                      height: 120,
+                      fit: BoxFit.contain,
                     ),
-                    imageUrl: widget.track.coverImageUrl,
-                    errorWidget: (context, url, error) {
-                      return Image.asset(
-                        'assets/images/singletrack_one.jpg',
-                        fit: BoxFit.cover,
-                      );
-                    },
-                    width: 140.0,
-                    height: 120,
-                    fit: BoxFit.contain,
                   ),
                 ),
               ),

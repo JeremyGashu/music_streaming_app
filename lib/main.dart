@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:streaming_mobile/blocs/cache_bloc/cache_bloc.dart';
 import 'imports.dart';
 
 void main() async {
@@ -45,6 +46,10 @@ void main() async {
 
     BlocProvider<LikedAlbumBloc>(
       create: (_) => sl<LikedAlbumBloc>(),
+    ),
+
+    BlocProvider<CacheBloc>(
+      create: (_) => sl<CacheBloc>(),
     ),
 
     BlocProvider<LikedArtistsBloc>(

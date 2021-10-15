@@ -7,22 +7,25 @@ Widget FeaturedAlbum(Album album) {
   return Container(
     margin: EdgeInsets.only(right: 8.0),
     child: Stack(children: [
-      CachedNetworkImage(
-        placeholder: (context, url) => Center(
-          child: SpinKitRipple(
-            size: 50,
-            color: Colors.grey,
+      Hero(
+        tag: album != null ? album.albumId : '' ,
+        child: CachedNetworkImage(
+          placeholder: (context, url) => Center(
+            child: SpinKitRipple(
+              size: 50,
+              color: Colors.grey,
+            ),
           ),
+          imageUrl: album != null ? album.artist.image : '',
+          errorWidget: (context, url, error) {
+            return Image.asset(
+              'assets/images/dawit_new.jpg',
+              fit: BoxFit.cover,
+            );
+          },
+          width: 1000.0,
+          fit: BoxFit.cover,
         ),
-        imageUrl: album != null ? album.artist.image : '',
-        errorWidget: (context, url, error) {
-          return Image.asset(
-            'assets/images/dawit_new.jpg',
-            fit: BoxFit.cover,
-          );
-        },
-        width: 1000.0,
-        fit: BoxFit.cover,
       ),
       Align(
         alignment: Alignment.bottomCenter,

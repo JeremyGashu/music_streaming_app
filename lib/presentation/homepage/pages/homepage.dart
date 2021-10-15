@@ -181,19 +181,20 @@ class _HomePageState extends State<HomePage> {
                                     .map((e) => GestureDetector(
                                         onTap: () {
                                           if (e == null) {
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                    content: CustomAlertDialog(
-                  type: AlertType.ERROR,
-                  message: 'Incomplete album info!',
-                )));
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    elevation: 0,
+                                                    content: CustomAlertDialog(
+                                                      type: AlertType.ERROR,
+                                                      message:
+                                                          'Incomplete album info!',
+                                                    )));
                                             return;
                                           }
-                                          Navigator.pushNamed(
-                                              context,
-                                              AlbumDetail
-                                                  .albumDetailRouterName,
+                                          Navigator.pushNamed(context,
+                                              AlbumDetail.albumDetailRouterName,
                                               arguments: e);
                                         },
                                         child: FeaturedAlbum(e)))
@@ -225,10 +226,8 @@ class _HomePageState extends State<HomePage> {
                   SectionTitle(
                       title: "Newly Released Songs",
                       callback: () {
-                        Navigator.pushNamed(
-                            context,
-                            AllNewReleaseTracks
-                                .allNewReleaseTracksRouterName);
+                        Navigator.pushNamed(context,
+                            AllNewReleaseTracks.allNewReleaseTracksRouterName);
                       }),
                   SizedBox(
                     height: 5,
@@ -251,18 +250,16 @@ class _HomePageState extends State<HomePage> {
                             itemCount: state.newRelease.songs.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (ctx, index) {
-                              return index ==
-                                      state.newRelease.songs.length - 1
+                              return index == state.newRelease.songs.length - 1
                                   ? Container(
                                       margin: EdgeInsets.only(right: 15),
                                       child: SingleTrack(
-                                        track: state
-                                            .newRelease.songs[index].song,
+                                        track:
+                                            state.newRelease.songs[index].song,
                                       ),
                                     )
                                   : SingleTrack(
-                                      track:
-                                          state.newRelease.songs[index].song,
+                                      track: state.newRelease.songs[index].song,
                                     );
                             },
                           );
@@ -411,8 +408,7 @@ class _HomePageState extends State<HomePage> {
                               itemCount: state.genres.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (ctx, index) {
-                                return GenreWidget(
-                                    genre: state.genres[index]);
+                                return GenreWidget(genre: state.genres[index]);
                               },
                             );
                           } else if (state is GenresLoadFailed) {
@@ -546,8 +542,7 @@ class _HomePageState extends State<HomePage> {
                                   itemBuilder: (ctx, index) {
                                     return state.tracks.length - 1 == index
                                         ? Container(
-                                            margin:
-                                                EdgeInsets.only(right: 15),
+                                            margin: EdgeInsets.only(right: 15),
                                             child: SingleTrack(
                                                 track: state.tracks[index]),
                                           )
@@ -592,8 +587,7 @@ class _HomePageState extends State<HomePage> {
                                   currentMediaItemSnapshot) {
                             return currentMediaItemSnapshot.hasData &&
                                     currentMediaItemSnapshot.data != null
-                                ? PlayerOverlay(
-                                    playing: snapshot.data.playing)
+                                ? PlayerOverlay(playing: snapshot.data.playing)
                                 : SizedBox();
                           });
                     }

@@ -582,9 +582,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                     bottom: 50, left: 30, right: 30, top: 0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20.0),
-                  child: CachedNetworkImage(
-                    imageUrl: mediaItem.artUri.toString(),
-                    fit: BoxFit.cover,
+                  child: Hero(
+                    tag: widget.track!= null ?widget.track.coverImageUrl : '${Random()}',
+                    child: CachedNetworkImage(
+                      imageUrl: mediaItem.artUri.toString(),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

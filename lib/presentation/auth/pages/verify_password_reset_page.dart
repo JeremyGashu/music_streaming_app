@@ -71,14 +71,17 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            Container(
-                              width: 120,
-                              height: 120,
-                              margin: EdgeInsets.only(top: 40),
-                              child: SvgPicture.asset('assets/svg/Logo.svg'),
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
+                            Hero(
+                              tag: 'logo_image',
+                              child: Container(
+                                width: 120,
+                                height: 120,
+                                margin: EdgeInsets.only(top: 40),
+                                child: SvgPicture.asset('assets/svg/Logo.svg'),
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                ),
                               ),
                             ),
                             SizedBox(

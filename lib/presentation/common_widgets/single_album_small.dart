@@ -49,23 +49,26 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                                 borderRadius: BorderRadius.circular(10.0)),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: CachedNetworkImage(
-                                placeholder: (context, url) => Center(
-                                  child: SpinKitRipple(
-                                    size: 50,
-                                    color: Colors.grey,
+                              child: Hero(
+                                tag: widget.album.coverImageUrl,
+                                child: CachedNetworkImage(
+                                  placeholder: (context, url) => Center(
+                                    child: SpinKitRipple(
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
                                   ),
+                                  imageUrl: widget.album.albumId ?? '',
+                                  errorWidget: (context, url, error) {
+                                    return Image.asset(
+                                      'assets/images/album_one.jpg',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                  width: 120.0,
+                                  height: 160,
+                                  fit: BoxFit.cover,
                                 ),
-                                imageUrl: widget.album.coverImageUrl ?? '',
-                                errorWidget: (context, url, error) {
-                                  return Image.asset(
-                                    'assets/images/album_one.jpg',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                                width: 120.0,
-                                height: 160,
-                                fit: BoxFit.cover,
                               ),
                             ),
                           )

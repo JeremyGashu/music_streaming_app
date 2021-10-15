@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:streaming_mobile/blocs/cache_bloc/cache_bloc.dart';
 import 'package:streaming_mobile/blocs/like/like_bloc.dart';
 import 'package:streaming_mobile/blocs/liked_albums/liked_albums_bloc.dart';
 import 'package:streaming_mobile/blocs/liked_artists/liked_artists_bloc.dart';
@@ -106,6 +107,7 @@ void setupLocator() {
   sl.registerFactory(() => LikedSongsBloc(trackRepository: sl()));
   sl.registerFactory(() => LikedArtistsBloc(artistsRepository: sl()));
   sl.registerFactory(() => VPNBloc());
+  sl.registerFactory(() => CacheBloc());
 
   //others
   sl.registerFactory(() => LocationService());

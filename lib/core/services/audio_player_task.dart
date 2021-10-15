@@ -387,6 +387,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) {
+    return null;
     // print('repeat mode ${repeatMode}');
     // if (repeatMode != AudioServiceRepeatMode.none) {
     //   switch (repeatMode) {

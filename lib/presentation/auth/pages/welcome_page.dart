@@ -14,13 +14,16 @@ class WelcomePage extends StatelessWidget {
         children: [
           Positioned(
             top: -50,
-            child: Container(
-              width: kWidth(context),
-              height: kHeight(context) * 0.25,
-              margin: EdgeInsets.only(top: 40),
-              child: SvgPicture.asset('assets/svg/melody.svg'),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            child: Hero(
+              tag: 'melody_image',
+              child: Container(
+                width: kWidth(context),
+                height: kHeight(context) * 0.25,
+                margin: EdgeInsets.only(top: 40),
+                child: SvgPicture.asset('assets/svg/melody.svg'),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
               ),
             ),
           ),
@@ -31,13 +34,16 @@ class WelcomePage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    margin: EdgeInsets.only(bottom: 75),
-                    child: SvgPicture.asset('assets/svg/Logo.svg'),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  Hero(
+                    tag: 'logo_image',
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      margin: EdgeInsets.only(bottom: 75),
+                      child: SvgPicture.asset('assets/svg/Logo.svg'),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
                     ),
                   ),
                   Container(
