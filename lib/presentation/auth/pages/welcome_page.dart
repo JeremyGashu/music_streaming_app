@@ -20,7 +20,7 @@ class WelcomePage extends StatelessWidget {
                 width: kWidth(context),
                 height: kHeight(context) * 0.25,
                 margin: EdgeInsets.only(top: 40),
-                child: SvgPicture.asset('assets/svg/melody.svg'),
+                child: SvgPicture.asset('assets/svg/melody.svg',),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),

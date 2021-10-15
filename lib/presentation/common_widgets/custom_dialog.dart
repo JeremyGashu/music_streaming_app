@@ -27,7 +27,7 @@ class CustomAlertDialog extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             height: 60,
@@ -40,17 +40,16 @@ class CustomAlertDialog extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-                color: color,
-                child: Center(
-                  child: Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  ),
-                )),
-          ),
+          SizedBox(width: 30,),
+          Container(
+              color: color,
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ),
+              )),
               // SizedBox(width: 10,),
         ],
       ),

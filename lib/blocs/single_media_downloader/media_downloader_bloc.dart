@@ -155,6 +155,7 @@ class MediaDownloaderBloc
         }
       } else if (event is BeginDownload) {
         List<smd.DownloadTask> dt = [];
+        yield DownloadStarted();
 
         print('_task length => ${_tasks.length}');
         if (_tasks.length == 0) {
