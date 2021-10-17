@@ -17,7 +17,7 @@ class ForceUpdate extends StatelessWidget {
                 child: Text(
                   'You are using an outdated app please update the app to get new features.',
                   style: TextStyle(
-                    fontSize: 19,
+                    fontSize: 17,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -27,6 +27,7 @@ class ForceUpdate extends StatelessWidget {
               ),
               TextButton(
                   onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Appstore Link...')));
                     // print('update');

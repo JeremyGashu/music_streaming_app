@@ -7,7 +7,6 @@ import 'package:streaming_mobile/blocs/auth/auth_event.dart';
 import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/login/login_page.dart';
 
 class VerifyPasswordResetPage extends StatefulWidget {
@@ -52,6 +51,7 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                   await Future.delayed(Duration(seconds: 2));
                   Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                 } else if (state is VerifyingPasswordResetError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Please check your reset code')));
                 }
@@ -253,6 +253,8 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                                           .value.text.length <
                                                       6) {
                                                 ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
                                                             'Password cannot be lass than 6 characters!')));
@@ -269,6 +271,8 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                                       _passwordTextController
                                                           .value.text) {
                                                 ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
                                                             'Password did not match!')));
@@ -280,8 +284,10 @@ class _VerifyPasswordResetPageState extends State<VerifyPasswordResetPage> {
                                                       null ||
                                                   _resetCodeTextController
                                                       .value.text.isEmpty) {
-                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Wrong reset code!')));
+                                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            'Wrong reset code!')));
                                                 return;
                                               }
 

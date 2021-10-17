@@ -8,7 +8,6 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/data_provider/playlist_dataprovider.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/repository/playlist_repository.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
@@ -43,6 +42,7 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
           bloc: playlistBloc,
           listener: (context, state) {
             if (state is ErrorState) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
               // Navigator.pop(context);
@@ -50,8 +50,9 @@ class _PrivatePlaylistListState extends State<PrivatePlaylistList> {
             }
             if (state is SuccessState) {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("added to playlist!")));
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("added to playlist!")));
             }
           },
           builder: (context, state) {

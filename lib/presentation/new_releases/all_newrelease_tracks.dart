@@ -45,14 +45,8 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
           BlocConsumer<NewReleaseBloc, NewReleaseState>(
               bloc: newReleaseBloc,
               listener: (context, state) {
-                if (state is LoadingNewReleases) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedNewReleases &&
-                    state.newRelease.songs.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingNewReleasesError) {
+                if (state is LoadingNewReleasesError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                   newReleaseBloc.isLoading = false;

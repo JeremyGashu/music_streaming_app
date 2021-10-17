@@ -17,5 +17,5 @@ class ConfigData extends Equatable {
       };
 
   @override
-  List<Object> get props => [version];
+  List<Object> get props => [version, forceUpdate];
 }

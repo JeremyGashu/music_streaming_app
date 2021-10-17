@@ -9,7 +9,6 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String signUpPageRouterName = 'signup_page_router_name';
@@ -194,6 +193,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           BlocConsumer<SignUpBloc, SignUpState>(
                               listener: (ctx, state) async {
                             if (state is SignUpError) {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(state.message ?? '')));
                             } else if (state is SignedUpSuccessfully) {
@@ -266,6 +267,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                                           .value.text.length ==
                                                       10) {
                                                 ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+
+                                                ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
                                                             'Please enter valid phone number!')));
@@ -280,6 +284,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                                   _passwordTextController
                                                           .value.text.length <
                                                       6) {
+                                                ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
@@ -296,6 +302,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                                           .value.text !=
                                                       _passwordTextController
                                                           .value.text) {
+                                                ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(

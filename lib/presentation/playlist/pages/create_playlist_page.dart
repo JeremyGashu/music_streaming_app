@@ -6,7 +6,6 @@ import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 import '../../../locator.dart';
 
@@ -33,13 +32,14 @@ class _CreatePrivatePlaylistWidgetState
         bloc: playlistBloc,
         listener: (context, state) {
           if (state is ErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error creating playlist!')));
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error creating playlist!')));
           }
           if (state is SuccessState) {
-
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Playlist created!')));
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Playlist created!')));
             Navigator.pop(context, true);
           }
         },
@@ -105,7 +105,7 @@ class _CreatePrivatePlaylistWidgetState
                                     Navigator.pop(context);
                                   },
                                   child: Container(
-                                    width: 130,
+                                    width: 100,
                                     height: 40,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
@@ -121,18 +121,20 @@ class _CreatePrivatePlaylistWidgetState
                                 GestureDetector(
                                   onTap: () {
                                     String title = _controller.value.text;
-                                    if (title != '') {
+                                    if (title.trim() != '') {
                                       playlistBloc.add(
                                           CreatePrivatePlaylist(title: title));
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
                                               content: Text(
                                                   'Playlist name cannot be empty!!')));
                                     }
                                   },
                                   child: Container(
-                                    width: 130,
+                                    width: 100,
                                     height: 40,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),

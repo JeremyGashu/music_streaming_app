@@ -12,7 +12,6 @@ import 'package:streaming_mobile/blocs/singletrack/track_bloc.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/rectangulat_loading_shimmer.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
@@ -62,6 +61,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                           : likesCount;
                 }
                 if (state is ErrorState) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                 }
@@ -298,36 +298,33 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
 
 //back nav, name and more vertical iconBuilder
 Widget _upperSection(BuildContext context, ArtistModel artist) {
-  return Padding(
-    padding: EdgeInsets.all(5),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black.withOpacity(0.5),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: Colors.black.withOpacity(0.5),
         ),
-        Text(
-          '${artist.firstName} ${artist.lastName}',
-          style: TextStyle(
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-          ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      Text(
+        '${artist.firstName} ${artist.lastName}',
+        style: TextStyle(
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
         ),
-        IconButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: Colors.black.withOpacity(0.5),
-          ),
-          onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.more_vert,
+          color: Colors.black.withOpacity(0.5),
         ),
-      ],
-    ),
+        onPressed: () {},
+      ),
+    ],
   );
 }
 

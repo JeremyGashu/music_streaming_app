@@ -15,10 +15,9 @@ import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
-import 'package:streaming_mobile/presentation/search/widgets/result_tile.dart';
+import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 class SongsResult extends StatefulWidget {
@@ -65,17 +64,15 @@ class _SongsResultState extends State<SongsResult> {
                     .data
                     .songs
                     .map((songElement) {
-                  return ResultListTile(
+                  
+                  return GestureDetector(
                     onTap: () async {
                       var recentlySearchedBox =
                           await Hive.openBox<Track>('recently_searched');
                       recentlySearchedBox.add(songElement.song);
                       playAudio(songElement.song);
                     },
-                    subtitle: songElement.song.title,
-                    title:
-                        '${songElement.song.artist.firstName} ${songElement.song.artist.lastName}',
-                    imageUrl: songElement.song.coverImageUrl,
+                    child: musicTile(songElement.song, context),
                   );
                   // return SingleTrack(track: songElement.song);
                 }).toList(),
@@ -129,8 +126,7 @@ class _SongsResultState extends State<SongsResult> {
           album: '',
           title: track.title,
           genre: '${track.genre.name}',
-          artist:
-              '${track.artist.firstName} ${track.artist.lastName}',
+          artist: '${track.artist.firstName} ${track.artist.lastName}',
           duration: Duration(seconds: track.duration),
           artUri: Uri.parse(track.coverImageUrl),
           extras: {'source': source}));
@@ -145,10 +141,8 @@ class _SongsResultState extends State<SongsResult> {
           hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
         } else {
           hlsPlayList = await parseHLS.parseHLS(File(
-                  await parseHLS.downloadFile(
-                      '$M3U8_URL/${track.songId}',
-                      '$dir/${track.songId}',
-                      "main.m3u8"))
+                  await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
+                      '$dir/${track.songId}', "main.m3u8"))
               .readAsStringSync());
         }
 
@@ -178,10 +172,8 @@ class _SongsResultState extends State<SongsResult> {
           await parseHLS.writeLocalM3u8File(m3u8FilePath);
         } else {
           HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-                  await parseHLS.downloadFile(
-                      '$M3U8_URL/${track.songId}',
-                      '$dir/${track.songId}',
-                      "main.m3u8"))
+                  await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
+                      '$dir/${track.songId}', "main.m3u8"))
               .readAsStringSync());
 
           List<DownloadTask> downloadTasks = [];
@@ -204,8 +196,9 @@ class _SongsResultState extends State<SongsResult> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error playing song!')));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

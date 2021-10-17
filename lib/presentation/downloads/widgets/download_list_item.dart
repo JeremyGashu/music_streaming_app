@@ -97,68 +97,49 @@ class _DownloadListItemState extends State<DownloadListItem> {
                       : Container(),
                   widget.downloadTask.progress == 100
                       ? IconButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
+                          onPressed: () async {
+                            String playingMusicId =
+                                await AudioService.currentMediaItem != null ? await AudioService.currentMediaItem.id : '';
+                            if (playingMusicId == widget.downloadTask.songId) {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'The please stop the song first!',
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
 
-                              SnackBar(duration: Duration(seconds: 3),content: Text(
-                                'Deleting',
-                              ), action: SnackBarAction(label: 'Undo',onPressed: () {
-                                setState(() {
-                                  isBeingDeleted = !isBeingDeleted;
-                                });
-                              },),),
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: Duration(seconds: 3),
+                                content: Text(
+                                  'Deleting',
+                                ),
+                                action: SnackBarAction(
+                                  label: 'Undo',
+                                  onPressed: () {
+                                    setState(() {
+                                      isBeingDeleted = !isBeingDeleted;
+                                    });
+                                  },
+                                ),
+                              ),
                             );
                             setState(() {
                               isBeingDeleted = !isBeingDeleted;
-                              var a = Timer(Duration(seconds: 4), () {
-                                if(isBeingDeleted) {
-                                              BlocProvider.of<UserDownloadBloc>(
-                                                      context)
-                                                  .add(DeleteDownload(
-                                                      trackId: widget
-                                                          .downloadTask.songId));
+                              Timer(Duration(seconds: 4), () {
+                                if (isBeingDeleted) {
+                                  BlocProvider.of<UserDownloadBloc>(context)
+                                      .add(DeleteDownload(
+                                          trackId: widget.downloadTask.songId));
                                 }
                               });
-
-                              // print(isBeingDeleted);
                             });
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (context) => AlertDialog(
-                            //     title: Text("Delete file"),
-                            //     content:
-                            //         Text("Do you want to delete this file"),
-                            //     actions: [
-                            //       TextButton(
-                            //           onPressed: () {
-                            //             Navigator.pop(context);
-                            //           },
-                            //           child: Text("No")),
-                            //       TextButton(
-                            //           onPressed: () {
-                            //             Navigator.pop(context);
-                            //             BlocProvider.of<UserDownloadBloc>(
-                            //                     context)
-                            //                 .add(DeleteDownload(
-                            //                     trackId: widget
-                            //                         .downloadTask.songId));
-                            //           },
-                            //           child: Text("Yes")),
-                            //     ],
-                            //   ),
-                            // );
-
-
-                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            //   content: Text('File Deleted!'),
-                            //   action: SnackBarAction(
-                            //       label: 'Undo',
-                            //       onPressed: () {
-                            //         setState(() {
-                            //           isBeingDeleted = !isBeingDeleted;
-                            //         });
-                            //       }),
-                            // ));
                           },
                           icon: Icon(
                             Icons.delete,
@@ -340,6 +321,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
 
       await _startPlaying(mediaItems);
     } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);

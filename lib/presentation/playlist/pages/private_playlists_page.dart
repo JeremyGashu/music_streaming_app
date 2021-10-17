@@ -7,7 +7,6 @@ import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 // import 'package:streaming_mobile/presentation/playlist/pages/create_playlist_page.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/create_playlist_page.dart';
 import 'package:streaming_mobile/presentation/playlist/pages/playlist_detail.dart';
 
@@ -51,8 +50,8 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
 
             if (value == true) {
               print('here is the value => $value');
-                _playlists.clear();
-                print('playlist length ${_playlists.length}');
+              _playlists.clear();
+              print('playlist length ${_playlists.length}');
               playlistBloc.add(LoadPrivatePlaylistsInit());
             }
           },
@@ -157,8 +156,9 @@ class _PrivatePlaylistsPageState extends State<PrivatePlaylistsPage> {
                             return dismiss;
                           },
                           onDismissed: (_) async {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Deleted playlist!')));
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Deleted playlist!')));
                             print(
                                 'delete playlist ${_playlists[index].playlistId}');
                           },

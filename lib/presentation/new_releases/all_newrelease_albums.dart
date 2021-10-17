@@ -10,7 +10,6 @@ import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
 import 'package:streaming_mobile/presentation/album/widgets/album_tile_new.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 class AllNewReleasedAlbumsPage extends StatefulWidget {
   static const String allNewReleaseAlbumsRouterName =
@@ -47,14 +46,8 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
           BlocConsumer<NewReleaseBloc, NewReleaseState>(
               bloc: newReleaseBloc,
               listener: (context, state) {
-                if (state is LoadingNewReleases) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedNewReleases &&
-                    state.newRelease.songs.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingNewReleasesError) {
+                if (state is LoadingNewReleasesError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                   newReleaseBloc.isLoading = false;

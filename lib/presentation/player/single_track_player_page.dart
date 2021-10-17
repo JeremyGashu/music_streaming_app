@@ -15,7 +15,6 @@ import 'package:streaming_mobile/blocs/like/like_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
 
 import '../../locator.dart';
@@ -104,8 +103,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                         return BlocConsumer<LikeBloc, LikeState>(
                             listener: (context, state) {
                               if (state is ErrorState) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Failed to add to favourites!')));
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed to add to favourites!')));
                               }
                             },
                             bloc: _likeBloc,

@@ -6,7 +6,6 @@ import 'package:streaming_mobile/blocs/liked_songs/liked_songs_event.dart';
 import 'package:streaming_mobile/blocs/liked_songs/liked_songs_state.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
 import '../../locator.dart';
@@ -42,15 +41,7 @@ class _LikedSongsPageState extends State<LikedSongsPage> {
           BlocConsumer<LikedSongsBloc, LikedSongsState>(
               bloc: likedSongsBloc,
               listener: (context, state) {
-                if (state is LoadingState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedLikedSongs && state.tracks.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is ErrorState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text(state.message)));
+                if (state is ErrorState) {
                   likedSongsBloc.isLoading = false;
                 }
                 return;

@@ -6,7 +6,6 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_tile.dart';
-import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
@@ -43,15 +42,9 @@ class _AllArtistsPageState extends State<AllArtistsPage> {
           BlocConsumer<ArtistBloc, ArtistState>(
               bloc: artistBloc,
               listener: (context, state) {
-                if (state is LoadingArtist) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedArtist && state.artists.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingArtistError) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
+                if (state is LoadingArtistError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
                   artistBloc.isLoading = false;
                 }
                 return;

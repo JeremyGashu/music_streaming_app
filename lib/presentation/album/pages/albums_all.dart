@@ -41,13 +41,8 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
           BlocConsumer<AlbumBloc, AlbumState>(
               bloc: albumBloc,
               listener: (context, state) {
-                if (state is LoadingAlbum) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedAlbum && state.albums.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingAlbumError) {
+                if (state is LoadingAlbumError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                   albumBloc.isLoading = false;
@@ -157,8 +152,7 @@ Widget _upperSection(BuildContext context) {
             Icons.search,
             size: 20,
           ),
-          onPressed: () {
-          },
+          onPressed: () {},
         ),
       ),
     ],

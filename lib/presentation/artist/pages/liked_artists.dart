@@ -7,7 +7,6 @@ import 'package:streaming_mobile/blocs/liked_artists/liked_artists_event.dart';
 import 'package:streaming_mobile/blocs/liked_artists/liked_artists_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_tile.dart';
-import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
@@ -44,16 +43,7 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
           BlocConsumer<LikedArtistsBloc, LikedArtistsState>(
               bloc: _likedArtistsBloc,
               listener: (context, state) {
-                if (state is LoadingState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedLikedArtists &&
-                    state.artists.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is ErrorState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text(state.message)));
+                if (state is ErrorState) {
                   _likedArtistsBloc.isLoading = false;
                 }
                 return;

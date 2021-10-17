@@ -44,8 +44,6 @@ class DownloadingPage extends StatelessWidget {
 
 class DownloadingTile extends StatelessWidget {
   final LocalDownloadTask task;
-  bool isVisible = true;
-
   DownloadingTile({this.task});
 
   @override

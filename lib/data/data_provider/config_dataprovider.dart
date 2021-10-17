@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/core/app/urls.dart';
@@ -15,7 +17,7 @@ class ConfigDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url = '$BASE_URL/appconfigs?page=0&per_page=10';
+    String url = '$BASE_URL/android/version';
 
     http.Response response = await client.get(
       Uri.parse(url),
@@ -26,12 +28,24 @@ class ConfigDataProvider {
   }
 
   Future<http.Response> getConfigData() async {
-    String testJson = '''
-    {
-      "success" : true,
-      "data" : {"version" : "1.0.0", "force_update" : true}
-    }
-    ''';
-    return http.Response(testJson, 200);
+    var authBox = await Hive.openBox<AuthData>('auth_box');
+    var authData = authBox.get('auth_data');
+    var headers = {
+      'Authorization': 'Bearer ${authData.token}',
+    };
+
+    final String url = '$BASE_URL/android/version';
+
+    http.Response response = await client.get(
+      Uri.parse(url,),
+      headers: headers,
+    );
+    print('current status code => ${response.statusCode}');
+      var body = jsonDecode(response.body);
+      print('config body => $body');
+
+      
+      return response;
+
   }
 }

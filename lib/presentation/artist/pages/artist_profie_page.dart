@@ -8,7 +8,6 @@ import 'package:streaming_mobile/blocs/cache_bloc/cache_event.dart';
 import 'package:streaming_mobile/blocs/cache_bloc/cache_state.dart' as cs;
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class ArtistProfilePage extends StatelessWidget {
   @override
@@ -22,11 +21,13 @@ class ArtistProfilePage extends StatelessWidget {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is cs.SuccessfulState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.message)));
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is cs.LoadingState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Clearing cache...')));
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Clearing cache...')));
             }
           }, builder: (context, state) {
             return Column(

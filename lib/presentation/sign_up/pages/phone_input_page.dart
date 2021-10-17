@@ -14,7 +14,6 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/data/models/country_codes.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 import '../../auth/pages/otp_page.dart';
 
@@ -51,6 +50,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
             }
 
             if (state is SignUpError) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
             }
@@ -183,6 +183,8 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                                           print(
                                               'phone number => ${_countryCode + _phoneNumberController.value.text}');
                                         } else {
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentSnackBar();
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   content: Text(

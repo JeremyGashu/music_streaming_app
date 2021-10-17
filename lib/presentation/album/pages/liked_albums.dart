@@ -7,7 +7,6 @@ import 'package:streaming_mobile/blocs/liked_albums/liked_albums_state.dart';
 import 'package:streaming_mobile/data/models/album.dart';
 import 'package:streaming_mobile/presentation/album/widgets/album_tile_new.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_album_small.dart';
 
 import '../../../locator.dart';
 
@@ -42,15 +41,7 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
           BlocConsumer<LikedAlbumBloc, LikedAlbumsState>(
               bloc: likedAlbumBloc,
               listener: (context, state) {
-                if (state is LoadingState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedLikedAlbums && state.albums.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is ErrorState) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text(state.message)));
+                if (state is ErrorState) {
                   likedAlbumBloc.isLoading = false;
                 }
                 return;

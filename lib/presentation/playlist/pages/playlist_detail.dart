@@ -23,7 +23,6 @@ import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/data/models/track.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
@@ -66,8 +65,9 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                     : likesCount;
           }
           if (state is ErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.message)));
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -298,8 +298,10 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                             return;
                           }
                           if (playlist.songs.length == 0) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('There are no tracks in this playlist!')));
+                                content: Text(
+                                    'There are no tracks in this playlist!')));
                           } else {
                             if (!AudioService.running) {
                               await AudioService.start(
@@ -321,8 +323,8 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                           width: 140,
                           height: 40,
                           decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.orange, width: 2.5),
+                            border:
+                                Border.all(color: Colors.orange, width: 2.5),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Row(
@@ -569,8 +571,9 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
       await _startPlaying(mediaItems, index);
     } catch (e) {
-     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error playing song!')));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

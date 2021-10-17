@@ -86,7 +86,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (context, index) {
                                       return musicTile(
-                                        null,
+                                        Track.fromMediaItem(snapshot.data[index]),
                                         context,
                                       );
                                     }),

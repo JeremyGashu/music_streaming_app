@@ -9,7 +9,6 @@ import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/check_phone_number.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   static const String resetPasswordPageRouterName =
@@ -34,6 +33,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           }
 
           if (state is SendingPasswordResetFailed) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Error resetting password please try again!')));
           }
@@ -155,11 +155,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                                               .value.text));
                                             } else {
                                               ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar();
+                                              ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
                                                       content: Text(
                                                           'Please enter valid phone number')));
                                             }
                                           } else {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
                                                     content: Text(

@@ -6,7 +6,6 @@ import 'package:streaming_mobile/blocs/playlist/playlist_event.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/data/models/playlist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/playlist.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/playlist_tile_new.dart';
 
 import '../../../locator.dart';
@@ -42,13 +41,8 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
           BlocConsumer<PlaylistBloc, PlaylistState>(
               bloc: playlistBloc,
               listener: (context, state) {
-                if (state is LoadingPlaylist) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedPlaylist && state.playlists.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingPlaylistError) {
+                if (state is LoadingPlaylistError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                   playlistBloc.isLoading = false;

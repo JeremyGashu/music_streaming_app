@@ -295,6 +295,7 @@
 //
 //     final tracksResponse = tracksResponseFromJson(jsonString);
 
+import 'package:audio_service/audio_service.dart';
 import 'package:hive/hive.dart';
 import 'package:streaming_mobile/data/models/api_metadata.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
@@ -452,6 +453,19 @@ class Track {
       createdAt: DateTime.parse(json["created_at"]),
       updatedAt: DateTime.parse(json["updated_at"]),
       likeCount: json['like_counts']);
+
+    factory Track.fromMediaItem(MediaItem mediaItem) => Track(
+      songId: mediaItem.id,
+      artistId: '',
+      artist: ArtistModel(artistId: '', firstName: mediaItem.artist, lastName: '', image: ''),
+      title : mediaItem.title,
+      coverImageUrl: mediaItem.artUri.toString(),
+      songUrl: mediaItem.extras['source'],
+      isSingle: true,
+      duration: mediaItem.duration.inSeconds,
+      imageLocation: mediaItem.artUri.toString(),
+
+    );
 
   Map<String, dynamic> toJson() => {
         "song_id": songId,

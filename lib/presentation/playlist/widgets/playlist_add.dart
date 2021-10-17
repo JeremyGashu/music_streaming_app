@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_bloc.dart';
 import 'package:streaming_mobile/blocs/playlist/playlist_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 
 import '../../../locator.dart';
 
@@ -27,8 +26,9 @@ class _AddPlaylistPageState extends State<AddPlaylistPage> {
         bloc: playlistBloc,
         listener: (context, state) {
           if (state is LoadingPlaylistError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error loading playlist!')));
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error loading playlist!')));
           }
         },
         builder: (context, state) {

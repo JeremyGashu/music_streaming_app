@@ -26,7 +26,6 @@ import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/album/pages/liked_albums.dart';
 import 'package:streaming_mobile/presentation/artist/pages/liked_artists.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/section_title.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
@@ -56,10 +55,11 @@ class LibraryPage extends StatelessWidget {
                 // ),
                 SliverToBoxAdapter(
                   child: Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    padding:
+                        EdgeInsets.only(top: 13, bottom: 13, left: 8, right: 8),
                     color: Colors.white,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildPlayListTopOptionsItem('assets/svg/album_new.svg',
                             () {
@@ -454,8 +454,9 @@ class LibraryPage extends StatelessWidget {
 
       await _startPlaying(mediaItems);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error playing song!')));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

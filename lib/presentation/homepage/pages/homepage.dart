@@ -34,7 +34,6 @@ import 'package:streaming_mobile/presentation/album/pages/albums_detail.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/common_widgets/artist.dart';
 import 'package:streaming_mobile/presentation/common_widgets/circular_loading_shimmer.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
 import 'package:streaming_mobile/presentation/common_widgets/genre.dart';
 import 'package:streaming_mobile/presentation/common_widgets/player_overlay.dart';
@@ -56,7 +55,6 @@ backgroundTaskEntryPoint() {
 }
 
 class HomePage extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -96,7 +94,6 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
-
       child: RefreshIndicator(
         onRefresh: () async {
           BlocProvider.of<TrackBloc>(context).add(LoadTracksInit());
@@ -144,8 +141,12 @@ class _HomePageState extends State<HomePage> {
                                     .map((e) => GestureDetector(
                                         onTap: () {
                                           if (e == null) {
-                                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Incomplete album info')));
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Incomplete album info')));
                                             return;
                                           }
                                           Navigator.pushNamed(context,
@@ -173,22 +174,36 @@ class _HomePageState extends State<HomePage> {
                       return Container();
                     }),
                   ),
-                  SizedBox(height:5,),
+                  SizedBox(
+                    height: 5,
+                  ),
 
                   Container(
-                    decoration: BoxDecoration(color: Colors.white),
+                    decoration: BoxDecoration(color: Colors.transparent),
                     height: 15,
                     child: BlocBuilder<FeaturedAlbumBloc, FeaturedAlbumState>(
-
                         builder: (context, state) {
-                          if(state is LoadedFeaturedAlbum) {
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: state.albums.map((a) => Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),margin: EdgeInsets.symmetric(horizontal: 5,),width: 8,height: 8,color: page == state.albums.indexOf(a) ? Colors.black87 : Colors.grey.withOpacity(0.4)),).toList(),
-                            );
-                          }
-                          return Container();
-                        }),
+                      if (state is LoadedFeaturedAlbum) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: state.albums
+                              .map((a) => Container(
+                                    decoration: BoxDecoration(
+                                        color: page == state.albums.indexOf(a)
+                                            ? Colors.black87
+                                            : Colors.grey.withOpacity(0.4),
+                                        borderRadius: BorderRadius.circular(4)),
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    width: 8,
+                                    height: 8,
+                                  ))
+                              .toList(),
+                        );
+                      }
+                      return Container();
+                    }),
                   ),
 
                   SizedBox(
@@ -538,6 +553,17 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
+                  StreamBuilder(
+                      stream: AudioService.playbackStateStream,
+                      builder:
+                          (context, AsyncSnapshot<PlaybackState> snapshot) {
+                        if (snapshot.hasData && snapshot.data.playing) {
+                          return SizedBox(
+                            height: 25,
+                          );
+                        }
+                        return Container();
+                      }),
                 ],
               ),
             ),

@@ -6,7 +6,6 @@ import 'package:streaming_mobile/blocs/singletrack/track_event.dart';
 import 'package:streaming_mobile/blocs/singletrack/track_state.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/common_widgets/single_track.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
 import '../../locator.dart';
@@ -42,13 +41,8 @@ class _AllTracksState extends State<AllTracks> {
           BlocConsumer<TrackBloc, TrackState>(
               bloc: trackBloc,
               listener: (context, state) {
-                if (state is LoadingTrack) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('Loading Album!')));
-                } else if (state is LoadedTracks && state.tracks.isEmpty) {
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text('No More Albums!')));
-                } else if (state is LoadingTrackError) {
+                if (state is LoadingTrackError) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(state.message)));
                   trackBloc.isLoading = false;

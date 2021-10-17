@@ -8,7 +8,6 @@ import 'package:streaming_mobile/blocs/auth/auth_state.dart';
 import 'package:streaming_mobile/core/color_constants.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
-import 'package:streaming_mobile/presentation/common_widgets/custom_dialog.dart';
 import 'package:streaming_mobile/presentation/mainpage/mainpage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -63,8 +62,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     BlocConsumer<AuthBloc, AuthState>(listener: (ctx, state) {
                       if (state is AuthenticationError) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.message)));
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)));
                       } else if (state is Authenticated) {
                         Navigator.pushNamedAndRemoveUntil(context,
                             MainPage.mainPageRouterName, (route) => false);
@@ -261,8 +261,14 @@ class _LoginPageState extends State<LoginPage> {
                                                           _phoneNumberController
                                                                   .value.text ==
                                                               '') {
-                                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Password cannot be empty!')));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .hideCurrentSnackBar();
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'Password cannot be empty!')));
                                                         return;
                                                       }
 
@@ -272,8 +278,14 @@ class _LoginPageState extends State<LoginPage> {
                                                           _passwordTextController
                                                                   .value.text ==
                                                               '') {
-                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Phone number cannot be empty!')));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .hideCurrentSnackBar();
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'Phone number cannot be empty!')));
                                                         return;
                                                       }
                                                       BlocProvider.of<AuthBloc>(
