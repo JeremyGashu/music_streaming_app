@@ -7,6 +7,7 @@ import 'package:streaming_mobile/presentation/downloads/components/downloaded_pa
 import 'package:streaming_mobile/presentation/downloads/components/downloading_page.dart';
 
 class DownloadsPage extends StatefulWidget {
+  static const String downloadsPageRouteName = 'downloads_page_route_name';
   @override
   _DownloadPageState createState() => _DownloadPageState();
 }
@@ -37,8 +38,15 @@ class _DownloadPageState extends State<DownloadsPage> {
                 .showSnackBar(SnackBar(content: Text('Download finished!')));
           } else if (mds is DownloadStarted) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Downloading...')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Downloading...'),
+              action: SnackBarAction(
+                  label: 'View',
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed(DownloadsPage.downloadsPageRouteName);
+                  }),
+            ));
           }
         }, builder: (context, userDownloaderState) {
           return BlocConsumer<UserDownloadBloc, UserDownloadState>(

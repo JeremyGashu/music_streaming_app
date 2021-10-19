@@ -81,7 +81,6 @@ class UserDownloadBloc extends Bloc<UserDownloadEvent, UserDownloadState> {
       }
       if (event is DeleteDownload) {
         yield LoadingState();
-
         try {
           var userDownloadBox =
               await Hive.openBox<LocalDownloadTask>('user_downloads');

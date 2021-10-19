@@ -8,17 +8,15 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
-import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
-import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_event.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
+import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
 import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/core/utils/m3u8_parser.dart';
-import 'package:streaming_mobile/data/models/download_task.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
-import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 class SongsResult extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -64,7 +62,6 @@ class _SongsResultState extends State<SongsResult> {
                     .data
                     .songs
                     .map((songElement) {
-                  
                   return GestureDetector(
                     onTap: () async {
                       var recentlySearchedBox =
@@ -135,32 +132,8 @@ class _SongsResultState extends State<SongsResult> {
       print("mediaItems: ${mediaItems}");
       if (!(await LocalHelper.isFileDownloaded(track.songId)) ||
           !(await LocalHelper.allSegmentsDownloaded(id: track.songId))) {
-        File m3u8File = File('$dir/${track.songId}/main.m3u8');
-        HlsMediaPlaylist hlsPlayList;
-        if (m3u8File.existsSync()) {
-          hlsPlayList = await parseHLS.parseHLS(m3u8File.readAsStringSync());
-        } else {
-          hlsPlayList = await parseHLS.parseHLS(File(
-                  await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
-                      '$dir/${track.songId}', "main.m3u8"))
-              .readAsStringSync());
-        }
-
-        List<DownloadTask> downloadTasks = [];
-        // print(hlsPlayList.segments);
-        hlsPlayList.segments.forEach((segment) {
-          var segmentIndex = hlsPlayList.segments.indexOf(segment);
-          downloadTasks.add(DownloadTask(
-              track_id: track.songId,
-              segment_number: segmentIndex,
-              downloadType: DownloadType.media,
-              downloaded: false,
-              download_path: '$dir/${track.songId}/',
-              url: segment.url));
-        });
-        print(downloadTasks);
-        BlocProvider.of<MediaDownloaderBloc>(context)
-            .add(AddDownload(downloadTasks: downloadTasks));
+        BlocProvider.of<UserDownloadBloc>(context)
+            .add(StartDownload(track: track));
       } else {
         var m3u8FilePath = '$dir/${track.songId}/main.m3u8';
 
@@ -171,26 +144,8 @@ class _SongsResultState extends State<SongsResult> {
           print("the file is downloaded playing from local: ${mediaItems}");
           await parseHLS.writeLocalM3u8File(m3u8FilePath);
         } else {
-          HlsMediaPlaylist hlsPlayList = await parseHLS.parseHLS(File(
-                  await parseHLS.downloadFile('$M3U8_URL/${track.songId}',
-                      '$dir/${track.songId}', "main.m3u8"))
-              .readAsStringSync());
-
-          List<DownloadTask> downloadTasks = [];
-          // print(hlsPlayList.segments);
-          hlsPlayList.segments.forEach((segment) {
-            var segmentIndex = hlsPlayList.segments.indexOf(segment);
-            downloadTasks.add(DownloadTask(
-                track_id: track.songId,
-                segment_number: segmentIndex,
-                downloadType: DownloadType.media,
-                downloaded: false,
-                download_path: '$dir/${track.songId}/',
-                url: segment.url));
-          });
-          print(downloadTasks);
-          BlocProvider.of<MediaDownloaderBloc>(context)
-              .add(AddDownload(downloadTasks: downloadTasks));
+          BlocProvider.of<UserDownloadBloc>(context)
+              .add(StartDownload(track: track));
         }
       }
 

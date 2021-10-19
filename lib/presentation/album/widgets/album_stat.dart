@@ -42,11 +42,11 @@ Widget albumStat({Album album}) {
             SizedBox(
               width: 5,
             ),
-            Icon(
-              Icons.more_vert,
-              color: Colors.black,
-              size: 20,
-            ),
+            // Icon(
+            //   Icons.more_vert,
+            //   color: Colors.black,
+            //   size: 20,
+            // ),
           ],
         ),
       ),

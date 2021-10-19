@@ -6,7 +6,6 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
-import 'package:streaming_mobile/core/services/user_download_manager.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
 import 'package:streaming_mobile/data/models/download_task.dart' as smd;
 import 'package:streaming_mobile/imports.dart';
@@ -81,22 +80,22 @@ class MediaDownloaderBloc
             addDownload(_tasks[0].downloadTask)
                 .then((value) => _tasks[0].taskId = value);
           } else {
-            try {
-              Track t = await getIt<UserDownloadManager>()
-                  .getTrackByIdFromRemote(_downloadTask.track_id);
-              print('downloaded track => ${t}');
-              if (t != null) {
-                await getIt<UserDownloadManager>()
-                    .addToDownload(id: _downloadTask.track_id, track: t);
+            // try {
+            //   Track t = await getIt<UserDownloadManager>()
+            //       .getTrackByIdFromRemote(_downloadTask.track_id);
+            //   print('downloaded track => ${t}');
+            //   if (t != null) {
+            //     await getIt<UserDownloadManager>()
+            //         .addToDownload(id: _downloadTask.track_id, track: t);
 
-                var downloadedMediaBox = await Hive.box('downloadedMedias');
-                await downloadedMediaBox.add(_downloadTask.track_id);
+            //     var downloadedMediaBox = await Hive.box('downloadedMedias');
+            //     await downloadedMediaBox.add(_downloadTask.track_id);
 
-                print('track saved to downloads => ${t}');
-              }
-            } catch (e) {
-              print(e);
-            }
+            //     print('track saved to downloads => ${t}');
+            //   }
+            // } catch (e) {
+            //   print(e);
+            // }
 
             add(UpdateDownloadState(
                 state: DownloadDone(downloadedTask: _downloadTask)));

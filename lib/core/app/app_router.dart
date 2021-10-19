@@ -6,6 +6,7 @@ import 'package:streaming_mobile/presentation/artist/pages/artist_all.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
 import 'package:streaming_mobile/presentation/artist/pages/liked_artists.dart';
 import 'package:streaming_mobile/presentation/auth/pages/otp_page.dart';
+import 'package:streaming_mobile/presentation/downloads/downloads_page.dart';
 import 'package:streaming_mobile/presentation/sign_up/pages/phone_input_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/verify_password_reset_page.dart';
@@ -102,6 +103,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => WelcomePage());
       case PrivatePlaylistsPage.privatePlaylistRouteName:
         return MaterialPageRoute(builder: (_) => PrivatePlaylistsPage());
+
+        case DownloadsPage.downloadsPageRouteName:
+        return MaterialPageRoute(builder: (_) => DownloadsPage());
 
       case TracksByGenre.tracksByGenreRouteName:
         return MaterialPageRoute(

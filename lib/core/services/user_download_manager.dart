@@ -38,8 +38,7 @@ class UserDownloadManager {
           artistLastName: track.artist.lastName,
           duration: track.duration,
           failed: false,
-          genre: track.genre.name,
-          progress: 100));
+          genre: track.genre.name,));
     }
   }
 
