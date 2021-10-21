@@ -6,58 +6,55 @@ import 'package:streaming_mobile/blocs/artist/artist_event.dart';
 import 'package:streaming_mobile/blocs/artist/artist_state.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_detail_page.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 class ArtistsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocBuilder<ArtistBloc, ArtistState>(builder: (context, state) {
-            if (state is LoadedArtist) {
-              return Expanded(
-                  child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                children: state.artists.map((artist) {
-                  return _artistTile(
-                      onTap: () {
-                        print('artist id => ${artist.artistId}');
-                        Navigator.pushNamed(
-                            context, ArtistDetailPage.artistDetailPageRouteName,
-                            arguments: artist);
-                      },
-                      name: artist.firstName + ' ' + artist.lastName,
-                      imageUrl: artist.image,
-                      likes: 0.toString());
-                }).toList(),
-              ));
-            } else if (state is LoadingArtist) {
-              return Center(
-                child: SpinKitRipple(
-                  color: Colors.grey,
-                  size: 40,
-                ),
-              );
-            } else if (state is LoadingArtistError) {
-              return CustomErrorWidget(
-                  onTap: () {
-                    BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
-                  },
-                  message: 'Error Loading Artists!');
-            }
-            return Container();
-          }),
-        ],
-      ),
-    ));
+        body: Column(
+          children: [
+            //back button and search page
+            _upperSection(context),
+            // Divider(),
+            BlocBuilder<ArtistBloc, ArtistState>(builder: (context, state) {
+              if (state is LoadedArtist) {
+                return Expanded(
+                    child: GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: state.artists.map((artist) {
+                    return _artistTile(
+                        onTap: () {
+                          print('artist id => ${artist.artistId}');
+                          Navigator.pushNamed(
+                              context, ArtistDetailPage.artistDetailPageRouteName,
+                              arguments: artist);
+                        },
+                        name: artist.firstName + ' ' + artist.lastName,
+                        imageUrl: artist.image,
+                        likes: 0.toString());
+                  }).toList(),
+                ));
+              } else if (state is LoadingArtist) {
+                return Center(
+                  child: SpinKitRipple(
+                    color: Colors.grey,
+                    size: 40,
+                  ),
+                );
+              } else if (state is LoadingArtistError) {
+                return CustomErrorWidget(
+                    onTap: () {
+                      BlocProvider.of<ArtistBloc>(context).add(LoadArtists());
+                    },
+                    message: 'Error Loading Artists!');
+              }
+              return Container();
+            }),
+          ],
+        ));
   }
 }
 
@@ -145,10 +142,10 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => SearchPage()));
+            // Navigator.push(context, MaterialPageRoute(builder: (_) => SearchPage()));
           },
         ),
       ),

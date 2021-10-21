@@ -33,96 +33,96 @@ class _AllPlaylistsPageState extends State<AllPlaylistsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<PlaylistBloc, PlaylistState>(
-              bloc: playlistBloc,
-              listener: (context, state) {
-                if (state is LoadingPlaylistError) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                  playlistBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedPlaylist) {
-                  _playlists.addAll(state.playlists);
-                  playlistBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingPlaylist && _playlists.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is LoadingPlaylistError &&
-                    _playlists.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        playlistBloc.add(LoadPlaylists());
-                      },
-                      message: 'Error Loading Playlists!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !playlistBloc.isLoading) {
-                              if (playlistBloc.state is LoadedPlaylist) {
-                                if ((playlistBloc.state as LoadedPlaylist)
-                                        .playlists
-                                        .length ==
-                                    0) return;
-                              }
-                              playlistBloc
-                                ..isLoading = true
-                                ..add(LoadPlaylists());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _playlists.map((playlist) {
-                          return PlaylistTile(
-                            playlist: playlist,
-                          );
-                        }).toList(),
-                      )),
-                      state is LoadingPlaylist
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedPlaylist
-                          ? state.playlists.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Playlists!'),
+          child: Column(
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              BlocConsumer<PlaylistBloc, PlaylistState>(
+                  bloc: playlistBloc,
+                  listener: (context, state) {
+                    if (state is LoadingPlaylistError) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                      playlistBloc.isLoading = false;
+                    }
+                    return;
+                  },
+                  builder: (context, state) {
+                    if (state is LoadedPlaylist) {
+                      _playlists.addAll(state.playlists);
+                      playlistBloc.isLoading = false;
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    } else if (state is InitialState ||
+                        state is LoadingPlaylist && _playlists.isEmpty) {
+                      return Center(
+                        child: SpinKitRipple(
+                          color: Colors.grey,
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is LoadingPlaylistError &&
+                        _playlists.isEmpty) {
+                      return CustomErrorWidget(
+                          onTap: () {
+                            playlistBloc.add(LoadPlaylists());
+                          },
+                          message: 'Error Loading Playlists!');
+                    }
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !playlistBloc.isLoading) {
+                                  if (playlistBloc.state is LoadedPlaylist) {
+                                    if ((playlistBloc.state as LoadedPlaylist)
+                                            .playlists
+                                            .length ==
+                                        0) return;
+                                  }
+                                  playlistBloc
+                                    ..isLoading = true
+                                    ..add(LoadPlaylists());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _playlists.map((playlist) {
+                              return PlaylistTile(
+                                playlist: playlist,
+                              );
+                            }).toList(),
+                          )),
+                          state is LoadingPlaylist
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedPlaylist
+                              ? state.playlists.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Playlists!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -152,7 +152,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

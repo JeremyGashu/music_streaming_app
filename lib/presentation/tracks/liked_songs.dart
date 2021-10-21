@@ -33,90 +33,93 @@ class _LikedSongsPageState extends State<LikedSongsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<LikedSongsBloc, LikedSongsState>(
-              bloc: likedSongsBloc,
-              listener: (context, state) {
-                if (state is ErrorState) {
-                  likedSongsBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedLikedSongs) {
-                  _tracks.addAll(state.tracks);
-                  likedSongsBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingState && _tracks.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is ErrorState && _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        likedSongsBloc.add(LoadLikedSongs());
-                      },
-                      message: 'Error Loading Tracks!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !likedSongsBloc.isLoading) {
-                              if (likedSongsBloc.state is LoadedLikedSongs) {
-                                if ((likedSongsBloc.state as LoadedLikedSongs)
-                                        .tracks
-                                        .length ==
-                                    0) return;
-                              }
-                              likedSongsBloc
-                                ..isLoading = true
-                                ..add(LoadLikedSongs());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _tracks.map((track) {
-                          return musicTile(track, context);
-                        }).toList(),
-                      )),
-                      state is LoadingState
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedLikedSongs
-                          ? state.tracks.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Tracks!'),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              Expanded(
+                child: BlocConsumer<LikedSongsBloc, LikedSongsState>(
+                    bloc: likedSongsBloc,
+                    listener: (context, state) {
+                      if (state is ErrorState) {
+                        likedSongsBloc.isLoading = false;
+                      }
+                      return;
+                    },
+                    builder: (context, state) {
+                      if (state is LoadedLikedSongs) {
+                        _tracks.addAll(state.tracks);
+                        likedSongsBloc.isLoading = false;
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      } else if (state is InitialState ||
+                          state is LoadingState && _tracks.isEmpty) {
+                        return Center(
+                          child: SpinKitRipple(
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                        );
+                      } else if (state is ErrorState && _tracks.isEmpty) {
+                        return Center(
+                          child: CustomErrorWidget(
+                              onTap: () {
+                                likedSongsBloc.add(LoadLikedSongs());
+                              },
+                              message: 'Error Loading Tracks!'),
+                        );
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !likedSongsBloc.isLoading) {
+                                  if (likedSongsBloc.state is LoadedLikedSongs) {
+                                    if ((likedSongsBloc.state as LoadedLikedSongs)
+                                            .tracks
+                                            .length ==
+                                        0) return;
+                                  }
+                                  likedSongsBloc
+                                    ..isLoading = true
+                                    ..add(LoadLikedSongs());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _tracks.map((track) {
+                              return musicTile(track, context);
+                            }).toList(),
+                          )),
+                          state is LoadingState
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedLikedSongs
+                              ? state.tracks.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Tracks!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      );
+                    }),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -146,7 +149,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

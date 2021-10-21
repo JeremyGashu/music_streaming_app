@@ -33,93 +33,93 @@ class _AllAlbumsPageState extends State<AllAlbumsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<AlbumBloc, AlbumState>(
-              bloc: albumBloc,
-              listener: (context, state) {
-                if (state is LoadingAlbumError) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                  albumBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedAlbum) {
-                  _albums.addAll(state.albums);
-                  albumBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingAlbum && _albums.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is LoadingAlbumError && _albums.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        albumBloc.add(LoadAlbums());
-                      },
-                      message: 'Error Loading Album!');
-                }
-                return Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        primary: false,
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !albumBloc.isLoading) {
-                              if (albumBloc.state is LoadedAlbum) {
-                                if ((albumBloc.state as LoadedAlbum)
-                                        .albums
-                                        .length ==
-                                    0) return;
-                              }
-                              albumBloc
-                                ..isLoading = true
-                                ..add(LoadAlbums());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _albums.map((album) {
-                          return AlbumTile(album: album);
-                        }).toList(),
-                      )),
-                      state is LoadingAlbum
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedAlbum
-                          ? state.albums.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Albums!'),
+          child: Column(
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              BlocConsumer<AlbumBloc, AlbumState>(
+                  bloc: albumBloc,
+                  listener: (context, state) {
+                    if (state is LoadingAlbumError) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                      albumBloc.isLoading = false;
+                    }
+                    return;
+                  },
+                  builder: (context, state) {
+                    if (state is LoadedAlbum) {
+                      _albums.addAll(state.albums);
+                      albumBloc.isLoading = false;
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    } else if (state is InitialState ||
+                        state is LoadingAlbum && _albums.isEmpty) {
+                      return Center(
+                        child: SpinKitRipple(
+                          color: Colors.grey,
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is LoadingAlbumError && _albums.isEmpty) {
+                      return CustomErrorWidget(
+                          onTap: () {
+                            albumBloc.add(LoadAlbums());
+                          },
+                          message: 'Error Loading Album!');
+                    }
+                    return Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            primary: false,
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !albumBloc.isLoading) {
+                                  if (albumBloc.state is LoadedAlbum) {
+                                    if ((albumBloc.state as LoadedAlbum)
+                                            .albums
+                                            .length ==
+                                        0) return;
+                                  }
+                                  albumBloc
+                                    ..isLoading = true
+                                    ..add(LoadAlbums());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _albums.map((album) {
+                              return AlbumTile(album: album);
+                            }).toList(),
+                          )),
+                          state is LoadingAlbum
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedAlbum
+                              ? state.albums.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Albums!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -149,7 +149,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

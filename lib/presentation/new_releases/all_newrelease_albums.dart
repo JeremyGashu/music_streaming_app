@@ -38,97 +38,97 @@ class _AllNewReleasedAlbumsPageState extends State<AllNewReleasedAlbumsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<NewReleaseBloc, NewReleaseState>(
-              bloc: newReleaseBloc,
-              listener: (context, state) {
-                if (state is LoadingNewReleasesError) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                  newReleaseBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedNewReleases) {
-                  _albums.addAll(state.newRelease.albums);
-                  newReleaseBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingNewReleases && _albums.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is LoadingNewReleasesError &&
-                    _albums.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        newReleaseBloc.add(LoadNewReleases());
-                      },
-                      message: 'Error Loading New Albums!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !newReleaseBloc.isLoading) {
-                              if (newReleaseBloc.state is LoadedNewReleases) {
-                                if ((newReleaseBloc.state as LoadedNewReleases)
-                                        .newRelease
-                                        .albums
-                                        .length ==
-                                    0) return;
-                              }
-                              newReleaseBloc
-                                ..isLoading = true
-                                ..add(LoadNewReleases());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _albums.map((album) {
-                          return AlbumTile(
-                            album: album,
-                          );
-                        }).toList(),
-                      )),
-                      state is LoadingNewReleases
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedNewReleases
-                          ? state.newRelease.songs.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Albums!'),
+          child: Column(
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              BlocConsumer<NewReleaseBloc, NewReleaseState>(
+                  bloc: newReleaseBloc,
+                  listener: (context, state) {
+                    if (state is LoadingNewReleasesError) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                      newReleaseBloc.isLoading = false;
+                    }
+                    return;
+                  },
+                  builder: (context, state) {
+                    if (state is LoadedNewReleases) {
+                      _albums.addAll(state.newRelease.albums);
+                      newReleaseBloc.isLoading = false;
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    } else if (state is InitialState ||
+                        state is LoadingNewReleases && _albums.isEmpty) {
+                      return Center(
+                        child: SpinKitRipple(
+                          color: Colors.grey,
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is LoadingNewReleasesError &&
+                        _albums.isEmpty) {
+                      return CustomErrorWidget(
+                          onTap: () {
+                            newReleaseBloc.add(LoadNewReleases());
+                          },
+                          message: 'Error Loading New Albums!');
+                    }
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !newReleaseBloc.isLoading) {
+                                  if (newReleaseBloc.state is LoadedNewReleases) {
+                                    if ((newReleaseBloc.state as LoadedNewReleases)
+                                            .newRelease
+                                            .albums
+                                            .length ==
+                                        0) return;
+                                  }
+                                  newReleaseBloc
+                                    ..isLoading = true
+                                    ..add(LoadNewReleases());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _albums.map((album) {
+                              return AlbumTile(
+                                album: album,
+                              );
+                            }).toList(),
+                          )),
+                          state is LoadingNewReleases
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedNewReleases
+                              ? state.newRelease.songs.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Albums!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -158,7 +158,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

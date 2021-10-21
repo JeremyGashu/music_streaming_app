@@ -43,8 +43,8 @@ class SinglePlaylist extends StatelessWidget {
                                       color: Colors.grey,
                                     ),
                                   ),
-                                  imageUrl:
-                                      playlist.songs.length > 1 ?  playlist.songs[0].song.coverImageUrl : '',
+                                  imageUrl: playlist.image ?? '',
+                                      // playlist.,
                                   errorWidget: (context, url, error) {
                                     return Image.asset(
                                       'assets/images/singletrack_one.jpg',

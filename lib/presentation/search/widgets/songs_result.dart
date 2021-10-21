@@ -4,7 +4,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/search/search_bloc.dart';
 import 'package:streaming_mobile/blocs/search/search_event.dart';
@@ -62,15 +61,7 @@ class _SongsResultState extends State<SongsResult> {
                     .data
                     .songs
                     .map((songElement) {
-                  return GestureDetector(
-                    onTap: () async {
-                      var recentlySearchedBox =
-                          await Hive.openBox<Track>('recently_searched');
-                      recentlySearchedBox.add(songElement.song);
-                      playAudio(songElement.song);
-                    },
-                    child: musicTile(songElement.song, context),
-                  );
+                  return musicTile(songElement.song, context, addToRecentlySearhed: true);
                   // return SingleTrack(track: songElement.song);
                 }).toList(),
               )

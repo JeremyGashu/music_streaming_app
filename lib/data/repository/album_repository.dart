@@ -18,19 +18,19 @@ String defaultAlbumString = '''
             "total_count": 1,
             "links": [
                 {
-                    "self": "/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title"
+                    "self": "/v1/albums/?page=1&per_page=20&sort=ASC&sort_key=title"
                 },
                 {
-                    "first": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                    "first": "/v1/albums/?page=0&per_page=20&sort=ASC&sort_key=title"
                 },
                 {
-                    "previous": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                    "previous": "/v1/albums/?page=0&per_page=20&sort=ASC&sort_key=title"
                 },
                 {
-                    "next": "/v1/albums/?page=0&per_page=10&sort=ASC&sort_key=title"
+                    "next": "/v1/albums/?page=0&per_page=20&sort=ASC&sort_key=title"
                 },
                 {
-                    "last": "/v1/albums/?page=1&per_page=10&sort=ASC&sort_key=title"
+                    "last": "/v1/albums/?page=1&per_page=20&sort=ASC&sort_key=title"
                 }
             ]
         },

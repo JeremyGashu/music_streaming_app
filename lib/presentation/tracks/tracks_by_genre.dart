@@ -37,94 +37,94 @@ class _TracksByGenreState extends State<TracksByGenre> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context, widget.genre.name),
-          // Divider(),
-          BlocConsumer<TrackBloc, TrackState>(
-              bloc: trackBloc,
-              listener: (context, state) {
-                if (state is LoadingTrackError) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                  trackBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedTracks) {
-                  _tracks.addAll(state.tracks);
-                  trackBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingTrack && _tracks.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is LoadingTrackError && _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        trackBloc.add(
-                            LoadSongsByGenre(genreId: widget.genre.genreId));
-                      },
-                      message: 'Error Loading Tracks!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !trackBloc.isLoading) {
-                              if (trackBloc.state is LoadedTracks) {
-                                if ((trackBloc.state as LoadedTracks)
-                                        .tracks
-                                        .length ==
-                                    0) return;
-                              }
-                              trackBloc
-                                ..isLoading = true
-                                ..add(LoadTracks());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _tracks.map((track) {
-                          return musicTile(track, context);
-                        }).toList(),
-                      )),
-                      state is LoadingTrack
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedTracks
-                          ? state.tracks.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Tracks!'),
+          child: Column(
+            children: [
+              //back button and search page
+              _upperSection(context, widget.genre.name),
+              // Divider(),
+              BlocConsumer<TrackBloc, TrackState>(
+                  bloc: trackBloc,
+                  listener: (context, state) {
+                    if (state is LoadingTrackError) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                      trackBloc.isLoading = false;
+                    }
+                    return;
+                  },
+                  builder: (context, state) {
+                    if (state is LoadedTracks) {
+                      _tracks.addAll(state.tracks);
+                      trackBloc.isLoading = false;
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    } else if (state is InitialState ||
+                        state is LoadingTrack && _tracks.isEmpty) {
+                      return Center(
+                        child: SpinKitRipple(
+                          color: Colors.grey,
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is LoadingTrackError && _tracks.isEmpty) {
+                      return CustomErrorWidget(
+                          onTap: () {
+                            trackBloc.add(
+                                LoadSongsByGenre(genreId: widget.genre.genreId));
+                          },
+                          message: 'Error Loading Tracks!');
+                    }
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !trackBloc.isLoading) {
+                                  if (trackBloc.state is LoadedTracks) {
+                                    if ((trackBloc.state as LoadedTracks)
+                                            .tracks
+                                            .length ==
+                                        0) return;
+                                  }
+                                  trackBloc
+                                    ..isLoading = true
+                                    ..add(LoadTracks());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _tracks.map((track) {
+                              return musicTile(track, context);
+                            }).toList(),
+                          )),
+                          state is LoadingTrack
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedTracks
+                              ? state.tracks.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Tracks!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -154,7 +154,7 @@ Widget _upperSection(BuildContext context, String genreName) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

@@ -8,69 +8,67 @@ class FeaturedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_outlined,
-                  color: Colors.grey.withOpacity(0.8),
-                ),
-                onPressed: () {},
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_outlined,
+                color: Colors.grey.withOpacity(0.8),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'Featured',
-                  style: TextStyle(
-                      color: Colors.black.withOpacity(0.8),
-                      fontSize: 18,
-                      letterSpacing: 1.1,
-                      fontWeight: FontWeight.bold),
-                ),
+              onPressed: () {},
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Featured',
+                style: TextStyle(
+                    color: Colors.black.withOpacity(0.8),
+                    fontSize: 18,
+                    letterSpacing: 1.1,
+                    fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 10,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 160,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  FeaturedList(albumArt: 'singletrack_one.jpg'),
+                  FeaturedList(albumArt: 'album_one.jpg'),
+                  FeaturedList(albumArt: 'singletrack_one.jpg'),
+                  FeaturedList(albumArt: 'album_one.jpg'),
+                ],
               ),
-              Container(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    FeaturedList(albumArt: 'singletrack_one.jpg'),
-                    FeaturedList(albumArt: 'album_one.jpg'),
-                    FeaturedList(albumArt: 'singletrack_one.jpg'),
-                    FeaturedList(albumArt: 'album_one.jpg'),
-                  ],
-                ),
+            ),
+            Divider(),
+            AdContainer('ad.png'),
+            SizedBox(
+              height: 10,
+            ),
+            SearchBar(),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 400,
+              child: ListView(
+                children: [
+                  AlbumListTile(),
+                  AlbumListTile(),
+                  AlbumListTile(),
+                  AlbumListTile(),
+                  AlbumListTile(),
+                  AlbumListTile(),
+                  AlbumListTile(),
+                ],
               ),
-              Divider(),
-              AdContainer('ad.png'),
-              SizedBox(
-                height: 10,
-              ),
-              SearchBar(),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 400,
-                child: ListView(
-                  children: [
-                    AlbumListTile(),
-                    AlbumListTile(),
-                    AlbumListTile(),
-                    AlbumListTile(),
-                    AlbumListTile(),
-                    AlbumListTile(),
-                    AlbumListTile(),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

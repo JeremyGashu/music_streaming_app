@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/cache_bloc/cache_bloc.dart';
@@ -20,15 +21,46 @@ import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
-Widget musicTile(
-  Track music,
-  BuildContext context,
-) {
+Widget musicTile(Track music, BuildContext context,
+    {bool addToRecentlySearhed = false, bool addToRecentlyPlayed = true}) {
   return BlocBuilder<CacheBloc, CacheState>(builder: (context, snapshot) {
     return BlocListener<UserDownloadBloc, UserDownloadState>(
       listener: (_, __) {},
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
+          if (addToRecentlyPlayed) {
+            var recentlyPlaedSongs =
+                await Hive.openBox<Track>('recently_played_songs');
+            bool added = false;
+            recentlyPlaedSongs.values.forEach((song) {
+              if (song.songId == music.songId) {
+                added = true;
+              }
+            });
+            if (!added) {
+              await recentlyPlaedSongs.add(music);
+            }
+
+            print(
+                'current recently played songs => ${recentlyPlaedSongs.values.length}');
+          }
+          if (addToRecentlySearhed) {
+            var recentlySearchedSongs =
+                await Hive.openBox<Track>('recently_searched');
+            bool added = false;
+            recentlySearchedSongs.values.forEach((song) {
+              if (song.songId == music.songId) {
+                added = true;
+              }
+            });
+            if (!added) {
+              await recentlySearchedSongs.add(music);
+            }
+
+            print(
+                'current recently searched songs => ${recentlySearchedSongs.values.length}');
+          }
+
           playAudio(music, context);
         },
         child: StreamBuilder(
@@ -58,19 +90,13 @@ Widget musicTile(
                                   : mediaItemStream.data.artUri.toString(),
                               placeholder: (context, url) =>
                                   CircularProgressIndicator(),
-                              fit: BoxFit.contain,
+                              fit: BoxFit.fill,
                             ),
                           ),
                         ),
                       ),
                       title: Text(
-                        music != null
-                            ? music.title != null
-                                ? music.title
-                                : "-------"
-                            : mediaItemStream.data.title != null
-                                ? mediaItemStream.data.title
-                                : "-------",
+                        music.title ?? 'Unknown',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -80,11 +106,9 @@ Widget musicTile(
                         ),
                       ),
                       subtitle: Text(
-                        music != null
-                            ? music.title
-                            : mediaItemStream.data.artist != null
-                                ? mediaItemStream.data.artist
-                                : "-----",
+                        music.artist != null
+                            ? '${music.artist.firstName} ${music.artist.lastName}'
+                            : 'Unkown Artist',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.5),
                           fontSize: 14,

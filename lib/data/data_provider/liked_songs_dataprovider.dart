@@ -16,7 +16,7 @@ class LikedSongsDataProvider {
       'Authorization': 'Bearer ${authData.token}',
     };
 
-    String url = '$LIKES_URL/songs?page=${page}&per_page=10';
+    String url = '$LIKES_URL/songs?page=${page}&per_page=20';
 
     http.Response response = await client.get(
       Uri.parse(url),

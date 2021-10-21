@@ -37,7 +37,7 @@ class ArtistTile extends StatelessWidget {
                 color: Colors.orange,
                 size: 10,
               ),
-              fit: BoxFit.contain,
+              fit: BoxFit.fill,
             ),
           ),
         ),

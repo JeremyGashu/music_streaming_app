@@ -77,8 +77,8 @@ class DownloadingTile extends StatelessWidget {
                         alignment: Alignment.center,
                         children: [
                           Container(
-                            width: 68,
-                            height: 68,
+                            width: 50,
+                            height: 50,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5),
                               child: CachedNetworkImage(
@@ -94,15 +94,15 @@ class DownloadingTile extends StatelessWidget {
                                   color: Colors.orange,
                                   size: 10,
                                 ),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(5),
                             child: Container(
-                              height: 68,
-                              width: 68,
+                              height: 50,
+                              width: 50,
                               color: Colors.black.withOpacity(0.5),
                             ),
                           ),
@@ -118,14 +118,14 @@ class DownloadingTile extends StatelessWidget {
                           // ),
 
                           const SpinKitRing(
-                              size: 44,
+                              size: 38,
                               color: Colors.grey,
                               lineWidth: 4,
                               duration: Duration(seconds: 2)),
                           Text(
                             '${task.progress.toStringAsFixed(0)}%',
                             style: TextStyle(
-                                color: Colors.white, fontSize: 15),
+                                color: Colors.white, fontSize: 13),
                           ),
                         ],
                       )

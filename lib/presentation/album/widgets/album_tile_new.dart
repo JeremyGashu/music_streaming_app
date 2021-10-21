@@ -30,7 +30,7 @@ class AlbumTile extends StatelessWidget {
               },
               imageUrl: album.coverImageUrl ?? '',
               placeholder: (context, url) => SpinKitRipple(color: Colors.orange, size: 10,),
-              fit: BoxFit.contain,
+              fit: BoxFit.fill,
             ),
           ),
         ),

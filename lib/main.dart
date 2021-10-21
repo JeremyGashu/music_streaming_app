@@ -64,7 +64,7 @@ void main() async {
       create: (_) => sl<AlbumBloc>()..add(LoadInitAlbums()),
     ),
     BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>()..add(CheckAuthOnStartUp()),
+      create: (_) => sl<AuthBloc>()..add(CheckAuthOnStartUp())..add(RefreshToken()),
     ),
 
     BlocProvider<LikeBloc>(create: (_) => sl<LikeBloc>()),

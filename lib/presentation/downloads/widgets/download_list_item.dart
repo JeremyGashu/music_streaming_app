@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,14 +48,32 @@ class _DownloadListItemState extends State<DownloadListItem> {
                 }
               },
               title: Text("${widget.downloadTask.title}"),
-              leading: Container(
-                width: 40,
-                height: 40,
-                child: widget.downloadTask.coverImageUrl != null
-                    ? Image.network(
-                        widget.downloadTask.coverImageUrl,
-                      )
-                    : Container(),
+              leading: Card(
+                color: Colors.transparent,
+                elevation: 8,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    child: widget.downloadTask.coverImageUrl != null
+                        ? CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(
+                              strokeWidth: 1,
+                            ),
+                            imageUrl: widget.downloadTask.coverImageUrl,
+                            errorWidget: (context, url, error) {
+                              return Image.asset(
+                                'assets/images/artist_placeholder.png',
+                                fit: BoxFit.fill,
+                              );
+                            },
+                            fit: BoxFit.fill,
+                          )
+                        : Container(),
+                  ),
+                ),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,6 +139,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
                                   'Deleting',
                                 ),
                                 action: SnackBarAction(
+                                  textColor: Colors.orange,
                                   label: 'Undo',
                                   onPressed: () {
                                     setState(() {

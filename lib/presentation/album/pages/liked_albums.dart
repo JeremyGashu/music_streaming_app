@@ -33,90 +33,93 @@ class _LikedAlbumsPageState extends State<LikedAlbumsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<LikedAlbumBloc, LikedAlbumsState>(
-              bloc: likedAlbumBloc,
-              listener: (context, state) {
-                if (state is ErrorState) {
-                  likedAlbumBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedLikedAlbums) {
-                  _albums.addAll(state.albums);
-                  likedAlbumBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingState && _albums.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is ErrorState && _albums.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        likedAlbumBloc.add(LoadLikedAlbums());
-                      },
-                      message: 'Error Loading Album!');
-                }
-                return Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        primary: false,
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !likedAlbumBloc.isLoading) {
-                              if (likedAlbumBloc.state is LoadedLikedAlbums) {
-                                if ((likedAlbumBloc.state as LoadedLikedAlbums)
-                                        .albums
-                                        .length ==
-                                    0) return;
-                              }
-                              likedAlbumBloc
-                                ..isLoading = true
-                                ..add(LoadLikedAlbums());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _albums.map((album) {
-                          return AlbumTile(album: album);
-                        }).toList(),
-                      )),
-                      state is LoadingState
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedLikedAlbums
-                          ? state.albums.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Albums!'),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              Expanded(
+                child: BlocConsumer<LikedAlbumBloc, LikedAlbumsState>(
+                    bloc: likedAlbumBloc,
+                    listener: (context, state) {
+                      if (state is ErrorState) {
+                        likedAlbumBloc.isLoading = false;
+                      }
+                      return;
+                    },
+                    builder: (context, state) {
+                      if (state is LoadedLikedAlbums) {
+                        _albums.addAll(state.albums);
+                        likedAlbumBloc.isLoading = false;
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      } else if (state is InitialState ||
+                          state is LoadingState && _albums.isEmpty) {
+                        return Center(
+                          child: SpinKitRipple(
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                        );
+                      } else if (state is ErrorState && _albums.isEmpty) {
+                        return Center(
+                          child: CustomErrorWidget(
+                              onTap: () {
+                                likedAlbumBloc.add(LoadLikedAlbums());
+                              },
+                              message: 'Error Loading Album!'),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            primary: false,
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !likedAlbumBloc.isLoading) {
+                                  if (likedAlbumBloc.state is LoadedLikedAlbums) {
+                                    if ((likedAlbumBloc.state as LoadedLikedAlbums)
+                                            .albums
+                                            .length ==
+                                        0) return;
+                                  }
+                                  likedAlbumBloc
+                                    ..isLoading = true
+                                    ..add(LoadLikedAlbums());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _albums.map((album) {
+                              return AlbumTile(album: album);
+                            }).toList(),
+                          )),
+                          state is LoadingState
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedLikedAlbums
+                              ? state.albums.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Albums!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      );
+                    }),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -146,7 +149,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

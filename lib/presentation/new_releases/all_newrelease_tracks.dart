@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:streaming_mobile/blocs/new_release/new_release_bloc.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_event.dart';
 import 'package:streaming_mobile/blocs/new_release/new_release_state.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_bloc.dart';
+import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/data/data_provider/new_release_dataprovider.dart';
 import 'package:streaming_mobile/data/models/track.dart';
 import 'package:streaming_mobile/data/repository/new_release_repository.dart';
@@ -37,97 +39,101 @@ class _AllNewReleaseTracksState extends State<AllNewReleaseTracks> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<NewReleaseBloc, NewReleaseState>(
-              bloc: newReleaseBloc,
-              listener: (context, state) {
-                if (state is LoadingNewReleasesError) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                  newReleaseBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedNewReleases) {
-                  List<Track> m =
-                      state.newRelease.songs.map((newR) => newR.song).toList();
-                  _tracks.addAll(m);
-                  newReleaseBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingNewReleases && _tracks.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is LoadingNewReleasesError &&
-                    _tracks.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        newReleaseBloc.add(LoadNewReleases());
-                      },
-                      message: 'Error Loading New Songs!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !newReleaseBloc.isLoading) {
-                              if (newReleaseBloc.state is LoadedNewReleases) {
-                                if ((newReleaseBloc.state as LoadedNewReleases)
-                                        .newRelease
-                                        .songs
-                                        .length ==
-                                    0) return;
-                              }
-                              newReleaseBloc
-                                ..isLoading = true
-                                ..add(LoadNewReleases());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _tracks.map((track) {
-                          return musicTile(track, context);
-                        }).toList(),
-                      )),
-                      state is LoadingNewReleases
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedNewReleases
-                          ? state.newRelease.songs.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Songs!'),
+          child: Column(
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              BlocConsumer<NewReleaseBloc, NewReleaseState>(
+                  bloc: newReleaseBloc,
+                  listener: (context, state) {
+                    if (state is LoadingNewReleasesError) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                      newReleaseBloc.isLoading = false;
+                    }
+                    return;
+                  },
+                  builder: (context, state) {
+                    if (state is LoadedNewReleases) {
+                      List<Track> m =
+                          state.newRelease.songs.map((newR) => newR.song).toList();
+                      _tracks.addAll(m);
+                      newReleaseBloc.isLoading = false;
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    } else if (state is InitialState ||
+                        state is LoadingNewReleases && _tracks.isEmpty) {
+                      return Center(
+                        child: SpinKitRipple(
+                          color: Colors.grey,
+                          size: 40,
+                        ),
+                      );
+                    } else if (state is LoadingNewReleasesError &&
+                        _tracks.isEmpty) {
+                      return CustomErrorWidget(
+                          onTap: () {
+                            newReleaseBloc.add(LoadNewReleases());
+                          },
+                          message: 'Error Loading New Songs!');
+                    }
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: BlocBuilder<MediaDownloaderBloc, MediaDownloaderState>(
+                                builder: (context, s) {
+                                  return ListView(
+                            controller: _scrollController
+                                  ..addListener(() {
+                                    if (_scrollController.offset ==
+                                            _scrollController
+                                                .position.maxScrollExtent &&
+                                        !newReleaseBloc.isLoading) {
+                                      if (newReleaseBloc.state is LoadedNewReleases) {
+                                        if ((newReleaseBloc.state as LoadedNewReleases)
+                                                .newRelease
+                                                .songs
+                                                .length ==
+                                            0) return;
+                                      }
+                                      newReleaseBloc
+                                        ..isLoading = true
+                                        ..add(LoadNewReleases());
+                                    }
+                                  }),
+                            shrinkWrap: true,
+                            children: _tracks.map((track) {
+                                  return musicTile(track, context);
+                            }).toList(),
+                          );
+                                }
+                              )),
+                          state is LoadingNewReleases
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedNewReleases
+                              ? state.newRelease.songs.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Songs!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -157,7 +163,7 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {},

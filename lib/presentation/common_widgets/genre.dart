@@ -27,11 +27,11 @@ class GenreWidget extends StatelessWidget {
               child: CachedNetworkImage(
                 errorWidget: (context, url, error) {
                   return Image.asset(
-                    'assets/images/artist_one.jpg',
+                    'assets/images/artist_placeholder.png',
                     fit: BoxFit.cover,
                   );
                 },
-                imageUrl: genre.name,
+                imageUrl: genre.image ?? '',
                 placeholder: (context, url) => Center(
                   child: SpinKitRipple(
                     size: 50,

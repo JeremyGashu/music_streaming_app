@@ -9,28 +9,6 @@ class AuthRepository {
   final AuthDataProvider dataProvider;
   AuthRepository({@required this.dataProvider}) : assert(dataProvider != null);
 
-  Future<String> verifyPhoneNumber({String phoneNo}) async {
-    http.Response authData =
-        await dataProvider.verifyPhoneNumber(phoneNo: phoneNo);
-    print('status code ${authData.statusCode}');
-    if (authData.statusCode != 200) {
-      return null;
-    }
-    String message = jsonDecode(authData.body)['data'];
-    return message;
-  }
-
-  Future<String> verifyOTP({String phoneNo, String otp}) async {
-    http.Response authData =
-        await dataProvider.verifyOTP(phoneNo: phoneNo, otp: otp);
-    print('status code ${authData.statusCode}');
-    if (authData.statusCode != 200) {
-      return null;
-    }
-    String message = jsonDecode(authData.body)['data'];
-    return message;
-  }
-
   Future<bool> resetPassword({String phoneNo}) async {
     http.Response resetData =
         await dataProvider.resetPassword(phoneNo: phoneNo);

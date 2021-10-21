@@ -249,6 +249,7 @@ class Playlist {
     this.createdAt,
     this.updatedAt,
     this.likeCount,
+    this.image
   });
 
   int likeCount;
@@ -257,6 +258,7 @@ class Playlist {
   String title;
   String createdBy;
   String type;
+  String image;
   List<SongData> songs;
   DateTime createdAt;
   DateTime updatedAt;
@@ -268,6 +270,7 @@ class Playlist {
         createdBy: json["created_by"],
         type: json["type"],
         likeCount: json['like_counts'],
+        image : json['cover_image_url'],
         songs:
             List<SongData>.from(json["songs"].map((x) => SongData.fromJson(x))),
         createdAt: DateTime.parse(json["created_at"]),

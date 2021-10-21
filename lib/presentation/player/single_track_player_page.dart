@@ -15,6 +15,7 @@ import 'package:streaming_mobile/blocs/like/like_state.dart';
 import 'package:streaming_mobile/core/size_constants.dart';
 import 'package:streaming_mobile/core/utils/pretty_duration.dart';
 import 'package:streaming_mobile/data/models/track.dart';
+import 'package:streaming_mobile/presentation/common_widgets/loading_player.dart';
 import 'package:streaming_mobile/presentation/player/widgets/private_playlist_list.dart';
 
 import '../../locator.dart';
@@ -91,61 +92,40 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       body: StreamBuilder(
           stream: AudioService.playbackStateStream,
           builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
-            return SafeArea(
-              child: StreamBuilder<MediaItem>(
-                  stream: AudioService.currentMediaItemStream,
-                  builder: (ctx, snapshot) {
-                    if (playBackSnapshot.hasData &&
-                        (playBackSnapshot.data.playing ||
-                            (playBackSnapshot.data.processingState ==
-                                AudioProcessingState.ready))) {
-                      if (snapshot.hasData) {
-                        return BlocConsumer<LikeBloc, LikeState>(
-                            listener: (context, state) {
-                              if (state is ErrorState) {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to add to favourites!')));
-                              }
-                            },
-                            bloc: _likeBloc,
-                            builder: (context, state) {
-                              return Stack(
-                                children: [
-                                  _nowPlayingWidget(playBackSnapshot.data,
-                                      mediaItem: snapshot.data),
-                                  _menuSelector(context, state,
-                                      songId: snapshot.data.id),
-                                ],
-                              );
-                            });
-                      }
+            return StreamBuilder<MediaItem>(
+                stream: AudioService.currentMediaItemStream,
+                builder: (ctx, snapshot) {
+                  if (playBackSnapshot.hasData &&
+                      (playBackSnapshot.data.playing ||
+                          (playBackSnapshot.data.processingState ==
+                              AudioProcessingState.ready))) {
+                    if (snapshot.hasData) {
+                      return BlocConsumer<LikeBloc, LikeState>(
+                          listener: (context, state) {
+                            if (state is ErrorState) {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Failed to add to favourites!')));
+                            }
+                          },
+                          bloc: _likeBloc,
+                          builder: (context, state) {
+                            return Stack(
+                              children: [
+                                _nowPlayingWidget(playBackSnapshot.data,
+                                    mediaItem: snapshot.data),
+                                _menuSelector(context, state,
+                                    songId: snapshot.data.id),
+                              ],
+                            );
+                          });
                     }
-                    return Container(
-                      color: Colors.white,
-                      width: kWidth(context),
-                      height: kHeight(context),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Text('Preparing The Player'),
-                            SizedBox(
-                              height: 45,
-                            ),
-                            SpinKitRipple(
-                              color: Colors.grey,
-                              size: 40,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-            );
+                  }
+                  return LoadingPlayerWidget();
+                });
           }),
     );
   }

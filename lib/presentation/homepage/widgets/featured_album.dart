@@ -16,7 +16,7 @@ Widget FeaturedAlbum(Album album) {
               color: Colors.grey,
             ),
           ),
-          imageUrl: album != null ? album.artist.image : '',
+          imageUrl: album.coverImageUrl != null ? album.coverImageUrl : '',
           errorWidget: (context, url, error) {
             return Image.asset(
               'assets/images/dawit_new.jpg',
@@ -24,7 +24,7 @@ Widget FeaturedAlbum(Album album) {
             );
           },
           width: 1000.0,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
       Align(
@@ -58,7 +58,7 @@ Widget FeaturedAlbum(Album album) {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  album != null ? '${album.artist.firstName} ${album.artist.lastName}' : 'Unknown Artist',
+                  album.artist != null ? '${album.artist.firstName} ${album.artist.lastName}' : 'Unknown Artist',
                   style:
                   TextStyle(color: Colors.white, fontSize: 15),
                 ),

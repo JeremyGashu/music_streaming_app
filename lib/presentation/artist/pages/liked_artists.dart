@@ -8,7 +8,6 @@ import 'package:streaming_mobile/blocs/liked_artists/liked_artists_state.dart';
 import 'package:streaming_mobile/data/models/artist.dart';
 import 'package:streaming_mobile/presentation/artist/pages/artist_tile.dart';
 import 'package:streaming_mobile/presentation/common_widgets/error_widget.dart';
-import 'package:streaming_mobile/presentation/search/pages/search_page.dart';
 
 import '../../../locator.dart';
 
@@ -35,92 +34,95 @@ class _LikedArtistsPageState extends State<LikedArtistsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        children: [
-          //back button and search page
-          _upperSection(context),
-          // Divider(),
-          BlocConsumer<LikedArtistsBloc, LikedArtistsState>(
-              bloc: _likedArtistsBloc,
-              listener: (context, state) {
-                if (state is ErrorState) {
-                  _likedArtistsBloc.isLoading = false;
-                }
-                return;
-              },
-              builder: (context, state) {
-                if (state is LoadedLikedArtists) {
-                  _artists.addAll(state.artists);
-                  _likedArtistsBloc.isLoading = false;
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                } else if (state is InitialState ||
-                    state is LoadingState && _artists.isEmpty) {
-                  return Center(
-                    child: SpinKitRipple(
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  );
-                } else if (state is ErrorState && _artists.isEmpty) {
-                  return CustomErrorWidget(
-                      onTap: () {
-                        _likedArtistsBloc.add(LoadLikedArtists());
-                      },
-                      message: 'Error Loading Artists!');
-                }
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: ListView(
-                        controller: _scrollController
-                          ..addListener(() {
-                            if (_scrollController.offset ==
-                                    _scrollController
-                                        .position.maxScrollExtent &&
-                                !_likedArtistsBloc.isLoading) {
-                              if (_likedArtistsBloc.state
-                                  is LoadedLikedArtists) {
-                                if ((_likedArtistsBloc.state
-                                            as LoadedLikedArtists)
-                                        .artists
-                                        .length ==
-                                    0) return;
-                              }
-                              _likedArtistsBloc
-                                ..isLoading = true
-                                ..add(LoadLikedArtists());
-                            }
-                          }),
-                        shrinkWrap: true,
-                        children: _artists.map((artist) {
-                          return ArtistTile(artist: artist);
-                        }).toList(),
-                      )),
-                      state is LoadingState
-                          ? SpinKitRipple(
-                              color: Colors.grey,
-                              size: 50,
-                            )
-                          : Container(),
-                      // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
-                      state is LoadedLikedArtists
-                          ? state.artists.length == 0
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 25),
-                                  child: Text('No More Artists!'),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              //back button and search page
+              _upperSection(context),
+              // Divider(),
+              Expanded(
+                child: BlocConsumer<LikedArtistsBloc, LikedArtistsState>(
+                    bloc: _likedArtistsBloc,
+                    listener: (context, state) {
+                      if (state is ErrorState) {
+                        _likedArtistsBloc.isLoading = false;
+                      }
+                      return;
+                    },
+                    builder: (context, state) {
+                      if (state is LoadedLikedArtists) {
+                        _artists.addAll(state.artists);
+                        _likedArtistsBloc.isLoading = false;
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      } else if (state is InitialState ||
+                          state is LoadingState && _artists.isEmpty) {
+                        return Center(
+                          child: SpinKitRipple(
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                        );
+                      } else if (state is ErrorState && _artists.isEmpty) {
+                        return Center(
+                          child: CustomErrorWidget(
+                              onTap: () {
+                                _likedArtistsBloc.add(LoadLikedArtists());
+                              },
+                              message: 'Error Loading Artists!'),
+                        );
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: ListView(
+                            controller: _scrollController
+                              ..addListener(() {
+                                if (_scrollController.offset ==
+                                        _scrollController
+                                            .position.maxScrollExtent &&
+                                    !_likedArtistsBloc.isLoading) {
+                                  if (_likedArtistsBloc.state
+                                      is LoadedLikedArtists) {
+                                    if ((_likedArtistsBloc.state
+                                                as LoadedLikedArtists)
+                                            .artists
+                                            .length ==
+                                        0) return;
+                                  }
+                                  _likedArtistsBloc
+                                    ..isLoading = true
+                                    ..add(LoadLikedArtists());
+                                }
+                              }),
+                            shrinkWrap: true,
+                            children: _artists.map((artist) {
+                              return ArtistTile(artist: artist);
+                            }).toList(),
+                          )),
+                          state is LoadingState
+                              ? SpinKitRipple(
+                                  color: Colors.grey,
+                                  size: 50,
                                 )
-                              : Container()
-                          : Container(),
-                    ],
-                  ),
-                );
-              }),
-        ],
-      ),
-    ));
+                              : Container(),
+                          // stat state.albums.length == 0 ? Text('No More Albums!') : Container();
+                          state is LoadedLikedArtists
+                              ? state.artists.length == 0
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(vertical: 25),
+                                      child: Text('No More Artists!'),
+                                    )
+                                  : Container()
+                              : Container(),
+                        ],
+                      );
+                    }),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -150,11 +152,11 @@ Widget _upperSection(BuildContext context) {
         margin: EdgeInsets.all(10),
         child: IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             size: 20,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, SearchPage.searchPageRouteName);
+            // Navigator.pushNamed(context, SearchPage.searchPageRouteName);
           },
         ),
       ),

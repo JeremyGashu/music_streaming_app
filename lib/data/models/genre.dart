@@ -4,16 +4,19 @@ class Genre {
     this.name,
     this.createdAt,
     this.updatedAt,
+    this.image
   });
 
   String genreId;
   String name;
+  String image;
   DateTime createdAt;
   DateTime updatedAt;
 
   factory Genre.fromJson(Map<String, dynamic> json) => Genre(
         genreId: json["genre_id"],
         name: json["name"],
+        image : json['cover_image_url'],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );

@@ -96,6 +96,10 @@ class _HomePageState extends State<HomePage> {
       ],
       child: RefreshIndicator(
         onRefresh: () async {
+          setState(() {
+            page = 0;
+          });
+
           BlocProvider.of<TrackBloc>(context).add(LoadTracksInit());
           BlocProvider.of<AlbumBloc>(context).add(LoadInitAlbums());
           BlocProvider.of<PlaylistBloc>(context).add(LoadPlaylistsInit());
@@ -122,15 +126,18 @@ class _HomePageState extends State<HomePage> {
                                 child: Text(
                                   'No Featured Album!',
                                   style: TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 23,
                                   ),
                                 ),
                               )
                             : CarouselSlider(
                                 options: CarouselOptions(
                                     onPageChanged: (p, _) {
-                                      setState(() {
-                                        page = p;
+                                      Future.delayed(
+                                          Duration(milliseconds: 300), () {
+                                        setState(() {
+                                          page = p;
+                                        });
                                       });
                                     },
                                     height: 310,
@@ -233,23 +240,29 @@ class _HomePageState extends State<HomePage> {
                             ],
                           );
                         } else if (state is LoadedNewReleases) {
-                          return ListView.builder(
-                            itemCount: state.newRelease.songs.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (ctx, index) {
-                              return index == state.newRelease.songs.length - 1
-                                  ? Container(
-                                      margin: EdgeInsets.only(right: 15),
-                                      child: SingleTrack(
-                                        track:
-                                            state.newRelease.songs[index].song,
-                                      ),
-                                    )
-                                  : SingleTrack(
-                                      track: state.newRelease.songs[index].song,
-                                    );
-                            },
-                          );
+                          return state.newRelease.songs.length > 0
+                              ? ListView.builder(
+                                  itemCount: state.newRelease.songs.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return index ==
+                                            state.newRelease.songs.length - 1
+                                        ? Container(
+                                            margin: EdgeInsets.only(right: 15),
+                                            child: SingleTrack(
+                                              track: state
+                                                  .newRelease.songs[index].song,
+                                            ),
+                                          )
+                                        : SingleTrack(
+                                            track: state
+                                                .newRelease.songs[index].song,
+                                          );
+                                  },
+                                )
+                              : Center(
+                                  child: Text('No newly released song found!'),
+                                );
                         } else if (state is LoadingNewReleasesError) {
                           return CustomErrorWidget(
                               onTap: () {
@@ -273,8 +286,9 @@ class _HomePageState extends State<HomePage> {
                                 .allNewReleaseAlbumsRouterName);
                       }),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
+
                   Container(
                     height: 200,
                     child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
@@ -289,15 +303,19 @@ class _HomePageState extends State<HomePage> {
                             ],
                           );
                         } else if (state is LoadedNewReleases) {
-                          return ListView.builder(
-                            itemCount: state.newRelease.albums.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (ctx, index) {
-                              return SingleAlbum(
-                                album: state.newRelease.albums[index],
-                              );
-                            },
-                          );
+                          return state.newRelease.albums.length > 0
+                              ? ListView.builder(
+                                  itemCount: state.newRelease.albums.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return SingleAlbum(
+                                      album: state.newRelease.albums[index],
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  child: Text('No newly released album found!'),
+                                );
                         } else if (state is LoadingNewReleasesError) {
                           return CustomErrorWidget(
                               onTap: () {
@@ -313,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   SectionTitle(
-                      title: "Popular Playlists",
+                      title: "Recommended Playlists",
                       callback: () {
                         Navigator.pushNamed(
                             context, AllPlaylistsPage.allPlaylistsRouterName);
@@ -361,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SectionTitle(title: "Most Played Tracks", callback: () {}),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -460,7 +478,7 @@ class _HomePageState extends State<HomePage> {
                             context, AllAlbumsPage.allAlbumsRouterName);
                       }),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   Container(
                     height: 200,
@@ -508,6 +526,9 @@ class _HomePageState extends State<HomePage> {
                         Navigator.pushNamed(
                             context, AllTracks.allTracksRouterName);
                       }),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Container(
                     height: 200,
                     child: BlocBuilder<TrackBloc, TrackState>(

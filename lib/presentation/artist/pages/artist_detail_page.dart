@@ -72,7 +72,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                   children: [
                     //the name and back navigator icon and vertical more option
                     _upperSection(context, widget.artist),
-                    Divider(),
+                    // Divider(),
                     //circular artist image
                     Padding(
                       padding: EdgeInsets.all(15),
@@ -153,21 +153,21 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                     Divider(),
                     // _descriptionSection(),
 
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      width: double.infinity,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          alignment: AlignmentDirectional.centerEnd,
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          'More',
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.symmetric(
+                    //     horizontal: 10,
+                    //   ),
+                    //   width: double.infinity,
+                    //   child: TextButton(
+                    //     style: ButtonStyle(
+                    //       alignment: AlignmentDirectional.centerEnd,
+                    //     ),
+                    //     onPressed: () {},
+                    //     child: Text(
+                    //       'More',
+                    //     ),
+                    //   ),
+                    // ),
                     // SizedBox(
                     //   height: 10,
                     // ),
@@ -177,115 +177,112 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                     //   height: 10,
                     // ),
 
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        children: [
-                          //tab selectors
-                          // _tabSelectors(),
+                    Column(
+                      children: [
+                        //tab selectors
+                        // _tabSelectors(),
 
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SectionTitle(title: 'Albums', callback: () {}),
-                          //album section
-                          BlocBuilder<AlbumBloc, AlbumState>(
-                              bloc: albumBloc,
-                              builder: (context, state) {
-                                if (state is LoadedAlbum) {
-                                  return state.albums.length == 0
-                                      ? Center(
-                                          child: Text(
-                                              'No albums found for this artist.'),
-                                        )
-                                      : Container(
-                                          height: 200,
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: state.albums.length,
-                                              itemBuilder: (context, index) {
-                                                return SingleAlbum(
-                                                  album: state.albums[index],
-                                                );
-                                              }),
-                                        );
-                                } else if (state is LoadingAlbum) {
-                                  return Container(
-                                    height: 200,
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: [
-                                        RectangularShimmer(),
-                                        RectangularShimmer(),
-                                        RectangularShimmer(),
-                                      ],
-                                    ),
-                                  );
-                                } else if (state is LoadingAlbumError) {
-                                  return CustomErrorWidget(
-                                      onTap: () {
-                                        albumBloc.add(LoadAlbumsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      },
-                                      message: 'Error Loading Albums!');
-                                }
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SectionTitle(title: 'Albums', callback: () {}),
+                        //album section
+                        BlocBuilder<AlbumBloc, AlbumState>(
+                            bloc: albumBloc,
+                            builder: (context, state) {
+                              if (state is LoadedAlbum) {
+                                return state.albums.length == 0
+                                    ? Center(
+                                        child: Text(
+                                            'No albums found for this artist.'),
+                                      )
+                                    : Container(
+                                        height: 200,
+                                        child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state.albums.length,
+                                            itemBuilder: (context, index) {
+                                              return SingleAlbum(
+                                                album: state.albums[index],
+                                              );
+                                            }),
+                                      );
+                              } else if (state is LoadingAlbum) {
+                                return Container(
+                                  height: 200,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      RectangularShimmer(),
+                                      RectangularShimmer(),
+                                      RectangularShimmer(),
+                                    ],
+                                  ),
+                                );
+                              } else if (state is LoadingAlbumError) {
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      albumBloc.add(LoadAlbumsByArtistId(
+                                          artistId: widget.artist.artistId));
+                                    },
+                                    message: 'Error Loading Albums!');
+                              }
 
-                                return Container();
-                              }),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Divider(),
-                          SectionTitle(title: 'Songs', callback: () {}),
-                          BlocBuilder<TrackBloc, TrackState>(
-                              bloc: trackBloc,
-                              builder: (context, state) {
-                                if (state is LoadedTracks) {
-                                  return state.tracks.length == 0
-                                      ? Center(
-                                          child: Text(
-                                              'No songs found for this artist.'),
-                                        )
-                                      : Container(
-                                          height: 200,
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: state.tracks.length,
-                                              itemBuilder: (context, index) {
-                                                return SingleTrack(
-                                                  track: state.tracks[index],
-                                                );
-                                              }),
-                                        );
-                                } else if (state is LoadingTrack) {
-                                  return Container(
-                                    height: 200,
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: [
-                                        RectangularShimmer(),
-                                        RectangularShimmer(),
-                                        RectangularShimmer(),
-                                      ],
-                                    ),
-                                  );
-                                } else if (state is LoadingTrackError) {
-                                  return CustomErrorWidget(
-                                      onTap: () {
-                                        trackBloc.add(LoadSongsByArtistId(
-                                            artistId: widget.artist.artistId));
-                                      },
-                                      message: 'Error Loading Tracks!');
-                                }
+                              return Container();
+                            }),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Divider(),
+                        SectionTitle(title: 'Songs', callback: () {}),
+                        BlocBuilder<TrackBloc, TrackState>(
+                            bloc: trackBloc,
+                            builder: (context, state) {
+                              if (state is LoadedTracks) {
+                                return state.tracks.length == 0
+                                    ? Center(
+                                        child: Text(
+                                            'No songs found for this artist.'),
+                                      )
+                                    : Container(
+                                        height: 200,
+                                        child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state.tracks.length,
+                                            itemBuilder: (context, index) {
+                                              return SingleTrack(
+                                                track: state.tracks[index],
+                                              );
+                                            }),
+                                      );
+                              } else if (state is LoadingTrack) {
+                                return Container(
+                                  height: 200,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      RectangularShimmer(),
+                                      RectangularShimmer(),
+                                      RectangularShimmer(),
+                                    ],
+                                  ),
+                                );
+                              } else if (state is LoadingTrackError) {
+                                return CustomErrorWidget(
+                                    onTap: () {
+                                      trackBloc.add(LoadSongsByArtistId(
+                                          artistId: widget.artist.artistId));
+                                    },
+                                    message: 'Error Loading Tracks!');
+                              }
 
-                                return Container();
-                              }),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Divider(),
-                        ],
-                      ),
+                              return Container();
+                            }),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Divider(),
+                      ],
                     ),
                   ],
                 );
@@ -296,33 +293,37 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 }
 
-//back nav, name and more vertical iconBuilder
 Widget _upperSection(BuildContext context, ArtistModel artist) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.black.withOpacity(0.5),
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        child: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       Text(
         '${artist.firstName} ${artist.lastName}',
         style: TextStyle(
-          fontSize: 21,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
-      IconButton(
-        icon: Icon(
-          Icons.more_vert,
-          color: Colors.black.withOpacity(0.5),
+      Container(
+        margin: EdgeInsets.all(10),
+        child: IconButton(
+          icon: Icon(
+            Icons.more_vert,
+            size: 20,
+          ),
+          onPressed: () {},
         ),
-        onPressed: () {},
       ),
     ],
   );

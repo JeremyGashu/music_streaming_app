@@ -11,7 +11,7 @@ class SearchField extends StatelessWidget {
     return Container(
       width: getWidth(350),
       decoration: BoxDecoration(
-        color: Color(0x227521D5),
+        color: Colors.grey.withOpacity(0.2),
         borderRadius: BorderRadius.circular(6),
       ),
       child: TextField(
@@ -22,38 +22,38 @@ class SearchField extends StatelessWidget {
               BlocProvider.of<SearchBloc>(context)
                   .add(SetCurrentKey(currentKey: value));
             } else {
-              // BlocProvider.of<SearchBloc>(context)
-              //     .add(SetCurrentKey(currentKey: value));
+              BlocProvider.of<SearchBloc>(context)
+                  .add(SetCurrentKey(currentKey: value));
               BlocProvider.of<SearchBloc>(context).add(ExitSearch());
             }
           },
           textInputAction: TextInputAction.search,
+          // textAlign: TextAlign.left,
+
           decoration: InputDecoration(
             icon: Padding(
-              padding: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.all(10.0),
               child: Icon(
                 Icons.search,
                 color: Colors.grey.withOpacity(0.6),
               ),
             ),
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 5, vertical: 10),
             hintStyle: TextStyle(fontSize: 14, color: Color(0x882D2D2D)),
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
             hintText: "Search Songs, Albums, Artists, Playlist",
-            prefixIcon: SvgPicture.asset(
-              'assets/svgs/search.svg',
-              fit: BoxFit.scaleDown,
-              color: Color(0x882D2D2D),
-            ),
+            // prefixIcon: SvgPicture.asset(
+            //   'assets/svgs/search.svg',
+            //   fit: BoxFit.cover,
+            //   color: Color(0x882D2D2D),
+            // ),
             suffixIcon: Container(
               width: 16,
               height: 16,
               child: SvgPicture.asset(
                 'assets/svgs/filter.svg',
-                color: Color(0xCC741855),
+                color: Colors.grey,
                 fit: BoxFit.scaleDown,
               ),
             ),

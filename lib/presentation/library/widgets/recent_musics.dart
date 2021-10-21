@@ -18,12 +18,12 @@ import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 import 'package:streaming_mobile/presentation/playlist/widgets/music_tile.dart';
 
-class RecentlyeSearched extends StatefulWidget {
+class RecentSongs extends StatefulWidget {
   @override
-  _RecentlyeSearchedState createState() => _RecentlyeSearchedState();
+  _RecentSongsState createState() => _RecentSongsState();
 }
 
-class _RecentlyeSearchedState extends State<RecentlyeSearched> {
+class _RecentSongsState extends State<RecentSongs> {
   @override
   void initState() {
     super.initState();
@@ -34,29 +34,28 @@ class _RecentlyeSearchedState extends State<RecentlyeSearched> {
     return BlocBuilder<MediaDownloaderBloc, MediaDownloaderState>(
         builder: (context, s) {
       return FutureBuilder<Box<Track>>(
-          future: Hive.openBox<Track>('recently_searched'),
+          future: Hive.openBox<Track>('recently_played_songs'),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return snapshot.data.values.length == 0
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 50, bottom: 50),
-                      child: Center(
-                        child: Text('No recently searched song found!'),
-                      ),
+              return snapshot.data.length != 0
+                  ? Container(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.all(4),
+                          itemCount: snapshot.data.length > 10
+                              ? 10
+                              : snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            Track track = snapshot.data.values
+                                .toList()
+                                .reversed
+                                .toList()[index];
+                            print('current item => ${track}');
+                            return musicTile(track, context);
+                          }),
                     )
-                  : ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(4),
-                      shrinkWrap: true,
-                      itemCount:
-                          snapshot.data.length > 3 ? 3 : snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        Track track = snapshot.data.values
-                            .toList()
-                            .reversed
-                            .toList()[index];
-                        return musicTile(track, context);
-                      });
+                  : Center(child: Text('You have not played songs recently!'));
             }
 
             return Center(

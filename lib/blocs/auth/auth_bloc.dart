@@ -16,23 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is VerifyPhoneNumberEvent) {
-      yield SendingPhoneVerification();
-      try {
-        String otp =
-            await authRepository.verifyPhoneNumber(phoneNo: event.phoneNo);
-        if (otp != '' && otp != null) {
-          yield OTPReceived(otp: otp, phoneNo: event.phoneNo);
-        } else {
-          yield AuthenticationError(message: 'Error verifying your phone! Please try Again!');
-          // yield Unauthenticated(authData: AuthData(isAuthenticated: false));
-        }
-      } catch (e) {
-        print(e.toString());
-        yield AuthenticationError();
-        // throw Exception(e);
-      }
-    } else if (event is CheckAuthOnStartUp) {
+    if (event is CheckAuthOnStartUp) {
       yield CheckingAuthOnStartup();
       var authBox = await Hive.openBox<AuthData>('auth_box');
       AuthData authData = authBox.get('auth_data',
@@ -41,26 +25,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield Authenticated(authData: authData);
       } else {
         yield InitialState();
-      }
-    } else if (event is SendOTPVerification) {
-      yield VerifyingOTP();
-      try {
-        String token = await authRepository.verifyOTP(
-            phoneNo: event.phoneNo, otp: event.otp);
-        if (token != '') {
-          print('OTP => ' + event.otp);
-          yield OTPVerified(
-            otp: event.otp,
-            phoneNo: event.phoneNo,
-          );
-          // yield Authenticated(isAuthenticated: true, otp: event.otp);
-        } else {
-          yield OTPVerificationFailed(phoneNo: event.phoneNo);
-        }
-      } catch (e) {
-        print(e.toString());
-        yield AuthenticationError();
-        // throw Exception(e);
       }
     } else if (event is LoginEvent) {
       yield SendingLoginData();
@@ -72,11 +36,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield Authenticated(authData: authData);
 
           var authBox = await Hive.openBox<AuthData>('auth_box');
+          var authDataToBeSaved = AuthData(isAuthenticated: true, phone: event.phone, token: authData.token, refreshToken: authData.refreshToken, userId: authData.userId, message: '');
           print('saving auth data into  hive');
           print('saving user_id in shared prefernce');
-          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
           sharedPreferences.setString('user_id', authData.userId);
-          await authBox.put('auth_data', authData);
+          sharedPreferences.setString('phone_number', event.phone);
+          await authBox.put('auth_data', authDataToBeSaved);
 
           print(
               'saved auth data ${authBox.get('auth_data', defaultValue: AuthData(isAuthenticated: false))}');

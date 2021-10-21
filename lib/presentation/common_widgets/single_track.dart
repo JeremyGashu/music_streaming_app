@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_event.dart';
@@ -20,7 +21,8 @@ import 'package:streaming_mobile/presentation/player/single_track_player_page.da
 
 class SingleTrack extends StatefulWidget {
   final Track track;
-  SingleTrack({@required this.track});
+  final addToRecentlyPlayed;
+  SingleTrack({@required this.track, bool this.addToRecentlyPlayed = true});
 
   @override
   _SingleTrackState createState() => _SingleTrackState();
@@ -36,8 +38,24 @@ class _SingleTrackState extends State<SingleTrack> {
         left: 15,
       ),
       child: GestureDetector(
-        onTap: () {
-          /// Start playing the audio
+        onTap: () async {
+          if (widget.addToRecentlyPlayed) {
+            var recentlyPlaedSongs =
+                await Hive.openBox<Track>('recently_played_songs');
+            bool added = false;
+            recentlyPlaedSongs.values.forEach((song) {
+              if (song.songId == widget.track.songId) {
+                added = true;
+              }
+            });
+            if (!added) {
+              await recentlyPlaedSongs.add(widget.track);
+            }
+
+            print(
+                'current recently played songs => ${recentlyPlaedSongs.values.length}');
+          }
+
           try {
             playAudio();
           } catch (e) {}
@@ -59,7 +77,9 @@ class _SingleTrackState extends State<SingleTrack> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Hero(
-                    tag: widget.track!= null ?widget.track.songId : '${Random()}',
+                    tag: widget.track != null
+                        ? widget.track.songId
+                        : '${Random()}',
                     child: CachedNetworkImage(
                       placeholder: (context, url) => Center(
                         child: SpinKitRipple(
@@ -76,7 +96,7 @@ class _SingleTrackState extends State<SingleTrack> {
                       },
                       width: 140.0,
                       height: 120,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
@@ -190,7 +210,7 @@ class _SingleTrackState extends State<SingleTrack> {
       if (!(await LocalHelper.isFileDownloaded(widget.track.songId)) ||
           !(await LocalHelper.allSegmentsDownloaded(id: widget.track.songId))) {
         BlocProvider.of<UserDownloadBloc>(context)
-              .add(StartDownload(track: widget.track));
+            .add(StartDownload(track: widget.track));
       } else {
         var m3u8FilePath = '$dir/${widget.track.songId}/main.m3u8';
 
@@ -209,8 +229,8 @@ class _SingleTrackState extends State<SingleTrack> {
       await _startPlaying(mediaItems);
     } catch (e) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Error playing song!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
     }
   }

@@ -28,7 +28,7 @@ class PlaylistTile extends StatelessWidget {
                   fit: BoxFit.contain,
                 );
               },
-              imageUrl: playlist.songs.isNotEmpty ? playlist.songs[0].song.coverImageUrl ?? '' : '',
+              imageUrl: playlist.image ?? '',
               placeholder: (context, url) => SpinKitRipple(color: Colors.orange, size: 10,),
               fit: BoxFit.contain,
             ),

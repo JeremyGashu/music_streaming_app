@@ -51,91 +51,92 @@ class _AlbumDetailState extends State<AlbumDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
-      body: Stack(children: [
-        SingleChildScrollView(
-          child: BlocConsumer<LikeBloc, LikeState>(
-              bloc: _likeBloc,
-              listener: (context, state) {
-                if (state is SuccessState) {
-                  state.status
-                      ? likesCount++
-                      : likesCount > 0
-                          ? likesCount--
-                          : likesCount;
-                }
-                if (state is ErrorState) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.message)));
-                }
-              },
-              builder: (context, state) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    //upper section containing the image, svg, shuffle button and healing track
-                    upperSection(context, state, album: widget.album),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    Container(
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: widget.album.tracks.length,
-                              itemBuilder: (context, index) {
-                                return musicTile(
-                                  widget.album.tracks[index],
-                                  context,
-                                );
-                              }),
-                          SizedBox(
-                            height: 100,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: StreamBuilder(
-            stream: AudioService.playbackStateStream,
-            builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
-              if (snapshot.hasData) {
-                print("SnapshotData: ${snapshot.data.processingState}");
+      body: SafeArea(
+        child: Stack(children: [
+    SingleChildScrollView(
+        child: BlocConsumer<LikeBloc, LikeState>(
+            bloc: _likeBloc,
+            listener: (context, state) {
+              if (state is SuccessState) {
+                state.status
+                    ? likesCount++
+                    : likesCount > 0
+                        ? likesCount--
+                        : likesCount;
               }
-              if (snapshot.hasData) {
-                var snapShotData = snapshot.data.processingState;
-                if (snapShotData != AudioProcessingState.stopped) {
-                  return StreamBuilder(
-                      stream: AudioService.currentMediaItemStream,
-                      builder: (context,
-                          AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
-                        return currentMediaItemSnapshot.hasData &&
-                                currentMediaItemSnapshot.data != null
-                            ? PlayerOverlay(playing: snapshot.data.playing)
-                            : SizedBox();
-                      });
-                }
+              if (state is ErrorState) {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
               }
-              return SizedBox();
             },
-          ),
+            builder: (context, state) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  //upper section containing the image, svg, shuffle button and healing track
+                  upperSection(context, state, album: widget.album),
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  Container(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: widget.album.tracks.length,
+                            itemBuilder: (context, index) {
+                              return musicTile(
+                                widget.album.tracks[index],
+                                context,
+                              );
+                            }),
+                        SizedBox(
+                          height: 100,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }),
+    ),
+    Align(
+        alignment: Alignment.bottomCenter,
+        child: StreamBuilder(
+          stream: AudioService.playbackStateStream,
+          builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
+            if (snapshot.hasData) {
+              print("SnapshotData: ${snapshot.data.processingState}");
+            }
+            if (snapshot.hasData) {
+              var snapShotData = snapshot.data.processingState;
+              if (snapShotData != AudioProcessingState.stopped) {
+                return StreamBuilder(
+                    stream: AudioService.currentMediaItemStream,
+                    builder: (context,
+                        AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                      return currentMediaItemSnapshot.hasData &&
+                              currentMediaItemSnapshot.data != null
+                          ? PlayerOverlay(playing: snapshot.data.playing)
+                          : SizedBox();
+                    });
+              }
+            }
+            return SizedBox();
+          },
         ),
-      ]),
-    ));
+    ),
+        ]),
+      ),
+    );
   }
 
   Widget upperSection(context, LikeState state, {Album album}) {
@@ -338,9 +339,9 @@ class _AlbumDetailState extends State<AlbumDetail> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 album.tracks != null
-                    ? '${album.tracks.length} Songs, ${prettyDuration(Duration(seconds: duration))}'
+                    ? '${album.tracks.length} Songs | ${prettyDuration(Duration(seconds: duration))}'
                     : '',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
             ),
             Padding(

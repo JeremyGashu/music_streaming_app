@@ -66,7 +66,7 @@ class _SingleAlbumState extends State<SingleAlbum> {
                           },
                           width: 140.0,
                           height: 120,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),

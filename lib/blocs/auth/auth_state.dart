@@ -12,38 +12,7 @@ class InitialState extends AuthState {
   List<Object> get props => [];
 }
 
-class SendingPhoneVerification extends AuthState {
-  @override
-  List<Object> get props => [];
-}
 
-class VerifyingOTP extends AuthState {
-  @override
-  List<Object> get props => [];
-}
-
-class OTPVerified extends AuthState {
-  final String phoneNo;
-  final String otp;
-  OTPVerified({@required this.otp, @required this.phoneNo});
-  @override
-  List<Object> get props => [otp, phoneNo];
-}
-
-class OTPVerificationFailed extends AuthState {
-  final String phoneNo;
-  OTPVerificationFailed({@required this.phoneNo});
-  @override
-  List<Object> get props => [phoneNo];
-}
-
-class OTPReceived extends AuthState {
-  final String otp;
-  final String phoneNo;
-  OTPReceived({@required this.otp, this.phoneNo});
-  @override
-  List<Object> get props => [otp];
-}
 
 class AuthenticationError extends AuthState {
   final String message;
@@ -110,7 +79,6 @@ class SendingPasswordResetFailed extends AuthState {
   List<Object> get props => [message];
 }
 
-///
 class SendingVerifyPasswordReset extends AuthState {}
 
 class VerifiedPasswordReset extends AuthState {
@@ -129,7 +97,7 @@ class VerifyingPasswordResetError extends AuthState {
   List<Object> get props => [message];
 }
 
-///
+
 class CheckingAuthOnStartup extends AuthState {
   @override
   List<Object> get props => [];

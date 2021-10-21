@@ -52,27 +52,28 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LikeBloc, LikeState>(
-        bloc: _likeBloc,
-        listener: (context, state) {
-          if (state is SuccessState) {
-            state.status
-                ? likesCount++
-                : likesCount > 0
-                    ? likesCount--
-                    : likesCount;
-          }
-          if (state is ErrorState) {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          }
-        },
-        builder: (context, state) {
-          return SafeArea(
-              child: Scaffold(
-            key: _scaffoldKey,
-            body: Stack(children: [
+    return Scaffold(
+      body: SafeArea(
+        child: BlocConsumer<LikeBloc, LikeState>(
+            bloc: _likeBloc,
+            listener: (context, state) {
+              if (state is SuccessState) {
+                state.status
+                    ? likesCount++
+                    : likesCount > 0
+                        ? likesCount--
+                        : likesCount;
+              }
+              if (state is ErrorState) {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+            builder: (context, state) {
+              return Scaffold(
+                key: _scaffoldKey,
+                body: Stack(children: [
               SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -158,9 +159,11 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                   },
                 ),
               ),
-            ]),
-          ));
-        });
+                ]),
+              );
+            }),
+      ),
+    );
   }
 
   Widget upperSection(context, LikeState state, {Playlist playlist}) {
@@ -362,9 +365,9 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 playlist.songs != null
-                    ? '${playlist.songs.length} Songs, ${prettyDuration(Duration(seconds: duration))}'
+                    ? '${playlist.songs.length} Songs ${prettyDuration(Duration(seconds: duration))}'
                     : '',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
             ),
             Padding(
