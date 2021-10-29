@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  animated_rotation:
-    dependency: "direct main"
-    description:
-      name: animated_rotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   archive:
     dependency: transitive
     description:
@@ -695,13 +688,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
-  modal_bottom_sheet:
-    dependency: "direct main"
-    description:
-      name: modal_bottom_sheet
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   nested:
     dependency: transitive
     description:
@@ -779,6 +765,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  palette_generator:
+    dependency: "direct main"
+    description:
+      name: palette_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.2"
   path:
     dependency: "direct main"
     description:
@@ -835,13 +828,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  pausable_timer:
-    dependency: "direct main"
-    description:
-      name: pausable_timer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0+2"
   pedantic:
     dependency: transitive
     description:

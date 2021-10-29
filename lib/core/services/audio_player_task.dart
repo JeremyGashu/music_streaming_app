@@ -398,10 +398,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) {
-    if (shuffleMode != AudioServiceShuffleMode.none) {
-      _audioPlayer.setShuffleModeEnabled(true);
-    }
-    AudioServiceBackground.setState(shuffleMode: shuffleMode);
+    // if (shuffleMode != AudioServiceShuffleMode.none) {
+    //   _audioPlayer.setShuffleModeEnabled(true);
+    // }
+    // AudioServiceBackground.setState(shuffleMode: shuffleMode);
     return super.onSetShuffleMode(shuffleMode);
   }
 

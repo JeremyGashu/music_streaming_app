@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,23 @@ import 'package:streaming_mobile/presentation/player/single_track_player_page.da
 import 'package:streaming_mobile/presentation/playlist/pages/private_playlists_page.dart';
 import 'package:streaming_mobile/presentation/tracks/liked_songs.dart';
 
-class LibraryPage extends StatelessWidget {
+class LibraryPage extends StatefulWidget {
+  @override
+  _LibraryPageState createState() => _LibraryPageState();
+}
+
+class _LibraryPageState extends State<LibraryPage> {
+
+  @override
+  initState() {
+    super.initState();
+    FocusNode myFocusNode = FocusNode();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context).isCurrent) {
+        myFocusNode.requestFocus();
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,11 +200,11 @@ class LibraryPage extends StatelessWidget {
               child: Opacity(
                 opacity: opacity,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(0),
                   child: SvgPicture.asset(
                     svg,
-                    height: getHeight(60),
-                    width: getWidth(60),
+                    height: getHeight(70),
+                    width: getWidth(70),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -208,98 +225,6 @@ class LibraryPage extends StatelessWidget {
       ),
     );
   }
-
-  // _trackListItem() {
-  //   return Padding(
-  //     padding: EdgeInsets.only(bottom: 10, left: 16.0, right: 16.0),
-  //     child: Row(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         _imageWithDetailRow(),
-  //         Spacer(),
-  //         SizedBox(
-  //           width: 20,
-  //         ),
-  //         Row(
-  //           mainAxisSize: MainAxisSize.min,
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text(
-  //               '04:13',
-  //               style: TextStyle(
-  //                   letterSpacing: 1,
-  //                   fontSize: 13,
-  //                   fontWeight: FontWeight.w400,
-  //                   color: Color(0x882D2D2D)),
-  //             ),
-  //             IconButton(
-  //               icon: Icon(Icons.more_vert),
-  //               onPressed: () {},
-  //               color: Color(0x882D2D2D),
-  //             )
-  //           ],
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Row _imageWithDetailRow() {
-  //   return Row(
-  //     children: [
-  //       Row(
-  //         children: [
-  //           _customClippedImage(),
-  //           SizedBox(
-  //             width: 16,
-  //           ),
-  //           Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 'Amelkalew',
-  //                 style: TextStyle(
-  //                     letterSpacing: 1.2,
-  //                     fontSize: 15,
-  //                     fontWeight: FontWeight.w500,
-  //                     color: Color(0xDD2D2D2D)),
-  //               ),
-  //               Text(
-  //                 'Dawit Getachew',
-  //                 style: TextStyle(
-  //                     letterSpacing: 1,
-  //                     fontSize: 13,
-  //                     fontWeight: FontWeight.w400,
-  //                     color: Color(0x882D2D2D)),
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Container _customClippedImage() {
-  //   return Container(
-  //       height: 50,
-  //       width: 50,
-  //       decoration:
-  //           BoxDecoration(borderRadius: BorderRadius.circular(50), boxShadow: [
-  //         BoxShadow(
-  //           offset: Offset(0, 2),
-  //           blurRadius: 2,
-  //           color: Color(0x882D2D2D),
-  //         )
-  //       ]),
-  //       child: ClipRRect(
-  //         borderRadius: BorderRadius.circular(10),
-  //         child: Image(
-  //           image: AssetImage('assets/images/artist_two.jpg'),
-  //           fit: BoxFit.cover,
-  //         ),
-  //       ));
-  // }
 
   void playAudio(BuildContext context, Track track) async {
     if (AudioService.playbackState.playing) {

@@ -102,7 +102,7 @@ Widget musicTile(Track music, BuildContext context,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.8),
-                          fontSize: 18,
+                          fontSize: 16,
                           letterSpacing: 1.01,
                         ),
                       ),
@@ -112,7 +112,7 @@ Widget musicTile(Track music, BuildContext context,
                             : 'Unkown Artist',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.5),
-                          fontSize: 14,
+                          fontSize: 13,
                           letterSpacing: 1.01,
                         ),
                       ),
@@ -286,8 +286,8 @@ Future<void> playSong(context, Duration position, Track track) async {
         id: track.songId,
         album: '',
         title: track.title,
-        genre: '${track.genre.name}',
-        artist: '${track.artist.firstName} ${track.artist.lastName}',
+        genre: track.genre != null ?  '${track.genre.name}' : '',
+        artist: track.artist != null ? '${track.artist.firstName} ${track.artist.lastName}' : 'Unknown Artist',
         duration: Duration(seconds: track.duration),
         artUri: Uri.parse(track.coverImageUrl),
         extras: {'source': source}));
@@ -314,7 +314,8 @@ Future<void> playSong(context, Duration position, Track track) async {
     }
 
     await _startPlaying(mediaItems);
-  } catch (e) {
+  } catch (e, st) {
+    print(st);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text('Error playing song')));

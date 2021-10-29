@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
@@ -17,6 +18,7 @@ class _DownloadPageState extends State<DownloadsPage> {
   @override
   void initState() {
     super.initState();
+    
   }
 
   @override

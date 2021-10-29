@@ -51,6 +51,7 @@ class _SearchPageState extends State<SearchPage>
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
     super.initState();
+    
   }
 
   @override

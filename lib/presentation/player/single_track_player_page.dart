@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +89,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      // backgroundColor: Colors.black87,
       body: StreamBuilder(
           stream: AudioService.playbackStateStream,
           builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
@@ -115,8 +116,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
                           builder: (context, state) {
                             return Stack(
                               children: [
-                                _nowPlayingWidget(playBackSnapshot.data,
-                                    mediaItem: snapshot.data),
+                                Container(
+                                  color: Colors.black,
+                                  child: _nowPlayingWidget(
+                                      playBackSnapshot.data,
+                                      mediaItem: snapshot.data),
+                                ),
                                 _menuSelector(context, state,
                                     songId: snapshot.data.id),
                               ],
@@ -363,7 +368,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             linearStrokeCap: LinearStrokeCap.butt,
             lineHeight: 2.0,
             progressColor: Colors.orangeAccent.withOpacity(0.5),
-            backgroundColor: Colors.black12,
+            // backgroundColor: Colors.black12,
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 16.0,
@@ -452,11 +457,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
           IconButton(
             onPressed: () async {
               playbackState.repeatMode == AudioServiceRepeatMode.one
-                  ? await AudioService.setRepeatMode(
-                      AudioServiceRepeatMode.all)
-                  : playbackState.repeatMode == AudioServiceRepeatMode.all ? await AudioService.setRepeatMode(
-                      AudioServiceRepeatMode.none) : await AudioService.setRepeatMode(
-                      AudioServiceRepeatMode.one);
+                  ? await AudioService.setRepeatMode(AudioServiceRepeatMode.all)
+                  : playbackState.repeatMode == AudioServiceRepeatMode.all
+                      ? await AudioService.setRepeatMode(
+                          AudioServiceRepeatMode.none)
+                      : await AudioService.setRepeatMode(
+                          AudioServiceRepeatMode.one);
             },
             icon: Icon(
               playbackState.repeatMode == AudioServiceRepeatMode.one
@@ -534,46 +540,91 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     );
   }
 
-  Container _songImage(BuildContext context, MediaItem mediaItem) {
-    return Container(
-        color: Colors.black87,
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.white70,
+  FutureBuilder _songImage(BuildContext context, MediaItem mediaItem) {
+    return FutureBuilder<Color>(
+        future: getDominantColor(mediaItem.artUri.toString()),
+        builder: (context, snapshot) {
+          return snapshot.hasData
+              ? Container(
+                color: snapshot.data,
+                  // color: Colors.black87,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white70,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 50, left: 30, right: 30, top: 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: CachedNetworkImage(
+                              imageUrl: mediaItem.artUri.toString(),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        _songTitleRow(mediaItem),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-              ),
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(
-                    bottom: 50, left: 30, right: 30, top: 0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: CachedNetworkImage(
-                    imageUrl: mediaItem.artUri.toString(),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              _songTitleRow(mediaItem),
-              SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-        ));
+                  ))
+              : Container(
+                  // color: Colors.black87,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white70,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 50, left: 30, right: 30, top: 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: CachedNetworkImage(
+                              imageUrl: mediaItem.artUri.toString(),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        _songTitleRow(mediaItem),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ));
+        });
   }
 
   play(SharedPreferences prefs) async {
@@ -582,5 +633,13 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
       // playSingleTrack(context, track, position);
     } else
       await AudioService.play();
+  }
+
+  Future<Color> getDominantColor(String imageUrl) async {
+    PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(
+      Image.network(imageUrl).image,
+    );
+    return paletteGenerator.dominantColor.color;
   }
 }

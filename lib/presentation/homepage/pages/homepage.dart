@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         AudioService.playbackStateStream.where(isStopped).listen((_) {
       reloadPrefs();
     });
+
   }
 
   @override

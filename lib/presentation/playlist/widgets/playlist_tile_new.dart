@@ -15,7 +15,7 @@ class PlaylistTile extends StatelessWidget {
         Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: playlist);
       },
       leading: Card(
-        elevation: 3,
+        elevation: 5,
         child: Container(
           width: 50,
           height: 50,
@@ -30,14 +30,13 @@ class PlaylistTile extends StatelessWidget {
               },
               imageUrl: playlist.image ?? '',
               placeholder: (context, url) => SpinKitRipple(color: Colors.orange, size: 10,),
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
           ),
         ),
       ),
 
       title: Text(playlist.title),
-      // subtitle: Text('${playlist.firstName} ${playlist.artist.lastName}'),
       trailing: Text('${playlist.songs.length} Tracks', style: TextStyle(color: Colors.grey),),
     );
   }

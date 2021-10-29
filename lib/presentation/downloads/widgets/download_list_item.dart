@@ -80,7 +80,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
                 children: [
                   Text(
                     widget.completed
-                        ? "completed"
+                        ? '${widget.downloadTask.artistFirstName} ${widget.downloadTask.artistLastName}'
                         : "${widget.downloadTask.progress.toStringAsFixed(1)} %",
                   ),
                   SizedBox(
@@ -124,7 +124,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    'The please stop the song first!',
+                                    'Please stop the song first!',
                                   ),
                                 ),
                               );

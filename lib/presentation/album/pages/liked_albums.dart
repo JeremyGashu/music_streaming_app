@@ -139,7 +139,7 @@ Widget _upperSection(BuildContext context) {
             }),
       ),
       Text(
-        'Liked Albums',
+        'My Albums',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,

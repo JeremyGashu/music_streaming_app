@@ -10,13 +10,24 @@ import 'package:streaming_mobile/blocs/cache_bloc/cache_state.dart' as cs;
 import 'package:streaming_mobile/presentation/auth/pages/reset_password_page.dart';
 import 'package:streaming_mobile/presentation/auth/pages/welcome_page.dart';
 
-class ArtistProfilePage extends StatelessWidget {
+class ArtistProfilePage extends StatefulWidget {
+  @override
+  _ArtistProfilePageState createState() => _ArtistProfilePageState();
+}
+
+class _ArtistProfilePageState extends State<ArtistProfilePage> {
+  @override
+  initState() {
+    super.initState();
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: BlocConsumer<CacheBloc, cs.CacheState>(
-            listener: (context, state) {
+        child:
+            BlocConsumer<CacheBloc, cs.CacheState>(listener: (context, state) {
           if (state is cs.ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -52,23 +63,30 @@ class ArtistProfilePage extends StatelessWidget {
                 ),
               ),
               FutureBuilder(
-                future: SharedPreferences.getInstance(),
-                builder: (context, AsyncSnapshot<SharedPreferences> s) {
-                  
-                  if (s.hasData) {
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.phone, color: Colors.grey,size: 15,),
-                        SizedBox(width: 5,),
-                        Text(s.data.getString('phone_number') ?? '', style: TextStyle(color: Colors.grey, fontSize: 15),),
-                      ],
-                    );
-                  }
+                  future: SharedPreferences.getInstance(),
+                  builder: (context, AsyncSnapshot<SharedPreferences> s) {
+                    if (s.hasData) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.phone,
+                            color: Colors.grey,
+                            size: 15,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            s.data.getString('phone_number') ?? '',
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                          ),
+                        ],
+                      );
+                    }
 
-                  return Container();
-                }
-              ),
+                    return Container();
+                  }),
               SizedBox(
                 height: 13,
               ),
@@ -87,8 +105,8 @@ class ArtistProfilePage extends StatelessWidget {
                     size: 25,
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context,
-                        ResetPasswordPage.resetPasswordPageRouterName);
+                    Navigator.pushNamed(
+                        context, ResetPasswordPage.resetPasswordPageRouterName);
                   }),
               _listSelectorTiles(
                   title: 'Clear Cache',

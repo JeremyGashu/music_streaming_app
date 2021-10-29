@@ -142,7 +142,7 @@ Widget _upperSection(BuildContext context) {
             }),
       ),
       Text(
-        'Liked Artists',
+        'My Artists',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
