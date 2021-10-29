@@ -12,6 +12,7 @@ import 'package:streaming_mobile/blocs/user_downloads/user_download_bloc.dart'
     as udb;
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart'
     as uds;
+import 'package:streaming_mobile/core/app/size_configs.dart';
 
 import 'package:streaming_mobile/core/app/urls.dart';
 import 'package:streaming_mobile/core/utils/helpers.dart';
@@ -53,23 +54,23 @@ class LibraryPage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildPlayListTopOptionsItem('assets/svg/album_new.svg',
+                        _buildPlayListTopOptionsItem('assets/svg/album_library.svg',
                             () {
                           Navigator.pushNamed(
                               context, LikedAlbumsPage.likedAlbumsRouteName);
                         }, 'Albums', 1.0),
-                        _buildPlayListTopOptionsItem('assets/svg/songs_new.svg',
+                        _buildPlayListTopOptionsItem('assets/svg/song_library.svg',
                             () {
                           Navigator.pushNamed(
                               context, LikedSongsPage.likedSongsPage);
-                        }, 'Songs', 0.6),
+                        }, 'Songs', 1.0),
                         _buildPlayListTopOptionsItem(
-                            'assets/svg/playlist_new.svg', () {
+                            'assets/svg/playlist_library.svg', () {
                           Navigator.pushNamed(context,
                               PrivatePlaylistsPage.privatePlaylistRouteName);
-                        }, 'Playlists', 0.6),
+                        }, 'Playlists', 1.0),
                         _buildPlayListTopOptionsItem(
-                            'assets/svg/artists_new.svg', () {
+                            'assets/svg/artist_library.svg', () {
                           Navigator.pushNamed(
                               context, LikedArtistsPage.likedArtistsRouteName);
                         }, 'Artists', 1.0),
@@ -140,14 +141,7 @@ class LibraryPage extends StatelessWidget {
                   //   }
                   //   return Container();
                   // }),
-                  child: Column(
-                    children: [
-                      RecentSongs(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
+                  child: RecentSongs(),
                 ),
                 // SizedBox(
                 //   height: 20.0,
@@ -185,18 +179,17 @@ class LibraryPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10)),
-              padding: EdgeInsets.all(20),
+              // padding: EdgeInsets.all(5),
               child: Opacity(
                 opacity: opacity,
-                child: SvgPicture.asset(
-                  svg,
-                  color: Colors.grey[900],
-                  height: 30,
-                  width: 30,
-                  fit: BoxFit.fill,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SvgPicture.asset(
+                    svg,
+                    height: getHeight(60),
+                    width: getWidth(60),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
             ),

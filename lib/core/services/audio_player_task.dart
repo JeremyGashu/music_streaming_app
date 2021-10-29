@@ -106,22 +106,14 @@ class AudioPlayerTask extends BackgroundAudioTask {
         onSkipToNext();
       } else {
         _queueIndex = 0;
-        onPlay();
+        onPlayMediaItem(_mediaItem);
       }
     } else if (AudioServiceBackground.state.repeatMode ==
         AudioServiceRepeatMode.one) {
-      onPlay();
+          onSeekTo(Duration(seconds: 0));
     } else if (AudioServiceBackground.state.repeatMode ==
         AudioServiceRepeatMode.none) {
       hasNext ? onSkipToNext() : onStop();
-    }
-    else if (AudioServiceBackground.state.repeatMode == AudioServiceRepeatMode.all) {
-      if (hasNext) {
-        onSkipToNext();
-      } else {
-        _queueIndex = 0;
-        onPlay();
-      }
     }
   }
 
@@ -387,26 +379,21 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) {
-    return null;
-    // print('repeat mode ${repeatMode}');
-    // if (repeatMode != AudioServiceRepeatMode.none) {
-    //   switch (repeatMode) {
-    //     case AudioServiceRepeatMode.all:
-    //       _audioPlayer.setLoopMode(LoopMode.all);
-    //       break;
-    //     case AudioServiceRepeatMode.none:
-    //       _audioPlayer.setLoopMode(LoopMode.off);
-    //       break;
-    //     case AudioServiceRepeatMode.one:
-    //       _audioPlayer.setLoopMode(LoopMode.one);
-    //       break;
-    //     case AudioServiceRepeatMode.group:
-    //       break;
-    //   }
-    //   _audioPlayer.setLoopMode(LoopMode.one);
-    // }
-    // AudioServiceBackground.setState(repeatMode: repeatMode);
-    // return super.onSetRepeatMode(repeatMode);
+    print('repeat mode ${repeatMode}');
+    if (repeatMode != AudioServiceRepeatMode.none) {
+      switch (repeatMode) {
+        case AudioServiceRepeatMode.all:
+          break;
+        case AudioServiceRepeatMode.none:
+          break;
+        case AudioServiceRepeatMode.one:
+          break;
+        case AudioServiceRepeatMode.group:
+          break;
+      }
+    }
+    AudioServiceBackground.setState(repeatMode: repeatMode);
+    return super.onSetRepeatMode(repeatMode);
   }
 
   @override

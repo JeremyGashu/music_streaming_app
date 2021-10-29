@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,7 +90,7 @@ Widget musicTile(Track music, BuildContext context,
                                   ? music.coverImageUrl
                                   : mediaItemStream.data.artUri.toString(),
                               placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
+                                  SpinKitRipple(color: Colors.orange,size: 20,),
                               fit: BoxFit.fill,
                             ),
                           ),

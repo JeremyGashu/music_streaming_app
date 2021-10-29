@@ -185,7 +185,10 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                         SizedBox(
                           height: 10,
                         ),
-                        SectionTitle(title: 'Albums', callback: () {}),
+                        SectionTitle(title: 'Albums', callback: () {}, hasMore: false),
+                        SizedBox(
+                          height: 10,
+                        ),
                         //album section
                         BlocBuilder<AlbumBloc, AlbumState>(
                             bloc: albumBloc,
@@ -233,8 +236,11 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                         SizedBox(
                           height: 10,
                         ),
-                        Divider(),
-                        SectionTitle(title: 'Songs', callback: () {}),
+
+                        SectionTitle(title: 'Songs', callback: () {}, hasMore: false),
+                        SizedBox(
+                          height: 10,
+                        ),
                         BlocBuilder<TrackBloc, TrackState>(
                             bloc: trackBloc,
                             builder: (context, state) {
@@ -281,7 +287,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                         SizedBox(
                           height: 10,
                         ),
-                        Divider(),
+                        // Divider(),
                       ],
                     ),
                   ],

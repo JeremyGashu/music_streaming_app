@@ -453,14 +453,17 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
             onPressed: () async {
               playbackState.repeatMode == AudioServiceRepeatMode.one
                   ? await AudioService.setRepeatMode(
-                      AudioServiceRepeatMode.none)
-                  : await AudioService.setRepeatMode(
+                      AudioServiceRepeatMode.all)
+                  : playbackState.repeatMode == AudioServiceRepeatMode.all ? await AudioService.setRepeatMode(
+                      AudioServiceRepeatMode.none) : await AudioService.setRepeatMode(
                       AudioServiceRepeatMode.one);
             },
             icon: Icon(
               playbackState.repeatMode == AudioServiceRepeatMode.one
-                  ? Icons.repeat_one_outlined
-                  : Icons.repeat,
+                  ? Icons.repeat_one
+                  : playbackState.repeatMode == AudioServiceRepeatMode.all
+                      ? Icons.loop
+                      : Icons.repeat,
               color: Colors.orange,
               size: 30,
             ),

@@ -575,10 +575,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   StreamBuilder(
-                      stream: AudioService.playbackStateStream,
+                      stream: AudioService.runningStream,
                       builder:
-                          (context, AsyncSnapshot<PlaybackState> snapshot) {
-                        if (snapshot.hasData && snapshot.data.playing) {
+                          (context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.hasData && snapshot.data ) {
                           return SizedBox(
                             height: 25,
                           );
