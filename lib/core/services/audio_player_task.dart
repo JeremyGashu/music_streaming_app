@@ -110,7 +110,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       }
     } else if (AudioServiceBackground.state.repeatMode ==
         AudioServiceRepeatMode.one) {
-          onSeekTo(Duration(seconds: 0));
+      onSeekTo(Duration(seconds: 0));
     } else if (AudioServiceBackground.state.repeatMode ==
         AudioServiceRepeatMode.none) {
       hasNext ? onSkipToNext() : onStop();
@@ -307,6 +307,14 @@ class AudioPlayerTask extends BackgroundAudioTask {
       );
       await _audioPlayer.setAudioSource(_hlsAudioSource);
     }
+
+    //add to shared preference
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> currentDownloads =
+        preferences.getStringList('download_medias') ?? [];
+    currentDownloads.add(mediaItem.id);
+    await preferences.setStringList('download_medias', currentDownloads);
+    print('current downloads => ${currentDownloads}');
 
     await onUpdateMediaItem(mediaItem);
     await onPlay();

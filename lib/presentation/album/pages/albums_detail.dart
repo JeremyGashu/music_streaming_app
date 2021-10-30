@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:math';
+// import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -55,85 +55,86 @@ class _AlbumDetailState extends State<AlbumDetail> {
       key: _scaffoldKey,
       body: SafeArea(
         child: Stack(children: [
-    SingleChildScrollView(
-        child: BlocConsumer<LikeBloc, LikeState>(
-            bloc: _likeBloc,
-            listener: (context, state) {
-              if (state is SuccessState) {
-                state.status
-                    ? likesCount++
-                    : likesCount > 0
-                        ? likesCount--
-                        : likesCount;
-              }
-              if (state is ErrorState) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
-              }
-            },
-            builder: (context, state) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  //upper section containing the image, svg, shuffle button and healing track
-                  upperSection(context, state, album: widget.album),
-                  SizedBox(
-                    height: 20,
-                  ),
+          SingleChildScrollView(
+            child: BlocConsumer<LikeBloc, LikeState>(
+                bloc: _likeBloc,
+                listener: (context, state) {
+                  if (state is SuccessState) {
+                    state.status
+                        ? likesCount++
+                        : likesCount > 0
+                            ? likesCount--
+                            : likesCount;
+                  }
+                  if (state is ErrorState) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.message)));
+                  }
+                },
+                builder: (context, state) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      //upper section containing the image, svg, shuffle button and healing track
+                      upperSection(context, state, album: widget.album),
+                      SizedBox(
+                        height: 20,
+                      ),
 
-                  Container(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: widget.album.tracks.length,
-                            itemBuilder: (context, index) {
-                              return musicTile(
-                                widget.album.tracks[index],
-                                context,
-                              );
-                            }),
-                        SizedBox(
-                          height: 100,
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            }),
-    ),
-    Align(
-        alignment: Alignment.bottomCenter,
-        child: StreamBuilder(
-          stream: AudioService.playbackStateStream,
-          builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
-            if (snapshot.hasData) {
-              print("SnapshotData: ${snapshot.data.processingState}");
-            }
-            if (snapshot.hasData) {
-              var snapShotData = snapshot.data.processingState;
-              if (snapShotData != AudioProcessingState.stopped) {
-                return StreamBuilder(
-                    stream: AudioService.currentMediaItemStream,
-                    builder: (context,
-                        AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
-                      return currentMediaItemSnapshot.hasData &&
-                              currentMediaItemSnapshot.data != null
-                          ? PlayerOverlay(playing: snapshot.data.playing)
-                          : SizedBox();
-                    });
-              }
-            }
-            return SizedBox();
-          },
-        ),
-    ),
+                      Container(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: widget.album.tracks.length,
+                                itemBuilder: (context, index) {
+                                  return musicTile(
+                                    widget.album.tracks[index],
+                                    context,
+                                    fromPlaylist: true,
+                                  );
+                                }),
+                            SizedBox(
+                              height: 100,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: StreamBuilder(
+              stream: AudioService.playbackStateStream,
+              builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
+                if (snapshot.hasData) {
+                  print("SnapshotData: ${snapshot.data.processingState}");
+                }
+                if (snapshot.hasData) {
+                  var snapShotData = snapshot.data.processingState;
+                  if (snapShotData != AudioProcessingState.stopped) {
+                    return StreamBuilder(
+                        stream: AudioService.currentMediaItemStream,
+                        builder: (context,
+                            AsyncSnapshot<MediaItem> currentMediaItemSnapshot) {
+                          return currentMediaItemSnapshot.hasData &&
+                                  currentMediaItemSnapshot.data != null
+                              ? PlayerOverlay(playing: snapshot.data.playing)
+                              : SizedBox();
+                        });
+                  }
+                }
+                return SizedBox();
+              },
+            ),
+          ),
         ]),
       ),
     );
@@ -287,11 +288,9 @@ class _AlbumDetailState extends State<AlbumDetail> {
                                 androidEnableQueue: true,
                               );
                             }
-                            await AudioService.setShuffleMode(
-                                AudioServiceShuffleMode.all);
-                            playAudio(
-                                Random().nextInt(widget.album.tracks.length),
-                                sharedPreferences);
+                            // await AudioService.setShuffleMode(
+                            //     AudioServiceShuffleMode.all);
+                            playAudio(0, sharedPreferences);
                           }
                         },
                         child: Container(
@@ -446,7 +445,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
             album: '',
             title: track.title,
             genre: 'genre goes here',
-            // artist: track.artist.firstName,
+            artist: track.artist != null ? '${track.artist.firstName} ${track.artist.lastName}' : 'Unknown Artist',
             duration: Duration(seconds: track.duration),
             artUri: Uri.parse(track.coverImageUrl),
             // extras: {'source': m3u8FilePath});

@@ -298,6 +298,7 @@ class _DownloadListItemState extends State<DownloadListItem> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error playing song!')));
       Navigator.pop(context);
+      throw Exception(e);
     }
   }
 

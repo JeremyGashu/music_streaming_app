@@ -120,6 +120,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                 return musicTile(
                                   widget.playlistInfo.songs[index].song,
                                   context,
+                                  fromPlaylist: true,
                                 );
                               }),
                           SizedBox(

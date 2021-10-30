@@ -88,6 +88,7 @@ class _PlayerOverlayState extends State<PlayerOverlay> {
                                       return musicTile(
                                         Track.fromMediaItem(snapshot.data[index]),
                                         context,
+                                        fromPlaylist: true,
                                       );
                                     }),
                               ),

@@ -90,6 +90,7 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.black87,
+      // appBar: null,
       body: StreamBuilder(
           stream: AudioService.playbackStateStream,
           builder: (context, AsyncSnapshot<PlaybackState> playBackSnapshot) {
@@ -168,12 +169,12 @@ class _SingleTrackPlayerPageState extends State<SingleTrackPlayerPage> {
     // BlocProvider.of<PlaylistBloc>(context).add(GetPrivatePlaylists());
     return AnimatedPositioned(
       duration: Duration(milliseconds: 240),
-      top: !_isCollapsed ? kHeight(context) - 240 : kHeight(context),
+      top: !_isCollapsed ? kHeight(context) - 190 : kHeight(context),
       left: 0,
       right: 0,
       child: Container(
         width: kWidth(context),
-        height: 240,
+        height: 190,
         child: Column(
           children: [
             GestureDetector(

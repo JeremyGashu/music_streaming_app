@@ -55,7 +55,10 @@ class _RecentSongsState extends State<RecentSongs> {
                             return musicTile(track, context);
                           }),
                     )
-                  : Center(child: Text('You have not played songs recently!'));
+                  : Center(child: Padding(
+                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    child: Text('You have not played songs recently!', style: TextStyle(fontSize: 14),),
+                  ));
             }
 
             return Center(

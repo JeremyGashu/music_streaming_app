@@ -29,25 +29,27 @@ class UserDownloadManager {
   Future<void> addToDownload({String id, Track track}) async {
     var task = await getTaskById(id);
     if (task == null) {
-      userDownloadBox.put(track.songId,LocalDownloadTask(
-          songId: track.songId,
-          title: track.title,
-          coverImageUrl: track.coverImageUrl,
-          songUrl: track.songUrl,
-          artistFirstName: track.artist.firstName,
-          artistLastName: track.artist.lastName,
-          duration: track.duration,
-          failed: false,
-          genre: track.genre.name,));
+      userDownloadBox.put(
+          track.songId,
+          LocalDownloadTask(
+            songId: track.songId,
+            title: track.title,
+            coverImageUrl: track.coverImageUrl,
+            songUrl: track.songUrl,
+            artistFirstName: track.artist.firstName,
+            artistLastName: track.artist.lastName,
+            duration: track.duration,
+            failed: false,
+            genre: track.genre.name,
+          ));
     }
   }
 
-  Future<Track> getTrackByIdFromRemote(String id) async {
+  static Future<Track> getTrackByIdFromRemote(String id) async {
     TrackDataProvider trackDataProvider = sl<TrackDataProvider>();
     Track track = await trackDataProvider.getTrackById(id: id);
     return track;
   }
-
 
   Future<LocalDownloadTask> getTaskById(String id) async {
     return userDownloadBox.get(id);

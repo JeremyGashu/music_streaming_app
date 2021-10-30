@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:streaming_mobile/blocs/single_media_downloader/media_downloader_state.dart';
 import 'package:streaming_mobile/blocs/user_downloads/user_download_state.dart';
 import 'package:streaming_mobile/core/services/user_download_manager.dart';
@@ -18,7 +17,6 @@ class _DownloadPageState extends State<DownloadsPage> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
@@ -33,11 +31,31 @@ class _DownloadPageState extends State<DownloadsPage> {
         ),
       ),
       body: BlocConsumer<MediaDownloaderBloc, MediaDownloaderState>(
-          listener: (c, mds) {
+          listener: (c, mds) async {
         if (mds is DownloadDone) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Download finished!')));
+
+          //==============================================================================
+          //read the saved StringList preference and start the download if it is not empty
+          // SharedPreferences preferences = await SharedPreferences.getInstance();
+          // List<String> currentDownloads =
+          //     preferences.getStringList('download_medias');
+          // print('current downloads => ${currentDownloads.toString()}');
+          // if (currentDownloads != null && currentDownloads.isNotEmpty) {
+          //   currentDownloads.forEach((element) async {
+          //     bool downloaded = await LocalHelper.isFileDownloaded(element);
+          //     if (!downloaded) {
+          //       Track track =
+          //           await UserDownloadManager.getTrackByIdFromRemote(element);
+          //       BlocProvider.of<UserDownloadBloc>(context)
+          //           .add(StartDownload(track: track));
+          //     }
+          //   });
+          //   await preferences.remove('download_medias');
+          //   //===============================================================================
+          // }
         } else if (mds is DownloadStarted) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(

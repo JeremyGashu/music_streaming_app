@@ -23,7 +23,7 @@ import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 Widget musicTile(Track music, BuildContext context,
-    {bool addToRecentlySearhed = false, bool addToRecentlyPlayed = true}) {
+    {bool addToRecentlySearhed = false, bool addToRecentlyPlayed = true, bool fromPlaylist = false}) {
   return BlocBuilder<CacheBloc, CacheState>(builder: (context, snapshot) {
     return BlocListener<UserDownloadBloc, UserDownloadState>(
       listener: (_, __) {},
@@ -61,7 +61,18 @@ Widget musicTile(Track music, BuildContext context,
             print(
                 'current recently searched songs => ${recentlySearchedSongs.values.length}');
           }
-
+          if(fromPlaylist) {
+            print('play from mediaid and return');
+            String currentlyPlayingId = await AudioService.currentMediaItem.id;
+            if(music.songId != currentlyPlayingId) {
+              await AudioService.playFromMediaId(music.songId);
+            }
+            else{
+              Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName);
+            }
+             return;
+          }
+          print('play from mediaid and return');
           playAudio(music, context);
         },
         child: StreamBuilder(
@@ -126,7 +137,7 @@ Widget musicTile(Track music, BuildContext context,
                                   children: [
                                     Image.asset(
                                       "assets/images/playing_wave.gif",
-                                      height: 20,
+                                      height: 16,
                                       color: kRed,
                                     ),
                                     SizedBox(width: 10),

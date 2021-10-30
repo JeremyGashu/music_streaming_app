@@ -35,7 +35,6 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-
   @override
   initState() {
     super.initState();
@@ -46,6 +45,7 @@ class _LibraryPageState extends State<LibraryPage> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +71,13 @@ class _LibraryPageState extends State<LibraryPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildPlayListTopOptionsItem('assets/svg/album_library.svg',
-                            () {
+                        _buildPlayListTopOptionsItem(
+                            'assets/svg/album_library.svg', () {
                           Navigator.pushNamed(
                               context, LikedAlbumsPage.likedAlbumsRouteName);
                         }, 'Albums', 1.0),
-                        _buildPlayListTopOptionsItem('assets/svg/song_library.svg',
-                            () {
+                        _buildPlayListTopOptionsItem(
+                            'assets/svg/song_library.svg', () {
                           Navigator.pushNamed(
                               context, LikedSongsPage.likedSongsPage);
                         }, 'Songs', 1.0),
@@ -111,72 +111,11 @@ class _LibraryPageState extends State<LibraryPage> {
 
                 SliverToBoxAdapter(
                     child: SizedBox(
-                  height: 20,
+                  height: 10,
                 )),
                 SliverToBoxAdapter(
-                  // child: BlocBuilder<NewReleaseBloc, NewReleaseState>(
-                  //     builder: (context, state) {
-                  //   if (state is LoadedNewReleases) {
-                  //     return StreamBuilder(
-                  //         stream: AudioService.currentMediaItemStream,
-                  //         builder:
-                  //             (context, AsyncSnapshot<MediaItem> snapshot) {
-                  //           return Column(
-                  //             children: [
-                  //               ListView.builder(
-                  //                   physics: NeverScrollableScrollPhysics(),
-                  //                   shrinkWrap: true,
-                  //                   itemCount: state.newRelease.songs.length,
-                  //                   itemBuilder: (context, index) {
-                  //                     var track =
-                  //                         state.newRelease.songs[index].song;
-                  //                     return musicTile(
-                  //                       track,
-                  //                       context,
-                  //                     );
-                  //                   }),
-                  //               SizedBox(
-                  //                 height: 100,
-                  //               )
-                  //             ],
-                  //           );
-                  //         });
-                  //   } else if (state is LoadingNewReleasesError) {
-                  //     return CustomErrorWidget(
-                  //         onTap: () {
-                  //           BlocProvider.of<NewReleaseBloc>(context)
-                  //               .add(LoadNewReleasesInit());
-                  //         },
-                  //         message: 'Error Loading New Songs!');
-                  //   } else if (state is LoadingNewReleases) {
-                  //     return Center(
-                  //       child: SpinKitRipple(
-                  //         color: Colors.grey,
-                  //         size: 70,
-                  //       ),
-                  //     );
-                  //   }
-                  //   return Container();
-                  // }),
                   child: RecentSongs(),
                 ),
-                // SizedBox(
-                //   height: 20.0,
-                // ),
-                // _sectionTitle(title: 'Newly Released Songs', callback: () {}),
-                // SizedBox(
-                //   height: 20.0,
-                // ),
-                // ListView(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   children: [
-                //     _trackListItem(),
-                //     _trackListItem(),
-                //     _trackListItem(),
-                //     _trackListItem(),
-                //   ],
-                // )
               ],
             );
           });
@@ -258,11 +197,6 @@ class _LibraryPageState extends State<LibraryPage> {
       var dir = await LocalHelper.getFilePath(context);
       // create mediaItem list
       List<MediaItem> mediaItems = [];
-      // print("tracks length: ${widget.tracks.length}");
-      // print("index: $index");
-      // print("tracks: ${widget.tracks}");
-      // print("trackId: ${widget.tracks[0].songId}");
-      // print("songId: ${widget.tracks[0].songId}");
 
       String source = '$M3U8_URL/${track.songId}';
 

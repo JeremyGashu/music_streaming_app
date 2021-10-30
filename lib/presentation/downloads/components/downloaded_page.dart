@@ -21,7 +21,7 @@ class DownloadedPage extends StatelessWidget {
           print("Download data :${snapshot.data}");
           return Container(
             // color: Colors.white,
-            child: ListView(
+            child: snapshot.data.length != 0 ?  ListView(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               children: snapshot.data
@@ -32,7 +32,7 @@ class DownloadedPage extends StatelessWidget {
                     ),
                   )
                   .toList(),
-            ),
+            ) : Text('No tracks are downloaded!'),
           );
         } else if (snapshot.hasError) {
           print(snapshot.error);
