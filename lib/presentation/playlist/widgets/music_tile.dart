@@ -23,7 +23,9 @@ import 'package:streaming_mobile/presentation/homepage/pages/homepage.dart';
 import 'package:streaming_mobile/presentation/player/single_track_player_page.dart';
 
 Widget musicTile(Track music, BuildContext context,
-    {bool addToRecentlySearhed = false, bool addToRecentlyPlayed = true, bool fromPlaylist = false}) {
+    {bool addToRecentlySearhed = false,
+    bool addToRecentlyPlayed = true,
+    bool fromPlaylist = false}) {
   return BlocBuilder<CacheBloc, CacheState>(builder: (context, snapshot) {
     return BlocListener<UserDownloadBloc, UserDownloadState>(
       listener: (_, __) {},
@@ -61,16 +63,16 @@ Widget musicTile(Track music, BuildContext context,
             print(
                 'current recently searched songs => ${recentlySearchedSongs.values.length}');
           }
-          if(fromPlaylist) {
+          if (fromPlaylist) {
             print('play from mediaid and return');
             String currentlyPlayingId = await AudioService.currentMediaItem.id;
-            if(music.songId != currentlyPlayingId) {
+            if (music.songId != currentlyPlayingId) {
               await AudioService.playFromMediaId(music.songId);
+            } else {
+              Navigator.pushNamed(context,
+                  SingleTrackPlayerPage.singleTrackPlayerPageRouteName);
             }
-            else{
-              Navigator.pushNamed(context, SingleTrackPlayerPage.singleTrackPlayerPageRouteName);
-            }
-             return;
+            return;
           }
           print('play from mediaid and return');
           playAudio(music, context);
@@ -93,15 +95,17 @@ Widget musicTile(Track music, BuildContext context,
                             child: CachedNetworkImage(
                               errorWidget: (context, url, error) {
                                 return Image.asset(
-                                  'assets/images/album_one.jpg',
+                                  'assets/images/artist_placeholder.png',
                                   fit: BoxFit.contain,
                                 );
                               },
                               imageUrl: music != null
                                   ? music.coverImageUrl
                                   : mediaItemStream.data.artUri.toString(),
-                              placeholder: (context, url) =>
-                                  SpinKitRipple(color: Colors.orange,size: 20,),
+                              placeholder: (context, url) => SpinKitRipple(
+                                color: Colors.orange,
+                                size: 20,
+                              ),
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -297,8 +301,10 @@ Future<void> playSong(context, Duration position, Track track) async {
         id: track.songId,
         album: '',
         title: track.title,
-        genre: track.genre != null ?  '${track.genre.name}' : '',
-        artist: track.artist != null ? '${track.artist.firstName} ${track.artist.lastName}' : 'Unknown Artist',
+        genre: track.genre != null ? '${track.genre.name}' : '',
+        artist: track.artist != null
+            ? '${track.artist.firstName} ${track.artist.lastName}'
+            : 'Unknown Artist',
         duration: Duration(seconds: track.duration),
         artUri: Uri.parse(track.coverImageUrl),
         extras: {'source': source}));

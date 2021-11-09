@@ -28,7 +28,7 @@ class ResultListTile extends StatelessWidget {
               imageUrl: imageUrl,
               errorWidget: (context, url, error) {
                 return Image.asset(
-                  'assets/images/singletrack_one.jpg',
+                  'assets/images/artist_placeholder.png',
                   fit: BoxFit.contain,
                 );
               },

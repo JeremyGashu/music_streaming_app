@@ -28,7 +28,7 @@ class ArtistTile extends StatelessWidget {
             child: CachedNetworkImage(
               errorWidget: (context, url, error) {
                 return Image.asset(
-                  'assets/images/album_one.jpg',
+                  'assets/images/artist_placeholder.png',
                   fit: BoxFit.contain,
                 );
               },

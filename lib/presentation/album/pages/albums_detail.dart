@@ -196,7 +196,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
                                           imageUrl: album.coverImageUrl,
                                           errorWidget: (context, url, error) {
                                             return Image.asset(
-                                              'assets/images/album_one.jpg',
+                                              'assets/images/artist_placeholder.png',
                                               fit: BoxFit.cover,
                                             );
                                           },
@@ -445,7 +445,9 @@ class _AlbumDetailState extends State<AlbumDetail> {
             album: '',
             title: track.title,
             genre: 'genre goes here',
-            artist: track.artist != null ? '${track.artist.firstName} ${track.artist.lastName}' : 'Unknown Artist',
+            artist: track.artist != null
+                ? '${track.artist.firstName} ${track.artist.lastName}'
+                : 'Unknown Artist',
             duration: Duration(seconds: track.duration),
             artUri: Uri.parse(track.coverImageUrl),
             // extras: {'source': m3u8FilePath});

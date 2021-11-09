@@ -12,7 +12,8 @@ class PlaylistTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: playlist);
+        Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName,
+            arguments: playlist);
       },
       leading: Card(
         elevation: 5,
@@ -24,20 +25,25 @@ class PlaylistTile extends StatelessWidget {
             child: CachedNetworkImage(
               errorWidget: (context, url, error) {
                 return Image.asset(
-                  'assets/images/album_one.jpg',
+                  'assets/images/artist_placeholder.png',
                   fit: BoxFit.contain,
                 );
               },
               imageUrl: playlist.image ?? '',
-              placeholder: (context, url) => SpinKitRipple(color: Colors.orange, size: 10,),
+              placeholder: (context, url) => SpinKitRipple(
+                color: Colors.orange,
+                size: 10,
+              ),
               fit: BoxFit.cover,
             ),
           ),
         ),
       ),
-
       title: Text(playlist.title),
-      trailing: Text('${playlist.songs.length} Tracks', style: TextStyle(color: Colors.grey),),
+      trailing: Text(
+        '${playlist.songs.length} Tracks',
+        style: TextStyle(color: Colors.grey),
+      ),
     );
   }
 }

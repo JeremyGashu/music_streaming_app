@@ -12,7 +12,8 @@ class AlbumTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName, arguments: album);
+        Navigator.pushNamed(context, AlbumDetail.albumDetailRouterName,
+            arguments: album);
       },
       leading: Card(
         elevation: 3,
@@ -24,21 +25,26 @@ class AlbumTile extends StatelessWidget {
             child: CachedNetworkImage(
               errorWidget: (context, url, error) {
                 return Image.asset(
-                  'assets/images/album_one.jpg',
+                  'assets/images/artist_placeholder.png',
                   fit: BoxFit.contain,
                 );
               },
               imageUrl: album.coverImageUrl ?? '',
-              placeholder: (context, url) => SpinKitRipple(color: Colors.orange, size: 10,),
+              placeholder: (context, url) => SpinKitRipple(
+                color: Colors.orange,
+                size: 10,
+              ),
               fit: BoxFit.fill,
             ),
           ),
         ),
       ),
-
       title: Text(album.title),
       subtitle: Text('${album.artist.firstName} ${album.artist.lastName}'),
-      trailing: Text('${album.tracks.length} Tracks', style: TextStyle(color: Colors.grey),),
+      trailing: Text(
+        '${album.tracks.length} Tracks',
+        style: TextStyle(color: Colors.grey),
+      ),
     );
   }
 }

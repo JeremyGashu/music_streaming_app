@@ -74,92 +74,95 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
               return Scaffold(
                 key: _scaffoldKey,
                 body: Stack(children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 10,
+                  SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        //upper section containing the image, svg, shuffle button and healing track
+                        upperSection(context, state,
+                            playlist: widget.playlistInfo),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        // playListStat(playlist: widget.playlistInfo),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Divider(
+                          height: 1,
+                          color: Colors.grey.withOpacity(0.8),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        //ad section
+                        // _adContainer('ad.png'),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        // searchBar(),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          child: Column(
+                            children: [
+                              ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: widget.playlistInfo.songs.length,
+                                  itemBuilder: (context, index) {
+                                    return musicTile(
+                                      widget.playlistInfo.songs[index].song,
+                                      context,
+                                      fromPlaylist: true,
+                                    );
+                                  }),
+                              SizedBox(
+                                height: 100,
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    //upper section containing the image, svg, shuffle button and healing track
-                    upperSection(context, state, playlist: widget.playlistInfo),
-                    SizedBox(
-                      height: 20,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: StreamBuilder(
+                      stream: AudioService.playbackStateStream,
+                      builder:
+                          (context, AsyncSnapshot<PlaybackState> snapshot) {
+                        if (snapshot.hasData) {
+                          print(
+                              "SnapshotData: ${snapshot.data.processingState}");
+                        }
+                        if (snapshot.hasData) {
+                          var snapShotData = snapshot.data.processingState;
+                          if (snapShotData != AudioProcessingState.stopped) {
+                            return StreamBuilder(
+                                stream: AudioService.currentMediaItemStream,
+                                builder: (context,
+                                    AsyncSnapshot<MediaItem>
+                                        currentMediaItemSnapshot) {
+                                  return currentMediaItemSnapshot.hasData &&
+                                          currentMediaItemSnapshot.data != null
+                                      ? PlayerOverlay(
+                                          playing: snapshot.data.playing)
+                                      : SizedBox();
+                                });
+                          }
+                        }
+                        return SizedBox();
+                      },
                     ),
-                    // playListStat(playlist: widget.playlistInfo),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Colors.grey.withOpacity(0.8),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    //ad section
-                    // _adContainer('ad.png'),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    // searchBar(),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: widget.playlistInfo.songs.length,
-                              itemBuilder: (context, index) {
-                                return musicTile(
-                                  widget.playlistInfo.songs[index].song,
-                                  context,
-                                  fromPlaylist: true,
-                                );
-                              }),
-                          SizedBox(
-                            height: 100,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: StreamBuilder(
-                  stream: AudioService.playbackStateStream,
-                  builder: (context, AsyncSnapshot<PlaybackState> snapshot) {
-                    if (snapshot.hasData) {
-                      print("SnapshotData: ${snapshot.data.processingState}");
-                    }
-                    if (snapshot.hasData) {
-                      var snapShotData = snapshot.data.processingState;
-                      if (snapShotData != AudioProcessingState.stopped) {
-                        return StreamBuilder(
-                            stream: AudioService.currentMediaItemStream,
-                            builder: (context,
-                                AsyncSnapshot<MediaItem>
-                                    currentMediaItemSnapshot) {
-                              return currentMediaItemSnapshot.hasData &&
-                                      currentMediaItemSnapshot.data != null
-                                  ? PlayerOverlay(
-                                      playing: snapshot.data.playing)
-                                  : SizedBox();
-                            });
-                      }
-                    }
-                    return SizedBox();
-                  },
-                ),
-              ),
+                  ),
                 ]),
               );
             }),
@@ -225,7 +228,7 @@ class _PlaylistDetailState extends State<PlaylistDetail> {
                                             : '',
                                         errorWidget: (context, url, error) {
                                           return Image.asset(
-                                            'assets/images/album_one.jpg',
+                                            'assets/images/artist_placeholder.png',
                                             fit: BoxFit.cover,
                                           );
                                         },

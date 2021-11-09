@@ -61,7 +61,7 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                                   imageUrl: widget.album.albumId ?? '',
                                   errorWidget: (context, url, error) {
                                     return Image.asset(
-                                      'assets/images/album_one.jpg',
+                                      'assets/images/artist_placeholder.png',
                                       fit: BoxFit.cover,
                                     );
                                   },
@@ -86,8 +86,9 @@ class _SingleAlbumSmallState extends State<SingleAlbumSmall> {
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0),
                       child: Text(
-                        widget.album.artist != null ? 
-                        '${widget.album.artist.firstName} ${widget.album.artist.lastName} ' : 'Unknown Artist',
+                        widget.album.artist != null
+                            ? '${widget.album.artist.firstName} ${widget.album.artist.lastName} '
+                            : 'Unknown Artist',
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: kGray,

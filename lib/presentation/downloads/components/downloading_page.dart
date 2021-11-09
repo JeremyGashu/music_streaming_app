@@ -74,61 +74,60 @@ class DownloadingTile extends StatelessWidget {
                 children: [
                   task.coverImageUrl != null
                       ? Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: CachedNetworkImage(
-                                errorWidget: (context, url, error) {
-                                  return Image.asset(
-                                    'assets/images/album_one.jpg',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                                imageUrl: task.coverImageUrl ?? '',
-                                placeholder: (context, url) =>
-                                    SpinKitRipple(
-                                  color: Colors.orange,
-                                  size: 10,
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedNetworkImage(
+                                  errorWidget: (context, url, error) {
+                                    return Image.asset(
+                                      'assets/images/artist_placeholder.png',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                  imageUrl: task.coverImageUrl ?? '',
+                                  placeholder: (context, url) => SpinKitRipple(
+                                    color: Colors.orange,
+                                    size: 10,
+                                  ),
+                                  fit: BoxFit.fill,
                                 ),
-                                fit: BoxFit.fill,
                               ),
                             ),
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              color: Colors.black.withOpacity(0.5),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                color: Colors.black.withOpacity(0.5),
+                              ),
                             ),
-                          ),
-                          // Container(
-                          //   width: 48,
-                          //   height: 48,
-                          //   child: CircularProgressIndicator(
-                          //     valueColor:
-                          //         AlwaysStoppedAnimation<Color>(Colors.grey),
+                            // Container(
+                            //   width: 48,
+                            //   height: 48,
+                            //   child: CircularProgressIndicator(
+                            //     valueColor:
+                            //         AlwaysStoppedAnimation<Color>(Colors.grey),
 
-                          //     // valueColor: Colors.grey,
-                          //   ),
-                          // ),
+                            //     // valueColor: Colors.grey,
+                            //   ),
+                            // ),
 
-                          const SpinKitRing(
-                              size: 38,
-                              color: Colors.grey,
-                              lineWidth: 4,
-                              duration: Duration(seconds: 2)),
-                          Text(
-                            '${task.progress.toStringAsFixed(0)}%',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 13),
-                          ),
-                        ],
-                      )
+                            const SpinKitRing(
+                                size: 38,
+                                color: Colors.grey,
+                                lineWidth: 4,
+                                duration: Duration(seconds: 2)),
+                            Text(
+                              '${task.progress.toStringAsFixed(0)}%',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 13),
+                            ),
+                          ],
+                        )
                       : Container(),
                   SizedBox(
                     width: 10,

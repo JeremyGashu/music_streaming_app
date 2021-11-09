@@ -8,7 +8,7 @@ Widget FeaturedAlbum(Album album) {
     margin: EdgeInsets.only(right: 8.0),
     child: Stack(children: [
       Hero(
-        tag: album != null ? album.albumId : '' ,
+        tag: album != null ? album.albumId : '',
         child: CachedNetworkImage(
           placeholder: (context, url) => Center(
             child: SpinKitRipple(
@@ -17,9 +17,10 @@ Widget FeaturedAlbum(Album album) {
             ),
           ),
           imageUrl: album.coverImageUrl != null ? album.coverImageUrl : '',
+          //TODO for featured
           errorWidget: (context, url, error) {
             return Image.asset(
-              'assets/images/dawit_new.jpg',
+              'assets/images/artist_placeholder.png',
               fit: BoxFit.cover,
             );
           },
@@ -35,7 +36,10 @@ Widget FeaturedAlbum(Album album) {
               gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.0)])),
+                  colors: [
+                Colors.black.withOpacity(0.6),
+                Colors.black.withOpacity(0.0)
+              ])),
         ),
       ),
       Align(
@@ -50,17 +54,19 @@ Widget FeaturedAlbum(Album album) {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   album != null ? album.title : 'Unknown Album',
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 23),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 23),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  album.artist != null ? '${album.artist.firstName} ${album.artist.lastName}' : 'Unknown Artist',
-                  style:
-                  TextStyle(color: Colors.white, fontSize: 15),
+                  album.artist != null
+                      ? '${album.artist.firstName} ${album.artist.lastName}'
+                      : 'Unknown Artist',
+                  style: TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ),
             ],

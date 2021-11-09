@@ -22,7 +22,9 @@ class SinglePlaylist extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, PlaylistDetail.playlistDetailRouterName, arguments: playlist);
+                        Navigator.pushNamed(
+                            context, PlaylistDetail.playlistDetailRouterName,
+                            arguments: playlist);
                       },
                       child: Stack(
                         children: [
@@ -44,10 +46,10 @@ class SinglePlaylist extends StatelessWidget {
                                     ),
                                   ),
                                   imageUrl: playlist.image ?? '',
-                                      // playlist.,
+                                  // playlist.,
                                   errorWidget: (context, url, error) {
                                     return Image.asset(
-                                      'assets/images/singletrack_one.jpg',
+                                      'assets/images/artist_placeholder.png',
                                       fit: BoxFit.contain,
                                     );
                                   },
@@ -133,7 +135,9 @@ class SinglePlaylist extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, PlaylistDetail.playlistDetailRouterName, arguments: playlist);
+                        Navigator.pushNamed(
+                            context, PlaylistDetail.playlistDetailRouterName,
+                            arguments: playlist);
                       },
                       child: Stack(
                         children: [

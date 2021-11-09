@@ -90,7 +90,7 @@ class _SingleTrackState extends State<SingleTrack> {
                       imageUrl: widget.track.coverImageUrl,
                       errorWidget: (context, url, error) {
                         return Image.asset(
-                          'assets/images/singletrack_one.jpg',
+                          'assets/images/artist_placeholder.png',
                           fit: BoxFit.cover,
                         );
                       },
